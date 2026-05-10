@@ -12,28 +12,26 @@
             --bg: #F5F7FA; --card: #FFFFFF; --text: #333333; --text-light: #777777;
             --success: #4CAF50; --danger: #F44336; --warning: #FFC107;
         }
-        [data-theme="green"] {
-            --primary: #4CAF50; --primary-dark: #388E3C; --primary-light: #C8E6C9;
-        }
-        [data-theme="pink"] {
-            --primary: #E91E63; --primary-dark: #C2185B; --primary-light: #F8BBD0;
-        }
+        [data-theme="green"] { --primary: #4CAF50; --primary-dark: #388E3C; --primary-light: #C8E6C9; }
+        [data-theme="pink"] { --primary: #E91E63; --primary-dark: #C2185B; --primary-light: #F8BBD0; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { background: var(--bg); color: var(--text); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
 
-        /* HEADER LIMPO */
+        /* HEADER */
         header { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10; height: 60px; flex-shrink: 0; }
-        header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 800; }
         .header-icons { display: flex; gap: 15px; }
         .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
+        .icon-btn.active-tab { background: white; color: var(--primary-dark); }
 
         /* SCREENS */
         .screen { display: none; flex: 1; flex-direction: column; padding: 15px 20px; overflow-y: auto; }
-        .screen.active { display: flex; }
+        .screen.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* GRID CURRÍCULO */
+        /* MURAL DE ATIVIDADES */
         .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-bottom: 20px; }
         .phase-card { background: var(--card); border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 5px solid var(--primary); cursor: pointer; transition: 0.2s; position: relative; }
         .phase-card:active { transform: scale(0.95); }
@@ -46,57 +44,59 @@
         .phase-card p { font-size: 0.75rem; color: var(--text-light); font-weight: bold; }
         .status-icon { position: absolute; top: 10px; right: 10px; font-size: 1.2rem; color: var(--success); }
 
-        /* MTS CONTAINER */
+        /* TELA DE GESTÃO (DASHBOARD) */
+        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .dash-header h2 { color: var(--primary-dark); font-size: 1.5rem; display:flex; align-items:center; gap:8px;}
+        .dash-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 30px; }
+        .log-card { background: var(--card); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 6px solid var(--primary); }
+        .log-card-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px; }
+        .log-card-top h3 { font-size: 1.2rem; color: var(--text); margin:0; }
+        .log-badge { padding: 4px 10px; border-radius: 20px; color: white; font-weight: bold; font-size: 0.85rem; }
+        .log-info { font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px; }
+        .log-cycles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
+        .cycle-stat-box { background: #f8f9fa; border-radius: 8px; padding: 8px; font-size: 0.8rem; text-align: center; border: 1px solid #eee; }
+        .cycle-stat-box strong { display: block; margin-bottom: 4px; color: var(--primary-dark); border-bottom: 1px solid #ddd; padding-bottom: 4px;}
+        .c-indep { color: var(--success); font-weight: bold;}
+        .c-dica { color: #F57F17; font-weight: bold;}
+        .c-erro { color: var(--danger); font-weight: bold;}
+
+        /* MTS CONTAINER (JOGO) */
         .mts-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 5px; gap: 10px; }
         .cycle-badge { background: var(--primary-light); color: var(--primary-dark); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; flex-shrink: 0; }
-        
-        /* MODELO */
         .model-area { display: flex; align-items: center; justify-content: center; width: 100%; height: 110px; flex-shrink: 0; }
         .model-card { background: white; border: 3px dashed var(--primary); border-radius: 20px; width: auto; min-width: 220px; padding: 0 20px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: bold; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .model-audio-btn { background: var(--primary); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.2); border: none; }
         .model-audio-btn:active { transform: scale(0.9); }
         .model-audio-btn .material-icons { font-size: 3.5rem; }
-
-        /* COMPARAÇÕES */
         .comparisons-area { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 15px; width: 100%; padding: 10px 0; }
         .comp-card { background: white; border: 2px solid #ccc; border-radius: 15px; flex: 1; min-width: 150px; max-width: 220px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; color: var(--text); cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 0 10px; text-align: center; }
         .comp-card:active { transform: scale(0.95); background: var(--primary-light); border-color: var(--primary); }
         
-        /* STT AREA ERGONÔMICA */
+        /* STT AREA */
         .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; position: relative; }
         .stt-controls { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; }
         .stt-btn { background: var(--warning); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.1s ease; }
         .stt-btn .material-icons { font-size: 3rem; }
         .stt-btn.listening { background: var(--danger); transform: scale(0.92); box-shadow: 0 0 0 10px rgba(244, 67, 54, 0.3); animation: pulseRecord 1s infinite; }
-
-        @keyframes pulseRecord {
-            0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(244, 67, 54, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
-        }
-
+        @keyframes pulseRecord { 0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(244, 67, 54, 0); } 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); } }
         .btn-override { padding: 10px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
         .btn-override:active { transform: scale(0.95); }
-
         .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
-        /* MODAIS */
+        /* MODAIS & BOTÕES GERAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; }
         .modal-title { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
         .modal-desc { color: var(--text-light); font-size: 1rem; margin-bottom: 20px; }
-        
         .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; }
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
         .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
-        
-        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: auto; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #ccc; cursor: not-allowed; transform: none; }
         .btn-cancel { background: #e0e0e0; color: #333; }
         .btn-danger { background: var(--danger); }
-        
         textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; padding: 10px; resize: none; border: 2px solid #ddd; border-radius: 8px; text-align: left; margin-bottom: 10px; }
         textarea#json-output { font-family: monospace; font-size: 0.8rem; border-color: #eee; }
     </style>
@@ -106,12 +106,25 @@
 <header>
     <h1><span class="material-icons">extension</span> Eidos MTS</h1>
     <div class="header-icons">
+        <button class="icon-btn active-tab" id="nav-home" onclick="goHome()" title="Mural de Atividades"><span class="material-icons">apps</span></button>
+        <button class="icon-btn" id="nav-dash" onclick="openDashboard()" title="Painel de Gestão"><span class="material-icons">bar_chart</span></button>
         <button class="icon-btn" onclick="openSettings()" title="Configurações e Ferramentas"><span class="material-icons">settings</span></button>
     </div>
 </header>
 
 <div id="screen-home" class="screen active">
     <div class="curriculum-grid" id="grid-phases"></div>
+</div>
+
+<div id="screen-dashboard" class="screen">
+    <div class="dash-header">
+        <h2><span class="material-icons">analytics</span> Telemetria da Sessão</h2>
+        <button class="btn-action" style="background:var(--primary-dark); margin:0;" onclick="openReport()">
+            <span class="material-icons">data_object</span> Exportar JSON
+        </button>
+    </div>
+    <div class="dash-list" id="dashboard-content">
+        </div>
 </div>
 
 <div id="screen-game" class="screen" style="background: white; padding: 10px;">
@@ -130,8 +143,8 @@
         <p class="modal-desc" style="font-size:0.85rem;">Insira as palavras-alvo separadas por vírgula.</p>
         <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, MACACO..."></textarea>
         <div style="display:flex; gap:10px;">
-            <button class="btn-action btn-cancel" onclick="closeModals()">Cancelar</button>
-            <button class="btn-action" id="btn-start-words" style="background: var(--warning);" onclick="startCustomWords()" disabled>Iniciar Jogo</button>
+            <button class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
+            <button class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning);" onclick="startCustomWords()" disabled>Iniciar Jogo</button>
         </div>
     </div>
 </div>
@@ -171,23 +184,22 @@
                 <option value="pink">Rosa Coral</option>
             </select>
         </div>
-        <button class="btn-action" style="background:var(--primary-dark);" onclick="openReport()"><span class="material-icons">content_paste</span> Visualizar Telemetria (JSON)</button>
-        <button class="btn-action" style="background:var(--danger);" onclick="resetApp()"><span class="material-icons">restart_alt</span> Resetar Aplicativo (Cache)</button>
+        <button class="btn-action" style="background:var(--danger); width:100%; margin-top:15px;" onclick="resetApp()"><span class="material-icons">delete_forever</span> Apagar Dados e Resetar App</button>
 
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn-action btn-cancel" onclick="closeModals()">Cancelar</button>
-            <button class="btn-action" onclick="saveSettings()">Salvar Alterações</button>
+        <div style="display:flex; gap:10px; margin-top:25px;">
+            <button class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
+            <button class="btn-action" style="flex:2" onclick="saveSettings()">Salvar Alterações</button>
         </div>
     </div>
 </div>
 
 <div id="modal-report" class="modal-overlay" style="z-index: 150;">
     <div class="modal-content">
-        <h2 class="modal-title">Telemetria (JSON)</h2>
+        <h2 class="modal-title">Código Estruturado (JSON)</h2>
         <p class="modal-desc" style="font-size:0.85rem;">Cole no "Lançamento Universal" do Âncora Gestão.</p>
         <textarea id="json-output" readonly></textarea>
-        <button class="btn-action" onclick="copyJSON()"><span class="material-icons" style="vertical-align:middle; font-size:1.2rem;">content_copy</span> Copiar Dados</button>
-        <button class="btn-action btn-cancel" onclick="closeModals()">Fechar</button>
+        <button class="btn-action" style="width:100%" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar Código</button>
+        <button class="btn-action btn-cancel" style="width:100%" onclick="closeModals()">Fechar</button>
     </div>
 </div>
 
@@ -196,7 +208,7 @@
         <h2 class="modal-title" id="alert-title">Aviso</h2>
         <p class="modal-desc" id="alert-desc" style="font-size:1.1rem; color:var(--text);"></p>
         <div id="alert-actions" style="display:flex; gap:10px; margin-top: 20px;">
-            <button class="btn-action" onclick="closeAlert()" id="alert-btn-ok">Entendido</button>
+            <button class="btn-action" style="width:100%" onclick="closeAlert()" id="alert-btn-ok">Entendido</button>
         </div>
     </div>
 </div>
@@ -205,7 +217,7 @@
     <div class="modal-content">
         <h2 class="modal-title" id="result-title" style="font-size:1.8rem; margin-bottom:5px;"></h2>
         <p class="modal-desc" id="result-desc" style="font-size:1.1rem; color:var(--text); margin-bottom: 25px;"></p>
-        <div id="result-actions" style="display:flex; gap:10px; flex-wrap: wrap;">
+        <div id="result-actions" style="display:flex; gap:10px; flex-wrap: wrap; justify-content:center;">
             </div>
     </div>
 </div>
@@ -216,46 +228,16 @@
     const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
     const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS'];
     
-    // ================= DICIONÁRIO FONÉTICO E ANTI-CENSURA =================
+    // ================= DICIONÁRIO FONÉTICO E ANTI-CENSURA (V 1.5) =================
     const phoneticsMap = {
-        // Sílabas com homofonias e bloqueios do STT
-        'CA': ['K', 'KA'],
-        'CE': ['SE', 'C'],
-        'CI': ['SI', 'SEI', 'CY', 'SY'],
-        'CO': ['KO'],
-        'CU': ['C\\*', 'C\\*\\*', 'C\\*\\*\\*', 'KU', 'C...'], // Fuga da censura do Google
-        'GE': ['JE'],
-        'GI': ['JI'],
-        'QUE': ['KE', 'K', 'Q'],
-        'QUI': ['KI'],
-        'QUA': ['KUA'],
-        'XA': ['CHA'],
-        'XE': ['CHE'],
-        'XI': ['CHI'],
-        'XO': ['CHO'],
-        'XU': ['CHU'],
-        'CHA': ['XA'],
-        'CHE': ['XE'],
-        'CHI': ['XI'],
-        'CHO': ['XO'],
-        'CHU': ['XU'],
-        'SE': ['CE'],
-        'SI': ['CI'],
-        'JE': ['GE'],
-        'JI': ['GI'],
-        
-        // Letras avulsas (Aparecem nas fases PRE1 e VOGAIS)
-        'F': ['EFE'],
-        'J': ['JOTA'],
-        'L': ['ELE'],
-        'M': ['EME'],
-        'N': ['ENE'],
-        'R': ['ERRE'],
-        'S': ['ESSE'],
-        'X': ['XIS'],
-        'Z': ['ZE'],
-        'Y': ['IPSLON', 'IPISLON'],
-        'W': ['DABLIU']
+        'AU': ['AO'], 'AO': ['AU'], 'OU': ['O'], 'ÃO': ['AM', 'AO', 'AUM'], 'EI': ['E'],
+        'B': ['BE'], 'C': ['CE'], 'D': ['DE'], 'F': ['EFE'], 'G': ['GE'], 'J': ['JOTA'], 'L': ['ELE'], 'M': ['EME'], 'N': ['ENE'], 'P': ['PE'], 'R': ['ERRE'], 'S': ['ESSE'], 'T': ['TE'], 'V': ['VE'], 'X': ['XIS'], 'Z': ['ZE'], 'Y': ['IPSLON', 'IPISLON'], 'W': ['DABLIU'],
+        'CA': ['K', 'KA'], 'CE': ['SE', 'C'], 'CI': ['SI', 'SEI', 'CY', 'SY'], 'CO': ['KO'],
+        'CU': ['C\\*', 'C\\*\\*', 'C\\*\\*\\*', 'KU', 'C...'], 
+        'GE': ['JE'], 'GI': ['JI'], 'QUE': ['KE', 'K', 'Q'], 'QUI': ['KI'], 'QUA': ['KUA'],
+        'XA': ['CHA'], 'XE': ['CHE'], 'XI': ['CHI'], 'XO': ['CHO'], 'XU': ['CHU'],
+        'CHA': ['XA'], 'CHE': ['XE'], 'CHI': ['XI'], 'CHO': ['XO'], 'CHU': ['XU'],
+        'SE': ['CE'], 'SI': ['CI'], 'JE': ['GE'], 'JI': ['GI']
     };
 
     function shuffleArray(array) {
@@ -347,11 +329,11 @@
         const actions = document.getElementById('alert-actions');
         if (isConfirm) {
             actions.innerHTML = `
-                <button class="btn-action btn-cancel" onclick="closeAlert(false)">Cancelar</button>
-                <button class="btn-action btn-danger" onclick="closeAlert(true)">Sim, Apagar</button>
+                <button class="btn-action btn-cancel" style="flex:1" onclick="closeAlert(false)">Cancelar</button>
+                <button class="btn-action btn-danger" style="flex:1" onclick="closeAlert(true)">Sim, Apagar</button>
             `;
         } else {
-            actions.innerHTML = `<button class="btn-action" onclick="closeAlert(true)">Entendido</button>`;
+            actions.innerHTML = `<button class="btn-action" style="width:100%" onclick="closeAlert(true)">Entendido</button>`;
         }
         document.getElementById('modal-alert').style.display = 'flex';
     }
@@ -364,14 +346,34 @@
 
     function resetApp() {
         closeModals();
-        customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e alunos salvos neste navegador. Tem certeza absoluta?", () => {
+        customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e os dados do aluno atual. Tem certeza absoluta?", () => {
             localStorage.removeItem('eidos_mts_state');
             location.reload();
         }, true);
     }
 
+    // ================= NAVEGAÇÃO =================
     function init() { applyTheme(); renderGrid(); }
 
+    function goHome() {
+        document.getElementById('nav-dash').classList.remove('active-tab');
+        document.getElementById('nav-home').classList.add('active-tab');
+        document.getElementById('screen-dashboard').classList.remove('active');
+        document.getElementById('screen-game').classList.remove('active');
+        document.getElementById('screen-home').classList.add('active');
+        renderGrid();
+    }
+
+    function openDashboard() {
+        document.getElementById('nav-home').classList.remove('active-tab');
+        document.getElementById('nav-dash').classList.add('active-tab');
+        document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-game').classList.remove('active');
+        document.getElementById('screen-dashboard').classList.add('active');
+        renderDashboard();
+    }
+
+    // ================= RENDERIZADORES =================
     function renderGrid() {
         const grid = document.getElementById('grid-phases'); grid.innerHTML = '';
         curriculumOrder.forEach(p => {
@@ -382,7 +384,7 @@
             let displayName = p.length > 2 ? p.substring(0,3) : p;
             let displayDesc = p;
             if(p === 'PRE1') { displayName = "PRÉ 1"; displayDesc = "Vogal / Consoante"; }
-            if(p === 'PRE2') { displayName = "PRÉ 2"; displayDesc = "Letra / Sílaba / Palavra"; }
+            if(p === 'PRE2') { displayName = "PRÉ 2"; displayDesc = "Letra/Sílaba/Palavra"; }
 
             card.className = `phase-card ${isUnlocked ? '' : 'locked'} ${isPre ? 'module-prereq' : ''}`;
             card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon">check_circle</span>' : '<span class="material-icons status-icon" style="color:#999">lock</span>'}
@@ -401,6 +403,48 @@
         });
     }
 
+    function renderDashboard() {
+        const container = document.getElementById('dashboard-content');
+        container.innerHTML = '';
+        
+        if(state.log.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:40px 0; color:var(--text-light);"><span class="material-icons" style="font-size:3rem; margin-bottom:10px; opacity:0.5;">inbox</span><p>Nenhuma lição finalizada ainda.</p></div>';
+            return;
+        }
+
+        [...state.log].reverse().forEach(entry => {
+            const card = document.createElement('div');
+            const isSuccess = entry.acc >= entry.crit;
+            card.className = 'log-card';
+            card.style.borderLeftColor = isSuccess ? 'var(--success)' : 'var(--danger)';
+            
+            let detailsHTML = '';
+            if(entry.tipo === 'PRE_REQUISITO') {
+                detailsHTML = `<p style="margin-top:10px; font-weight:bold; color: ${isSuccess ? 'var(--success)' : 'var(--danger)'};">Status: ${entry.status}</p>`;
+            } else {
+                const c1 = entry.ciclos.c1; const c2 = entry.ciclos.c2; const c3 = entry.ciclos.c3;
+                detailsHTML = `
+                    <div class="log-cycles-grid" style="margin-top:12px;">
+                        <div class="cycle-stat-box"><strong>C1 (Visual)</strong><span class="c-indep">✔ ${c1.indep}</span> | <span class="c-dica">💡 ${c1.dica}</span> | <span class="c-erro">✖ ${c1.erro}</span></div>
+                        <div class="cycle-stat-box"><strong>C2 (Áudio)</strong><span class="c-indep">✔ ${c2.indep}</span> | <span class="c-dica">💡 ${c2.dica}</span> | <span class="c-erro">✖ ${c2.erro}</span></div>
+                        <div class="cycle-stat-box"><strong>C3 (Fala)</strong><span class="c-indep">✔ ${c3.indep}</span> | <span class="c-dica">💡 ${c3.dica}</span> | <span class="c-erro">✖ ${c3.erro}</span></div>
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="log-card-top">
+                    <h3>${entry.fase} <span style="font-size:0.8rem; font-weight:normal; color:var(--text-light);">(${entry.tipo})</span></h3>
+                    <span class="log-badge" style="background:${isSuccess ? 'var(--success)' : 'var(--danger)'};">${entry.acc}%</span>
+                </div>
+                <div class="log-info"><strong>Data:</strong> ${entry.d} | <strong>Aluno:</strong> ${entry.n} | <strong>Nível:</strong> ${entry.nv || '-'}</div>
+                ${detailsHTML}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // ================= MENUS =================
     function openSettings() { 
         document.getElementById('set-name').value = state.student; 
         document.getElementById('set-crit').value = state.settings.crit; 
@@ -416,7 +460,8 @@
         state.settings.opts = parseInt(document.getElementById('set-opts').value); 
         state.settings.hard = document.getElementById('set-hard').checked; 
         state.settings.theme = document.getElementById('set-theme').value;
-        saveState(); applyTheme(); closeModals(); renderGrid(); 
+        saveState(); applyTheme(); closeModals(); 
+        if(document.getElementById('screen-home').classList.contains('active')) renderGrid();
     }
     
     function openReport() { 
@@ -430,7 +475,7 @@
         const txt = document.getElementById('json-output'); 
         if(txt.value.includes("Nenhum dado")) return; 
         txt.select(); document.execCommand('copy'); 
-        customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.'); 
+        customAlert('Copiado!', 'O código JSON foi copiado para a área de transferência.'); 
     }
 
     function checkWordsInput() {
@@ -449,11 +494,15 @@
 
         session = { phase: 'PALAVRAS', pool: pool, trials: targets, currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: targets.length }, c2: { indep:0, dica:0, erro:0, total: targets.length }, c3: { indep:0, dica:0, erro:0, total: targets.length } } };
         
+        document.getElementById('nav-home').classList.remove('active-tab');
+        document.getElementById('nav-dash').classList.remove('active-tab');
         document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-dashboard').classList.remove('active');
         document.getElementById('screen-game').classList.add('active');
         renderTrial();
     }
 
+    // ================= MOTOR DO JOGO =================
     function startGame(phaseId) {
         if(phaseId === 'PALAVRAS') {
             document.getElementById('custom-words-input').value = state.customWords || '';
@@ -493,15 +542,17 @@
 
         session = { phase: phaseId, pool: pool, trials: targets, currentCycle: isOnlyCycle3 ? 3 : 1, isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: (isOnlyCycle3) ? 0 : targetCount }, c2: { indep:0, dica:0, erro:0, total: (isOnlyCycle3) ? 0 : targetCount }, c3: { indep:0, dica:0, erro:0, total: (isOnlyCycle3 || !isPreReq) ? targetCount : 0 } } };
         
+        document.getElementById('nav-home').classList.remove('active-tab');
+        document.getElementById('nav-dash').classList.remove('active-tab');
         document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-dashboard').classList.remove('active');
         document.getElementById('screen-game').classList.add('active');
         renderTrial();
     }
 
     function abortGame() {
         if(sttRecognition && isListening) toggleMicrophone();
-        document.getElementById('screen-game').classList.remove('active');
-        document.getElementById('screen-home').classList.add('active');
+        goHome();
     }
 
     function getSpokenPrompt(target) {
@@ -636,14 +687,9 @@
         sttRecognition = new SpeechRecognition(); sttRecognition.lang = 'pt-BR'; sttRecognition.interimResults = true; sttRecognition.maxAlternatives = 1; ghostInput.value = ""; 
         
         const targetClean = removeAccents(session.trials[session.currentTrialIdx]);
-        
-        // Puxa as aceitações fonéticas (ou censura) do dicionário
         let acceptedTerms = [targetClean];
-        if (phoneticsMap[targetClean]) {
-            acceptedTerms = acceptedTerms.concat(phoneticsMap[targetClean]);
-        }
+        if (phoneticsMap[targetClean]) acceptedTerms = acceptedTerms.concat(phoneticsMap[targetClean]);
 
-        // Constrói a Regex usando (^|\s) em vez de \b para suportar caracteres especiais como *
         const regexStr = '(^|\\s)(' + acceptedTerms.join('|') + ')($|\\s)';
         const regex = new RegExp(regexStr);
 
@@ -701,9 +747,7 @@
     function finishCycle() {
         session.currentTrialIdx = 0;
         session.currentCycle++;
-        
         let maxCycles = session.isPreReq ? 2 : 3;
-
         if((session.isOnlyCycle3 && session.currentCycle > 3) || (!session.isOnlyCycle3 && session.currentCycle > maxCycles)) {
             checkBlockMastery();
         } else {
@@ -720,19 +764,17 @@
         if (isSuccess) {
             title.innerText = "Desempenho Excelente!";
             desc.innerText = `Parabéns! A precisão foi de ${Math.round(accuracy)}%. Fase concluída com sucesso!`;
-            
             actions.innerHTML = `
-                <button class="btn-action btn-cancel" style="flex:1" onclick="closeResult(); abortGame()"><span class="material-icons">home</span> Início</button>
-                <button class="btn-action" style="flex:1; background:var(--warning)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir</button>
-                ${nextPhase ? `<button class="btn-action" style="flex:1; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar <span class="material-icons">arrow_forward</span></button>` : ''}
+                <button class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); goHome()"><span class="material-icons">home</span> Início</button>
+                <button class="btn-action" style="width:100%; background:var(--warning)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir</button>
+                ${nextPhase ? `<button class="btn-action" style="width:100%; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar <span class="material-icons">arrow_forward</span></button>` : ''}
             `;
         } else {
             title.innerText = "Quase lá...";
             desc.innerText = `Parabéns pelo esforço! Precisão de ${Math.round(accuracy)}%. A meta é ${state.settings.crit}%.`;
-            
             actions.innerHTML = `
-                <button class="btn-action btn-cancel" style="flex:1" onclick="closeResult(); abortGame()"><span class="material-icons">home</span> Início</button>
-                <button class="btn-action" style="flex:1; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
+                <button class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); goHome()"><span class="material-icons">home</span> Início</button>
+                <button class="btn-action" style="width:100%; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
             `;
         }
         document.getElementById('modal-result').style.display = 'flex';
@@ -765,7 +807,7 @@
             if (session.isPreReq) {
                 const dataObj = { 
                     n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), 
-                    tipo: "PRE_REQUISITO", fase: session.phase === 'PRE1' ? "Discriminação (Vogal/Consoante)" : "Discriminação (Letra/Sílaba/Palavra)", 
+                    tipo: "PRE_REQUISITO", fase: session.phase === 'PRE1' ? "Discrim. (Vogal/Consoante)" : "Discrim. (Letra/Sílaba/Palavra)", 
                     crit: state.settings.crit, acc: Math.round(accuracy), 
                     status: accuracy >= state.settings.crit ? "Atingiu Pré-requisito" : "Não Atingiu" 
                 };
