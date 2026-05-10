@@ -38,7 +38,11 @@
         .phase-card { background: var(--card); border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 5px solid var(--primary); cursor: pointer; transition: 0.2s; position: relative; }
         .phase-card:active { transform: scale(0.95); }
         .phase-card.locked { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; border-bottom-color: #ccc; }
+        .phase-card.module-extra { border-color: var(--warning); background: #fffdf5; }
+        .phase-card.module-prereq { border-color: #9C27B0; background: #f3e5f5; }
         .phase-card h2 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 5px; }
+        .phase-card.module-extra h2 { color: #F57F17; font-size: 1.4rem; }
+        .phase-card.module-prereq h2 { color: #7B1FA2; font-size: 1.4rem; }
         .phase-card p { font-size: 0.75rem; color: var(--text-light); font-weight: bold; }
         .status-icon { position: absolute; top: 10px; right: 10px; font-size: 1.2rem; color: var(--success); }
 
@@ -48,20 +52,19 @@
         
         /* MODELO */
         .model-area { display: flex; align-items: center; justify-content: center; width: 100%; height: 110px; flex-shrink: 0; }
-        .model-card { background: white; border: 3px dashed var(--primary); border-radius: 20px; width: 220px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: bold; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .model-card { background: white; border: 3px dashed var(--primary); border-radius: 20px; width: auto; min-width: 220px; padding: 0 20px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: bold; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .model-audio-btn { background: var(--primary); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.2); border: none; }
         .model-audio-btn:active { transform: scale(0.9); }
         .model-audio-btn .material-icons { font-size: 3.5rem; }
 
         /* COMPARAÇÕES */
-        .comparisons-area { flex: 1; display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; padding: 10px 0; }
-        .comp-card { background: white; border: 2px solid #ccc; border-radius: 15px; flex: 1; max-width: 180px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; color: var(--text); cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .comparisons-area { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 15px; width: 100%; padding: 10px 0; }
+        .comp-card { background: white; border: 2px solid #ccc; border-radius: 15px; flex: 1; min-width: 150px; max-width: 220px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; color: var(--text); cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 0 10px; text-align: center; }
         .comp-card:active { transform: scale(0.95); background: var(--primary-light); border-color: var(--primary); }
         
         /* STT AREA ERGONÔMICA */
         .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; position: relative; }
         .stt-controls { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; }
-        
         .stt-btn { background: var(--warning); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.1s ease; }
         .stt-btn .material-icons { font-size: 3rem; }
         .stt-btn.listening { background: var(--danger); transform: scale(0.92); box-shadow: 0 0 0 10px rgba(244, 67, 54, 0.3); animation: pulseRecord 1s infinite; }
@@ -75,12 +78,11 @@
         .btn-override { padding: 10px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
         .btn-override:active { transform: scale(0.95); }
 
-        /* CAIXA DE TEXTO FANTASMA */
         .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
         /* MODAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto; text-align: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; text-align: center; }
         .modal-title { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
         .modal-desc { color: var(--text-light); font-size: 1rem; margin-bottom: 20px; }
         
@@ -88,11 +90,13 @@
         .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
         .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
         
-        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-action:active { transform: scale(0.98); }
+        .btn-action:disabled { background: #ccc; cursor: not-allowed; transform: none; }
         .btn-cancel { background: #e0e0e0; color: #333; }
         
-        textarea#json-output { width: 100%; height: 150px; font-family: monospace; font-size: 0.8rem; padding: 10px; resize: none; border: 2px solid #eee; border-radius: 8px; text-align: left; }
+        textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; padding: 10px; resize: none; border: 2px solid #ddd; border-radius: 8px; text-align: left; margin-bottom: 10px; }
+        textarea#json-output { font-family: monospace; font-size: 0.8rem; border-color: #eee; }
     </style>
 </head>
 <body>
@@ -117,6 +121,18 @@
         <div id="cycle-indicator" class="cycle-badge">Ciclo 1: Identidade Visual</div>
         <div class="model-area" id="model-area"></div>
         <div class="comparisons-area" id="comparisons-area"></div>
+    </div>
+</div>
+
+<div id="modal-words" class="modal-overlay">
+    <div class="modal-content" style="text-align: left;">
+        <h2 class="modal-title" style="border-bottom: 2px solid var(--warning); color: #F57F17; padding-bottom:10px;">Módulo: Palavras</h2>
+        <p class="modal-desc" style="font-size:0.85rem;">Insira as palavras-alvo separadas por vírgula.</p>
+        <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, MACACO..."></textarea>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-action btn-cancel" onclick="closeModals()">Cancelar</button>
+            <button class="btn-action" id="btn-start-words" style="background: var(--warning);" onclick="startCustomWords()" disabled>Iniciar Jogo</button>
+        </div>
     </div>
 </div>
 
@@ -155,25 +171,26 @@
         <h2 class="modal-title">Telemetria (JSON)</h2>
         <p class="modal-desc" style="font-size:0.85rem;">Cole no "Lançamento Universal" do Âncora Gestão.</p>
         <textarea id="json-output" readonly></textarea>
-        <button class="btn-action" onclick="copyJSON()"><span class="material-icons" style="vertical-align:middle; font-size:1.2rem;">content_copy</span> Copiar Dados</button>
+        <button class="btn-action" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar Dados</button>
         <button class="btn-action btn-cancel" onclick="closeModals()">Fechar</button>
     </div>
 </div>
 
-<div id="modal-alert" class="modal-overlay" style="z-index: 200;">
+<div id="modal-result" class="modal-overlay" style="z-index: 200;">
     <div class="modal-content">
-        <h2 class="modal-title" id="alert-title">Aviso</h2>
-        <p class="modal-desc" id="alert-desc" style="font-size:1.1rem; color:var(--text);"></p>
-        <button class="btn-action" onclick="closeAlert()">Entendido</button>
+        <h2 class="modal-title" id="result-title" style="font-size:1.8rem; margin-bottom:5px;"></h2>
+        <p class="modal-desc" id="result-desc" style="font-size:1.1rem; color:var(--text); margin-bottom: 25px;"></p>
+        <div id="result-actions" style="display:flex; gap:10px; flex-wrap: wrap;">
+            </div>
     </div>
 </div>
 
 <script>
-    const curriculumOrder = ['VOGAIS', 'ENCONTROS', 'C','P','B','F','T','D','Q','G','M','N','L','R','V','S','X','J','Z'];
+    const curriculumOrder = ['PRE1', 'PRE2', 'VOGAIS', 'ENCONTROS', 'C','P','B','F','T','D','Q','G','M','N','L','R','V','S','X','J','Z'];
     const vowels = ['A','E','I','O','U'];
     const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
+    const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS'];
     
-    // ================= ALGORITMO FISHER-YATES PERFEITO =================
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -194,11 +211,35 @@
         return pool;
     }
 
+    function generatePseudoWords() {
+        let availableSyllables = [...vowels, ...encounters];
+        curriculumOrder.forEach(p => {
+            if(!['PRE1','PRE2','VOGAIS','ENCONTROS'].includes(p) && state.unlocked.includes(p)) {
+                availableSyllables = availableSyllables.concat(generateSyllables(p, state.settings.hard));
+            }
+        });
+        let pseudos = [];
+        for(let i=0; i<20; i++) {
+            let s1 = availableSyllables[Math.floor(Math.random()*availableSyllables.length)];
+            let s2 = availableSyllables[Math.floor(Math.random()*availableSyllables.length)];
+            pseudos.push(s1 + s2);
+        }
+        return pseudos;
+    }
+
+    // Identificador Categórico para os Módulos de Pré-Requisito
+    function getCategory(item) {
+        if (vowels.includes(item)) return 'VOGAL';
+        if (item.length === 1 && !vowels.includes(item)) return 'CONSOANTE';
+        if (['BOLA','GATO','BOLO','MACACO','CAVALO','SAPATO'].includes(item)) return 'PALAVRA';
+        return 'SÍLABA';
+    }
+
     let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
-        student: '', unlocked: ['VOGAIS'], settings: { crit: 100, opts: 4, hard: false, theme: 'cyan' }, log: [] 
+        student: '', unlocked: ['PRE1', 'PRE2', 'VOGAIS'], settings: { crit: 100, opts: 4, hard: false, theme: 'cyan' }, customWords: '', log: [] 
     };
 
-    let session = { phase: '', pool: [], trials: [], currentCycle: 1, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0 }, c2: { indep: 0, dica: 0, erro: 0 }, c3: { indep: 0, dica: 0, erro: 0 } } };
+    let session = { phase: '', pool: [], trials: [], currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
 
     // ================= SOM E TEMAS =================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -237,31 +278,35 @@
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
 
-    let alertCallback = null;
-    function customAlert(title, desc, callback = null) {
-        document.getElementById('alert-title').innerText = title;
-        document.getElementById('alert-desc').innerText = desc;
-        alertCallback = callback;
-        document.getElementById('modal-alert').style.display = 'flex';
-    }
-    function closeAlert() {
-        document.getElementById('modal-alert').style.display = 'none';
-        if(alertCallback) alertCallback();
-        alertCallback = null;
-    }
-
     // ================= TELA INICIAL =================
     function init() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); renderGrid(); }
 
     function renderGrid() {
         const grid = document.getElementById('grid-phases'); grid.innerHTML = '';
+        
         curriculumOrder.forEach(p => {
             const isUnlocked = state.unlocked.includes(p);
+            const isPre = p.startsWith('PRE');
             const card = document.createElement('div');
-            card.className = `phase-card ${isUnlocked ? '' : 'locked'}`;
+            
+            let displayName = p.length > 2 ? p.substring(0,3) : p;
+            let displayDesc = p;
+            if(p === 'PRE1') { displayName = "PRÉ 1"; displayDesc = "Vogal / Consoante"; }
+            if(p === 'PRE2') { displayName = "PRÉ 2"; displayDesc = "Letra / Sílaba / Palavra"; }
+
+            card.className = `phase-card ${isUnlocked ? '' : 'locked'} ${isPre ? 'module-prereq' : ''}`;
             card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon">check_circle</span>' : '<span class="material-icons status-icon" style="color:#999">lock</span>'}
-                <h2>${p.length > 2 ? p.substring(0,3) : p}</h2><p>${p}</p>`;
+                <h2>${displayName}</h2><p>${displayDesc}</p>`;
             if(isUnlocked) card.onclick = () => { playSound('click'); startGame(p); };
+            grid.appendChild(card);
+        });
+
+        extraModules.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'phase-card module-extra';
+            card.innerHTML = `<span class="material-icons status-icon" style="color:var(--warning)">star</span>
+                <h2>${p === 'PSEUDOPALAVRAS' ? 'PSEUDO' : 'PALAVRAS'}</h2><p>${p}</p>`;
+            card.onclick = () => { playSound('click'); startGame(p); };
             grid.appendChild(card);
         });
     }
@@ -270,24 +315,70 @@
     function openSettings() { document.getElementById('set-name').value = state.student; document.getElementById('set-crit').value = state.settings.crit; document.getElementById('set-opts').value = state.settings.opts; document.getElementById('set-hard').checked = state.settings.hard; document.getElementById('modal-settings').style.display = 'flex'; }
     function saveSettings() { state.student = document.getElementById('set-name').value.toUpperCase(); state.settings.crit = parseInt(document.getElementById('set-crit').value); state.settings.opts = parseInt(document.getElementById('set-opts').value); state.settings.hard = document.getElementById('set-hard').checked; saveState(); closeModals(); renderGrid(); }
     function openReport() { if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda."; else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2); document.getElementById('modal-report').style.display = 'flex'; }
-    function copyJSON() { const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; txt.select(); document.execCommand('copy'); customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.'); }
+    function copyJSON() { const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; txt.select(); document.execCommand('copy'); alert('Copiado para a área de transferência!'); }
+
+    function checkWordsInput() {
+        const val = document.getElementById('custom-words-input').value.trim();
+        document.getElementById('btn-start-words').disabled = val.length === 0;
+    }
+    function startCustomWords() {
+        const wordsVal = document.getElementById('custom-words-input').value.trim();
+        if(!wordsVal) return;
+        state.customWords = wordsVal; saveState(); closeModals();
+
+        let pool = wordsVal.split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
+        pool = [...new Set(pool)]; shuffleArray(pool);
+        const targets = pool;
+
+        session = { phase: 'PALAVRAS', pool: pool, trials: targets, currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: targets.length }, c2: { indep:0, dica:0, erro:0, total: targets.length }, c3: { indep:0, dica:0, erro:0, total: targets.length } } };
+        
+        document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-game').classList.add('active');
+        renderTrial();
+    }
 
     // ================= MOTOR DO JOGO =================
     function startGame(phaseId) {
+        if(phaseId === 'PALAVRAS') {
+            document.getElementById('custom-words-input').value = state.customWords || '';
+            checkWordsInput(); document.getElementById('modal-words').style.display = 'flex';
+            return;
+        }
+
+        let pool = []; let targets = [];
+        let targetCount = 5;
+        let isOnlyCycle3 = false;
+        let isPreReq = false;
+
+        if (phaseId === 'PRE1') {
+            isPreReq = true;
+            targetCount = 10;
+            const cons = shuffleArray(['C','P','B','F','T','D','Q','G','M','N']).slice(0, 5);
+            const vow = shuffleArray([...vowels]).slice(0, 5);
+            pool = [...cons, ...vow];
+            targets = shuffleArray([...pool]);
+        } 
+        else if (phaseId === 'PRE2') {
+            isPreReq = true;
+            const cons = shuffleArray(['C','P','B','F','T']).slice(0, 5);
+            const vow = shuffleArray([...vowels]).slice(0, 5);
+            const syls = shuffleArray(['BA','CA','DA','FA','GA','PRA','BOI','FLA','MA','NA']).slice(0, 10);
+            const wrds = ['BOLA','GATO','BOLO','MACACO','CAVALO','SAPATO'];
+            pool = [...cons, ...vow, ...syls, ...wrds];
+            targets = shuffleArray([...pool]); // Todos os 26 itens para treino intenso
+            targetCount = targets.length;
+        }
+        else if (phaseId === 'VOGAIS') { pool = [...vowels]; shuffleArray(pool); targets = pool.slice(0, targetCount); }
+        else if(phaseId === 'ENCONTROS') { pool = [...encounters]; shuffleArray(pool); targets = pool.slice(0, targetCount); }
+        else if(phaseId === 'PSEUDOPALAVRAS') {
+            pool = generatePseudoWords(); targetCount = 20; isOnlyCycle3 = true; targets = pool;
+        }
+        else { pool = generateSyllables(phaseId, state.settings.hard); shuffleArray(pool); targets = pool.slice(0, targetCount); }
+
+        session = { phase: phaseId, pool: pool, trials: targets, currentCycle: isOnlyCycle3 ? 3 : 1, isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: (isOnlyCycle3) ? 0 : targetCount }, c2: { indep:0, dica:0, erro:0, total: (isOnlyCycle3) ? 0 : targetCount }, c3: { indep:0, dica:0, erro:0, total: (isOnlyCycle3 || !isPreReq) ? targetCount : 0 } } };
+        
         document.getElementById('screen-home').classList.remove('active');
         document.getElementById('screen-game').classList.add('active');
-
-        let pool = [];
-        if(phaseId === 'VOGAIS') pool = [...vowels];
-        else if(phaseId === 'ENCONTROS') pool = [...encounters];
-        else pool = generateSyllables(phaseId, state.settings.hard);
-
-        // Fisher-Yates no pool principal
-        shuffleArray(pool);
-        const targetCount = Math.min(5, pool.length);
-        const targets = pool.slice(0, targetCount);
-
-        session = { phase: phaseId, pool: pool, trials: targets, currentCycle: 1, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: targetCount }, c2: { indep:0, dica:0, erro:0, total: targetCount }, c3: { indep:0, dica:0, erro:0, total: targetCount } } };
         renderTrial();
     }
 
@@ -295,6 +386,13 @@
         if(sttRecognition && isListening) toggleMicrophone();
         document.getElementById('screen-game').classList.remove('active');
         document.getElementById('screen-home').classList.add('active');
+    }
+
+    function getSpokenPrompt(target) {
+        if (session.phase === 'VOGAIS' || session.phase === 'PRE1') return "Letra " + target;
+        if (session.phase === 'PALAVRAS' || session.phase === 'PSEUDOPALAVRAS') return "Palavra " + target;
+        if (session.phase === 'PRE2') return "Item " + target; // Neutro
+        return "Sílaba " + target;
     }
 
     function renderTrial() {
@@ -306,42 +404,53 @@
         
         compArea.innerHTML = '';
         
+        // Geração de Opções
+        let optionsToRender = [];
+        if (session.isPreReq) {
+            if (session.phase === 'PRE1') optionsToRender = ['VOGAL', 'CONSOANTE'];
+            if (session.phase === 'PRE2') optionsToRender = ['VOGAL', 'CONSOANTE', 'SÍLABA', 'PALAVRA'];
+        } else {
+            optionsToRender = generateComparisons(target);
+        }
+
         if(session.currentCycle === 1) {
-            badge.innerText = "Ciclo 1: Encontre o Igual";
+            badge.innerText = session.isPreReq ? "Ciclo 1: Classifique a Imagem" : "Ciclo 1: Encontre o Igual";
             modelArea.innerHTML = `<div class="model-card">${target}</div>`;
-            generateComparisons(target).forEach(opt => {
+            optionsToRender.forEach(opt => {
                 const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
-                btn.onclick = (e) => handleAnswer(opt === target, e.target);
+                if(opt.length >= 8) btn.style.fontSize = '1.8rem'; // Ajuste de fonte para palavras longas (ex: CONSOANTE)
+                
+                let isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
+                btn.onclick = (e) => handleAnswer(isCorrect, e.target);
                 compArea.appendChild(btn);
             });
         }
         else if (session.currentCycle === 2) {
-            badge.innerText = "Ciclo 2: Ouvir e Achar";
+            badge.innerText = session.isPreReq ? "Ciclo 2: Ouça e Classifique" : "Ciclo 2: Ouvir e Achar";
             modelArea.innerHTML = `<button class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>`;
             speakTTS(target); 
-            generateComparisons(target).forEach(opt => {
+            optionsToRender.forEach(opt => {
                 const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
-                btn.onclick = (e) => handleAnswer(opt === target, e.target);
+                if(opt.length >= 8) btn.style.fontSize = '1.8rem';
+                
+                let isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
+                btn.onclick = (e) => handleAnswer(isCorrect, e.target);
                 compArea.appendChild(btn);
             });
         }
-        else if (session.currentCycle === 3) {
-            badge.innerText = "Ciclo 3: Sua vez de falar!";
+        else if (session.currentCycle === 3 && !session.isPreReq) {
+            badge.innerText = session.isOnlyCycle3 ? "Leitura Direta" : "Ciclo 3: Sua vez de ler!";
             modelArea.innerHTML = `<div class="model-card">${target}</div>`;
             
             compArea.innerHTML = `
                 <div class="stt-area">
                     <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
-                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Toque no microfone e fale.</p>
+                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Fale: '${getSpokenPrompt(target)}'</p>
                     <div class="stt-controls">
                         <button class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
                             <span class="material-icons">close</span> Erro
                         </button>
-                        
-                        <button class="stt-btn" id="mic-btn" onclick="toggleMicrophone()">
-                            <span class="material-icons">mic</span>
-                        </button>
-                        
+                        <button class="stt-btn" id="mic-btn" onclick="toggleMicrophone()"><span class="material-icons">mic</span></button>
                         <button class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">
                             <span class="material-icons">check</span> Acerto
                         </button>
@@ -354,14 +463,11 @@
     function generateComparisons(target) {
         let opts = [target];
         let available = session.pool.filter(x => x !== target);
-        // Aplica o Fisher-Yates para puxar distratores aleatórios
         shuffleArray(available);
-        
-        while(opts.length < state.settings.opts && available.length > 0) {
-            opts.push(available.pop());
+        while(opts.length < state.settings.opts) {
+            if(available.length > 0) opts.push(available.pop());
+            else { const gen = generateSyllables('C', false); opts.push(gen[Math.floor(Math.random()*gen.length)]); }
         }
-        
-        // Aplica o Fisher-Yates de novo para garantir posição randômica no grid final
         return shuffleArray(opts);
     }
 
@@ -388,131 +494,147 @@
         }
     }
 
-    // ================= STT - EXPRESSÕES REGULARES (\b) =================
+    // ================= STT (REGEX BLINDADA) =================
     let sttRecognition = null;
     let isListening = false;
 
-    // Remove acentos para facilitar o Match (BÁ vira BA)
-    function removeAccents(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
-    }
+    function removeAccents(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim(); }
 
     function toggleMicrophone() {
         const btn = document.getElementById('mic-btn');
         const feedback = document.getElementById('mic-feedback');
         const ghostInput = document.getElementById('ghost-stt');
 
-        if(isListening) {
-            sttRecognition.stop();
-            isListening = false;
-            btn.classList.remove('listening');
-            return;
-        }
+        if(isListening) { sttRecognition.stop(); isListening = false; btn.classList.remove('listening'); return; }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!SpeechRecognition) {
-            feedback.innerText = "API de Voz indisponível. Use a validação do professor.";
-            return;
-        }
+        if(!SpeechRecognition) { feedback.innerText = "API de Voz indisponível. Use a validação do professor."; return; }
 
-        sttRecognition = new SpeechRecognition();
-        sttRecognition.lang = 'pt-BR';
-        sttRecognition.interimResults = true; 
-        sttRecognition.maxAlternatives = 1;
-        ghostInput.value = ""; 
+        sttRecognition = new SpeechRecognition(); sttRecognition.lang = 'pt-BR'; sttRecognition.interimResults = true; sttRecognition.maxAlternatives = 1; ghostInput.value = ""; 
         
         const targetClean = removeAccents(session.trials[session.currentTrialIdx]);
-        
-        // Cria a Expressão Regular exigindo Limite de Palavra (\b)
-        // Isso impede que "CASA" valide a vogal "A"
         const regex = new RegExp('\\b' + targetClean + '\\b');
 
         sttRecognition.onresult = function(event) {
             let transcript = Array.from(event.results).map(r => r[0].transcript).join('');
-            
-            ghostInput.value = transcript;
-            let currentSpeech = removeAccents(transcript);
-            
+            ghostInput.value = transcript; let currentSpeech = removeAccents(transcript);
             feedback.innerText = `Ouvindo: "${transcript}"`;
 
-            // Validação com Regex
             if(regex.test(currentSpeech)) {
-                sttRecognition.stop();
-                isListening = false;
-                btn.classList.remove('listening');
-                feedback.innerText = "✅ Detectado!";
-                setTimeout(() => handleAnswer(true, null), 400);
+                sttRecognition.stop(); isListening = false; btn.classList.remove('listening');
+                feedback.innerText = "✅ Detectado!"; setTimeout(() => handleAnswer(true, null), 400);
             }
         };
 
-        sttRecognition.onerror = function(event) {
-            isListening = false;
-            btn.classList.remove('listening');
-            if (event.error === 'not-allowed') feedback.innerText = "⛔ Microfone bloqueado.";
-            else if (event.error === 'no-speech') feedback.innerText = "🔇 Som não detectado. Tente de novo.";
-            else feedback.innerText = `Erro técnico (${event.error}).`;
-        };
-
+        sttRecognition.onerror = function(event) { isListening = false; btn.classList.remove('listening'); feedback.innerText = event.error === 'not-allowed' ? "⛔ Microfone bloqueado." : (event.error === 'no-speech' ? "🔇 Som não detectado. Tente de novo." : `Erro técnico (${event.error}).`); };
         sttRecognition.onend = function() {
             if(!isListening) return; 
-            isListening = false;
-            btn.classList.remove('listening');
-            
+            isListening = false; btn.classList.remove('listening');
             let finalSpeech = removeAccents(ghostInput.value);
-            // Verifica o erro também com Regex
             if(finalSpeech && !regex.test(finalSpeech)) {
                 session.attemptsOnCurrent++;
                 feedback.innerText = `Você disse: "${ghostInput.value}" ✖`;
-                setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = "Toque no microfone e fale."; }, 2000);
+                setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000);
             }
         };
 
-        isListening = true;
-        btn.classList.add('listening');
-        feedback.innerText = "Gravando... Fale a sílaba.";
+        isListening = true; btn.classList.add('listening'); feedback.innerText = "Gravando...";
         try { sttRecognition.start(); } catch(err) {} 
     }
 
     function forceAnswer(isCorrect) {
         if(isCorrect) handleAnswer(true, null);
-        else {
-            session.attemptsOnCurrent++;
-            document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!";
-        }
+        else { session.attemptsOnCurrent++; document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!"; }
     }
 
-    // ================= PROGRESSÃO =================
+    // ================= PROGRESSÃO E MODAIS DE RESULTADO =================
     function finishCycle() {
         session.currentTrialIdx = 0;
         session.currentCycle++;
-        if(session.currentCycle > 3) checkBlockMastery();
-        else renderTrial();
+        
+        let maxCycles = session.isPreReq ? 2 : 3;
+
+        if((session.isOnlyCycle3 && session.currentCycle > 3) || (!session.isOnlyCycle3 && session.currentCycle > maxCycles)) {
+            checkBlockMastery();
+        } else {
+            renderTrial();
+        }
+    }
+
+    function showResultModal(isSuccess, accuracy, nextPhase) {
+        const title = document.getElementById('result-title');
+        const desc = document.getElementById('result-desc');
+        const actions = document.getElementById('result-actions');
+        actions.innerHTML = '';
+
+        if (isSuccess) {
+            title.innerText = "Desempenho Excelente!";
+            desc.innerText = `Parabéns! A precisão foi de ${Math.round(accuracy)}%. Fase concluída com sucesso!`;
+            
+            actions.innerHTML = `
+                <button class="btn-action btn-cancel" style="flex:1" onclick="closeResult(); abortGame()"><span class="material-icons">home</span> Início</button>
+                <button class="btn-action" style="flex:1; background:var(--warning)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir</button>
+                ${nextPhase ? `<button class="btn-action" style="flex:1; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar <span class="material-icons">arrow_forward</span></button>` : ''}
+            `;
+        } else {
+            title.innerText = "Quase lá...";
+            desc.innerText = `Parabéns pelo esforço! Precisão de ${Math.round(accuracy)}%. A meta é ${state.settings.crit}%.`;
+            
+            actions.innerHTML = `
+                <button class="btn-action btn-cancel" style="flex:1" onclick="closeResult(); abortGame()"><span class="material-icons">home</span> Início</button>
+                <button class="btn-action" style="flex:1; background:var(--primary)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
+            `;
+        }
+        document.getElementById('modal-result').style.display = 'flex';
+    }
+
+    function closeResult() { document.getElementById('modal-result').style.display = 'none'; }
+    
+    function repeatLesson() {
+        session.isRepeating = true; 
+        session.currentCycle = session.isOnlyCycle3 ? 3 : 1; 
+        renderTrial();
     }
 
     function checkBlockMastery() {
-        const totalTrials = session.stats.c1.total + session.stats.c2.total;
-        const totalIndep = session.stats.c1.indep + session.stats.c2.indep;
-        const accuracy = (totalIndep / totalTrials) * 100;
+        let totalTrials = 0; let totalIndep = 0;
 
-        if(!session.isRepeating) {
-            const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round(accuracy), ciclos: session.stats };
-            state.log.push(dataObj);
+        if (session.isOnlyCycle3) {
+            totalTrials = session.stats.c3.total; totalIndep = session.stats.c3.indep;
+        } else {
+            totalTrials = session.stats.c1.total + session.stats.c2.total; totalIndep = session.stats.c1.indep + session.stats.c2.indep;
         }
 
+        const accuracy = totalTrials > 0 ? (totalIndep / totalTrials) * 100 : 0;
+
+        if(!session.isRepeating) {
+            if (session.isPreReq) {
+                const dataObj = { 
+                    n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), 
+                    tipo: "PRE_REQUISITO", fase: session.phase === 'PRE1' ? "Discriminação (Vogal/Consoante)" : "Discriminação (Letra/Sílaba/Palavra)", 
+                    crit: state.settings.crit, acc: Math.round(accuracy), 
+                    status: accuracy >= state.settings.crit ? "Atingiu Pré-requisito" : "Não Atingiu" 
+                };
+                state.log.push(dataObj);
+            } else {
+                const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round(accuracy), ciclos: session.stats };
+                state.log.push(dataObj);
+            }
+        }
+
+        let nextPhase = null;
         if(accuracy >= state.settings.crit) {
             const curIdx = curriculumOrder.indexOf(session.phase);
-            if(curIdx < curriculumOrder.length - 1) {
-                const nextPhase = curriculumOrder[curIdx + 1];
-                if(!state.unlocked.includes(nextPhase)) state.unlocked.push(nextPhase);
+            if(curIdx >= 0 && curIdx < curriculumOrder.length - 1) {
+                nextPhase = curriculumOrder[curIdx + 1];
+                if(!state.unlocked.includes(nextPhase)) {
+                    state.unlocked.push(nextPhase);
+                    saveState();
+                }
             }
-            saveState();
-            customAlert("Desempenho Excelente!", `A precisão foi de ${Math.round(accuracy)}%. Fase concluída com sucesso!`, () => {
-                abortGame(); renderGrid();
-            });
+            showResultModal(true, accuracy, nextPhase);
         } else {
-            customAlert("Quase lá...", `Precisão de ${Math.round(accuracy)}%. A meta é ${state.settings.crit}%. Vamos revisar o bloco.`, () => {
-                session.isRepeating = true; session.currentCycle = 1; renderTrial();
-            });
+            showResultModal(false, accuracy, null);
         }
     }
 
