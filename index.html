@@ -94,6 +94,7 @@
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #ccc; cursor: not-allowed; transform: none; }
         .btn-cancel { background: #e0e0e0; color: #333; }
+        .btn-danger { background: var(--danger); }
         
         textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; padding: 10px; resize: none; border: 2px solid #ddd; border-radius: 8px; text-align: left; margin-bottom: 10px; }
         textarea#json-output { font-family: monospace; font-size: 0.8rem; border-color: #eee; }
@@ -107,6 +108,7 @@
         <button class="icon-btn" onclick="cycleTheme()" title="Mudar Tema"><span class="material-icons">palette</span></button>
         <button class="icon-btn" onclick="openReport()" title="Dados Clínicos"><span class="material-icons">content_paste</span></button>
         <button class="icon-btn" onclick="openSettings()" title="Configurações"><span class="material-icons">settings</span></button>
+        <button class="icon-btn" onclick="resetApp()" title="Resetar App (Apagar Cache)"><span class="material-icons">restart_alt</span></button>
     </div>
 </header>
 
@@ -176,6 +178,16 @@
     </div>
 </div>
 
+<div id="modal-alert" class="modal-overlay" style="z-index: 200;">
+    <div class="modal-content">
+        <h2 class="modal-title" id="alert-title">Aviso</h2>
+        <p class="modal-desc" id="alert-desc" style="font-size:1.1rem; color:var(--text);"></p>
+        <div id="alert-actions" style="display:flex; gap:10px; margin-top: 20px;">
+            <button class="btn-action" onclick="closeAlert()" id="alert-btn-ok">Entendido</button>
+        </div>
+    </div>
+</div>
+
 <div id="modal-result" class="modal-overlay" style="z-index: 200;">
     <div class="modal-content">
         <h2 class="modal-title" id="result-title" style="font-size:1.8rem; margin-bottom:5px;"></h2>
@@ -227,7 +239,6 @@
         return pseudos;
     }
 
-    // Identificador Categórico para os Módulos de Pré-Requisito
     function getCategory(item) {
         if (vowels.includes(item)) return 'VOGAL';
         if (item.length === 1 && !vowels.includes(item)) return 'CONSOANTE';
@@ -238,6 +249,11 @@
     let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
         student: '', unlocked: ['PRE1', 'PRE2', 'VOGAIS'], settings: { crit: 100, opts: 4, hard: false, theme: 'cyan' }, customWords: '', log: [] 
     };
+
+    // Vacina de Retrocompatibilidade (Garante que os pré-requisitos abram em saves antigos)
+    if(!state.unlocked.includes('PRE1')) state.unlocked.push('PRE1');
+    if(!state.unlocked.includes('PRE2')) state.unlocked.push('PRE2');
+    if(!state.unlocked.includes('VOGAIS')) state.unlocked.push('VOGAIS');
 
     let session = { phase: '', pool: [], trials: [], currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
 
@@ -278,6 +294,37 @@
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
 
+    let alertCallback = null;
+    function customAlert(title, desc, confirmCallback = null, isConfirm = false) {
+        document.getElementById('alert-title').innerText = title;
+        document.getElementById('alert-desc').innerText = desc;
+        alertCallback = confirmCallback;
+        
+        const actions = document.getElementById('alert-actions');
+        if (isConfirm) {
+            actions.innerHTML = `
+                <button class="btn-action btn-cancel" onclick="closeAlert(false)">Cancelar</button>
+                <button class="btn-action btn-danger" onclick="closeAlert(true)">Sim, Apagar</button>
+            `;
+        } else {
+            actions.innerHTML = `<button class="btn-action" onclick="closeAlert(true)">Entendido</button>`;
+        }
+        document.getElementById('modal-alert').style.display = 'flex';
+    }
+    
+    function closeAlert(confirmed) {
+        document.getElementById('modal-alert').style.display = 'none';
+        if(confirmed && alertCallback) alertCallback();
+        alertCallback = null;
+    }
+
+    function resetApp() {
+        customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e alunos salvos neste navegador. Tem certeza absoluta?", () => {
+            localStorage.removeItem('eidos_mts_state');
+            location.reload();
+        }, true);
+    }
+
     // ================= TELA INICIAL =================
     function init() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); renderGrid(); }
 
@@ -315,7 +362,7 @@
     function openSettings() { document.getElementById('set-name').value = state.student; document.getElementById('set-crit').value = state.settings.crit; document.getElementById('set-opts').value = state.settings.opts; document.getElementById('set-hard').checked = state.settings.hard; document.getElementById('modal-settings').style.display = 'flex'; }
     function saveSettings() { state.student = document.getElementById('set-name').value.toUpperCase(); state.settings.crit = parseInt(document.getElementById('set-crit').value); state.settings.opts = parseInt(document.getElementById('set-opts').value); state.settings.hard = document.getElementById('set-hard').checked; saveState(); closeModals(); renderGrid(); }
     function openReport() { if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda."; else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2); document.getElementById('modal-report').style.display = 'flex'; }
-    function copyJSON() { const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; txt.select(); document.execCommand('copy'); alert('Copiado para a área de transferência!'); }
+    function copyJSON() { const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; txt.select(); document.execCommand('copy'); customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.'); }
 
     function checkWordsInput() {
         const val = document.getElementById('custom-words-input').value.trim();
@@ -365,7 +412,7 @@
             const syls = shuffleArray(['BA','CA','DA','FA','GA','PRA','BOI','FLA','MA','NA']).slice(0, 10);
             const wrds = ['BOLA','GATO','BOLO','MACACO','CAVALO','SAPATO'];
             pool = [...cons, ...vow, ...syls, ...wrds];
-            targets = shuffleArray([...pool]); // Todos os 26 itens para treino intenso
+            targets = shuffleArray([...pool]); 
             targetCount = targets.length;
         }
         else if (phaseId === 'VOGAIS') { pool = [...vowels]; shuffleArray(pool); targets = pool.slice(0, targetCount); }
@@ -391,8 +438,16 @@
     function getSpokenPrompt(target) {
         if (session.phase === 'VOGAIS' || session.phase === 'PRE1') return "Letra " + target;
         if (session.phase === 'PALAVRAS' || session.phase === 'PSEUDOPALAVRAS') return "Palavra " + target;
-        if (session.phase === 'PRE2') return "Item " + target; // Neutro
+        if (session.phase === 'PRE2') return "Item " + target; 
         return "Sílaba " + target;
+    }
+
+    function advanceTrial() {
+        setTimeout(() => {
+            session.currentTrialIdx++;
+            if(session.currentTrialIdx >= session.trials.length) finishCycle();
+            else renderTrial();
+        }, 600);
     }
 
     function renderTrial() {
@@ -404,7 +459,6 @@
         
         compArea.innerHTML = '';
         
-        // Geração de Opções
         let optionsToRender = [];
         if (session.isPreReq) {
             if (session.phase === 'PRE1') optionsToRender = ['VOGAL', 'CONSOANTE'];
@@ -418,7 +472,7 @@
             modelArea.innerHTML = `<div class="model-card">${target}</div>`;
             optionsToRender.forEach(opt => {
                 const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
-                if(opt.length >= 8) btn.style.fontSize = '1.8rem'; // Ajuste de fonte para palavras longas (ex: CONSOANTE)
+                if(opt.length >= 8) btn.style.fontSize = '1.8rem'; 
                 
                 let isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
                 btn.onclick = (e) => handleAnswer(isCorrect, e.target);
@@ -479,22 +533,26 @@
             if(!session.isRepeating) {
                 let cat = `c${session.currentCycle}`;
                 if(session.attemptsOnCurrent === 0) session.stats[cat].indep++;
-                else if(session.attemptsOnCurrent === 1) session.stats[cat].dica++;
-                else session.stats[cat].erro++;
+                else session.stats[cat].dica++; // Acertou na 2ª tentativa (após o Fading out)
             }
-            setTimeout(() => {
-                session.currentTrialIdx++;
-                if(session.currentTrialIdx >= session.trials.length) finishCycle();
-                else renderTrial();
-            }, 600);
+            advanceTrial();
         } else {
             session.attemptsOnCurrent++;
-            if(element) element.style.visibility = 'hidden'; 
+            if(element) element.style.visibility = 'hidden'; // Dica visual (Apaga a errada)
             playSound('click'); 
+            
+            // Vida que segue: Se errou duas vezes, marca o erro e avança.
+            if(session.attemptsOnCurrent >= 2) {
+                if(!session.isRepeating) {
+                    let cat = `c${session.currentCycle}`;
+                    session.stats[cat].erro++;
+                }
+                advanceTrial();
+            }
         }
     }
 
-    // ================= STT (REGEX BLINDADA) =================
+    // ================= STT E BOTÕES DO PROFESSOR (SEM LOOP INFINITO) =================
     let sttRecognition = null;
     let isListening = false;
 
@@ -527,14 +585,22 @@
         };
 
         sttRecognition.onerror = function(event) { isListening = false; btn.classList.remove('listening'); feedback.innerText = event.error === 'not-allowed' ? "⛔ Microfone bloqueado." : (event.error === 'no-speech' ? "🔇 Som não detectado. Tente de novo." : `Erro técnico (${event.error}).`); };
+        
         sttRecognition.onend = function() {
             if(!isListening) return; 
             isListening = false; btn.classList.remove('listening');
+            
             let finalSpeech = removeAccents(ghostInput.value);
             if(finalSpeech && !regex.test(finalSpeech)) {
                 session.attemptsOnCurrent++;
-                feedback.innerText = `Você disse: "${ghostInput.value}" ✖`;
-                setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000);
+                if(session.attemptsOnCurrent >= 2) {
+                    feedback.innerText = `Você disse: "${ghostInput.value}". Seguindo...`;
+                    if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
+                    advanceTrial();
+                } else {
+                    feedback.innerText = `Você disse: "${ghostInput.value}" ✖`;
+                    setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000);
+                }
             }
         };
 
@@ -543,11 +609,21 @@
     }
 
     function forceAnswer(isCorrect) {
-        if(isCorrect) handleAnswer(true, null);
-        else { session.attemptsOnCurrent++; document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!"; }
+        if(isCorrect) {
+            handleAnswer(true, null);
+        } else { 
+            session.attemptsOnCurrent++; 
+            if(session.attemptsOnCurrent >= 2) {
+                document.getElementById('mic-feedback').innerText = "Seguindo...";
+                if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
+                advanceTrial();
+            } else {
+                document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!"; 
+            }
+        }
     }
 
-    // ================= PROGRESSÃO E MODAIS DE RESULTADO =================
+    // ================= PROGRESSÃO E MODAIS DE ESCOLHA ATIVA =================
     function finishCycle() {
         session.currentTrialIdx = 0;
         session.currentCycle++;
