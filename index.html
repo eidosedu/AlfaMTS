@@ -88,10 +88,11 @@
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; }
         .modal-title { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
         .modal-desc { color: var(--text-light); font-size: 1rem; margin-bottom: 20px; }
-        .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; }
+        .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
-        .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;}
+        .input-group input:focus { border-color: var(--primary); }
         .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: auto; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #ccc; cursor: not-allowed; transform: none; }
@@ -107,8 +108,8 @@
     <h1><span class="material-icons">extension</span> Eidos MTS</h1>
     <div class="header-icons">
         <button class="icon-btn active-tab" id="nav-home" onclick="goHome()" title="Mural de Atividades"><span class="material-icons">apps</span></button>
-        <button class="icon-btn" id="nav-dash" onclick="openDashboard()" title="Painel de Gestão"><span class="material-icons">bar_chart</span></button>
-        <button class="icon-btn" onclick="openSettings()" title="Configurações e Ferramentas"><span class="material-icons">settings</span></button>
+        <button class="icon-btn" id="nav-dash" onclick="requireAuth(openDashboard)" title="Painel de Gestão"><span class="material-icons">bar_chart</span></button>
+        <button class="icon-btn" onclick="requireAuth(openSettings)" title="Configurações e Ferramentas"><span class="material-icons">settings</span></button>
     </div>
 </header>
 
@@ -123,17 +124,28 @@
             <span class="material-icons">data_object</span> Exportar JSON
         </button>
     </div>
-    <div class="dash-list" id="dashboard-content">
-        </div>
+    <div class="dash-list" id="dashboard-content"></div>
 </div>
 
 <div id="screen-game" class="screen" style="background: white; padding: 10px;">
     <button class="icon-btn" style="position:absolute; top:70px; left:15px; background:#e0e0e0; color:#333; z-index:20;" onclick="abortGame()"><span class="material-icons">close</span></button>
-    
     <div class="mts-container">
         <div id="cycle-indicator" class="cycle-badge">Ciclo 1: Identidade Visual</div>
         <div class="model-area" id="model-area"></div>
         <div class="comparisons-area" id="comparisons-area"></div>
+    </div>
+</div>
+
+<div id="modal-auth" class="modal-overlay" style="z-index: 300;">
+    <div class="modal-content" style="max-width: 350px;">
+        <h2 class="modal-title" style="color:var(--danger);"><span class="material-icons" style="vertical-align:middle;">lock</span> Acesso Restrito</h2>
+        <p class="modal-desc">Digite o PIN do Professor para continuar.</p>
+        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 1.8rem; letter-spacing: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 5px;">
+        <div id="auth-error" style="color:var(--danger); font-size:0.85rem; font-weight:bold; height:20px; margin-bottom:15px;"></div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-action btn-cancel" style="flex:1" onclick="closeAuth()">Cancelar</button>
+            <button class="btn-action" style="flex:1" onclick="confirmAuth()">Desbloquear</button>
+        </div>
     </div>
 </div>
 
@@ -153,7 +165,7 @@
     <div class="modal-content" style="text-align: left;">
         <h2 class="modal-title" style="border-bottom: 2px solid var(--primary-light); padding-bottom:10px;">Configurações</h2>
         
-        <div class="section-title">Setup de Intervenção</div>
+        <div class="section-title"><span class="material-icons">psychology</span> Setup de Intervenção</div>
         <div class="input-group">
             <label>Nome do Aluno:</label>
             <input type="text" id="set-name" placeholder="Ex: Miguel">
@@ -175,7 +187,17 @@
             <label style="margin:0;">Modo Difícil (+CCV)</label>
         </div>
 
-        <div class="section-title">Sistema e Ferramentas</div>
+        <div class="section-title"><span class="material-icons">admin_panel_settings</span> Segurança (Blindagem Infantil)</div>
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="set-sec-enable" style="width:20px; height:20px;" onchange="togglePasswordField()">
+            <label style="margin:0;">Exigir Senha Numérica (PIN) para Gestão e Setup</label>
+        </div>
+        <div class="input-group" id="pin-group" style="display:none;">
+            <label>Defina o PIN (Apenas Números):</label>
+            <input type="password" id="set-sec-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Ex: 1234">
+        </div>
+
+        <div class="section-title"><span class="material-icons">build</span> Sistema e Ferramentas</div>
         <div class="input-group">
             <label>Tema Visual da Interface:</label>
             <select id="set-theme">
@@ -188,7 +210,7 @@
 
         <div style="display:flex; gap:10px; margin-top:25px;">
             <button class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
-            <button class="btn-action" style="flex:2" onclick="saveSettings()">Salvar Alterações</button>
+            <button class="btn-action" style="flex:2" onclick="saveSettings()"><span class="material-icons">save</span> Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -203,7 +225,7 @@
     </div>
 </div>
 
-<div id="modal-alert" class="modal-overlay" style="z-index: 200;">
+<div id="modal-alert" class="modal-overlay" style="z-index: 400;">
     <div class="modal-content">
         <h2 class="modal-title" id="alert-title">Aviso</h2>
         <p class="modal-desc" id="alert-desc" style="font-size:1.1rem; color:var(--text);"></p>
@@ -217,8 +239,7 @@
     <div class="modal-content">
         <h2 class="modal-title" id="result-title" style="font-size:1.8rem; margin-bottom:5px;"></h2>
         <p class="modal-desc" id="result-desc" style="font-size:1.1rem; color:var(--text); margin-bottom: 25px;"></p>
-        <div id="result-actions" style="display:flex; gap:10px; flex-wrap: wrap; justify-content:center;">
-            </div>
+        <div id="result-actions" style="display:flex; gap:10px; flex-wrap: wrap; justify-content:center;"></div>
     </div>
 </div>
 
@@ -228,7 +249,7 @@
     const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
     const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS'];
     
-    // ================= DICIONÁRIO FONÉTICO E ANTI-CENSURA (V 1.5) =================
+    // ================= DICIONÁRIO FONÉTICO =================
     const phoneticsMap = {
         'AU': ['AO'], 'AO': ['AU'], 'OU': ['O'], 'ÃO': ['AM', 'AO', 'AUM'], 'EI': ['E'],
         'B': ['BE'], 'C': ['CE'], 'D': ['DE'], 'F': ['EFE'], 'G': ['GE'], 'J': ['JOTA'], 'L': ['ELE'], 'M': ['EME'], 'N': ['ENE'], 'P': ['PE'], 'R': ['ERRE'], 'S': ['ESSE'], 'T': ['TE'], 'V': ['VE'], 'X': ['XIS'], 'Z': ['ZE'], 'Y': ['IPSLON', 'IPISLON'], 'W': ['DABLIU'],
@@ -283,16 +304,23 @@
         return 'SÍLABA';
     }
 
+    // ================= ESTADO E SETUP INICIAL =================
     let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
-        student: '', unlocked: ['PRE1', 'PRE2', 'VOGAIS'], settings: { crit: 100, opts: 4, hard: false, theme: 'cyan' }, customWords: '', log: [] 
+        setupDone: false, student: '', unlocked: ['PRE1', 'PRE2', 'VOGAIS'], 
+        settings: { crit: 100, opts: 4, hard: false, theme: 'cyan', security: { enabled: false, pin: '' } }, 
+        customWords: '', log: [] 
     };
 
+    // Retrocompatibilidade
+    if(!state.settings.security) state.settings.security = { enabled: false, pin: '' };
+    if(state.setupDone === undefined) state.setupDone = state.student !== ''; 
     if(!state.unlocked.includes('PRE1')) state.unlocked.push('PRE1');
     if(!state.unlocked.includes('PRE2')) state.unlocked.push('PRE2');
     if(!state.unlocked.includes('VOGAIS')) state.unlocked.push('VOGAIS');
 
     let session = { phase: '', pool: [], trials: [], currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
 
+    // ================= SOM E TEMAS =================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(type) {
         const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
@@ -321,6 +349,39 @@
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
 
+    // ================= BLINDAGEM INFANTIL (AUTH) =================
+    let authCallback = null;
+    
+    function requireAuth(callback) {
+        if (!state.settings.security.enabled) {
+            callback();
+        } else {
+            authCallback = callback;
+            document.getElementById('auth-pin-input').value = '';
+            document.getElementById('auth-error').innerText = '';
+            document.getElementById('modal-auth').style.display = 'flex';
+            setTimeout(() => document.getElementById('auth-pin-input').focus(), 100);
+        }
+    }
+
+    function closeAuth() {
+        document.getElementById('modal-auth').style.display = 'none';
+        authCallback = null;
+    }
+
+    function confirmAuth() {
+        const input = document.getElementById('auth-pin-input').value;
+        if (input === state.settings.security.pin) {
+            closeAuth();
+            if (authCallback) authCallback();
+        } else {
+            document.getElementById('auth-error').innerText = 'PIN Incorreto. Acesso Negado.';
+            document.getElementById('auth-pin-input').value = '';
+            playSound('click'); 
+        }
+    }
+
+    // ================= ALERTA GENÉRICO =================
     let alertCallback = null;
     function customAlert(title, desc, confirmCallback = null, isConfirm = false) {
         document.getElementById('alert-title').innerText = title;
@@ -346,15 +407,22 @@
 
     function resetApp() {
         closeModals();
-        customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e os dados do aluno atual. Tem certeza absoluta?", () => {
+        customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e alunos salvos neste navegador. Tem certeza absoluta?", () => {
             localStorage.removeItem('eidos_mts_state');
             location.reload();
         }, true);
     }
 
-    // ================= NAVEGAÇÃO =================
-    function init() { applyTheme(); renderGrid(); }
+    // ================= INICIALIZAÇÃO =================
+    function init() { 
+        applyTheme(); 
+        renderGrid(); 
+        if(!state.setupDone) {
+            openSettings(); // Onboarding Automático
+        }
+    }
 
+    // ================= NAVEGAÇÃO E DASHBOARD =================
     function goHome() {
         document.getElementById('nav-dash').classList.remove('active-tab');
         document.getElementById('nav-home').classList.add('active-tab');
@@ -373,7 +441,6 @@
         renderDashboard();
     }
 
-    // ================= RENDERIZADORES =================
     function renderGrid() {
         const grid = document.getElementById('grid-phases'); grid.innerHTML = '';
         curriculumOrder.forEach(p => {
@@ -444,22 +511,44 @@
         });
     }
 
-    // ================= MENUS =================
+    // ================= MENUS DE CONFIGURAÇÃO =================
+    function togglePasswordField() {
+        const isEnabled = document.getElementById('set-sec-enable').checked;
+        document.getElementById('pin-group').style.display = isEnabled ? 'block' : 'none';
+    }
+
     function openSettings() { 
         document.getElementById('set-name').value = state.student; 
         document.getElementById('set-crit').value = state.settings.crit; 
         document.getElementById('set-opts').value = state.settings.opts; 
         document.getElementById('set-hard').checked = state.settings.hard; 
         document.getElementById('set-theme').value = state.settings.theme;
+        
+        document.getElementById('set-sec-enable').checked = state.settings.security.enabled;
+        document.getElementById('set-sec-pin').value = state.settings.security.pin;
+        togglePasswordField();
+
         document.getElementById('modal-settings').style.display = 'flex'; 
     }
     
     function saveSettings() { 
-        state.student = document.getElementById('set-name').value.toUpperCase(); 
+        const isSecEnabled = document.getElementById('set-sec-enable').checked;
+        const pinValue = document.getElementById('set-sec-pin').value;
+
+        if (isSecEnabled && !pinValue) {
+            customAlert("Atenção", "Você ativou a segurança, mas não definiu um PIN. Defina uma senha numérica.");
+            return;
+        }
+
+        state.student = document.getElementById('set-name').value.toUpperCase() || "NÃO INFORMADO"; 
         state.settings.crit = parseInt(document.getElementById('set-crit').value); 
         state.settings.opts = parseInt(document.getElementById('set-opts').value); 
         state.settings.hard = document.getElementById('set-hard').checked; 
         state.settings.theme = document.getElementById('set-theme').value;
+        state.settings.security = { enabled: isSecEnabled, pin: pinValue };
+        
+        state.setupDone = true;
+
         saveState(); applyTheme(); closeModals(); 
         if(document.getElementById('screen-home').classList.contains('active')) renderGrid();
     }
@@ -747,7 +836,9 @@
     function finishCycle() {
         session.currentTrialIdx = 0;
         session.currentCycle++;
+        
         let maxCycles = session.isPreReq ? 2 : 3;
+
         if((session.isOnlyCycle3 && session.currentCycle > 3) || (!session.isOnlyCycle3 && session.currentCycle > maxCycles)) {
             checkBlockMastery();
         } else {
@@ -813,28 +904,4 @@
                 };
                 state.log.push(dataObj);
             } else {
-                const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round(accuracy), ciclos: session.stats };
-                state.log.push(dataObj);
-            }
-        }
-
-        let nextPhase = null;
-        if(accuracy >= state.settings.crit) {
-            const curIdx = curriculumOrder.indexOf(session.phase);
-            if(curIdx >= 0 && curIdx < curriculumOrder.length - 1) {
-                nextPhase = curriculumOrder[curIdx + 1];
-                if(!state.unlocked.includes(nextPhase)) {
-                    state.unlocked.push(nextPhase);
-                    saveState();
-                }
-            }
-            showResultModal(true, accuracy, nextPhase);
-        } else {
-            showResultModal(false, accuracy, null);
-        }
-    }
-
-    init();
-</script>
-</body>
-</html>
+                const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round
