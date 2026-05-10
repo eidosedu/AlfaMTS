@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>Eidos MTS - Alfabetização</title>
+    <title>AlfaMTS - Alfabetização</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         /* TEMAS */
@@ -20,8 +20,9 @@
 
         /* HEADER */
         header { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10; height: 60px; flex-shrink: 0; }
-        header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 800; }
-        .header-icons { display: flex; gap: 15px; }
+        header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 800; cursor: pointer; transition: 0.2s;}
+        header h1:active { transform: scale(0.95); opacity: 0.8;}
+        .header-icons { display: flex; gap: 15px; align-items: center; }
         .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
         .icon-btn.active-tab { background: white; color: var(--primary-dark); }
@@ -31,7 +32,18 @@
         .screen.active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MURAL DE ATIVIDADES */
+        /* TELA 0: SPLASH / LOBBY */
+        #screen-splash { align-items: center; justify-content: center; background: white; gap: 20px; }
+        .splash-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 30px; color: var(--primary-dark); }
+        .splash-logo .material-icons { font-size: 6rem; color: var(--primary); }
+        .splash-logo h2 { font-size: 3rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        
+        .splash-buttons { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
+        .splash-btn { background: var(--primary); color: white; border: none; border-radius: 15px; padding: 20px; font-size: 1.2rem; font-weight: bold; display: flex; align-items: center; justify-content: flex-start; gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .splash-btn:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .splash-btn .material-icons { font-size: 2rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; }
+
+        /* TELA 1: MURAL DE ATIVIDADES */
         .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-bottom: 20px; }
         .phase-card { background: var(--card); border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 5px solid var(--primary); cursor: pointer; transition: 0.2s; position: relative; }
         .phase-card:active { transform: scale(0.95); }
@@ -83,52 +95,93 @@
         .btn-override:active { transform: scale(0.95); }
         .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
-        /* MODAIS & BOTÕES GERAIS */
+        /* MODAIS E BOTÕES GERAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; position: relative; transition: all 0.3s; }
+        
+        @keyframes shakeError { 0% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-10px); } 80% { transform: translateX(10px); } 100% { transform: translateX(0); } }
+        .shake { animation: shakeError 0.4s ease-in-out; border: 2px solid var(--danger) !important; }
+
         .modal-title { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
         .modal-desc { color: var(--text-light); font-size: 1rem; margin-bottom: 20px; }
         .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
-        .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;}
+        .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s;}
         .input-group input:focus { border-color: var(--primary); }
+        
         .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: auto; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-action:active { transform: scale(0.98); }
         .btn-action:disabled { background: #ccc; cursor: not-allowed; transform: none; }
         .btn-cancel { background: #e0e0e0; color: #333; }
         .btn-danger { background: var(--danger); }
-        textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; padding: 10px; resize: none; border: 2px solid #ddd; border-radius: 8px; text-align: left; margin-bottom: 10px; }
+        
+        textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; padding: 10px; resize: none; border: 2px solid #ddd; border-radius: 8px; text-align: left; margin-bottom: 10px; outline: none; transition: 0.2s;}
+        textarea:focus { border-color: var(--primary); }
         textarea#json-output { font-family: monospace; font-size: 0.8rem; border-color: #eee; }
+
+        /* ESTILOS DO GERENCIADOR DE NOTAS */
+        .note-card { background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;}
+        .note-text { flex: 1; font-size: 0.95rem; color: var(--text); font-weight: bold; word-break: break-all; }
+        .note-actions { display: flex; gap: 5px; }
+        .note-btn { background: #e0e0e0; border: none; border-radius: 6px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-light); transition: 0.2s; }
+        .note-btn:active { transform: scale(0.9); }
+        .note-btn.copy { color: var(--primary-dark); background: var(--primary-light); }
+        .note-btn.del { color: var(--danger); background: #ffebee; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1><span class="material-icons">extension</span> Eidos MTS</h1>
+    <h1 onclick="goSplash()"><span class="material-icons">extension</span> AlfaMTS</h1>
     <div class="header-icons">
-        <button class="icon-btn active-tab" id="nav-home" onclick="goHome()" title="Mural de Atividades"><span class="material-icons">apps</span></button>
-        <button class="icon-btn" id="nav-dash" onclick="requireAuth(openDashboard)" title="Painel de Gestão"><span class="material-icons">bar_chart</span></button>
-        <button class="icon-btn" onclick="requireAuth(openSettings)" title="Configurações e Ferramentas"><span class="material-icons">settings</span></button>
+        <span id="header-timer-icon" class="material-icons" style="display:none; color:var(--warning); font-size:1.4rem;" title="Timer Ativo">timer</span>
     </div>
 </header>
 
-<div id="screen-home" class="screen active">
+<div id="screen-splash" class="screen active">
+    <div class="splash-logo">
+        <span class="material-icons">extension</span>
+        <h2>AlfaMTS</h2>
+        <p style="color:var(--text-light); font-weight:bold; margin-top:-5px;">Ensino por Equivalência de Estímulos</p>
+    </div>
+    
+    <div class="splash-buttons">
+        <button type="button" class="splash-btn" id="btn-start-game" onclick="openGrid()">
+            <span class="material-icons" style="background: rgba(0,0,0,0.15);">play_arrow</span> Iniciar o Game
+        </button>
+        <button type="button" class="splash-btn" style="background:var(--success);" onclick="requireAuth(openDashboard)">
+            <span class="material-icons" style="background: rgba(0,0,0,0.15);">analytics</span> Acessar Relatório
+        </button>
+        <button type="button" class="splash-btn" style="background:var(--primary-dark);" onclick="requireAuth(openSettings)">
+            <span class="material-icons" style="background: rgba(0,0,0,0.15);">settings</span> Configurar Intervenções
+        </button>
+    </div>
+</div>
+
+<div id="screen-home" class="screen">
+    <div style="display:flex; justify-content:space-between; margin-bottom: 15px; align-items:center;">
+        <h2 style="color:var(--primary-dark); font-size:1.4rem; margin:0;">Trilha de Aprendizagem</h2>
+        <button type="button" class="btn-action btn-cancel" style="padding:6px 12px; margin:0;" onclick="goSplash()">Voltar</button>
+    </div>
     <div class="curriculum-grid" id="grid-phases"></div>
 </div>
 
 <div id="screen-dashboard" class="screen">
     <div class="dash-header">
-        <h2><span class="material-icons">analytics</span> Telemetria da Sessão</h2>
-        <button class="btn-action" style="background:var(--primary-dark); margin:0;" onclick="openReport()">
-            <span class="material-icons">data_object</span> Exportar JSON
-        </button>
+        <h2 style="margin:0;"><span class="material-icons">analytics</span> Telemetria da Sessão</h2>
+        <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-action" style="background:var(--primary-dark); margin:0; padding:6px 12px;" onclick="openReport()">
+                <span class="material-icons">data_object</span> JSON
+            </button>
+            <button type="button" class="btn-action btn-cancel" style="margin:0; padding: 6px 12px;" onclick="goSplash()">Sair</button>
+        </div>
     </div>
     <div class="dash-list" id="dashboard-content"></div>
 </div>
 
 <div id="screen-game" class="screen" style="background: white; padding: 10px;">
-    <button class="icon-btn" style="position:absolute; top:70px; left:15px; background:#e0e0e0; color:#333; z-index:20;" onclick="abortGame()"><span class="material-icons">close</span></button>
+    <button type="button" class="icon-btn" style="position:absolute; top:70px; left:15px; background:#e0e0e0; color:#333; z-index:20;" onclick="abortGame()"><span class="material-icons">close</span></button>
     <div class="mts-container">
         <div id="cycle-indicator" class="cycle-badge">Ciclo 1: Identidade Visual</div>
         <div class="model-area" id="model-area"></div>
@@ -137,14 +190,14 @@
 </div>
 
 <div id="modal-auth" class="modal-overlay" style="z-index: 300;">
-    <div class="modal-content" style="max-width: 350px;">
+    <div class="modal-content" style="max-width: 350px;" id="auth-content">
         <h2 class="modal-title" style="color:var(--danger);"><span class="material-icons" style="vertical-align:middle;">lock</span> Acesso Restrito</h2>
         <p class="modal-desc">Digite o PIN do Professor para continuar.</p>
-        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 1.8rem; letter-spacing: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 5px;">
+        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 1.8rem; letter-spacing: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 5px; outline:none; transition: 0.2s;" onkeydown="if(event.key==='Enter') confirmAuth()">
         <div id="auth-error" style="color:var(--danger); font-size:0.85rem; font-weight:bold; height:20px; margin-bottom:15px;"></div>
         <div style="display:flex; gap:10px;">
-            <button class="btn-action btn-cancel" style="flex:1" onclick="closeAuth()">Cancelar</button>
-            <button class="btn-action" style="flex:1" onclick="confirmAuth()">Desbloquear</button>
+            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAuth()">Cancelar</button>
+            <button type="button" class="btn-action" style="flex:1" onclick="confirmAuth()">Desbloquear</button>
         </div>
     </div>
 </div>
@@ -152,12 +205,30 @@
 <div id="modal-words" class="modal-overlay">
     <div class="modal-content" style="text-align: left;">
         <h2 class="modal-title" style="border-bottom: 2px solid var(--warning); color: #F57F17; padding-bottom:10px;">Módulo: Palavras</h2>
-        <p class="modal-desc" style="font-size:0.85rem;">Insira as palavras-alvo separadas por vírgula.</p>
-        <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, MACACO..."></textarea>
+        <p class="modal-desc" style="font-size:0.85rem;">Cole ou insira os blocos de palavras-alvo (separadas por vírgula).</p>
+        <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, MACACO"></textarea>
         <div style="display:flex; gap:10px;">
-            <button class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
-            <button class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning);" onclick="startCustomWords()" disabled>Iniciar Jogo</button>
+            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
+            <button type="button" class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning);" onclick="startCustomWords()" disabled>Iniciar Jogo</button>
         </div>
+    </div>
+</div>
+
+<div id="modal-notes" class="modal-overlay">
+    <div class="modal-content" style="text-align: left; max-width: 500px;">
+        <h2 class="modal-title" style="border-bottom: 2px solid #9C27B0; color: #7B1FA2; padding-bottom:10px;">
+            <span class="material-icons" style="vertical-align:middle;">edit_note</span> Blocos de Palavras
+        </h2>
+        <p class="modal-desc" style="font-size:0.85rem;">Digite suas palavras separadas por vírgula e <strong>pressione Enter</strong> para salvar o bloco abaixo.</p>
+        
+        <div style="display:flex; gap:10px; margin-bottom: 20px;">
+            <input type="text" id="new-note-input" placeholder="Ex: BOLA, GATO, SAPATO (Pressione Enter)" style="flex:1; padding: 12px; border-radius: 8px; border: 2px solid #ddd; outline:none; font-size: 1rem;" onkeydown="if(event.key==='Enter') { event.preventDefault(); addNoteBlock(); }">
+        </div>
+
+        <div id="notes-list" style="display:flex; flex-direction:column; gap:10px; max-height: 250px; overflow-y:auto; padding-right: 5px; margin-bottom: 15px;">
+        </div>
+
+        <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeModals()">Fechar Gerenciador</button>
     </div>
 </div>
 
@@ -187,10 +258,20 @@
             <label style="margin:0;">Modo Difícil (+CCV)</label>
         </div>
 
-        <div class="section-title"><span class="material-icons">admin_panel_settings</span> Segurança (Blindagem Infantil)</div>
+        <div class="section-title"><span class="material-icons">timer</span> Controle de Tempo</div>
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="set-timer-enable" style="width:20px; height:20px;" onchange="toggleTimerField()">
+            <label style="margin:0;">Ativar Timer da Sessão (Exige PIN)</label>
+        </div>
+        <div class="input-group" id="timer-group" style="display:none;">
+            <label>Minutos:</label>
+            <input type="number" id="set-timer-min" min="1" value="30" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+        </div>
+
+        <div class="section-title"><span class="material-icons">admin_panel_settings</span> Segurança (Blindagem)</div>
         <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
             <input type="checkbox" id="set-sec-enable" style="width:20px; height:20px;" onchange="togglePasswordField()">
-            <label style="margin:0;">Exigir Senha Numérica (PIN) para Gestão e Setup</label>
+            <label style="margin:0;">Exigir Senha Numérica (PIN)</label>
         </div>
         <div class="input-group" id="pin-group" style="display:none;">
             <label>Defina o PIN (Apenas Números):</label>
@@ -206,11 +287,11 @@
                 <option value="pink">Rosa Coral</option>
             </select>
         </div>
-        <button class="btn-action" style="background:var(--danger); width:100%; margin-top:15px;" onclick="resetApp()"><span class="material-icons">delete_forever</span> Apagar Dados e Resetar App</button>
+        <button type="button" class="btn-action" style="background:var(--danger); width:100%; margin-top:15px;" onclick="resetApp()"><span class="material-icons">delete_forever</span> Apagar Dados e Resetar App</button>
 
         <div style="display:flex; gap:10px; margin-top:25px;">
-            <button class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
-            <button class="btn-action" style="flex:2" onclick="saveSettings()"><span class="material-icons">save</span> Salvar Alterações</button>
+            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
+            <button type="button" class="btn-action" style="flex:2" onclick="saveSettings()"><span class="material-icons">save</span> Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -220,8 +301,8 @@
         <h2 class="modal-title">Código Estruturado (JSON)</h2>
         <p class="modal-desc" style="font-size:0.85rem;">Cole no "Lançamento Universal" do Âncora Gestão.</p>
         <textarea id="json-output" readonly></textarea>
-        <button class="btn-action" style="width:100%" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar Código</button>
-        <button class="btn-action btn-cancel" style="width:100%" onclick="closeModals()">Fechar</button>
+        <button type="button" class="btn-action" style="width:100%" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar Código</button>
+        <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeModals()">Fechar</button>
     </div>
 </div>
 
@@ -230,7 +311,7 @@
         <h2 class="modal-title" id="alert-title">Aviso</h2>
         <p class="modal-desc" id="alert-desc" style="font-size:1.1rem; color:var(--text);"></p>
         <div id="alert-actions" style="display:flex; gap:10px; margin-top: 20px;">
-            <button class="btn-action" style="width:100%" onclick="closeAlert()" id="alert-btn-ok">Entendido</button>
+            <button type="button" class="btn-action" style="width:100%" onclick="closeAlert()" id="alert-btn-ok">Entendido</button>
         </div>
     </div>
 </div>
@@ -243,13 +324,23 @@
     </div>
 </div>
 
+<div id="modal-timesup" class="modal-overlay" style="z-index: 500;">
+    <div class="modal-content">
+        <h2 class="modal-title" style="color:var(--danger);"><span class="material-icons" style="vertical-align:middle; font-size:2rem;">timer_off</span> Fim da Sessão</h2>
+        <p class="modal-desc" style="font-size:1.1rem;">O tempo de intervenção programado acabou. Muito bem!</p>
+        <div style="display:flex; justify-content:center;">
+            <button type="button" class="btn-action" style="width:100%; background:var(--primary);" onclick="document.getElementById('modal-timesup').style.display='none'; goSplash();">Voltar ao Início</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // ================= DADOS E DICIONÁRIOS =================
     const curriculumOrder = ['PRE1', 'PRE2', 'VOGAIS', 'ENCONTROS', 'C','P','B','F','T','D','Q','G','M','N','L','R','V','S','X','J','Z'];
     const vowels = ['A','E','I','O','U'];
     const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
-    const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS'];
+    const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS', 'ANOTAÇÕES']; 
     
-    // ================= DICIONÁRIO FONÉTICO =================
     const phoneticsMap = {
         'AU': ['AO'], 'AO': ['AU'], 'OU': ['O'], 'ÃO': ['AM', 'AO', 'AUM'], 'EI': ['E'],
         'B': ['BE'], 'C': ['CE'], 'D': ['DE'], 'F': ['EFE'], 'G': ['GE'], 'J': ['JOTA'], 'L': ['ELE'], 'M': ['EME'], 'N': ['ENE'], 'P': ['PE'], 'R': ['ERRE'], 'S': ['ESSE'], 'T': ['TE'], 'V': ['VE'], 'X': ['XIS'], 'Z': ['ZE'], 'Y': ['IPSLON', 'IPISLON'], 'W': ['DABLIU'],
@@ -307,20 +398,24 @@
     // ================= ESTADO E SETUP INICIAL =================
     let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
         setupDone: false, student: '', unlocked: ['PRE1', 'PRE2', 'VOGAIS'], 
-        settings: { crit: 100, opts: 4, hard: false, theme: 'cyan', security: { enabled: false, pin: '' } }, 
-        customWords: '', log: [] 
+        settings: { crit: 100, opts: 4, hard: false, theme: 'cyan', security: { enabled: false, pin: '' }, timer: { enabled: false, min: 30 } }, 
+        customWords: '', notes: [], log: [], session: { expired: false, endTime: null }
     };
 
-    // Retrocompatibilidade
     if(!state.settings.security) state.settings.security = { enabled: false, pin: '' };
+    if(!state.settings.timer) state.settings.timer = { enabled: false, min: 30 };
+    if(!state.session) state.session = { expired: false, endTime: null };
+    if(!Array.isArray(state.notes)) state.notes = [];
+
     if(state.setupDone === undefined) state.setupDone = state.student !== ''; 
     if(!state.unlocked.includes('PRE1')) state.unlocked.push('PRE1');
     if(!state.unlocked.includes('PRE2')) state.unlocked.push('PRE2');
     if(!state.unlocked.includes('VOGAIS')) state.unlocked.push('VOGAIS');
 
     let session = { phase: '', pool: [], trials: [], currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
+    let timerInterval = null;
 
-    // ================= SOM E TEMAS =================
+    // ================= ÁUDIO E TEMAS =================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(type) {
         const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
@@ -347,7 +442,59 @@
 
     function applyTheme() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); }
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
-    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+    function closeModals() { 
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.style.display = 'none';
+        }); 
+        closeAuth(); 
+    }
+
+    // ================= TIMER DA SESSÃO =================
+    function checkTimer() {
+        if (!state.settings.timer.enabled || state.session.expired) return;
+        if (state.session.endTime && Date.now() >= state.session.endTime) {
+            state.session.expired = true;
+            saveState();
+            // Apenas liga a flag. Deixa a criança terminar o ciclo.
+        }
+    }
+
+    function triggerTimeUp() {
+        if (timerInterval) clearInterval(timerInterval);
+        abortGame(); 
+        document.getElementById('modal-timesup').style.display = 'flex';
+    }
+
+    function updateLobbyButton() {
+        const btn = document.getElementById('btn-start-game');
+        if (state.settings.timer.enabled && state.session.expired) {
+            btn.classList.add('disabled');
+            btn.style.background = '#ccc';
+            btn.innerHTML = '<span class="material-icons" style="background: rgba(0,0,0,0.15);">lock</span> Sessão Finalizada';
+            btn.onclick = () => {
+                requireAuth(() => {
+                    state.session.expired = false;
+                    state.session.endTime = null;
+                    saveState();
+                    updateLobbyButton();
+                    customAlert("Sessão Liberada", "O timer foi reiniciado. O jogo está aberto novamente.");
+                });
+            };
+        } else {
+            btn.classList.remove('disabled');
+            btn.style.background = 'var(--primary)';
+            btn.innerHTML = '<span class="material-icons" style="background: rgba(0,0,0,0.15);">play_arrow</span> Iniciar o Game';
+            btn.onclick = openGrid;
+        }
+
+        // Ícone de Relógio no Cabeçalho
+        const clock = document.getElementById('header-timer-icon');
+        if (state.settings.timer.enabled && !state.session.expired) {
+            clock.style.display = 'inline-block';
+        } else {
+            clock.style.display = 'none';
+        }
+    }
 
     // ================= BLINDAGEM INFANTIL (AUTH) =================
     let authCallback = null;
@@ -357,44 +504,64 @@
             callback();
         } else {
             authCallback = callback;
-            document.getElementById('auth-pin-input').value = '';
+            const input = document.getElementById('auth-pin-input');
+            input.value = '';
+            input.style.borderColor = '#ddd'; 
+            input.style.color = 'inherit';
             document.getElementById('auth-error').innerText = '';
             document.getElementById('modal-auth').style.display = 'flex';
-            setTimeout(() => document.getElementById('auth-pin-input').focus(), 100);
+            setTimeout(() => input.focus(), 100);
         }
     }
 
     function closeAuth() {
         document.getElementById('modal-auth').style.display = 'none';
-        authCallback = null;
+        authCallback = null; 
     }
 
     function confirmAuth() {
-        const input = document.getElementById('auth-pin-input').value;
-        if (input === state.settings.security.pin) {
-            closeAuth();
-            if (authCallback) authCallback();
+        const inputElement = document.getElementById('auth-pin-input');
+        const inputVal = inputElement.value;
+        
+        if (inputVal === state.settings.security.pin) {
+            playSound('win'); 
+            inputElement.style.borderColor = 'var(--success)';
+            inputElement.style.color = 'var(--success)';
+            
+            const destinationFunction = authCallback;
+            
+            setTimeout(() => {
+                closeAuth(); 
+                if (typeof destinationFunction === 'function') destinationFunction(); 
+            }, 400); 
+            
         } else {
             document.getElementById('auth-error').innerText = 'PIN Incorreto. Acesso Negado.';
-            document.getElementById('auth-pin-input').value = '';
+            inputElement.value = '';
             playSound('click'); 
+            
+            const modal = document.getElementById('auth-content');
+            modal.classList.add('shake');
+            setTimeout(() => modal.classList.remove('shake'), 400);
         }
     }
 
-    // ================= ALERTA GENÉRICO =================
+    // ================= ALERTA GENÉRICO E RESET =================
     let alertCallback = null;
+    
     function customAlert(title, desc, confirmCallback = null, isConfirm = false) {
         document.getElementById('alert-title').innerText = title;
         document.getElementById('alert-desc').innerText = desc;
         alertCallback = confirmCallback;
+        
         const actions = document.getElementById('alert-actions');
         if (isConfirm) {
             actions.innerHTML = `
-                <button class="btn-action btn-cancel" style="flex:1" onclick="closeAlert(false)">Cancelar</button>
-                <button class="btn-action btn-danger" style="flex:1" onclick="closeAlert(true)">Sim, Apagar</button>
+                <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAlert(false)">Cancelar</button>
+                <button type="button" class="btn-action btn-danger" style="flex:1" onclick="closeAlert(true)">Sim, Apagar</button>
             `;
         } else {
-            actions.innerHTML = `<button class="btn-action" style="width:100%" onclick="closeAlert(true)">Entendido</button>`;
+            actions.innerHTML = `<button type="button" class="btn-action" style="width:100%" onclick="closeAlert(true)">Entendido</button>`;
         }
         document.getElementById('modal-alert').style.display = 'flex';
     }
@@ -413,34 +580,43 @@
         }, true);
     }
 
-    // ================= INICIALIZAÇÃO =================
+    // ================= INICIALIZAÇÃO E NAVEGAÇÃO =================
     function init() { 
         applyTheme(); 
-        renderGrid(); 
+        updateLobbyButton();
         if(!state.setupDone) {
-            openSettings(); // Onboarding Automático
+            openSettings(); 
         }
     }
 
-    // ================= NAVEGAÇÃO E DASHBOARD =================
-    function goHome() {
-        document.getElementById('nav-dash').classList.remove('active-tab');
-        document.getElementById('nav-home').classList.add('active-tab');
-        document.getElementById('screen-dashboard').classList.remove('active');
-        document.getElementById('screen-game').classList.remove('active');
+    function hideAllScreens() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    }
+
+    function goSplash() {
+        hideAllScreens();
+        updateLobbyButton();
+        document.getElementById('screen-splash').classList.add('active');
+    }
+
+    function openGrid() {
+        hideAllScreens();
         document.getElementById('screen-home').classList.add('active');
         renderGrid();
     }
 
     function openDashboard() {
-        document.getElementById('nav-home').classList.remove('active-tab');
-        document.getElementById('nav-dash').classList.add('active-tab');
-        document.getElementById('screen-home').classList.remove('active');
-        document.getElementById('screen-game').classList.remove('active');
+        hideAllScreens();
         document.getElementById('screen-dashboard').classList.add('active');
         renderDashboard();
     }
 
+    function openGame() {
+        hideAllScreens();
+        document.getElementById('screen-game').classList.add('active');
+    }
+
+    // ================= RENDERIZADORES =================
     function renderGrid() {
         const grid = document.getElementById('grid-phases'); grid.innerHTML = '';
         curriculumOrder.forEach(p => {
@@ -463,9 +639,18 @@
         extraModules.forEach(p => {
             const card = document.createElement('div');
             card.className = 'phase-card module-extra';
-            card.innerHTML = `<span class="material-icons status-icon" style="color:var(--warning)">star</span>
-                <h2>${p === 'PSEUDOPALAVRAS' ? 'PSEUDO' : 'PALAVRAS'}</h2><p>${p}</p>`;
-            card.onclick = () => { playSound('click'); startGame(p); };
+            
+            if (p === 'ANOTAÇÕES') {
+                card.style.borderColor = '#9C27B0';
+                card.style.background = '#f3e5f5';
+                card.innerHTML = `<span class="material-icons status-icon" style="color:#9C27B0">edit_note</span>
+                    <h2 style="color:#7B1FA2">NOTAS</h2><p>Planejamento</p>`;
+                card.onclick = () => { playSound('click'); requireAuth(openNotesModal); };
+            } else {
+                card.innerHTML = `<span class="material-icons status-icon" style="color:var(--warning)">star</span>
+                    <h2>${p === 'PSEUDOPALAVRAS' ? 'PSEUDO' : 'PALAVRAS'}</h2><p>${p}</p>`;
+                card.onclick = () => { playSound('click'); startGame(p); };
+            }
             grid.appendChild(card);
         });
     }
@@ -515,6 +700,23 @@
     function togglePasswordField() {
         const isEnabled = document.getElementById('set-sec-enable').checked;
         document.getElementById('pin-group').style.display = isEnabled ? 'block' : 'none';
+        
+        // Se desligar a segurança, o timer não pode rodar
+        if (!isEnabled && document.getElementById('set-timer-enable').checked) {
+            document.getElementById('set-timer-enable').checked = false;
+            toggleTimerField();
+        }
+    }
+
+    function toggleTimerField() {
+        const isEnabled = document.getElementById('set-timer-enable').checked;
+        document.getElementById('timer-group').style.display = isEnabled ? 'block' : 'none';
+        
+        // Timer exige Segurança
+        if (isEnabled && !document.getElementById('set-sec-enable').checked) {
+            document.getElementById('set-sec-enable').checked = true;
+            togglePasswordField();
+        }
     }
 
     function openSettings() { 
@@ -528,15 +730,25 @@
         document.getElementById('set-sec-pin').value = state.settings.security.pin;
         togglePasswordField();
 
+        document.getElementById('set-timer-enable').checked = state.settings.timer.enabled;
+        document.getElementById('set-timer-min').value = state.settings.timer.min;
+        toggleTimerField();
+
         document.getElementById('modal-settings').style.display = 'flex'; 
     }
     
     function saveSettings() { 
         const isSecEnabled = document.getElementById('set-sec-enable').checked;
         const pinValue = document.getElementById('set-sec-pin').value;
+        const isTimerEnabled = document.getElementById('set-timer-enable').checked;
 
         if (isSecEnabled && !pinValue) {
             customAlert("Atenção", "Você ativou a segurança, mas não definiu um PIN. Defina uma senha numérica.");
+            return;
+        }
+
+        if (isTimerEnabled && !isSecEnabled) {
+            customAlert("Atenção", "Para usar o Timer da Sessão, você DEVE ativar a Segurança com PIN.");
             return;
         }
 
@@ -546,10 +758,12 @@
         state.settings.hard = document.getElementById('set-hard').checked; 
         state.settings.theme = document.getElementById('set-theme').value;
         state.settings.security = { enabled: isSecEnabled, pin: pinValue };
+        state.settings.timer = { enabled: isTimerEnabled, min: parseInt(document.getElementById('set-timer-min').value) };
         
         state.setupDone = true;
 
-        saveState(); applyTheme(); closeModals(); 
+        saveState(); applyTheme(); updateLobbyButton(); closeModals(); 
+        
         if(document.getElementById('screen-home').classList.contains('active')) renderGrid();
     }
     
@@ -567,6 +781,71 @@
         customAlert('Copiado!', 'O código JSON foi copiado para a área de transferência.'); 
     }
 
+    // ================= GERENCIADOR DE NOTAS (ENTER) =================
+    function openNotesModal() {
+        document.getElementById('new-note-input').value = '';
+        renderNotesList();
+        document.getElementById('modal-notes').style.display = 'flex';
+        setTimeout(() => document.getElementById('new-note-input').focus(), 100);
+    }
+
+    function addNoteBlock() {
+        const input = document.getElementById('new-note-input');
+        const val = input.value.trim().toUpperCase();
+        
+        if (val) {
+            state.notes.push(val);
+            saveState();
+            renderNotesList();
+        }
+        input.value = '';
+    }
+
+    function renderNotesList() {
+        const container = document.getElementById('notes-list');
+        container.innerHTML = '';
+
+        if(state.notes.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#999; font-size:0.9rem; margin-top:20px;">Nenhum bloco salvo. Digite acima e pressione <strong>Enter</strong>.</p>';
+            return;
+        }
+
+        state.notes.forEach((note, index) => {
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            card.innerHTML = `
+                <div class="note-text">${note}</div>
+                <div class="note-actions">
+                    <button type="button" class="note-btn copy" onclick="copyNoteBlock(${index})" title="Copiar"><span class="material-icons" style="font-size:1.2rem;">content_copy</span></button>
+                    <button type="button" class="note-btn del" onclick="deleteNoteBlock(${index})" title="Excluir"><span class="material-icons" style="font-size:1.2rem;">delete</span></button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function copyNoteBlock(index) {
+        const textToCopy = state.notes[index];
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            customAlert("Copiado!", "Bloco copiado! Agora é só colar no módulo de Palavras.");
+        }).catch(err => {
+            const temp = document.createElement('textarea');
+            temp.value = textToCopy;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            customAlert("Copiado!", "Bloco copiado! Agora é só colar no módulo de Palavras.");
+        });
+    }
+
+    function deleteNoteBlock(index) {
+        state.notes.splice(index, 1);
+        saveState();
+        renderNotesList();
+    }
+
+    // ================= PALAVRAS CUSTOMIZADAS =================
     function checkWordsInput() {
         const val = document.getElementById('custom-words-input').value.trim();
         document.getElementById('btn-start-words').disabled = val.length === 0;
@@ -583,11 +862,7 @@
 
         session = { phase: 'PALAVRAS', pool: pool, trials: targets, currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: targets.length }, c2: { indep:0, dica:0, erro:0, total: targets.length }, c3: { indep:0, dica:0, erro:0, total: targets.length } } };
         
-        document.getElementById('nav-home').classList.remove('active-tab');
-        document.getElementById('nav-dash').classList.remove('active-tab');
-        document.getElementById('screen-home').classList.remove('active');
-        document.getElementById('screen-dashboard').classList.remove('active');
-        document.getElementById('screen-game').classList.add('active');
+        openGame();
         renderTrial();
     }
 
@@ -598,6 +873,20 @@
             checkWordsInput(); document.getElementById('modal-words').style.display = 'flex';
             return;
         }
+
+        // --- TIMER INÍCIO ---
+        if (state.settings.timer.enabled) {
+            if (!state.session.endTime && !state.session.expired) {
+                state.session.endTime = Date.now() + (state.settings.timer.min * 60000);
+                saveState();
+            }
+            if (state.session.expired) {
+                triggerTimeUp();
+                return;
+            }
+            if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
+        }
+        // ---------------------
 
         let pool = []; let targets = [];
         let targetCount = 5;
@@ -631,17 +920,13 @@
 
         session = { phase: phaseId, pool: pool, trials: targets, currentCycle: isOnlyCycle3 ? 3 : 1, isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: (isOnlyCycle3) ? 0 : targetCount }, c2: { indep:0, dica:0, erro:0, total: (isOnlyCycle3) ? 0 : targetCount }, c3: { indep:0, dica:0, erro:0, total: (isOnlyCycle3 || !isPreReq) ? targetCount : 0 } } };
         
-        document.getElementById('nav-home').classList.remove('active-tab');
-        document.getElementById('nav-dash').classList.remove('active-tab');
-        document.getElementById('screen-home').classList.remove('active');
-        document.getElementById('screen-dashboard').classList.remove('active');
-        document.getElementById('screen-game').classList.add('active');
+        openGame();
         renderTrial();
     }
 
     function abortGame() {
         if(sttRecognition && isListening) toggleMicrophone();
-        goHome();
+        goSplash(); // Volta pro início principal
     }
 
     function getSpokenPrompt(target) {
@@ -690,7 +975,7 @@
         }
         else if (session.currentCycle === 2) {
             badge.innerText = session.isPreReq ? "Ciclo 2: Ouça e Classifique" : "Ciclo 2: Ouvir e Achar";
-            modelArea.innerHTML = `<button class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>`;
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>`;
             speakTTS(target); 
             optionsToRender.forEach(opt => {
                 const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
@@ -710,11 +995,11 @@
                     <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
                     <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Fale: '${getSpokenPrompt(target)}'</p>
                     <div class="stt-controls">
-                        <button class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
+                        <button type="button" class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
                             <span class="material-icons">close</span> Erro
                         </button>
-                        <button class="stt-btn" id="mic-btn" onclick="toggleMicrophone()"><span class="material-icons">mic</span></button>
-                        <button class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">
+                        <button type="button" class="stt-btn" id="mic-btn" onclick="toggleMicrophone()"><span class="material-icons">mic</span></button>
+                        <button type="button" class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">
                             <span class="material-icons">check</span> Acerto
                         </button>
                     </div>
@@ -852,20 +1137,26 @@
         const actions = document.getElementById('result-actions');
         actions.innerHTML = '';
 
+        // Se o timer de sessão estourou
+        if (state.settings.timer.enabled && state.session.expired) {
+            triggerTimeUp();
+            return;
+        }
+
         if (isSuccess) {
             title.innerText = "Desempenho Excelente!";
             desc.innerText = `Parabéns! A precisão foi de ${Math.round(accuracy)}%. Fase concluída com sucesso!`;
             actions.innerHTML = `
-                <button class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); goHome()"><span class="material-icons">home</span> Início</button>
-                <button class="btn-action" style="width:100%; background:var(--warning)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir</button>
-                ${nextPhase ? `<button class="btn-action" style="width:100%; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar <span class="material-icons">arrow_forward</span></button>` : ''}
+                <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); goSplash()"><span class="material-icons">home</span> Início</button>
+                <button type="button" class="btn-action" style="width:100%; background:var(--warning)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir</button>
+                ${nextPhase ? `<button type="button" class="btn-action" style="width:100%; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar <span class="material-icons">arrow_forward</span></button>` : ''}
             `;
         } else {
             title.innerText = "Quase lá...";
             desc.innerText = `Parabéns pelo esforço! Precisão de ${Math.round(accuracy)}%. A meta é ${state.settings.crit}%.`;
             actions.innerHTML = `
-                <button class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); goHome()"><span class="material-icons">home</span> Início</button>
-                <button class="btn-action" style="width:100%; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
+                <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); goSplash()"><span class="material-icons">home</span> Início</button>
+                <button type="button" class="btn-action" style="width:100%; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
             `;
         }
         document.getElementById('modal-result').style.display = 'flex';
@@ -904,4 +1195,28 @@
                 };
                 state.log.push(dataObj);
             } else {
-                const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round
+                const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round(accuracy), ciclos: session.stats };
+                state.log.push(dataObj);
+            }
+        }
+
+        let nextPhase = null;
+        if(accuracy >= state.settings.crit) {
+            const curIdx = curriculumOrder.indexOf(session.phase);
+            if(curIdx >= 0 && curIdx < curriculumOrder.length - 1) {
+                nextPhase = curriculumOrder[curIdx + 1];
+                if(!state.unlocked.includes(nextPhase)) {
+                    state.unlocked.push(nextPhase);
+                    saveState();
+                }
+            }
+            showResultModal(true, accuracy, nextPhase);
+        } else {
+            showResultModal(false, accuracy, null);
+        }
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
