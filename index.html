@@ -22,7 +22,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { background: var(--bg); color: var(--text); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
 
-        /* HEADER */
+        /* HEADER LIMPO */
         header { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10; height: 60px; flex-shrink: 0; }
         header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
         .header-icons { display: flex; gap: 15px; }
@@ -82,10 +82,11 @@
 
         /* MODAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; text-align: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; }
         .modal-title { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
         .modal-desc { color: var(--text-light); font-size: 1rem; margin-bottom: 20px; }
         
+        .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; }
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
         .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
@@ -105,10 +106,7 @@
 <header>
     <h1><span class="material-icons">extension</span> Eidos MTS</h1>
     <div class="header-icons">
-        <button class="icon-btn" onclick="cycleTheme()" title="Mudar Tema"><span class="material-icons">palette</span></button>
-        <button class="icon-btn" onclick="openReport()" title="Dados Clínicos"><span class="material-icons">content_paste</span></button>
-        <button class="icon-btn" onclick="openSettings()" title="Configurações"><span class="material-icons">settings</span></button>
-        <button class="icon-btn" onclick="resetApp()" title="Resetar App (Apagar Cache)"><span class="material-icons">restart_alt</span></button>
+        <button class="icon-btn" onclick="openSettings()" title="Configurações e Ferramentas"><span class="material-icons">settings</span></button>
     </div>
 </header>
 
@@ -140,7 +138,9 @@
 
 <div id="modal-settings" class="modal-overlay">
     <div class="modal-content" style="text-align: left;">
-        <h2 class="modal-title" style="border-bottom: 2px solid var(--primary-light); padding-bottom:10px;">Setup de Intervenção</h2>
+        <h2 class="modal-title" style="border-bottom: 2px solid var(--primary-light); padding-bottom:10px;">Configurações</h2>
+        
+        <div class="section-title">Setup de Intervenção</div>
         <div class="input-group">
             <label>Nome do Aluno:</label>
             <input type="text" id="set-name" placeholder="Ex: Miguel">
@@ -161,19 +161,32 @@
             <input type="checkbox" id="set-hard" style="width:20px; height:20px;">
             <label style="margin:0;">Modo Difícil (+CCV)</label>
         </div>
-        <div style="display:flex; gap:10px;">
+
+        <div class="section-title">Sistema e Ferramentas</div>
+        <div class="input-group">
+            <label>Tema Visual da Interface:</label>
+            <select id="set-theme">
+                <option value="cyan">Ciano (Padrão)</option>
+                <option value="green">Verde Natureza</option>
+                <option value="pink">Rosa Coral</option>
+            </select>
+        </div>
+        <button class="btn-action" style="background:var(--primary-dark);" onclick="openReport()"><span class="material-icons">content_paste</span> Visualizar Telemetria (JSON)</button>
+        <button class="btn-action" style="background:var(--danger);" onclick="resetApp()"><span class="material-icons">restart_alt</span> Resetar Aplicativo (Cache)</button>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
             <button class="btn-action btn-cancel" onclick="closeModals()">Cancelar</button>
-            <button class="btn-action" onclick="saveSettings()">Salvar</button>
+            <button class="btn-action" onclick="saveSettings()">Salvar Alterações</button>
         </div>
     </div>
 </div>
 
-<div id="modal-report" class="modal-overlay">
+<div id="modal-report" class="modal-overlay" style="z-index: 150;">
     <div class="modal-content">
         <h2 class="modal-title">Telemetria (JSON)</h2>
         <p class="modal-desc" style="font-size:0.85rem;">Cole no "Lançamento Universal" do Âncora Gestão.</p>
         <textarea id="json-output" readonly></textarea>
-        <button class="btn-action" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar Dados</button>
+        <button class="btn-action" onclick="copyJSON()"><span class="material-icons" style="vertical-align:middle; font-size:1.2rem;">content_copy</span> Copiar Dados</button>
         <button class="btn-action btn-cancel" onclick="closeModals()">Fechar</button>
     </div>
 </div>
@@ -203,6 +216,48 @@
     const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
     const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS'];
     
+    // ================= DICIONÁRIO FONÉTICO E ANTI-CENSURA =================
+    const phoneticsMap = {
+        // Sílabas com homofonias e bloqueios do STT
+        'CA': ['K', 'KA'],
+        'CE': ['SE', 'C'],
+        'CI': ['SI', 'SEI', 'CY', 'SY'],
+        'CO': ['KO'],
+        'CU': ['C\\*', 'C\\*\\*', 'C\\*\\*\\*', 'KU', 'C...'], // Fuga da censura do Google
+        'GE': ['JE'],
+        'GI': ['JI'],
+        'QUE': ['KE', 'K', 'Q'],
+        'QUI': ['KI'],
+        'QUA': ['KUA'],
+        'XA': ['CHA'],
+        'XE': ['CHE'],
+        'XI': ['CHI'],
+        'XO': ['CHO'],
+        'XU': ['CHU'],
+        'CHA': ['XA'],
+        'CHE': ['XE'],
+        'CHI': ['XI'],
+        'CHO': ['XO'],
+        'CHU': ['XU'],
+        'SE': ['CE'],
+        'SI': ['CI'],
+        'JE': ['GE'],
+        'JI': ['GI'],
+        
+        // Letras avulsas (Aparecem nas fases PRE1 e VOGAIS)
+        'F': ['EFE'],
+        'J': ['JOTA'],
+        'L': ['ELE'],
+        'M': ['EME'],
+        'N': ['ENE'],
+        'R': ['ERRE'],
+        'S': ['ESSE'],
+        'X': ['XIS'],
+        'Z': ['ZE'],
+        'Y': ['IPSLON', 'IPISLON'],
+        'W': ['DABLIU']
+    };
+
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -250,14 +305,12 @@
         student: '', unlocked: ['PRE1', 'PRE2', 'VOGAIS'], settings: { crit: 100, opts: 4, hard: false, theme: 'cyan' }, customWords: '', log: [] 
     };
 
-    // Vacina de Retrocompatibilidade (Garante que os pré-requisitos abram em saves antigos)
     if(!state.unlocked.includes('PRE1')) state.unlocked.push('PRE1');
     if(!state.unlocked.includes('PRE2')) state.unlocked.push('PRE2');
     if(!state.unlocked.includes('VOGAIS')) state.unlocked.push('VOGAIS');
 
     let session = { phase: '', pool: [], trials: [], currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
 
-    // ================= SOM E TEMAS =================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(type) {
         const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
@@ -282,15 +335,7 @@
         window.speechSynthesis.speak(utter);
     }
 
-    const themes = ['cyan', 'green', 'pink'];
-    function cycleTheme() {
-        let idx = themes.indexOf(state.settings.theme) + 1;
-        if(idx >= themes.length) idx = 0;
-        state.settings.theme = themes[idx];
-        document.documentElement.setAttribute('data-theme', state.settings.theme);
-        saveState();
-    }
-
+    function applyTheme() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); }
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
 
@@ -299,7 +344,6 @@
         document.getElementById('alert-title').innerText = title;
         document.getElementById('alert-desc').innerText = desc;
         alertCallback = confirmCallback;
-        
         const actions = document.getElementById('alert-actions');
         if (isConfirm) {
             actions.innerHTML = `
@@ -319,18 +363,17 @@
     }
 
     function resetApp() {
+        closeModals();
         customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e alunos salvos neste navegador. Tem certeza absoluta?", () => {
             localStorage.removeItem('eidos_mts_state');
             location.reload();
         }, true);
     }
 
-    // ================= TELA INICIAL =================
-    function init() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); renderGrid(); }
+    function init() { applyTheme(); renderGrid(); }
 
     function renderGrid() {
         const grid = document.getElementById('grid-phases'); grid.innerHTML = '';
-        
         curriculumOrder.forEach(p => {
             const isUnlocked = state.unlocked.includes(p);
             const isPre = p.startsWith('PRE');
@@ -358,16 +401,43 @@
         });
     }
 
-    // ================= MODAIS DE MENU =================
-    function openSettings() { document.getElementById('set-name').value = state.student; document.getElementById('set-crit').value = state.settings.crit; document.getElementById('set-opts').value = state.settings.opts; document.getElementById('set-hard').checked = state.settings.hard; document.getElementById('modal-settings').style.display = 'flex'; }
-    function saveSettings() { state.student = document.getElementById('set-name').value.toUpperCase(); state.settings.crit = parseInt(document.getElementById('set-crit').value); state.settings.opts = parseInt(document.getElementById('set-opts').value); state.settings.hard = document.getElementById('set-hard').checked; saveState(); closeModals(); renderGrid(); }
-    function openReport() { if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda."; else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2); document.getElementById('modal-report').style.display = 'flex'; }
-    function copyJSON() { const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; txt.select(); document.execCommand('copy'); customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.'); }
+    function openSettings() { 
+        document.getElementById('set-name').value = state.student; 
+        document.getElementById('set-crit').value = state.settings.crit; 
+        document.getElementById('set-opts').value = state.settings.opts; 
+        document.getElementById('set-hard').checked = state.settings.hard; 
+        document.getElementById('set-theme').value = state.settings.theme;
+        document.getElementById('modal-settings').style.display = 'flex'; 
+    }
+    
+    function saveSettings() { 
+        state.student = document.getElementById('set-name').value.toUpperCase(); 
+        state.settings.crit = parseInt(document.getElementById('set-crit').value); 
+        state.settings.opts = parseInt(document.getElementById('set-opts').value); 
+        state.settings.hard = document.getElementById('set-hard').checked; 
+        state.settings.theme = document.getElementById('set-theme').value;
+        saveState(); applyTheme(); closeModals(); renderGrid(); 
+    }
+    
+    function openReport() { 
+        document.getElementById('modal-settings').style.display = 'none';
+        if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda."; 
+        else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2); 
+        document.getElementById('modal-report').style.display = 'flex'; 
+    }
+    
+    function copyJSON() { 
+        const txt = document.getElementById('json-output'); 
+        if(txt.value.includes("Nenhum dado")) return; 
+        txt.select(); document.execCommand('copy'); 
+        customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.'); 
+    }
 
     function checkWordsInput() {
         const val = document.getElementById('custom-words-input').value.trim();
         document.getElementById('btn-start-words').disabled = val.length === 0;
     }
+    
     function startCustomWords() {
         const wordsVal = document.getElementById('custom-words-input').value.trim();
         if(!wordsVal) return;
@@ -384,7 +454,6 @@
         renderTrial();
     }
 
-    // ================= MOTOR DO JOGO =================
     function startGame(phaseId) {
         if(phaseId === 'PALAVRAS') {
             document.getElementById('custom-words-input').value = state.customWords || '';
@@ -533,26 +602,22 @@
             if(!session.isRepeating) {
                 let cat = `c${session.currentCycle}`;
                 if(session.attemptsOnCurrent === 0) session.stats[cat].indep++;
-                else session.stats[cat].dica++; // Acertou na 2ª tentativa (após o Fading out)
+                else session.stats[cat].dica++; 
             }
             advanceTrial();
         } else {
             session.attemptsOnCurrent++;
-            if(element) element.style.visibility = 'hidden'; // Dica visual (Apaga a errada)
+            if(element) element.style.visibility = 'hidden'; 
             playSound('click'); 
             
-            // Vida que segue: Se errou duas vezes, marca o erro e avança.
             if(session.attemptsOnCurrent >= 2) {
-                if(!session.isRepeating) {
-                    let cat = `c${session.currentCycle}`;
-                    session.stats[cat].erro++;
-                }
+                if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
                 advanceTrial();
             }
         }
     }
 
-    // ================= STT E BOTÕES DO PROFESSOR (SEM LOOP INFINITO) =================
+    // ================= STT E FONÉTICA =================
     let sttRecognition = null;
     let isListening = false;
 
@@ -571,7 +636,16 @@
         sttRecognition = new SpeechRecognition(); sttRecognition.lang = 'pt-BR'; sttRecognition.interimResults = true; sttRecognition.maxAlternatives = 1; ghostInput.value = ""; 
         
         const targetClean = removeAccents(session.trials[session.currentTrialIdx]);
-        const regex = new RegExp('\\b' + targetClean + '\\b');
+        
+        // Puxa as aceitações fonéticas (ou censura) do dicionário
+        let acceptedTerms = [targetClean];
+        if (phoneticsMap[targetClean]) {
+            acceptedTerms = acceptedTerms.concat(phoneticsMap[targetClean]);
+        }
+
+        // Constrói a Regex usando (^|\s) em vez de \b para suportar caracteres especiais como *
+        const regexStr = '(^|\\s)(' + acceptedTerms.join('|') + ')($|\\s)';
+        const regex = new RegExp(regexStr);
 
         sttRecognition.onresult = function(event) {
             let transcript = Array.from(event.results).map(r => r[0].transcript).join('');
@@ -623,7 +697,7 @@
         }
     }
 
-    // ================= PROGRESSÃO E MODAIS DE ESCOLHA ATIVA =================
+    // ================= PROGRESSÃO E MODAIS =================
     function finishCycle() {
         session.currentTrialIdx = 0;
         session.currentCycle++;
@@ -658,7 +732,7 @@
             
             actions.innerHTML = `
                 <button class="btn-action btn-cancel" style="flex:1" onclick="closeResult(); abortGame()"><span class="material-icons">home</span> Início</button>
-                <button class="btn-action" style="flex:1; background:var(--primary)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
+                <button class="btn-action" style="flex:1; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
             `;
         }
         document.getElementById('modal-result').style.display = 'flex';
@@ -677,8 +751,12 @@
 
         if (session.isOnlyCycle3) {
             totalTrials = session.stats.c3.total; totalIndep = session.stats.c3.indep;
+        } else if (session.isPreReq) {
+            totalTrials = session.stats.c1.total + session.stats.c2.total; 
+            totalIndep = session.stats.c1.indep + session.stats.c2.indep;
         } else {
-            totalTrials = session.stats.c1.total + session.stats.c2.total; totalIndep = session.stats.c1.indep + session.stats.c2.indep;
+            totalTrials = session.stats.c1.total + session.stats.c2.total + session.stats.c3.total; 
+            totalIndep = session.stats.c1.indep + session.stats.c2.indep + session.stats.c3.indep;
         }
 
         const accuracy = totalTrials > 0 ? (totalIndep / totalTrials) * 100 : 0;
