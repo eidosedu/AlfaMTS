@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
+    <title>Eidos MTS - Alfabetização</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* TEMAS (Ciano, Verde, Rosa) */
+        :root {
+            --primary: #00BCD4; --primary-dark: #0097A7; --primary-light: #B2EBF2;
+            --bg: #F5F7FA; --card: #FFFFFF; --text: #333333; --text-light: #777777;
+            --success: #4CAF50; --danger: #F44336; --warning: #FFC107;
+        }
+        [data-theme="green"] {
+            --primary: #4CAF50; --primary-dark: #388E3C; --primary-light: #C8E6C9;
+        }
+        [data-theme="pink"] {
+            --primary: #E91E63; --primary-dark: #C2185B; --primary-light: #F8BBD0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { background: var(--bg); color: var(--text); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+
+        /* HEADER */
+        header { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10; height: 60px; }
+        header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .header-icons { display: flex; gap: 15px; }
+        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
+
+        /* SCREENS */
+        .screen { display: none; flex: 1; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .screen.active { display: flex; }
+
+        /* TELA INICIAL: GRID DE CURRÍCULO */
+        .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding-bottom: 20px; }
+        .phase-card { background: var(--card); border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 5px solid var(--primary); cursor: pointer; transition: 0.2s; position: relative; }
+        .phase-card:active { transform: scale(0.95); }
+        .phase-card.locked { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; border-bottom-color: #ccc; }
+        .phase-card h2 { font-size: 2rem; color: var(--primary-dark); margin-bottom: 5px; }
+        .phase-card p { font-size: 0.8rem; color: var(--text-light); font-weight: bold; }
+        .status-icon { position: absolute; top: 10px; right: 10px; font-size: 1.2rem; color: var(--success); }
+
+        /* TELA MTS (O JOGO) */
+        .mts-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px; }
+        .cycle-badge { background: var(--primary-light); color: var(--primary-dark); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 1rem; margin-bottom: 10px; }
+        
+        /* MODELO (CIMA) */
+        .model-area { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 120px; }
+        .model-card { background: white; border: 3px dashed var(--primary); border-radius: 20px; width: 250px; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 4rem; font-weight: bold; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .model-audio-btn { background: var(--primary); color: white; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.2); border: none; }
+        .model-audio-btn:active { transform: scale(0.9); }
+
+        /* COMPARAÇÕES (BAIXO) */
+        .comparisons-area { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; padding: 20px 0; }
+        .comp-card { background: white; border: 2px solid #ccc; border-radius: 15px; flex: 1; max-width: 200px; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: bold; color: var(--text); cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .comp-card:active { transform: scale(0.95); background: var(--primary-light); border-color: var(--primary); }
+        
+        /* CICLO 3 - STT AREA (PUSH-TO-TALK) */
+        .stt-area { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+        
+        .stt-btn { 
+            background: var(--warning); color: white; width: 100px; height: 100px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 3rem; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+            cursor: pointer; transition: all 0.1s ease; touch-action: manipulation;
+        }
+        /* Estado enquanto está sendo pressionado */
+        .stt-btn.listening { 
+            background: var(--danger); 
+            transform: scale(0.92); 
+            box-shadow: 0 0 0 12px rgba(244, 67, 54, 0.3); 
+        }
+
+        .teacher-override { display: flex; gap: 20px; margin-top: 10px; }
+        .btn-override { padding: 12px 25px; font-size: 1rem; font-weight: bold; border: none; border-radius: 10px; color: white; cursor: pointer; }
+        .btn-override:active { transform: scale(0.95); }
+
+        /* MODAIS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal-title { color: var(--primary-dark); font-size: 1.5rem; margin-bottom: 15px; border-bottom: 2px solid var(--primary-light); padding-bottom: 10px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-cancel { background: #ccc; margin-top: 10px; }
+        
+        textarea#json-output { width: 100%; height: 200px; font-family: monospace; font-size: 0.8rem; padding: 10px; resize: none; border: 2px solid #eee; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><span class="material-icons">extension</span> Eidos MTS</h1>
+    <div class="header-icons">
+        <button class="icon-btn" onclick="cycleTheme()" title="Mudar Tema"><span class="material-icons">palette</span></button>
+        <button class="icon-btn" onclick="openReport()" title="Dados/JSON"><span class="material-icons">content_paste</span></button>
+        <button class="icon-btn" onclick="openSettings()" title="Configurações"><span class="material-icons">settings</span></button>
+    </div>
+</header>
+
+<div id="screen-home" class="screen active">
+    <div class="curriculum-grid" id="grid-phases"></div>
+</div>
+
+<div id="screen-game" class="screen" style="background: white;">
+    <button class="icon-btn" style="position:absolute; top:70px; left:10px; background:#ccc; color:#333;" onclick="abortGame()"><span class="material-icons">close</span></button>
+    
+    <div class="mts-container">
+        <div id="cycle-indicator" class="cycle-badge">Ciclo 1: Identidade Visual</div>
+        
+        <div class="model-area" id="model-area">
+            </div>
+
+        <div class="comparisons-area" id="comparisons-area">
+            </div>
+    </div>
+</div>
+
+<div id="modal-settings" class="modal-overlay">
+    <div class="modal-content">
+        <h2 class="modal-title">Setup de Intervenção</h2>
+        
+        <div class="input-group">
+            <label>Nome do Aluno (Para o Relatório):</label>
+            <input type="text" id="set-name" placeholder="Ex: Miguel">
+        </div>
+        
+        <div class="input-group">
+            <label>Critério de Maestria para Avanço (%):</label>
+            <input type="number" id="set-crit" min="50" max="100" value="100">
+        </div>
+        
+        <div class="input-group">
+            <label>Quantidade de Alternativas na Tela:</label>
+            <select id="set-opts">
+                <option value="2">2 Alternativas (Fácil)</option>
+                <option value="3">3 Alternativas (Médio)</option>
+                <option value="4" selected>4 Alternativas (Padrão ABA)</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="set-hard" style="width:25px; height:25px;">
+            <label style="margin:0;">Modo Difícil (Incluir sílabas complexas CCV)</label>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <button class="btn-action btn-cancel" onclick="closeModals()">Cancelar</button>
+            <button class="btn-action" onclick="saveSettings()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-report" class="modal-overlay">
+    <div class="modal-content">
+        <h2 class="modal-title">Telemetria Clínica (JSON)</h2>
+        <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">Copie os dados abaixo e cole no botão "Entrada Universal" do Âncora Gestão.</p>
+        <textarea id="json-output" readonly></textarea>
+        <button class="btn-action" onclick="copyJSON()"><span class="material-icons" style="vertical-align:middle;">content_copy</span> Copiar Dados</button>
+        <button class="btn-action btn-cancel" onclick="closeModals()">Fechar</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // ESTADO E CURRÍCULO
+    // ==========================================
+    const curriculumOrder = ['VOGAIS', 'ENCONTROS', 'C','P','B','F','T','D','Q','G','M','N','L','R','V','S','X','J','Z'];
+    const vowels = ['A','E','I','O','U'];
+    const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
+    
+    function generateSyllables(cons, hardMode) {
+        let pool = vowels.map(v => cons + v); 
+        if(cons === 'Q') pool = ['QUA','QUE','QUI','QUO'];
+        if(cons === 'G') pool = ['GA','GO','GU','GUE','GUI'];
+        
+        if(cons !== 'Q') pool = pool.concat(['AI','ÃO'].map(v => cons + v)); 
+        
+        if(hardMode) {
+            if(['C','P','B','F','G'].includes(cons)) pool = pool.concat(vowels.map(v => cons + 'R' + v)).concat(vowels.map(v => cons + 'L' + v));
+            if(['T','D'].includes(cons)) pool = pool.concat(vowels.map(v => cons + 'R' + v));
+        }
+        return pool;
+    }
+
+    let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
+        student: '',
+        unlocked: ['VOGAIS'],
+        settings: { crit: 100, opts: 4, hard: false, theme: 'cyan' },
+        log: [] 
+    };
+
+    let session = {
+        phase: '', pool: [], trials: [], 
+        currentCycle: 1, currentTrialIdx: 0, 
+        attemptsOnCurrent: 0, isRepeating: false,
+        stats: {
+            c1: { indep: 0, dica: 0, erro: 0 },
+            c2: { indep: 0, dica: 0, erro: 0 },
+            c3: { indep: 0, dica: 0, erro: 0 }
+        }
+    };
+
+    // ==========================================
+    // SISTEMA (BOOT, SOM, TEMAS)
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        if(type === 'win') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'click') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+    }
+
+    function speakTTS(text) {
+        if(!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text.toLowerCase());
+        utter.lang = 'pt-BR'; utter.rate = 0.8;
+        window.speechSynthesis.speak(utter);
+    }
+
+    const themes = ['cyan', 'green', 'pink'];
+    function cycleTheme() {
+        let idx = themes.indexOf(state.settings.theme) + 1;
+        if(idx >= themes.length) idx = 0;
+        state.settings.theme = themes[idx];
+        document.documentElement.setAttribute('data-theme', state.settings.theme);
+        saveState();
+    }
+
+    function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+
+    // ==========================================
+    // TELA INICIAL
+    // ==========================================
+    function init() {
+        document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan');
+        renderGrid();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('grid-phases');
+        grid.innerHTML = '';
+        curriculumOrder.forEach(p => {
+            const isUnlocked = state.unlocked.includes(p);
+            const card = document.createElement('div');
+            card.className = `phase-card ${isUnlocked ? '' : 'locked'}`;
+            card.innerHTML = `
+                ${isUnlocked ? '<span class="material-icons status-icon">check_circle</span>' : '<span class="material-icons status-icon" style="color:#999">lock</span>'}
+                <h2>${p.length > 2 ? p.substring(0,3) : p}</h2>
+                <p>${p}</p>
+            `;
+            if(isUnlocked) card.onclick = () => { playSound('click'); startGame(p); };
+            grid.appendChild(card);
+        });
+    }
+
+    // ==========================================
+    // MODAIS (CONFIG & REPORT)
+    // ==========================================
+    function openSettings() {
+        document.getElementById('set-name').value = state.student;
+        document.getElementById('set-crit').value = state.settings.crit;
+        document.getElementById('set-opts').value = state.settings.opts;
+        document.getElementById('set-hard').checked = state.settings.hard;
+        document.getElementById('modal-settings').style.display = 'flex';
+    }
+
+    function saveSettings() {
+        state.student = document.getElementById('set-name').value.toUpperCase();
+        state.settings.crit = parseInt(document.getElementById('set-crit').value);
+        state.settings.opts = parseInt(document.getElementById('set-opts').value);
+        state.settings.hard = document.getElementById('set-hard').checked;
+        saveState(); closeModals(); renderGrid();
+    }
+
+    function openReport() {
+        if(state.log.length === 0) {
+            document.getElementById('json-output').value = "Nenhum dado registrado ainda. Complete pelo menos um bloco.";
+        } else {
+            document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2);
+        }
+        document.getElementById('modal-report').style.display = 'flex';
+    }
+
+    function copyJSON() {
+        const txt = document.getElementById('json-output');
+        txt.select(); document.execCommand('copy');
+        alert('Copiado para a área de transferência!');
+    }
+
+    // ==========================================
+    // MOTOR DO JOGO MTS
+    // ==========================================
+    function startGame(phaseId) {
+        document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-game').classList.add('active');
+
+        let pool = [];
+        if(phaseId === 'VOGAIS') pool = [...vowels];
+        else if(phaseId === 'ENCONTROS') pool = [...encounters];
+        else pool = generateSyllables(phaseId, state.settings.hard);
+
+        pool.sort(() => Math.random() - 0.5);
+        const targetCount = Math.min(5, pool.length);
+        const targets = pool.slice(0, targetCount);
+
+        session = {
+            phase: phaseId, pool: pool,
+            trials: targets, currentCycle: 1, currentTrialIdx: 0,
+            attemptsOnCurrent: 0, isRepeating: false,
+            stats: { c1: { indep:0, dica:0, erro:0, total: targetCount }, c2: { indep:0, dica:0, erro:0, total: targetCount }, c3: { indep:0, dica:0, erro:0, total: targetCount } }
+        };
+
+        renderTrial();
+    }
+
+    function abortGame() {
+        document.getElementById('screen-game').classList.remove('active');
+        document.getElementById('screen-home').classList.add('active');
+    }
+
+    function renderTrial() {
+        session.attemptsOnCurrent = 0;
+        const target = session.trials[session.currentTrialIdx];
+        const modelArea = document.getElementById('model-area');
+        const compArea = document.getElementById('comparisons-area');
+        const badge = document.getElementById('cycle-indicator');
+        
+        compArea.innerHTML = '';
+        
+        // === CICLO 1: IDENTIDADE (Visual-Visual) ===
+        if(session.currentCycle === 1) {
+            badge.innerText = "Ciclo 1: Encontre o Igual";
+            modelArea.innerHTML = `<div class="model-card">${target}</div>`;
+            generateComparisons(target).forEach(opt => {
+                const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
+                btn.onclick = (e) => handleAnswer(opt === target, e.target);
+                compArea.appendChild(btn);
+            });
+        }
+        // === CICLO 2: RECEPTIVO (Audio-Visual) ===
+        else if (session.currentCycle === 2) {
+            badge.innerText = "Ciclo 2: Ouvir e Achar";
+            modelArea.innerHTML = `<button class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons" style="font-size:3rem;">volume_up</span></button>`;
+            speakTTS(target); 
+            generateComparisons(target).forEach(opt => {
+                const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
+                btn.onclick = (e) => handleAnswer(opt === target, e.target);
+                compArea.appendChild(btn);
+            });
+        }
+        // === CICLO 3: EXPRESSIVO (Textual-Audio / PUSH TO TALK) ===
+        else if (session.currentCycle === 3) {
+            badge.innerText = "Ciclo 3: Sua vez de falar!";
+            modelArea.innerHTML = `<div class="model-card">${target}</div>`;
+            
+            // Injeção do Botão Push-to-Talk (Mouse e Touch)
+            compArea.innerHTML = `
+                <div class="stt-area">
+                    <button class="stt-btn" id="mic-btn" 
+                        onmousedown="startPushToTalk(event)" 
+                        onmouseup="stopPushToTalk(event)" 
+                        onmouseleave="stopPushToTalk(event)" 
+                        ontouchstart="startPushToTalk(event)" 
+                        ontouchend="stopPushToTalk(event)">
+                        <span class="material-icons" style="font-size:2.5rem;">mic</span>
+                    </button>
+                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold;">Segure o botão para falar.</p>
+                    <div class="teacher-override">
+                        <button class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">✔ Validar (Prof)</button>
+                        <button class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">✖ Erro (Prof)</button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function generateComparisons(target) {
+        let opts = [target];
+        let available = session.pool.filter(x => x !== target);
+        available.sort(() => Math.random() - 0.5);
+        
+        while(opts.length < state.settings.opts && available.length > 0) {
+            opts.push(available.pop());
+        }
+        return opts.sort(() => Math.random() - 0.5);
+    }
+
+    function handleAnswer(isCorrect, element) {
+        if(isCorrect) {
+            playSound('win');
+            
+            if(!session.isRepeating) {
+                let cat = `c${session.currentCycle}`;
+                if(session.attemptsOnCurrent === 0) session.stats[cat].indep++;
+                else if(session.attemptsOnCurrent === 1) session.stats[cat].dica++;
+                else session.stats[cat].erro++;
+            }
+            
+            setTimeout(() => {
+                session.currentTrialIdx++;
+                if(session.currentTrialIdx >= session.trials.length) finishCycle();
+                else renderTrial();
+            }, 600);
+        } else {
+            session.attemptsOnCurrent++;
+            if(element) element.style.visibility = 'hidden'; 
+            playSound('click'); 
+        }
+    }
+
+    // ==========================================
+    // STT - MECÂNICA PUSH TO TALK (Segurar para Falar)
+    // ==========================================
+    let sttRecognition = null;
+    let isListening = false;
+    let finalSpokenWord = "";
+
+    function initSpeechAPI() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!SpeechRecognition) return null;
+        const rec = new SpeechRecognition();
+        rec.lang = 'pt-BR';
+        rec.interimResults = true; // Permite captar áudio enquanto o botão tá sendo segurado
+        rec.maxAlternatives = 1;
+        
+        rec.onresult = function(event) {
+            let tempWord = "";
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                tempWord += event.results[i][0].transcript;
+            }
+            finalSpokenWord = tempWord.toUpperCase().trim();
+        };
+
+        rec.onerror = function(e) {
+            document.getElementById('mic-feedback').innerText = "Não entendi. Use a validação manual ou tente novamente.";
+        };
+        return rec;
+    }
+
+    function startPushToTalk(e) {
+        e.preventDefault(); // Evita menu de contexto ao segurar o toque
+        if(isListening) return;
+        
+        const btn = document.getElementById('mic-btn');
+        const feedback = document.getElementById('mic-feedback');
+        
+        if(!sttRecognition) sttRecognition = initSpeechAPI();
+        if(!sttRecognition) {
+            feedback.innerText = "Microfone não suportado no navegador. Use os botões abaixo.";
+            return;
+        }
+
+        finalSpokenWord = "";
+        isListening = true;
+        btn.classList.add('listening');
+        feedback.innerText = "Gravando... Solte o dedo para avaliar.";
+        
+        try { sttRecognition.start(); } catch(err) {} // Evita crash se já estiver iniciado
+    }
+
+    function stopPushToTalk(e) {
+        if(e) e.preventDefault();
+        if(!isListening) return;
+
+        isListening = false;
+        const btn = document.getElementById('mic-btn');
+        const feedback = document.getElementById('mic-feedback');
+        
+        btn.classList.remove('listening');
+        if(sttRecognition) sttRecognition.stop();
+
+        // Aguarda 300ms para a API processar o buffer final antes de avaliar
+        feedback.innerText = "Avaliando...";
+        setTimeout(() => {
+            evaluateSpeech(finalSpokenWord);
+        }, 300);
+    }
+
+    function evaluateSpeech(word) {
+        const target = session.trials[session.currentTrialIdx].toUpperCase();
+        const feedback = document.getElementById('mic-feedback');
+        
+        if(!word) {
+            feedback.innerText = "Nenhum som detectado. Segure para falar.";
+            return;
+        }
+
+        feedback.innerText = `Você disse: "${word}"`;
+        
+        // Tolerância de pronúncia (ex: U -> UÚ, BA -> BÁ)
+        if(word.includes(target) || target.includes(word) || word.replace(/[ÁÀÃÂ]/g,'A').replace(/[ÉÈÊ]/g,'E').replace(/[ÍÌÎ]/g,'I').replace(/[ÓÒÕÔ]/g,'O').replace(/[ÚÙÛ]/g,'U') === target.replace(/[ÁÀÃÂ]/g,'A').replace(/[ÉÈÊ]/g,'E').replace(/[ÍÌÎ]/g,'I').replace(/[ÓÒÕÔ]/g,'O').replace(/[ÚÙÛ]/g,'U')) {
+            setTimeout(() => handleAnswer(true, null), 800);
+        } else {
+            session.attemptsOnCurrent++;
+            feedback.innerText += " ✖ Tente de novo!";
+            setTimeout(() => { feedback.innerText = "Segure o botão para falar."; }, 2000);
+        }
+    }
+
+    function forceAnswer(isCorrect) {
+        if(isCorrect) handleAnswer(true, null);
+        else {
+            session.attemptsOnCurrent++;
+            document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!";
+        }
+    }
+
+    // ==========================================
+    // PROGRESSÃO E TELEMETRIA
+    // ==========================================
+    function finishCycle() {
+        session.currentTrialIdx = 0;
+        session.currentCycle++;
+        
+        if(session.currentCycle > 3) {
+            checkBlockMastery();
+        } else {
+            renderTrial();
+        }
+    }
+
+    function checkBlockMastery() {
+        const totalTrials = session.stats.c1.total + session.stats.c2.total;
+        const totalIndep = session.stats.c1.indep + session.stats.c2.indep;
+        const accuracy = (totalIndep / totalTrials) * 100;
+
+        if(!session.isRepeating) {
+            const dataObj = {
+                n: state.student || "NÃO INFORMADO",
+                d: new Date().toLocaleDateString('pt-BR'),
+                tipo: "MTS",
+                fase: session.phase,
+                nv: state.settings.hard ? "Avançado (+CCV)" : "Básico",
+                crit: state.settings.crit,
+                acc: Math.round(accuracy),
+                ciclos: session.stats
+            };
+            state.log.push(dataObj);
+        }
+
+        if(accuracy >= state.settings.crit) {
+            const curIdx = curriculumOrder.indexOf(session.phase);
+            if(curIdx < curriculumOrder.length - 1) {
+                const nextPhase = curriculumOrder[curIdx + 1];
+                if(!state.unlocked.includes(nextPhase)) state.unlocked.push(nextPhase);
+            }
+            saveState();
+            alert(`🎉 Excelente! Você completou a lição com ${Math.round(accuracy)}% de precisão!`);
+            abortGame();
+            renderGrid();
+        } else {
+            alert(`Você fez ${Math.round(accuracy)}%. Precisamos de ${state.settings.crit}%. Vamos treinar mais um pouco!`);
+            session.isRepeating = true;
+            session.currentCycle = 1;
+            renderTrial();
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
