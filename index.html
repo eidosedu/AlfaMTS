@@ -59,15 +59,24 @@
         .comp-card:active { transform: scale(0.95); background: var(--primary-light); border-color: var(--primary); }
         
         /* STT AREA ERGONÔMICA */
-        .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }
+        .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; position: relative; }
         .stt-controls { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; }
         
-        .stt-btn { background: var(--warning); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.1s ease; touch-action: manipulation; }
+        .stt-btn { background: var(--warning); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.1s ease; }
         .stt-btn .material-icons { font-size: 3rem; }
-        .stt-btn.listening { background: var(--danger); transform: scale(0.92); box-shadow: 0 0 0 10px rgba(244, 67, 54, 0.3); }
+        .stt-btn.listening { background: var(--danger); transform: scale(0.92); box-shadow: 0 0 0 10px rgba(244, 67, 54, 0.3); animation: pulseRecord 1s infinite; }
+
+        @keyframes pulseRecord {
+            0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(244, 67, 54, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+        }
 
         .btn-override { padding: 10px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
         .btn-override:active { transform: scale(0.95); }
+
+        /* CAIXA DE TEXTO FANTASMA */
+        .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
         /* MODAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
@@ -164,6 +173,15 @@
     const vowels = ['A','E','I','O','U'];
     const encounters = ['AI','EI','OI','UI','AU','EU','OU','ÃO'];
     
+    // ================= ALGORITMO FISHER-YATES PERFEITO =================
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     function generateSyllables(cons, hardMode) {
         let pool = vowels.map(v => cons + v); 
         if(cons === 'Q') pool = ['QUA','QUE','QUI','QUO'];
@@ -219,7 +237,6 @@
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
 
-    // ================= ALERTAS CUSTOMIZADOS =================
     let alertCallback = null;
     function customAlert(title, desc, callback = null) {
         document.getElementById('alert-title').innerText = title;
@@ -250,34 +267,10 @@
     }
 
     // ================= MODAIS DE MENU =================
-    function openSettings() {
-        document.getElementById('set-name').value = state.student;
-        document.getElementById('set-crit').value = state.settings.crit;
-        document.getElementById('set-opts').value = state.settings.opts;
-        document.getElementById('set-hard').checked = state.settings.hard;
-        document.getElementById('modal-settings').style.display = 'flex';
-    }
-
-    function saveSettings() {
-        state.student = document.getElementById('set-name').value.toUpperCase();
-        state.settings.crit = parseInt(document.getElementById('set-crit').value);
-        state.settings.opts = parseInt(document.getElementById('set-opts').value);
-        state.settings.hard = document.getElementById('set-hard').checked;
-        saveState(); closeModals(); renderGrid();
-    }
-
-    function openReport() {
-        if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda.";
-        else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2);
-        document.getElementById('modal-report').style.display = 'flex';
-    }
-
-    function copyJSON() {
-        const txt = document.getElementById('json-output');
-        if(txt.value.includes("Nenhum dado")) return;
-        txt.select(); document.execCommand('copy');
-        customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.');
-    }
+    function openSettings() { document.getElementById('set-name').value = state.student; document.getElementById('set-crit').value = state.settings.crit; document.getElementById('set-opts').value = state.settings.opts; document.getElementById('set-hard').checked = state.settings.hard; document.getElementById('modal-settings').style.display = 'flex'; }
+    function saveSettings() { state.student = document.getElementById('set-name').value.toUpperCase(); state.settings.crit = parseInt(document.getElementById('set-crit').value); state.settings.opts = parseInt(document.getElementById('set-opts').value); state.settings.hard = document.getElementById('set-hard').checked; saveState(); closeModals(); renderGrid(); }
+    function openReport() { if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda."; else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2); document.getElementById('modal-report').style.display = 'flex'; }
+    function copyJSON() { const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; txt.select(); document.execCommand('copy'); customAlert('Copiado!', 'Os dados foram copiados para a área de transferência.'); }
 
     // ================= MOTOR DO JOGO =================
     function startGame(phaseId) {
@@ -289,7 +282,8 @@
         else if(phaseId === 'ENCONTROS') pool = [...encounters];
         else pool = generateSyllables(phaseId, state.settings.hard);
 
-        pool.sort(() => Math.random() - 0.5);
+        // Fisher-Yates no pool principal
+        shuffleArray(pool);
         const targetCount = Math.min(5, pool.length);
         const targets = pool.slice(0, targetCount);
 
@@ -298,6 +292,7 @@
     }
 
     function abortGame() {
+        if(sttRecognition && isListening) toggleMicrophone();
         document.getElementById('screen-game').classList.remove('active');
         document.getElementById('screen-home').classList.add('active');
     }
@@ -334,21 +329,16 @@
             badge.innerText = "Ciclo 3: Sua vez de falar!";
             modelArea.innerHTML = `<div class="model-card">${target}</div>`;
             
-            // STT Layout Ergonômico (Botões do Professor ao lado do Mic)
             compArea.innerHTML = `
                 <div class="stt-area">
-                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Segure o botão central para gravar</p>
+                    <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
+                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Toque no microfone e fale.</p>
                     <div class="stt-controls">
                         <button class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
                             <span class="material-icons">close</span> Erro
                         </button>
                         
-                        <button class="stt-btn" id="mic-btn" 
-                            onmousedown="startPushToTalk(event)" 
-                            onmouseup="stopPushToTalk(event)" 
-                            onmouseleave="stopPushToTalk(event)" 
-                            ontouchstart="startPushToTalk(event)" 
-                            ontouchend="stopPushToTalk(event)">
+                        <button class="stt-btn" id="mic-btn" onclick="toggleMicrophone()">
                             <span class="material-icons">mic</span>
                         </button>
                         
@@ -364,12 +354,20 @@
     function generateComparisons(target) {
         let opts = [target];
         let available = session.pool.filter(x => x !== target);
-        available.sort(() => Math.random() - 0.5);
-        while(opts.length < state.settings.opts && available.length > 0) opts.push(available.pop());
-        return opts.sort(() => Math.random() - 0.5);
+        // Aplica o Fisher-Yates para puxar distratores aleatórios
+        shuffleArray(available);
+        
+        while(opts.length < state.settings.opts && available.length > 0) {
+            opts.push(available.pop());
+        }
+        
+        // Aplica o Fisher-Yates de novo para garantir posição randômica no grid final
+        return shuffleArray(opts);
     }
 
     function handleAnswer(isCorrect, element) {
+        if(isListening) toggleMicrophone();
+
         if(isCorrect) {
             playSound('win');
             if(!session.isRepeating) {
@@ -390,80 +388,89 @@
         }
     }
 
-    // ================= PUSH TO TALK ROBUSTO =================
+    // ================= STT - EXPRESSÕES REGULARES (\b) =================
     let sttRecognition = null;
     let isListening = false;
 
-    function startPushToTalk(e) {
-        e.preventDefault();
-        if(isListening) return;
+    // Remove acentos para facilitar o Match (BÁ vira BA)
+    function removeAccents(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+    }
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const feedback = document.getElementById('mic-feedback');
+    function toggleMicrophone() {
         const btn = document.getElementById('mic-btn');
+        const feedback = document.getElementById('mic-feedback');
+        const ghostInput = document.getElementById('ghost-stt');
 
-        if(!SpeechRecognition) {
-            feedback.innerText = "API de Voz não suportada. Use os botões manuais.";
+        if(isListening) {
+            sttRecognition.stop();
+            isListening = false;
+            btn.classList.remove('listening');
             return;
         }
 
-        // Zera a instância para evitar bugs do Android Chrome
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!SpeechRecognition) {
+            feedback.innerText = "API de Voz indisponível. Use a validação do professor.";
+            return;
+        }
+
         sttRecognition = new SpeechRecognition();
         sttRecognition.lang = 'pt-BR';
-        sttRecognition.interimResults = false; // Mais seguro para PTT curto
+        sttRecognition.interimResults = true; 
         sttRecognition.maxAlternatives = 1;
+        ghostInput.value = ""; 
+        
+        const targetClean = removeAccents(session.trials[session.currentTrialIdx]);
+        
+        // Cria a Expressão Regular exigindo Limite de Palavra (\b)
+        // Isso impede que "CASA" valide a vogal "A"
+        const regex = new RegExp('\\b' + targetClean + '\\b');
 
         sttRecognition.onresult = function(event) {
-            const word = event.results[0][0].transcript.toUpperCase().trim();
-            evaluateSpeech(word);
+            let transcript = Array.from(event.results).map(r => r[0].transcript).join('');
+            
+            ghostInput.value = transcript;
+            let currentSpeech = removeAccents(transcript);
+            
+            feedback.innerText = `Ouvindo: "${transcript}"`;
+
+            // Validação com Regex
+            if(regex.test(currentSpeech)) {
+                sttRecognition.stop();
+                isListening = false;
+                btn.classList.remove('listening');
+                feedback.innerText = "✅ Detectado!";
+                setTimeout(() => handleAnswer(true, null), 400);
+            }
         };
 
         sttRecognition.onerror = function(event) {
             isListening = false;
             btn.classList.remove('listening');
-            if (event.error === 'not-allowed') feedback.innerText = "⛔ Microfone bloqueado pelo navegador.";
-            else if (event.error === 'no-speech') feedback.innerText = "🔇 Nenhum som detectado.";
-            else feedback.innerText = `Erro: ${event.error}`;
+            if (event.error === 'not-allowed') feedback.innerText = "⛔ Microfone bloqueado.";
+            else if (event.error === 'no-speech') feedback.innerText = "🔇 Som não detectado. Tente de novo.";
+            else feedback.innerText = `Erro técnico (${event.error}).`;
         };
 
         sttRecognition.onend = function() {
+            if(!isListening) return; 
             isListening = false;
             btn.classList.remove('listening');
+            
+            let finalSpeech = removeAccents(ghostInput.value);
+            // Verifica o erro também com Regex
+            if(finalSpeech && !regex.test(finalSpeech)) {
+                session.attemptsOnCurrent++;
+                feedback.innerText = `Você disse: "${ghostInput.value}" ✖`;
+                setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = "Toque no microfone e fale."; }, 2000);
+            }
         };
 
         isListening = true;
         btn.classList.add('listening');
-        feedback.innerText = "Gravando... Solte para avaliar.";
-        
+        feedback.innerText = "Gravando... Fale a sílaba.";
         try { sttRecognition.start(); } catch(err) {} 
-    }
-
-    function stopPushToTalk(e) {
-        if(e) e.preventDefault();
-        if(!isListening) return;
-        
-        document.getElementById('mic-feedback').innerText = "Avaliando...";
-        if(sttRecognition) sttRecognition.stop(); // Dispara o onresult final
-    }
-
-    function evaluateSpeech(word) {
-        const target = session.trials[session.currentTrialIdx].toUpperCase();
-        const feedback = document.getElementById('mic-feedback');
-        
-        if(!word) {
-            feedback.innerText = "🔇 Não compreendido. Tente novamente.";
-            return;
-        }
-
-        feedback.innerText = `Você disse: "${word}"`;
-        
-        if(word.includes(target) || target.includes(word) || word.replace(/[ÁÀÃÂ]/g,'A').replace(/[ÉÈÊ]/g,'E').replace(/[ÍÌÎ]/g,'I').replace(/[ÓÒÕÔ]/g,'O').replace(/[ÚÙÛ]/g,'U') === target.replace(/[ÁÀÃÂ]/g,'A').replace(/[ÉÈÊ]/g,'E').replace(/[ÍÌÎ]/g,'I').replace(/[ÓÒÕÔ]/g,'O').replace(/[ÚÙÛ]/g,'U')) {
-            setTimeout(() => handleAnswer(true, null), 800);
-        } else {
-            session.attemptsOnCurrent++;
-            feedback.innerText += " ✖ Tente de novo!";
-            setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = "Segure o botão central para gravar"; }, 2000);
-        }
     }
 
     function forceAnswer(isCorrect) {
@@ -474,7 +481,7 @@
         }
     }
 
-    // ================= PROGRESSÃO E FINALIZAÇÃO =================
+    // ================= PROGRESSÃO =================
     function finishCycle() {
         session.currentTrialIdx = 0;
         session.currentCycle++;
