@@ -193,7 +193,7 @@
     <div class="modal-content" style="max-width: 350px;" id="auth-content">
         <h2 class="modal-title" style="color:var(--danger);"><span class="material-icons" style="vertical-align:middle;">lock</span> Acesso Restrito</h2>
         <p class="modal-desc">Digite o PIN do Professor para continuar.</p>
-        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 1.8rem; letter-spacing: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 5px; outline:none; transition: 0.2s;" onkeydown="if(event.key==='Enter') confirmAuth()">
+        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 1.8rem; letter-spacing: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 5px; outline:none; transition: 0.2s;" onkeypress="if(event.key==='Enter') confirmAuth()">
         <div id="auth-error" style="color:var(--danger); font-size:0.85rem; font-weight:bold; height:20px; margin-bottom:15px;"></div>
         <div style="display:flex; gap:10px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAuth()">Cancelar</button>
@@ -455,7 +455,6 @@
         if (state.session.endTime && Date.now() >= state.session.endTime) {
             state.session.expired = true;
             saveState();
-            // Apenas liga a flag. Deixa a criança terminar o ciclo.
         }
     }
 
@@ -487,7 +486,6 @@
             btn.onclick = openGrid;
         }
 
-        // Ícone de Relógio no Cabeçalho
         const clock = document.getElementById('header-timer-icon');
         if (state.settings.timer.enabled && !state.session.expired) {
             clock.style.display = 'inline-block';
@@ -600,6 +598,10 @@
     }
 
     function openGrid() {
+        if (state.settings.timer.enabled && state.session.expired) {
+            updateLobbyButton(); // Apenas reseta o botão para o estado seguro caso tenha tentado forçar
+            return;
+        }
         hideAllScreens();
         document.getElementById('screen-home').classList.add('active');
         renderGrid();
@@ -701,7 +703,6 @@
         const isEnabled = document.getElementById('set-sec-enable').checked;
         document.getElementById('pin-group').style.display = isEnabled ? 'block' : 'none';
         
-        // Se desligar a segurança, o timer não pode rodar
         if (!isEnabled && document.getElementById('set-timer-enable').checked) {
             document.getElementById('set-timer-enable').checked = false;
             toggleTimerField();
@@ -712,7 +713,6 @@
         const isEnabled = document.getElementById('set-timer-enable').checked;
         document.getElementById('timer-group').style.display = isEnabled ? 'block' : 'none';
         
-        // Timer exige Segurança
         if (isEnabled && !document.getElementById('set-sec-enable').checked) {
             document.getElementById('set-sec-enable').checked = true;
             togglePasswordField();
@@ -926,7 +926,7 @@
 
     function abortGame() {
         if(sttRecognition && isListening) toggleMicrophone();
-        goSplash(); // Volta pro início principal
+        goSplash(); 
     }
 
     function getSpokenPrompt(target) {
@@ -1137,7 +1137,6 @@
         const actions = document.getElementById('result-actions');
         actions.innerHTML = '';
 
-        // Se o timer de sessão estourou
         if (state.settings.timer.enabled && state.session.expired) {
             triggerTimeUp();
             return;
@@ -1213,6 +1212,42 @@
             showResultModal(true, accuracy, nextPhase);
         } else {
             showResultModal(false, accuracy, null);
+        }
+    }
+
+    // ================= INTERCEPÇÃO DO BOTÃO VOLTAR NATIVO (KODULAR) =================
+    function handleAndroidBack() {
+        let modalAberto = false;
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            if(m.style.display === 'flex') {
+                modalAberto = true;
+            }
+        });
+
+        // 1. Se tem modal aberto, fecha tudo
+        if(modalAberto) {
+            closeModals();
+            return;
+        }
+
+        // 2. Se estiver jogando, aborta e vai pro lobby
+        if(document.getElementById('screen-game').classList.contains('active')) {
+            abortGame();
+            return;
+        }
+
+        // 3. Se estiver na Grade ou Dashboard, volta pro lobby
+        if(document.getElementById('screen-dashboard').classList.contains('active') ||
+           document.getElementById('screen-home').classList.contains('active')) {
+            goSplash();
+            return;
+        }
+
+        // 4. Se estiver no Lobby (Splash), pede pro Kodular fechar o APK
+        if(document.getElementById('screen-splash').classList.contains('active')) {
+            if (window.AppInventor) {
+                window.AppInventor.setWebViewString("FECHAR");
+            }
         }
     }
 
