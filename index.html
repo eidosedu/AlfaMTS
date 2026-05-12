@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>AlfaMTS - Alfabetização</title>
+    <title>AlfaMTS - Eidos</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         /* TEMAS */
@@ -416,28 +416,57 @@
     let timerInterval = null;
 
     // ================= ÁUDIO E TEMAS =================
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioCtx = null;
+    
     function playSound(type) {
-        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        if(type === 'win') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        } else if (type === 'click') {
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        try {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain();
+            osc.connect(gain); 
+            gain.connect(audioCtx.destination);
+            
+            if(type === 'win') {
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); 
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'click') {
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); 
+                osc.stop(audioCtx.currentTime + 0.1);
+            }
+        } catch (e) {
+            console.warn("Áudio nativo bloqueado pelo WebView. O app continuará sem sons de clique.", e);
         }
     }
 
     function speakTTS(text) {
-        if(!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text.toLowerCase());
-        utter.lang = 'pt-BR'; utter.rate = 0.8;
-        window.speechSynthesis.speak(utter);
+        if (window.AppInventor) {
+            // Usa a ponte nativa se estiver dentro do Kodular
+            window.AppInventor.setWebViewString("FALAR:" + text);
+        } else {
+            // Fallback para navegador
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text.toLowerCase());
+            utter.lang = 'pt-BR'; utter.rate = 0.8;
+            window.speechSynthesis.speak(utter);
+        }
     }
 
     function applyTheme() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); }
@@ -599,7 +628,7 @@
 
     function openGrid() {
         if (state.settings.timer.enabled && state.session.expired) {
-            updateLobbyButton(); // Apenas reseta o botão para o estado seguro caso tenha tentado forçar
+            updateLobbyButton(); 
             return;
         }
         hideAllScreens();
@@ -925,7 +954,7 @@
     }
 
     function abortGame() {
-        if(sttRecognition && isListening) toggleMicrophone();
+        if(isListening) toggleMicrophone(); // Desliga a interface visual se abortar
         goSplash(); 
     }
 
@@ -1053,8 +1082,30 @@
         const feedback = document.getElementById('mic-feedback');
         const ghostInput = document.getElementById('ghost-stt');
 
-        if(isListening) { sttRecognition.stop(); isListening = false; btn.classList.remove('listening'); return; }
+        if(isListening) { 
+            isListening = false; 
+            btn.classList.remove('listening'); 
+            
+            if (window.AppInventor) {
+                // Kodular ignora, pois ele gerencia o encerramento do popup sozinho
+                return;
+            } else {
+                if(sttRecognition) sttRecognition.stop(); 
+                return; 
+            }
+        }
 
+        // Ponte JS para o Kodular
+        if (window.AppInventor) {
+            isListening = true; 
+            btn.classList.add('listening'); 
+            feedback.innerText = "Aguardando Kodular...";
+            ghostInput.value = "";
+            window.AppInventor.setWebViewString("Ouvir_Mic");
+            return; 
+        }
+
+        // Fallback para navegador
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!SpeechRecognition) { feedback.innerText = "API de Voz indisponível. Use a validação do professor."; return; }
 
@@ -1101,6 +1152,51 @@
         isListening = true; btn.classList.add('listening'); feedback.innerText = "Gravando...";
         try { sttRecognition.start(); } catch(err) {} 
     }
+
+    // ================= PONTE NATIVA (KODULAR) =================
+    // Essa função será chamada exclusivamente pelos blocos lógicos do aplicativo para injetar a voz
+    window.receberTextoDoKodular = function(transcript) {
+        if(!isListening) return;
+        isListening = false;
+        
+        const btn = document.getElementById('mic-btn');
+        if(btn) btn.classList.remove('listening');
+        
+        const feedback = document.getElementById('mic-feedback');
+        const ghostInput = document.getElementById('ghost-stt');
+        
+        if (!transcript || transcript.trim() === "") {
+            feedback.innerText = "Som não detectado ou cancelado.";
+            setTimeout(() => { feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000);
+            return;
+        }
+
+        ghostInput.value = transcript;
+        let currentSpeech = removeAccents(transcript);
+        feedback.innerText = `Ouvindo: "${transcript}"`;
+
+        const targetClean = removeAccents(session.trials[session.currentTrialIdx]);
+        let acceptedTerms = [targetClean];
+        if (phoneticsMap[targetClean]) acceptedTerms = acceptedTerms.concat(phoneticsMap[targetClean]);
+
+        const regexStr = '(^|\\s)(' + acceptedTerms.join('|') + ')($|\\s)';
+        const regex = new RegExp(regexStr);
+
+        if(regex.test(currentSpeech)) {
+            feedback.innerText = "✅ Detectado!";
+            setTimeout(() => handleAnswer(true, null), 400);
+        } else {
+            session.attemptsOnCurrent++;
+            if(session.attemptsOnCurrent >= 2) {
+                feedback.innerText = `Você disse: "${transcript}". Seguindo...`;
+                if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
+                advanceTrial();
+            } else {
+                feedback.innerText = `Você disse: "${transcript}" ✖`;
+                setTimeout(() => { if(feedback.innerText.includes("✖")) feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000);
+            }
+        }
+    };
 
     function forceAnswer(isCorrect) {
         if(isCorrect) {
@@ -1216,40 +1312,35 @@
     }
 
     // ================= INTERCEPÇÃO DO BOTÃO VOLTAR NATIVO (KODULAR) =================
-    function handleAndroidBack() {
+    // Chame isso via JavaScript no Kodular: webViewer.RunJavaScript("handleAndroidBack();")
+    window.handleAndroidBack = function() {
         let modalAberto = false;
         document.querySelectorAll('.modal-overlay').forEach(m => {
-            if(m.style.display === 'flex') {
-                modalAberto = true;
-            }
+            if(m.style.display === 'flex') modalAberto = true;
         });
 
-        // 1. Se tem modal aberto, fecha tudo
-        if(modalAberto) {
-            closeModals();
-            return;
+        if(modalAberto) { 
+            closeModals(); 
+            return; 
         }
 
-        // 2. Se estiver jogando, aborta e vai pro lobby
-        if(document.getElementById('screen-game').classList.contains('active')) {
-            abortGame();
-            return;
+        if(document.getElementById('screen-game').classList.contains('active')) { 
+            abortGame(); 
+            return; 
         }
 
-        // 3. Se estiver na Grade ou Dashboard, volta pro lobby
         if(document.getElementById('screen-dashboard').classList.contains('active') ||
-           document.getElementById('screen-home').classList.contains('active')) {
-            goSplash();
-            return;
+           document.getElementById('screen-home').classList.contains('active')) { 
+            goSplash(); 
+            return; 
         }
 
-        // 4. Se estiver no Lobby (Splash), pede pro Kodular fechar o APK
         if(document.getElementById('screen-splash').classList.contains('active')) {
             if (window.AppInventor) {
-                window.AppInventor.setWebViewString("FECHAR");
+                window.AppInventor.setWebViewString("FECHAR_APP");
             }
         }
-    }
+    };
 
     window.onload = init;
 </script>
