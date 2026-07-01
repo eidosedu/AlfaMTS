@@ -1,0 +1,19 @@
+{
+  "name": "AlfaMTS - Eidos",
+  "short_name": "AlfaMTS",
+  "description": "Ensino por Equivalência de Estímulos e Telemetria ABA",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "background_color": "#F5F7FA",
+  "theme_color": "#00BCD4",
+  "orientation": "landscape",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300BCD4'><path d='M13 3v6h6V3h-6zm6 12h-6v6h6v-6zM11 3H5v6h6V3zm0 12H5v6h6v-6z'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
