@@ -4,11 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
     <title>AlfaMTS - Eidos</title>
+    
+    <!-- PWA & Tema -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00BCD4">
+    
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Bibliotecas para Geração de PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Registro do Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registrado com sucesso.'))
+            .catch(err => console.log('Falha ao registrar Service Worker:', err));
+        });
+      }
+    </script>
 
     <style>
         /* TEMAS */
@@ -1572,7 +1588,7 @@
 
         if(document.getElementById('screen-splash').classList.contains('active')) {
             if (window.AppInventor) {
-                window.AppInventor.setWebViewString("FECHAR_APP");
+                window.AppInventor.setWebViewString("VOLTAR_MENU");
             }
         }
     };
