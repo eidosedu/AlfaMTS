@@ -134,8 +134,8 @@
         .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
-        .input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s;}
-        .input-group input:focus { border-color: var(--primary); }
+        .input-group input[type="text"], .input-group input[type="number"], .input-group input[type="password"], .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s;}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); }
         
         .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: auto; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-action:active { transform: scale(0.98); }
@@ -318,6 +318,26 @@
             <input type="number" id="set-latency" min="0" step="100" value="500">
         </div>
 
+        <div class="section-title"><span class="material-icons">layers</span> Etapas da Tarefa</div>
+        <div class="input-group" style="display: flex; flex-direction: column; gap: 10px;">
+            <label style="display: flex; align-items: center; gap: 10px; color: var(--text);">
+                <input type="checkbox" id="set-stg-c1" style="width:20px; height:20px;"> 1. Identidade Visual (MTS)
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; color: var(--text);">
+                <input type="checkbox" id="set-stg-c2" style="width:20px; height:20px;"> 2. Receptivo (Áudio)
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; color: var(--text);">
+                <input type="checkbox" id="set-stg-c3" style="width:20px; height:20px;"> 3. Expressivo (Fala)
+            </label>
+        </div>
+
+        <div class="section-title"><span class="material-icons">mic</span> Treino Expressivo (Etapa 3)</div>
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="set-use-mic" style="width:20px; height:20px;">
+            <label style="margin:0; color: var(--text);">Ativar Microfone (Reconhecimento de Voz)</label>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-light); margin-top:-10px; margin-bottom:15px;">Se desativado, a Etapa 3 dependerá exclusivamente da mediação do professor (botões manuais).</p>
+
         <div class="section-title"><span class="material-icons">timer</span> Controle de Tempo</div>
         <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
             <input type="checkbox" id="set-timer-enable" style="width:20px; height:20px;" onchange="toggleTimerField()">
@@ -465,7 +485,7 @@
     // ================= ESTADO E SETUP INICIAL =================
     let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
         setupDone: false, student: '', unlocked: ['PRE1'], 
-        settings: { crit: 100, opts: 4, hard: false, theme: 'cyan', latency: 500, security: { enabled: false, pin: '' }, timer: { enabled: false, min: 30 } }, 
+        settings: { crit: 100, opts: 4, hard: false, theme: 'cyan', latency: 500, security: { enabled: false, pin: '' }, timer: { enabled: false, min: 30 }, stages: { c1: true, c2: true, c3: true }, useMic: true }, 
         customWords: '', notes: [], log: [], session: { expired: false, endTime: null }
     };
 
@@ -474,11 +494,15 @@
     if(state.settings.latency === undefined) state.settings.latency = 500;
     if(!state.session) state.session = { expired: false, endTime: null };
     if(!Array.isArray(state.notes)) state.notes = [];
+    
+    // Fallbacks para perfis já existentes
+    if(!state.settings.stages) state.settings.stages = { c1: true, c2: true, c3: true };
+    if(state.settings.useMic === undefined) state.settings.useMic = true;
 
     if(state.setupDone === undefined) state.setupDone = state.student !== ''; 
     if(!state.unlocked.includes('PRE1')) state.unlocked.push('PRE1');
 
-    let session = { phase: '', pool: [], trials: [], currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
+    let session = { phase: '', pool: [], trials: [], activeCycles: [], currentCycleIdx: 0, currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
     let timerInterval = null;
     
     // FLAG PARA CONTROLE DE IMPULSIVIDADE
@@ -942,6 +966,12 @@
         document.getElementById('set-theme').value = state.settings.theme;
         document.getElementById('set-latency').value = state.settings.latency;
         
+        // Etapas
+        document.getElementById('set-stg-c1').checked = state.settings.stages.c1;
+        document.getElementById('set-stg-c2').checked = state.settings.stages.c2;
+        document.getElementById('set-stg-c3').checked = state.settings.stages.c3;
+        document.getElementById('set-use-mic').checked = state.settings.useMic;
+
         document.getElementById('set-sec-enable').checked = state.settings.security.enabled;
         document.getElementById('set-sec-pin').value = state.settings.security.pin;
         togglePasswordField();
@@ -967,6 +997,15 @@
             customAlert("Atenção", "Para usar o Timer da Sessão, você DEVE ativar a Segurança com PIN.");
             return;
         }
+        
+        let c1_active = document.getElementById('set-stg-c1').checked;
+        let c2_active = document.getElementById('set-stg-c2').checked;
+        let c3_active = document.getElementById('set-stg-c3').checked;
+
+        if(!c1_active && !c2_active && !c3_active) {
+            c1_active = true;
+            customAlert("Atenção", "Pelo menos uma etapa da tarefa deve estar ativada. A Etapa 1 foi reativada automaticamente.");
+        }
 
         state.student = document.getElementById('set-name').value.toUpperCase() || "NÃO INFORMADO"; 
         state.settings.crit = parseInt(document.getElementById('set-crit').value); 
@@ -974,6 +1013,8 @@
         state.settings.hard = document.getElementById('set-hard').checked; 
         state.settings.theme = document.getElementById('set-theme').value;
         state.settings.latency = parseInt(document.getElementById('set-latency').value) || 500;
+        state.settings.stages = { c1: c1_active, c2: c2_active, c3: c3_active };
+        state.settings.useMic = document.getElementById('set-use-mic').checked;
         state.settings.security = { enabled: isSecEnabled, pin: pinValue };
         state.settings.timer = { enabled: isTimerEnabled, min: parseInt(document.getElementById('set-timer-min').value) };
         
@@ -1076,8 +1117,14 @@
         let pool = wordsVal.split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
         pool = [...new Set(pool)]; shuffleArray(pool);
         const targets = pool;
+        
+        let activeCycles = [];
+        if (state.settings.stages.c1) activeCycles.push(1);
+        if (state.settings.stages.c2) activeCycles.push(2);
+        if (state.settings.stages.c3) activeCycles.push(3);
+        if (activeCycles.length === 0) activeCycles = [1];
 
-        session = { phase: 'PALAVRAS', pool: pool, trials: targets, currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: targets.length }, c2: { indep:0, dica:0, erro:0, total: targets.length }, c3: { indep:0, dica:0, erro:0, total: targets.length } } };
+        session = { phase: 'PALAVRAS', pool: pool, trials: targets, activeCycles: activeCycles, currentCycleIdx: 0, currentCycle: activeCycles[0], isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: activeCycles.includes(1) ? targets.length : 0 }, c2: { indep:0, dica:0, erro:0, total: activeCycles.includes(2) ? targets.length : 0 }, c3: { indep:0, dica:0, erro:0, total: activeCycles.includes(3) ? targets.length : 0 } } };
         
         openGame();
         renderTrial();
@@ -1142,15 +1189,28 @@
             pool = generatePseudoWords(); targetCount = 20; isOnlyCycle3 = true; targets = pool;
         }
         else { pool = generateSyllables(phaseId, state.settings.hard); shuffleArray(pool); targets = pool.slice(0, targetCount); }
+        
+        let activeCycles = [];
+        if (isOnlyCycle3) {
+            activeCycles = state.settings.stages.c3 ? [3] : [3]; // Força ciclo 3 neste módulo
+        } else {
+            if (state.settings.stages.c1) activeCycles.push(1);
+            if (state.settings.stages.c2) activeCycles.push(2);
+            if (state.settings.stages.c3) activeCycles.push(3);
+            if (activeCycles.length === 0) activeCycles = [1];
+        }
 
         session = { 
             phase: phaseId, pool: pool, trials: targets, 
-            currentCycle: isOnlyCycle3 ? 3 : 1, isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, 
+            activeCycles: activeCycles,
+            currentCycleIdx: 0,
+            currentCycle: activeCycles[0],
+            isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, 
             currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, 
             stats: { 
-                c1: { indep:0, dica:0, erro:0, total: isOnlyCycle3 ? 0 : targetCount }, 
-                c2: { indep:0, dica:0, erro:0, total: isOnlyCycle3 ? 0 : targetCount }, 
-                c3: { indep:0, dica:0, erro:0, total: targetCount } 
+                c1: { indep:0, dica:0, erro:0, total: activeCycles.includes(1) ? targetCount : 0 }, 
+                c2: { indep:0, dica:0, erro:0, total: activeCycles.includes(2) ? targetCount : 0 }, 
+                c3: { indep:0, dica:0, erro:0, total: activeCycles.includes(3) ? targetCount : 0 } 
             } 
         };
         
@@ -1233,31 +1293,47 @@
             badge.innerText = session.isPreReq ? "Ciclo 3: Classificação Oral" : (session.isOnlyCycle3 ? "Leitura Direta" : "Ciclo 3: Sua vez de ler!");
             modelArea.innerHTML = `<div class="model-card">${target}</div>`;
             
-            compArea.innerHTML = `
-                <div class="stt-area">
-                    <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
-                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Fale: '${getSpokenPrompt(target)}'</p>
-                    <div class="stt-controls">
-                        <button type="button" class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
-                            <span class="material-icons">close</span> Erro
-                        </button>
-                        
-                        <!-- BOTÃO DE MIC PUSH TO TALK -->
-                        <button type="button" class="stt-btn" id="mic-btn" 
-                            onmousedown="startMicrophone()" 
-                            onmouseup="stopMicrophone()" 
-                            onmouseleave="stopMicrophone()"
-                            ontouchstart="event.preventDefault(); startMicrophone()" 
-                            ontouchend="event.preventDefault(); stopMicrophone()">
-                            <span class="material-icons">mic</span>
-                        </button>
+            if (state.settings.useMic) {
+                compArea.innerHTML = `
+                    <div class="stt-area">
+                        <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
+                        <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Fale: '${getSpokenPrompt(target)}'</p>
+                        <div class="stt-controls">
+                            <button type="button" class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
+                                <span class="material-icons">close</span> Erro
+                            </button>
+                            
+                            <!-- BOTÃO DE MIC PUSH TO TALK -->
+                            <button type="button" class="stt-btn" id="mic-btn" 
+                                onmousedown="startMicrophone()" 
+                                onmouseup="stopMicrophone()" 
+                                onmouseleave="stopMicrophone()"
+                                ontouchstart="event.preventDefault(); startMicrophone()" 
+                                ontouchend="event.preventDefault(); stopMicrophone()">
+                                <span class="material-icons">mic</span>
+                            </button>
 
-                        <button type="button" class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">
-                            <span class="material-icons">check</span> Acerto
-                        </button>
+                            <button type="button" class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">
+                                <span class="material-icons">check</span> Acerto
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                compArea.innerHTML = `
+                    <div class="stt-area">
+                        <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:15px; font-size:1.1rem;">Mediação: Avalie a leitura de '${getSpokenPrompt(target)}'</p>
+                        <div class="stt-controls" style="gap: 40px; justify-content: center;">
+                            <button type="button" class="btn-override" style="background:var(--danger); padding: 15px 35px; font-size: 1.2rem;" onclick="forceAnswer(false)">
+                                <span class="material-icons" style="font-size:1.8rem;">close</span> Errou
+                            </button>
+                            <button type="button" class="btn-override" style="background:var(--success); padding: 15px 35px; font-size: 1.2rem;" onclick="forceAnswer(true)">
+                                <span class="material-icons" style="font-size:1.8rem;">check</span> Acertou
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
         }
         
         setTimeout(() => {
@@ -1337,7 +1413,8 @@
 
         rec.onerror = function(event) {
             isListening = false;
-            document.getElementById('mic-btn').classList.remove('listening');
+            let btn = document.getElementById('mic-btn');
+            if (btn) btn.classList.remove('listening');
             let fb = document.getElementById('mic-feedback');
             fb.innerText = event.error === 'not-allowed' ? "Permissão negada." : (event.error === 'no-speech' ? "Som não detectado." : `Erro (${event.error}).`);
         };
@@ -1350,7 +1427,7 @@
     }
 
     function startMicrophone() {
-        if (isListening) return;
+        if (isListening || !state.settings.useMic) return;
         isListening = true;
         
         const btn = document.getElementById('mic-btn');
@@ -1469,13 +1546,12 @@
     // ================= PROGRESSÃO E MODAIS =================
     function finishCycle() {
         session.currentTrialIdx = 0;
-        session.currentCycle++;
+        session.currentCycleIdx++;
         
-        let maxCycles = 3;
-
-        if((session.isOnlyCycle3 && session.currentCycle > 3) || (!session.isOnlyCycle3 && session.currentCycle > maxCycles)) {
+        if(session.currentCycleIdx >= session.activeCycles.length) {
             checkBlockMastery();
         } else {
+            session.currentCycle = session.activeCycles[session.currentCycleIdx];
             renderTrial();
         }
     }
@@ -1514,20 +1590,18 @@
     
     function repeatLesson() {
         session.isRepeating = true; 
-        session.currentCycle = session.isOnlyCycle3 ? 3 : 1; 
+        session.currentCycleIdx = 0;
+        session.currentCycle = session.activeCycles[0]; 
         renderTrial();
     }
 
     function checkBlockMastery() {
         let totalTrials = 0; let totalIndep = 0;
 
-        if (session.isOnlyCycle3) {
-            totalTrials = session.stats.c3.total; totalIndep = session.stats.c3.indep;
-        } else {
-            totalTrials = session.stats.c1.total + session.stats.c2.total + session.stats.c3.total; 
-            totalIndep = session.stats.c1.indep + session.stats.c2.indep + session.stats.c3.indep;
-        }
-
+        // O total será dinâmico baseado apenas nas etapas (activeCycles) que o usuário realizou
+        totalTrials = session.stats.c1.total + session.stats.c2.total + session.stats.c3.total; 
+        totalIndep = session.stats.c1.indep + session.stats.c2.indep + session.stats.c3.indep;
+        
         const accuracy = totalTrials > 0 ? (totalIndep / totalTrials) * 100 : 0;
 
         if(!session.isRepeating) {
