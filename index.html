@@ -7,7 +7,7 @@
     
     <!-- PWA & Tema -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#00BCD4">
+    <meta name="theme-color" content="#ffffff">
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
@@ -27,82 +27,115 @@
     </script>
 
     <style>
-        /* TEMAS */
+        /* TEMAS E CORES */
         :root {
             --primary: #00BCD4; --primary-dark: #0097A7; --primary-light: #B2EBF2;
-            --bg: #F5F7FA; --card: #FFFFFF; --text: #333333; --text-light: #777777;
-            --success: #4CAF50; --danger: #F44336; --warning: #FFC107;
+            --bg: #FFFFFF; /* Fundo limpo e branco */
+            --card: #FFFFFF; --text: #2C3E50; --text-light: #7F8C8D;
+            --success: #2ECC71; --danger: #E74C3C; --warning: #F1C40F;
         }
-        [data-theme="green"] { --primary: #4CAF50; --primary-dark: #388E3C; --primary-light: #C8E6C9; }
-        [data-theme="pink"] { --primary: #E91E63; --primary-dark: #C2185B; --primary-light: #F8BBD0; }
+        [data-theme="green"] { --primary: #27AE60; --primary-dark: #229954; --primary-light: #D5F5E3; }
+        [data-theme="pink"] { --primary: #E84393; --primary-dark: #B33939; --primary-light: #FD79A8; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { background: var(--bg); color: var(--text); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
 
-        /* HEADER */
-        header { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10; height: 60px; flex-shrink: 0; }
-        header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 800; cursor: pointer; transition: 0.2s;}
-        header h1:active { transform: scale(0.95); opacity: 0.8;}
-        .header-icons { display: flex; gap: 15px; align-items: center; }
-        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.4); }
-        .icon-btn.active-tab { background: white; color: var(--primary-dark); }
+        header { display: none; }
+
+        /* ÍCONE DE TIMER FLUTUANTE */
+        #header-timer-icon { position: absolute; top: 20px; right: 20px; color: var(--warning); background: #fff; padding: 12px; border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.08); z-index: 100; display: none; border: 1px solid #f1f2f6; }
 
         /* SCREENS */
-        .screen { display: none; flex: 1; flex-direction: column; padding: 15px 20px; overflow-y: auto; }
-        .screen.active { display: flex; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .screen { display: none; flex: 1; flex-direction: column; padding: 30px 40px; overflow-y: auto; }
+        .screen.active { display: flex; animation: fadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* TELA 0: SPLASH / LOBBY */
-        #screen-splash { align-items: center; justify-content: center; background: white; gap: 20px; }
-        .splash-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 30px; color: var(--primary-dark); }
+        #screen-splash { align-items: center; justify-content: center; background: #FAFAFC; }
+        .splash-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 50px; color: var(--primary-dark); }
         .splash-logo .material-icons { font-size: 6rem; color: var(--primary); }
-        .splash-logo h2 { font-size: 3rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .splash-logo h2 { font-size: 4rem; font-weight: 900; margin: 0; letter-spacing: -2px; color: #1e272e; }
         
-        .splash-buttons { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
-        .splash-btn { background: var(--primary); color: white; border: none; border-radius: 15px; padding: 20px; font-size: 1.2rem; font-weight: bold; display: flex; align-items: center; justify-content: flex-start; gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .splash-btn:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .splash-btn .material-icons { font-size: 2rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; }
+        .splash-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 900px; }
+        .splash-btn { 
+            background: #FFFFFF; color: var(--text); border: 2px solid #F1F2F6; border-radius: 32px; 
+            padding: 40px 20px; font-size: 1.4rem; font-weight: 900; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; gap: 20px; cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
+        }
+        .splash-btn:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-color: var(--primary-light); }
+        .splash-btn .icon-wrapper { 
+            background: var(--primary-light); color: var(--primary-dark); width: 90px; height: 90px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+        }
+        .splash-btn .icon-wrapper .material-icons { font-size: 4rem; }
 
         /* TELA 1: MURAL DE ATIVIDADES */
-        .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-bottom: 20px; }
-        .phase-card { background: var(--card); border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 5px solid var(--primary); cursor: pointer; transition: 0.2s; position: relative; }
-        .phase-card:active { transform: scale(0.95); }
-        .phase-card.locked { opacity: 0.5; filter: grayscale(1); border-bottom-color: #ccc; }
-        .phase-card.module-extra { border-color: var(--warning); background: #fffdf5; }
-        .phase-card.module-prereq { border-color: #9C27B0; background: #f3e5f5; }
-        .phase-card h2 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 5px; }
-        .phase-card.module-extra h2 { color: #F57F17; font-size: 1.4rem; }
-        .phase-card.module-prereq h2 { color: #7B1FA2; font-size: 1.4rem; }
-        .phase-card p { font-size: 0.75rem; color: var(--text-light); font-weight: bold; }
-        .status-icon { position: absolute; top: 10px; right: 10px; font-size: 1.2rem; color: var(--success); }
+        .home-header { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
+        .home-header h2 { color: #1e272e; font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: -1px;}
+        .home-header p { color: var(--text-light); font-size: 1.1rem; }
+        
+        .curriculum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; padding-bottom: 30px; }
+        .phase-card { 
+            background: var(--card); border-radius: 28px; padding: 35px 20px; text-align: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 2px solid #F1F2F6; position: relative; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px;
+            cursor: pointer; transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .phase-card:active { transform: scale(0.95); background: #fafbfc; border-color: var(--primary-light); }
+        .phase-card.locked { opacity: 0.5; filter: grayscale(1); background: #f8f9fa; cursor: not-allowed; }
+        .phase-card.module-extra { border-color: rgba(241, 196, 15, 0.3); background: #fffdf5; }
+        .phase-card.module-prereq { border-color: rgba(156, 39, 176, 0.2); background: #fdfafc; }
+        .phase-card h2 { font-size: 2.8rem; color: var(--primary-dark); margin-top: 5px; margin-bottom: 10px; font-weight: 900; }
+        .phase-card p { font-size: 1.1rem; color: var(--text-light); font-weight: bold; }
+        .status-icon { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--success); }
 
         /* TELA DE GESTÃO (DASHBOARD) */
-        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
-        .dash-header h2 { color: var(--primary-dark); font-size: 1.5rem; display:flex; align-items:center; gap:8px;}
-        .dash-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 30px; }
-        .log-card { background: var(--card); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 6px solid var(--primary); }
-        .log-card-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px; }
-        .log-card-top h3 { font-size: 1.2rem; color: var(--text); margin:0; }
-        .log-badge { padding: 4px 10px; border-radius: 20px; color: white; font-weight: bold; font-size: 0.85rem; }
-        .log-info { font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px; }
-        .log-cycles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
-        .cycle-stat-box { background: #f8f9fa; border-radius: 8px; padding: 8px; font-size: 0.8rem; text-align: center; border: 1px solid #eee; }
-        .cycle-stat-box strong { display: block; margin-bottom: 4px; color: var(--primary-dark); border-bottom: 1px solid #ddd; padding-bottom: 4px;}
+        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #F1F2F6; }
+        .dash-header h2 { color: #1e272e; font-size: 2rem; font-weight: 900; display:flex; align-items:center; gap:12px;}
+        .dash-list { display: flex; flex-direction: column; gap: 15px; padding-bottom: 40px; }
+        .log-card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.03); border-left: 8px solid var(--primary); border-top: 2px solid #F1F2F6; border-right: 2px solid #F1F2F6; border-bottom: 2px solid #F1F2F6;}
+        .log-card-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f2f6; padding-bottom: 10px; margin-bottom: 12px; }
+        .log-card-top h3 { font-size: 1.3rem; color: var(--text); margin:0; font-weight: 800;}
+        .log-badge { padding: 6px 14px; border-radius: 20px; color: white; font-weight: bold; font-size: 0.9rem; }
+        .log-info { font-size: 0.95rem; color: var(--text-light); margin-bottom: 12px; }
+        .log-cycles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+        .cycle-stat-box { background: #fafbfc; border-radius: 12px; padding: 12px; font-size: 0.85rem; text-align: center; border: 1px solid #f1f2f6; }
+        .cycle-stat-box strong { display: block; margin-bottom: 6px; color: var(--text); border-bottom: 1px solid #eee; padding-bottom: 6px;}
         .c-indep { color: var(--success); font-weight: bold;}
         .c-dica { color: #F57F17; font-weight: bold;}
         .c-erro { color: var(--danger); font-weight: bold;}
 
+        /* TELA DE CONFIGURAÇÕES (NOVA ABORDAGEM TABLET) */
+        .settings-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 2px solid #F1F2F6; margin-bottom: 30px; }
+        .settings-header h2 { font-size: 2.2rem; font-weight: 900; color: #1e272e; display: flex; align-items: center; gap: 15px; }
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding-bottom: 40px; }
+        .settings-card { background: white; border: 2px solid #F1F2F6; border-radius: 24px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        .settings-card-title { font-size: 1.3rem; font-weight: 900; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f2f6; padding-bottom: 10px;}
+
         /* MTS CONTAINER (JOGO) */
-        .mts-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 5px; gap: 10px; }
-        .cycle-badge { background: var(--primary-light); color: var(--primary-dark); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; flex-shrink: 0; }
-        .model-area { display: flex; align-items: center; justify-content: center; width: 100%; height: 110px; flex-shrink: 0; }
-        .model-card { background: white; border: 3px dashed var(--primary); border-radius: 20px; width: auto; min-width: 220px; padding: 0 20px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: bold; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.2s; }
-        .model-audio-btn { background: var(--primary); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.2); border: 4px solid transparent; transition: 0.2s; }
+        .mts-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px; gap: 20px; }
+        .cycle-badge { background: var(--primary-light); color: var(--primary-dark); padding: 8px 25px; border-radius: 30px; font-weight: 800; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .model-area { display: flex; align-items: center; justify-content: center; width: 100%; height: 160px; flex-shrink: 0; position: relative; }
+        
+        .model-card { 
+            background: white; border: 4px dashed var(--primary); border-radius: 32px; width: auto; 
+            min-width: 280px; padding: 0 40px; height: 140px; display: flex; align-items: center; 
+            justify-content: center; font-size: 5rem; font-weight: 900; color: var(--text); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; position: relative;
+        }
+        
+        .model-audio-btn { background: var(--primary); color: white; width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,188,212,0.3); border: 4px solid transparent; transition: 0.2s; }
         .model-audio-btn:active { transform: scale(0.9); }
-        .model-audio-btn .material-icons { font-size: 3.5rem; }
-        .comparisons-area { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 15px; width: 100%; padding: 10px 0; }
-        .comp-card { background: white; border: 2px solid #ccc; border-radius: 15px; flex: 1; min-width: 150px; max-width: 220px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; color: var(--text); cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 0 10px; text-align: center; }
+        .model-audio-btn .material-icons { font-size: 5rem; }
+        
+        .comparisons-area { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 25px; width: 100%; padding: 10px 0; }
+        .comp-card { 
+            background: white; border: 2px solid #e0e6ed; border-radius: 28px; flex: 1; min-width: 200px; 
+            max-width: 280px; height: 140px; display: flex; align-items: center; justify-content: center; 
+            font-size: 3.5rem; font-weight: 900; color: var(--text); cursor: pointer; transition: 0.2s; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04); padding: 0 20px; text-align: center; 
+        }
         .comp-card:active { transform: scale(0.95); background: var(--primary-light); border-color: var(--primary); }
         
         /* FEEDBACK VISUAL DE ACERTO/ERRO */
@@ -112,115 +145,237 @@
         .model-audio-btn.feedback-success { background-color: var(--success) !important; color: white !important; border-color: #1b5e20 !important; }
 
         /* STT AREA */
-        .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; position: relative; }
-        .stt-controls { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; }
-        .stt-btn { background: var(--warning); color: white; width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.1s ease; user-select: none; -webkit-user-select: none; touch-action: manipulation; -webkit-touch-callout: none; outline: none; -webkit-tap-highlight-color: transparent;}
-        .stt-btn .material-icons { font-size: 3rem; pointer-events: none; }
-        .stt-btn.listening { background: var(--danger); transform: scale(0.92); box-shadow: 0 0 0 10px rgba(244, 67, 54, 0.3); animation: pulseRecord 1s infinite; }
-        @keyframes pulseRecord { 0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(244, 67, 54, 0); } 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); } }
-        .btn-override { padding: 10px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
+        .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; position: relative; }
+        .stt-controls { display: flex; align-items: center; justify-content: center; gap: 50px; width: 100%; margin-top: 10px; }
+        .stt-btn { background: var(--warning); color: white; width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 15px 35px rgba(241,196,15,0.3); cursor: pointer; transition: all 0.1s ease; outline: none; }
+        .stt-btn .material-icons { font-size: 5rem; pointer-events: none; }
+        .stt-btn.listening { background: var(--danger); transform: scale(0.92); box-shadow: 0 0 0 15px rgba(244, 67, 54, 0.2); animation: pulseRecord 1s infinite; }
+        @keyframes pulseRecord { 0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.3); } 70% { box-shadow: 0 0 0 20px rgba(244, 67, 54, 0); } 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); } }
+        .btn-override { padding: 20px 40px; font-size: 1.3rem; font-weight: 900; border: none; border-radius: 50px; color: white; cursor: pointer; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); transition: 0.2s;}
         .btn-override:active { transform: scale(0.95); }
         .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
         /* MODAIS E BOTÕES GERAIS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; position: relative; transition: all 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(8px); }
+        .modal-content { background: white; padding: 40px; border-radius: 32px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; text-align: center; position: relative; transition: all 0.3s; box-shadow: 0 25px 60px rgba(0,0,0,0.1); border: 1px solid #f1f2f6;}
         
         @keyframes shakeError { 0% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-10px); } 80% { transform: translateX(10px); } 100% { transform: translateX(0); } }
         .shake { animation: shakeError 0.4s ease-in-out; border: 2px solid var(--danger) !important; }
 
-        .modal-title { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
-        .modal-desc { color: var(--text-light); font-size: 1rem; margin-bottom: 20px; }
-        .section-title { color: var(--primary-dark); font-size: 1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 20px 0 10px 0; text-align: left; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-weight: bold; color: var(--text-light); margin-bottom: 5px; font-size: 0.9rem; }
-        .input-group input[type="text"], .input-group input[type="number"], .input-group input[type="password"], .input-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s;}
-        .input-group input:focus, .input-group select:focus { border-color: var(--primary); }
+        .modal-title { color: #1e272e; font-size: 1.8rem; margin-bottom: 10px; font-weight: 900; }
+        .modal-desc { color: var(--text-light); font-size: 1.1rem; margin-bottom: 30px; }
         
-        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: auto; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}
-        .btn-action:active { transform: scale(0.98); }
-        .btn-action:disabled { background: #ccc; cursor: not-allowed; transform: none; }
-        .btn-cancel { background: #e0e0e0; color: #333; }
-        .btn-danger { background: var(--danger); }
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-group label { display: block; font-weight: bold; color: var(--text); margin-bottom: 10px; font-size: 1.1rem; }
+        .input-group input[type="text"], .input-group input[type="number"], .input-group input[type="password"], .input-group select { width: 100%; padding: 18px; border: 2px solid #e0e6ed; border-radius: 16px; font-size: 1.2rem; outline: none; transition: 0.2s; background: #fafbfc;}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); background: #fff;}
         
-        textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1rem; padding: 10px; resize: none; border: 2px solid #ddd; border-radius: 8px; text-align: left; margin-bottom: 10px; outline: none; transition: 0.2s;}
-        textarea:focus { border-color: var(--primary); }
-        textarea#json-output { font-family: monospace; font-size: 0.8rem; border-color: #eee; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 18px 25px; border-radius: 20px; width: auto; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s;}
+        .btn-action:active { transform: scale(0.96); }
+        .btn-action:disabled { background: #dcdde1; cursor: not-allowed; transform: none; }
+        .btn-cancel { background: #f1f2f6; color: var(--text-light); }
+        
+        textarea { width: 100%; height: 150px; font-family: 'Segoe UI', sans-serif; font-size: 1.2rem; padding: 18px; resize: none; border: 2px solid #e0e6ed; border-radius: 16px; text-align: left; margin-bottom: 15px; outline: none; transition: 0.2s; background:#fafbfc;}
+        textarea:focus { border-color: var(--primary); background:#fff;}
+        textarea#json-output { font-family: monospace; font-size: 1rem; }
 
         /* ESTILOS DO GERENCIADOR DE NOTAS */
-        .note-card { background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;}
-        .note-text { flex: 1; font-size: 0.95rem; color: var(--text); font-weight: bold; word-break: break-all; }
-        .note-actions { display: flex; gap: 5px; }
-        .note-btn { background: #e0e0e0; border: none; border-radius: 6px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-light); transition: 0.2s; }
+        .note-card { background: #fff; border: 2px solid #f1f2f6; border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; align-items: center; gap: 15px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
+        .note-text { flex: 1; font-size: 1.1rem; color: var(--text); font-weight: bold; word-break: break-all; }
+        .note-actions { display: flex; gap: 8px; }
+        .note-btn { background: #f1f2f6; border: none; border-radius: 12px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-light); transition: 0.2s; }
         .note-btn:active { transform: scale(0.9); }
         .note-btn.copy { color: var(--primary-dark); background: var(--primary-light); }
         .note-btn.del { color: var(--danger); background: #ffebee; }
 
         /* CHECKBOX GERENCIADOR DE MODULOS */
-        .mod-label { display:flex; align-items:center; justify-content:space-between; padding:12px; background:#f5f7fa; border-radius:8px; border:1px solid #ddd; cursor:pointer; }
-        .mod-label:active { background: #e9ecef; }
+        .mod-label { display:flex; align-items:center; justify-content:space-between; padding:20px; background:#fff; border-radius:16px; border:2px solid #f1f2f6; cursor:pointer; transition:0.2s;}
+        .mod-label:active { background: #fafbfc; }
+
+        /* SCROLLBAR CLEAN */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dcdde1; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 onclick="goSplash()"><span class="material-icons">extension</span> AlfaMTS</h1>
-    <div class="header-icons">
-        <span id="header-timer-icon" class="material-icons" style="display:none; color:var(--warning); font-size:1.4rem;" title="Timer Ativo">timer</span>
-    </div>
-</header>
+<div id="header-timer-icon" title="Timer Ativo">
+    <span class="material-icons" style="font-size: 2rem;">timer</span>
+</div>
 
 <div id="screen-splash" class="screen active">
     <div class="splash-logo">
         <span class="material-icons">extension</span>
         <h2>AlfaMTS</h2>
-        <p style="color:var(--text-light); font-weight:bold; margin-top:-5px;">Ensino por Equivalência de Estímulos</p>
+        <p style="color:var(--text-light); font-size:1.3rem; font-weight:bold; margin-top:-10px;">Ensino por Equivalência de Estímulos</p>
     </div>
     
     <div class="splash-buttons">
-        <button type="button" class="splash-btn" id="btn-start-game" onclick="openGrid()">
-            <span class="material-icons" style="background: rgba(0,0,0,0.15);">play_arrow</span> Iniciar o Game
-        </button>
-        <button type="button" class="splash-btn" style="background:var(--success);" onclick="requireAuth(openDashboard)">
-            <span class="material-icons" style="background: rgba(0,0,0,0.15);">analytics</span> Acessar Relatório
-        </button>
-        <button type="button" class="splash-btn" style="background:var(--primary-dark);" onclick="requireAuth(openSettings)">
-            <span class="material-icons" style="background: rgba(0,0,0,0.15);">settings</span> Configurar Intervenções
-        </button>
+        <div class="splash-btn" id="btn-start-game" onclick="openGrid()">
+            <div class="icon-wrapper"><span class="material-icons">play_arrow</span></div>
+            Iniciar Sessão
+        </div>
+        <div class="splash-btn" onclick="requireAuth(openDashboard)">
+            <div class="icon-wrapper" style="background:#e8f8f5; color:#1abc9c;"><span class="material-icons">analytics</span></div>
+            Desempenho
+        </div>
+        <div class="splash-btn" onclick="requireAuth(openSettings)">
+            <div class="icon-wrapper" style="background:#fdf2e9; color:#e67e22;"><span class="material-icons">settings</span></div>
+            Configurações
+        </div>
     </div>
 </div>
 
 <div id="screen-home" class="screen">
-    <div style="display:flex; justify-content:space-between; margin-bottom: 15px; align-items:center;">
-        <h2 style="color:var(--primary-dark); font-size:1.4rem; margin:0;">Trilha de Aprendizagem</h2>
-        <div style="display:flex; gap: 10px;">
-            <button type="button" class="btn-action" style="background:#e0e0e0; color:#333; margin:0; padding:6px 10px;" onclick="requireAuth(openModulesManager)">
-                <span class="material-icons">lock_open</span>
+    <div class="home-header">
+        <div>
+            <h2>Trilha de Aprendizagem</h2>
+            <p>Selecione o módulo para praticar.</p>
+        </div>
+        <div style="display:flex; gap: 15px;">
+            <!-- BOTÃO INTELIGENTE DE MODO REVISÃO -->
+            <button type="button" class="btn-action" id="btn-review-mode" style="background:#f1f2f6; color:var(--text-light);" onclick="toggleReviewMode()">
+                <span class="material-icons">visibility_off</span> Modo Revisão: OFF
             </button>
-            <button type="button" class="btn-action btn-cancel" style="padding:6px 12px; margin:0;" onclick="goSplash()">Voltar</button>
+            <button type="button" class="btn-action" style="background:#f1f2f6; color:var(--primary-dark);" onclick="requireAuth(openModulesManager)">
+                <span class="material-icons">lock_open</span> Gerenciar
+            </button>
+            <button type="button" class="btn-action btn-cancel" onclick="goSplash()">
+                <span class="material-icons">home</span> Início
+            </button>
         </div>
     </div>
     <div class="curriculum-grid" id="grid-phases"></div>
 </div>
 
+<div id="screen-settings" class="screen">
+    <div class="settings-header">
+        <h2><span class="material-icons" style="font-size: 2.5rem; color: var(--primary);">settings</span> Configurações Globais</h2>
+        <div style="display:flex; gap: 15px;">
+            <button type="button" class="btn-action btn-cancel" onclick="goSplash()">Cancelar</button>
+            <button type="button" class="btn-action" onclick="saveSettings()"><span class="material-icons">save</span> Salvar Alterações</button>
+        </div>
+    </div>
+    
+    <div class="settings-grid">
+        <!-- COLUNA 1 -->
+        <div>
+            <div class="settings-card">
+                <div class="settings-card-title"><span class="material-icons">psychology</span> Setup de Intervenção</div>
+                <div class="input-group">
+                    <label>Nome do Aluno:</label>
+                    <input type="text" id="set-name" placeholder="Ex: Miguel">
+                </div>
+                <div class="input-group">
+                    <label>Critério de Maestria (%):</label>
+                    <input type="number" id="set-crit" min="50" max="100" value="100">
+                </div>
+                <div class="input-group">
+                    <label>Quantidade de Alternativas:</label>
+                    <select id="set-opts">
+                        <option value="2">2 Alternativas (Fácil)</option>
+                        <option value="3">3 Alternativas (Médio)</option>
+                        <option value="4" selected>4 Alternativas (Padrão ABA)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: #fffdf5; padding: 20px; border-radius: 16px; border: 1px solid rgba(241,196,15,0.3);">
+                    <input type="checkbox" id="set-hard" style="width:28px; height:28px;">
+                    <label style="margin:0; font-size: 1.1rem; color: #d35400;">Ativar Modo Difícil (+CCV)</label>
+                </div>
+                <div class="input-group">
+                    <label>Latência de Bloqueio (ms): <br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-light);">Tempo de bloqueio anti-impulsividade.</span></label>
+                    <input type="number" id="set-latency" min="0" step="100" value="500">
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-title"><span class="material-icons">layers</span> Etapas da Tarefa</div>
+                <div class="input-group" style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;">
+                    <label style="display: flex; align-items: center; gap: 15px; font-size:1.2rem; cursor:pointer;">
+                        <input type="checkbox" id="set-stg-c1" style="width:28px; height:28px;"> 1. Identidade Visual (MTS)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 15px; font-size:1.2rem; cursor:pointer;">
+                        <input type="checkbox" id="set-stg-c2" style="width:28px; height:28px;"> 2. Receptivo (Áudio)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 15px; font-size:1.2rem; cursor:pointer;">
+                        <input type="checkbox" id="set-stg-c3" style="width:28px; height:28px;"> 3. Expressivo (Fala)
+                    </label>
+                </div>
+                
+                <div class="settings-card-title"><span class="material-icons">mic</span> Treino Expressivo</div>
+                <div class="input-group" style="display: flex; align-items: center; gap: 15px; margin-bottom: 5px;">
+                    <input type="checkbox" id="set-use-mic" style="width:28px; height:28px;">
+                    <label style="margin:0; font-size:1.1rem;">Microfone (Reconhecimento de Voz)</label>
+                </div>
+                <p style="font-size:0.95rem; color:var(--text-light); line-height: 1.4;">Se desativado, a Etapa 3 dependerá exclusivamente da mediação do professor (botões manuais na tela).</p>
+            </div>
+        </div>
+
+        <!-- COLUNA 2 -->
+        <div>
+            <div class="settings-card">
+                <div class="settings-card-title"><span class="material-icons">timer</span> Controle de Tempo</div>
+                <div class="input-group" style="display: flex; align-items: center; gap: 15px;">
+                    <input type="checkbox" id="set-timer-enable" style="width:28px; height:28px;" onchange="toggleTimerField()">
+                    <label style="margin:0; font-size:1.1rem;">Ativar Timer da Sessão (Exige PIN)</label>
+                </div>
+                <div class="input-group" id="timer-group" style="display:none; background:#fafbfc; padding: 15px; border-radius: 16px; border: 1px solid #e0e6ed;">
+                    <label>Minutos da Sessão:</label>
+                    <input type="number" id="set-timer-min" min="1" value="30" style="background:#fff;">
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-title"><span class="material-icons">admin_panel_settings</span> Segurança (Blindagem)</div>
+                <div class="input-group" style="display: flex; align-items: center; gap: 15px;">
+                    <input type="checkbox" id="set-sec-enable" style="width:28px; height:28px;" onchange="togglePasswordField()">
+                    <label style="margin:0; font-size:1.1rem;">Exigir Senha Numérica (PIN)</label>
+                </div>
+                <div class="input-group" id="pin-group" style="display:none;">
+                    <label>Defina o PIN (Apenas Números):</label>
+                    <input type="password" id="set-sec-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Ex: 1234">
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-title"><span class="material-icons">build</span> Sistema e Ferramentas</div>
+                <div class="input-group">
+                    <label>Tema Visual da Interface:</label>
+                    <select id="set-theme">
+                        <option value="cyan">Ciano (Padrão Clean)</option>
+                        <option value="green">Verde Natureza</option>
+                        <option value="pink">Rosa Coral</option>
+                    </select>
+                </div>
+                <button type="button" class="btn-action" style="background:var(--danger); width:100%; margin-top:30px; padding: 20px;" onclick="resetApp()">
+                    <span class="material-icons">delete_forever</span> Apagar Dados e Resetar App
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="screen-dashboard" class="screen">
     <div class="dash-header">
-        <h2 style="margin:0;"><span class="material-icons">analytics</span> Telemetria</h2>
-        <div style="display:flex; gap:10px;">
-            <button type="button" class="btn-action" style="background:var(--danger); margin:0; padding:6px 12px;" onclick="exportPDF()">
-                <span class="material-icons">share</span> PDF
+        <h2 style="margin:0;"><span class="material-icons" style="font-size:2.5rem; color:var(--primary);">analytics</span> Telemetria</h2>
+        <div style="display:flex; gap:15px;">
+            <button type="button" class="btn-action" style="background:var(--danger);" onclick="exportPDF()">
+                <span class="material-icons">share</span> Salvar PDF
             </button>
-            <button type="button" class="btn-action" style="background:var(--primary-dark); margin:0; padding:6px 12px;" onclick="openReport()">
+            <button type="button" class="btn-action" style="background:var(--primary-dark);" onclick="openReport()">
                 <span class="material-icons">data_object</span> JSON
             </button>
-            <button type="button" class="btn-action btn-cancel" style="margin:0; padding: 6px 12px;" onclick="goSplash()">Sair</button>
+            <button type="button" class="btn-action btn-cancel" onclick="goSplash()">Sair</button>
         </div>
     </div>
     <div class="dash-list" id="dashboard-content"></div>
 </div>
 
-<div id="screen-game" class="screen" style="background: white; padding: 10px;">
-    <button type="button" class="icon-btn" style="position:absolute; top:70px; left:15px; background:#e0e0e0; color:#333; z-index:20;" onclick="abortGame()"><span class="material-icons">close</span></button>
+<div id="screen-game" class="screen" style="background: white; padding: 20px;">
+    <button type="button" class="btn-action btn-cancel" style="position:absolute; top:20px; left:20px; z-index:20; border-radius:50%; width:70px; height:70px; padding:0;" onclick="abortGame()">
+        <span class="material-icons" style="font-size:2.5rem;">close</span>
+    </button>
     <div class="mts-container">
         <div id="cycle-indicator" class="cycle-badge">Ciclo 1: Identidade Visual</div>
         <div class="model-area" id="model-area"></div>
@@ -231,14 +386,14 @@
 <!-- MODAL GERENCIADOR DE MÓDULOS -->
 <div id="modal-modules" class="modal-overlay">
     <div class="modal-content" style="text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
-        <h2 class="modal-title" style="border-bottom: 2px solid var(--primary-light); padding-bottom:10px;">Controle de Módulos</h2>
-        <p class="modal-desc" style="font-size:0.85rem;">Marque os módulos que deseja liberar para o aluno.</p>
+        <h2 class="modal-title" style="border-bottom: 2px solid var(--primary-light); padding-bottom:15px;">Controle de Módulos</h2>
+        <p class="modal-desc" style="font-size:1.1rem;">Marque os módulos que deseja liberar para o aluno.</p>
         
-        <div id="modules-list-container" style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:8px; margin-bottom: 20px; padding-right:5px;">
+        <div id="modules-list-container" style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px; margin-bottom: 25px; padding-right:10px;">
             <!-- Renderizado via JS -->
         </div>
 
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:15px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
             <button type="button" class="btn-action" style="flex:2" onclick="saveModulesManager()"><span class="material-icons">save</span> Salvar Acesso</button>
         </div>
@@ -246,170 +401,109 @@
 </div>
 
 <div id="modal-auth" class="modal-overlay" style="z-index: 300;">
-    <div class="modal-content" style="max-width: 350px;" id="auth-content">
-        <h2 class="modal-title" style="color:var(--danger);"><span class="material-icons" style="vertical-align:middle;">lock</span> Acesso Restrito</h2>
+    <div class="modal-content" style="max-width: 450px;" id="auth-content">
+        <div style="display:flex; justify-content:center; margin-bottom:20px;">
+            <span class="material-icons" style="font-size:5rem; color:var(--danger); background:#ffebee; padding:25px; border-radius:50%;">lock</span>
+        </div>
+        <h2 class="modal-title" style="color:var(--danger);">Acesso Restrito</h2>
         <p class="modal-desc">Digite o PIN do Professor para continuar.</p>
-        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 1.8rem; letter-spacing: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 5px; outline:none; transition: 0.2s;" onkeypress="if(event.key==='Enter') confirmAuth()">
-        <div id="auth-error" style="color:var(--danger); font-size:0.85rem; font-weight:bold; height:20px; margin-bottom:15px;"></div>
-        <div style="display:flex; gap:10px;">
+        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 3rem; letter-spacing: 20px; padding: 25px; border: 2px solid #e0e6ed; border-radius: 24px; margin-bottom: 10px; outline:none; transition: 0.2s;" onkeypress="if(event.key==='Enter') confirmAuth()">
+        <div id="auth-error" style="color:var(--danger); font-size:1.1rem; font-weight:bold; height:25px; margin-bottom:20px;"></div>
+        <div style="display:flex; gap:15px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAuth()">Cancelar</button>
             <button type="button" class="btn-action" style="flex:1" onclick="confirmAuth()">Desbloquear</button>
         </div>
     </div>
 </div>
 
+<!-- MODAL DE REVISÃO DE ESTÍMULOS -->
+<div id="modal-review" class="modal-overlay" style="z-index: 250;">
+    <div class="modal-content" style="max-width: 850px; text-align: left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #f1f2f6; padding-bottom:20px; margin-bottom: 25px;">
+            <div>
+                <h2 class="modal-title" id="review-title" style="margin-bottom: 5px; font-size: 2.2rem;">Revisão de Estímulos</h2>
+                <p class="modal-desc" style="margin:0; font-size: 1.1rem;">Clique no estímulo para destacar. Isso sinalizará atenção durante a tarefa.</p>
+            </div>
+            <span class="material-icons" style="font-size:4rem; color:var(--warning); background: #fffdf5; padding: 15px; border-radius: 20px;">visibility</span>
+        </div>
+        <div id="review-grid" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; margin-bottom: 35px; max-height: 50vh; overflow-y: auto; padding: 15px 5px;">
+            <!-- Preenchido via JS -->
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+            <button type="button" class="btn-action" style="width:100%; max-width: 250px;" onclick="closeModals()">Concluído</button>
+        </div>
+    </div>
+</div>
+
 <div id="modal-words" class="modal-overlay">
     <div class="modal-content" style="text-align: left;">
-        <h2 class="modal-title" style="border-bottom: 2px solid var(--warning); color: #F57F17; padding-bottom:10px;">Módulo: Palavras</h2>
-        <p class="modal-desc" style="font-size:0.85rem;">Cole ou insira os blocos de palavras-alvo (separadas por vírgula).</p>
+        <h2 class="modal-title" style="border-bottom: 2px solid var(--warning); color: #F57F17; padding-bottom:15px;">Módulo: Palavras</h2>
+        <p class="modal-desc" style="font-size:1.1rem;">Cole ou insira os blocos de palavras-alvo (separadas por vírgula).</p>
         <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, MACACO"></textarea>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:15px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
-            <button type="button" class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning);" onclick="startCustomWords()" disabled>Iniciar Jogo</button>
+            <button type="button" class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning); color:#333;" onclick="startCustomWords()" disabled>Avançar</button>
         </div>
     </div>
 </div>
 
 <div id="modal-notes" class="modal-overlay">
-    <div class="modal-content" style="text-align: left; max-width: 500px;">
-        <h2 class="modal-title" style="border-bottom: 2px solid #9C27B0; color: #7B1FA2; padding-bottom:10px;">
-            <span class="material-icons" style="vertical-align:middle;">edit_note</span> Blocos de Palavras
+    <div class="modal-content" style="text-align: left; max-width: 700px;">
+        <h2 class="modal-title" style="border-bottom: 2px solid #9C27B0; color: #7B1FA2; padding-bottom:15px;">
+            <span class="material-icons" style="vertical-align:middle; margin-right: 5px;">edit_note</span> Blocos de Palavras
         </h2>
-        <p class="modal-desc" style="font-size:0.85rem;">Digite suas palavras separadas por vírgula e <strong>pressione Enter</strong> para salvar o bloco abaixo.</p>
+        <p class="modal-desc" style="font-size:1.1rem;">Digite suas palavras separadas por vírgula e <strong>pressione Enter</strong> para salvar o bloco abaixo.</p>
         
-        <div style="display:flex; gap:10px; margin-bottom: 20px;">
-            <input type="text" id="new-note-input" placeholder="Ex: BOLA, GATO, SAPATO (Pressione Enter)" style="flex:1; padding: 12px; border-radius: 8px; border: 2px solid #ddd; outline:none; font-size: 1rem;" onkeydown="if(event.key==='Enter') { event.preventDefault(); addNoteBlock(); }">
+        <div style="display:flex; gap:10px; margin-bottom: 25px;">
+            <input type="text" id="new-note-input" placeholder="Ex: BOLA, GATO, SAPATO (Pressione Enter)" style="flex:1; padding: 20px; border-radius: 16px; border: 2px solid #e0e6ed; outline:none; font-size: 1.2rem; background: #fafbfc;" onkeydown="if(event.key==='Enter') { event.preventDefault(); addNoteBlock(); }">
         </div>
 
-        <div id="notes-list" style="display:flex; flex-direction:column; gap:10px; max-height: 250px; overflow-y:auto; padding-right: 5px; margin-bottom: 15px;">
+        <div id="notes-list" style="display:flex; flex-direction:column; gap:12px; max-height: 400px; overflow-y:auto; padding-right: 15px; margin-bottom: 30px;">
         </div>
 
         <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeModals()">Fechar Gerenciador</button>
     </div>
 </div>
 
-<div id="modal-settings" class="modal-overlay">
-    <div class="modal-content" style="text-align: left;">
-        <h2 class="modal-title" style="border-bottom: 2px solid var(--primary-light); padding-bottom:10px;">Configurações</h2>
-        
-        <div class="section-title"><span class="material-icons">psychology</span> Setup de Intervenção</div>
-        <div class="input-group">
-            <label>Nome do Aluno:</label>
-            <input type="text" id="set-name" placeholder="Ex: Miguel">
-        </div>
-        <div class="input-group">
-            <label>Critério de Maestria (%):</label>
-            <input type="number" id="set-crit" min="50" max="100" value="100">
-        </div>
-        <div class="input-group">
-            <label>Quantidade de Alternativas:</label>
-            <select id="set-opts">
-                <option value="2">2 Alternativas (Fácil)</option>
-                <option value="3">3 Alternativas (Médio)</option>
-                <option value="4" selected>4 Alternativas (Padrão ABA)</option>
-            </select>
-        </div>
-        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
-            <input type="checkbox" id="set-hard" style="width:20px; height:20px;">
-            <label style="margin:0;">Modo Difícil (+CCV)</label>
-        </div>
-        <div class="input-group">
-            <label>Latência de Bloqueio (ms): <br><small style="font-weight:normal; color:#999;">Tempo de bloqueio após renderizar tela.</small></label>
-            <input type="number" id="set-latency" min="0" step="100" value="500">
-        </div>
-
-        <div class="section-title"><span class="material-icons">layers</span> Etapas da Tarefa</div>
-        <div class="input-group" style="display: flex; flex-direction: column; gap: 10px;">
-            <label style="display: flex; align-items: center; gap: 10px; color: var(--text);">
-                <input type="checkbox" id="set-stg-c1" style="width:20px; height:20px;"> 1. Identidade Visual (MTS)
-            </label>
-            <label style="display: flex; align-items: center; gap: 10px; color: var(--text);">
-                <input type="checkbox" id="set-stg-c2" style="width:20px; height:20px;"> 2. Receptivo (Áudio)
-            </label>
-            <label style="display: flex; align-items: center; gap: 10px; color: var(--text);">
-                <input type="checkbox" id="set-stg-c3" style="width:20px; height:20px;"> 3. Expressivo (Fala)
-            </label>
-        </div>
-
-        <div class="section-title"><span class="material-icons">mic</span> Treino Expressivo (Etapa 3)</div>
-        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
-            <input type="checkbox" id="set-use-mic" style="width:20px; height:20px;">
-            <label style="margin:0; color: var(--text);">Ativar Microfone (Reconhecimento de Voz)</label>
-        </div>
-        <p style="font-size:0.8rem; color:var(--text-light); margin-top:-10px; margin-bottom:15px;">Se desativado, a Etapa 3 dependerá exclusivamente da mediação do professor (botões manuais).</p>
-
-        <div class="section-title"><span class="material-icons">timer</span> Controle de Tempo</div>
-        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
-            <input type="checkbox" id="set-timer-enable" style="width:20px; height:20px;" onchange="toggleTimerField()">
-            <label style="margin:0;">Ativar Timer da Sessão (Exige PIN)</label>
-        </div>
-        <div class="input-group" id="timer-group" style="display:none;">
-            <label>Minutos:</label>
-            <input type="number" id="set-timer-min" min="1" value="30" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
-        </div>
-
-        <div class="section-title"><span class="material-icons">admin_panel_settings</span> Segurança (Blindagem)</div>
-        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
-            <input type="checkbox" id="set-sec-enable" style="width:20px; height:20px;" onchange="togglePasswordField()">
-            <label style="margin:0;">Exigir Senha Numérica (PIN)</label>
-        </div>
-        <div class="input-group" id="pin-group" style="display:none;">
-            <label>Defina o PIN (Apenas Números):</label>
-            <input type="password" id="set-sec-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Ex: 1234">
-        </div>
-
-        <div class="section-title"><span class="material-icons">build</span> Sistema e Ferramentas</div>
-        <div class="input-group">
-            <label>Tema Visual da Interface:</label>
-            <select id="set-theme">
-                <option value="cyan">Ciano (Padrão)</option>
-                <option value="green">Verde Natureza</option>
-                <option value="pink">Rosa Coral</option>
-            </select>
-        </div>
-        <button type="button" class="btn-action" style="background:var(--danger); width:100%; margin-top:15px;" onclick="resetApp()"><span class="material-icons">delete_forever</span> Apagar Dados e Resetar App</button>
-
-        <div style="display:flex; gap:10px; margin-top:25px;">
-            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
-            <button type="button" class="btn-action" style="flex:2" onclick="saveSettings()"><span class="material-icons">save</span> Salvar Alterações</button>
-        </div>
-    </div>
-</div>
-
 <div id="modal-report" class="modal-overlay" style="z-index: 150;">
     <div class="modal-content">
         <h2 class="modal-title">Código Estruturado (JSON)</h2>
-        <p class="modal-desc" style="font-size:0.85rem;">Cole no "Lançamento Universal" do Âncora Gestão.</p>
+        <p class="modal-desc">Cole no "Lançamento Universal" do Âncora Gestão.</p>
         <textarea id="json-output" readonly></textarea>
-        <button type="button" class="btn-action" style="width:100%" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar Código</button>
-        <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeModals()">Fechar</button>
+        <div style="display:flex; gap: 15px;">
+            <button type="button" class="btn-action btn-cancel" style="flex:1;" onclick="closeModals()">Fechar</button>
+            <button type="button" class="btn-action" style="flex:1;" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar</button>
+        </div>
     </div>
 </div>
 
 <div id="modal-alert" class="modal-overlay" style="z-index: 400;">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 500px;">
         <h2 class="modal-title" id="alert-title">Aviso</h2>
-        <p class="modal-desc" id="alert-desc" style="font-size:1.1rem; color:var(--text);"></p>
-        <div id="alert-actions" style="display:flex; gap:10px; margin-top: 20px;">
+        <p class="modal-desc" id="alert-desc" style="font-size:1.3rem; color:var(--text); margin-bottom: 30px;"></p>
+        <div id="alert-actions" style="display:flex; gap:15px; margin-top: 25px;">
             <button type="button" class="btn-action" style="width:100%" onclick="closeAlert()" id="alert-btn-ok">Entendido</button>
         </div>
     </div>
 </div>
 
 <div id="modal-result" class="modal-overlay" style="z-index: 200;">
-    <div class="modal-content">
-        <h2 class="modal-title" id="result-title" style="font-size:1.8rem; margin-bottom:5px;"></h2>
-        <p class="modal-desc" id="result-desc" style="font-size:1.1rem; color:var(--text); margin-bottom: 25px;"></p>
-        <div id="result-actions" style="display:flex; gap:10px; flex-wrap: wrap; justify-content:center;"></div>
+    <div class="modal-content" style="max-width: 650px;">
+        <h2 class="modal-title" id="result-title" style="font-size:2.8rem; margin-bottom:15px;"></h2>
+        <p class="modal-desc" id="result-desc" style="font-size:1.4rem; color:var(--text); margin-bottom: 40px;"></p>
+        <div id="result-actions" style="display:flex; gap:20px; flex-wrap: wrap; justify-content:center;"></div>
     </div>
 </div>
 
 <div id="modal-timesup" class="modal-overlay" style="z-index: 500;">
-    <div class="modal-content">
-        <h2 class="modal-title" style="color:var(--danger);"><span class="material-icons" style="vertical-align:middle; font-size:2rem;">timer_off</span> Fim da Sessão</h2>
-        <p class="modal-desc" style="font-size:1.1rem;">O tempo de intervenção programado acabou. Muito bem!</p>
+    <div class="modal-content" style="max-width: 500px;">
+        <div style="display:flex; justify-content:center; margin-bottom:25px;">
+            <span class="material-icons" style="font-size:5rem; color:var(--danger); background:#ffebee; padding:25px; border-radius:50%;">timer_off</span>
+        </div>
+        <h2 class="modal-title" style="color:var(--danger); font-size: 2.5rem;">Fim da Sessão</h2>
+        <p class="modal-desc" style="font-size:1.3rem;">O tempo de intervenção programado acabou. Muito bem!</p>
         <div style="display:flex; justify-content:center;">
-            <button type="button" class="btn-action" style="width:100%; background:var(--primary);" onclick="document.getElementById('modal-timesup').style.display='none'; goSplash();">Voltar ao Início</button>
+            <button type="button" class="btn-action" style="width:100%;" onclick="document.getElementById('modal-timesup').style.display='none'; goSplash();">Voltar ao Início</button>
         </div>
     </div>
 </div>
@@ -474,6 +568,20 @@
         }
         return pseudos;
     }
+    
+    function getPhasePool(phaseId) {
+        if (phaseId === 'PRE1') return ['C','P','B','F','T','D','Q','G','M','N', ...vowels];
+        if (phaseId === 'PRE2') return ['BA','CA','DA','FA','GA','PRA','BOI','FLA','MA','NA', 'BOLA','GATO','BOLO','MACACO','CAVALO','SAPATO'];
+        if (phaseId === 'PRE3') return ['C','P','B','F','T', ...vowels, 'BA','CA','DA','FA','GA', 'BOLA','GATO','BOLO','MACACO','CAVALO'];
+        if (phaseId === 'VOGAIS') return [...vowels];
+        if (phaseId === 'ENCONTROS') return [...encounters];
+        if (phaseId === 'PSEUDOPALAVRAS') return generatePseudoWords(); 
+        if (phaseId === 'PALAVRAS') {
+            let pw = (state.customWords || '').split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
+            return [...new Set(pw)];
+        }
+        return generateSyllables(phaseId, state.settings.hard);
+    }
 
     function getCategory(item) {
         if (vowels.includes(item)) return 'VOGAL';
@@ -486,7 +594,8 @@
     let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
         setupDone: false, student: '', unlocked: ['PRE1'], 
         settings: { crit: 100, opts: 4, hard: false, theme: 'cyan', latency: 500, security: { enabled: false, pin: '' }, timer: { enabled: false, min: 30 }, stages: { c1: true, c2: true, c3: true }, useMic: true }, 
-        customWords: '', notes: [], log: [], session: { expired: false, endTime: null }
+        customWords: '', notes: [], log: [], session: { expired: false, endTime: null },
+        reviewHighlights: {} 
     };
 
     if(!state.settings.security) state.settings.security = { enabled: false, pin: '' };
@@ -494,19 +603,16 @@
     if(state.settings.latency === undefined) state.settings.latency = 500;
     if(!state.session) state.session = { expired: false, endTime: null };
     if(!Array.isArray(state.notes)) state.notes = [];
-    
-    // Fallbacks para perfis já existentes
+    if(!state.reviewHighlights) state.reviewHighlights = {};
     if(!state.settings.stages) state.settings.stages = { c1: true, c2: true, c3: true };
     if(state.settings.useMic === undefined) state.settings.useMic = true;
-
     if(state.setupDone === undefined) state.setupDone = state.student !== ''; 
     if(!state.unlocked.includes('PRE1')) state.unlocked.push('PRE1');
 
     let session = { phase: '', pool: [], trials: [], activeCycles: [], currentCycleIdx: 0, currentCycle: 1, isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep: 0, dica: 0, erro: 0, total: 0 }, c2: { indep: 0, dica: 0, erro: 0, total: 0 }, c3: { indep: 0, dica: 0, erro: 0, total: 0 } } };
     let timerInterval = null;
-    
-    // FLAG PARA CONTROLE DE IMPULSIVIDADE
     let blockClicks = false;
+    let isReviewMode = false; // Estado Global do Botão de Revisão
 
     // ================= ÁUDIO E TEMAS =================
     let audioCtx = null;
@@ -518,99 +624,71 @@
                 if (!AudioContext) return;
                 audioCtx = new AudioContext();
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            
-            const osc = audioCtx.createOscillator(); 
-            const gain = audioCtx.createGain();
-            osc.connect(gain); 
-            gain.connect(audioCtx.destination);
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
             
             if(type === 'win') {
-                osc.type = 'sine'; 
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
-                gain.gain.setValueAtTime(0.5, audioCtx.currentTime); 
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); 
-                osc.stop(audioCtx.currentTime + 0.3);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             } else if (type === 'click') {
-                osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime); 
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start(); 
-                osc.stop(audioCtx.currentTime + 0.1);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
             }
-        } catch (e) {
-            console.warn("Áudio nativo bloqueado pelo WebView.", e);
-        }
+        } catch (e) { console.warn("Áudio nativo bloqueado pelo WebView.", e); }
     }
 
     function speakTTS(text) {
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("FALAR:" + text);
-        } else {
-            if(!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(text.toLowerCase());
-            utter.lang = 'pt-BR'; utter.rate = 0.8;
+        if (window.AppInventor) { window.AppInventor.setWebViewString("FALAR:" + text); }
+        else {
+            if(!window.speechSynthesis) return; window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text.toLowerCase()); utter.lang = 'pt-BR'; utter.rate = 0.8;
             window.speechSynthesis.speak(utter);
         }
     }
 
     function applyTheme() { document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan'); }
     function saveState() { localStorage.setItem('eidos_mts_state', JSON.stringify(state)); }
-    function closeModals() { 
-        document.querySelectorAll('.modal-overlay').forEach(m => {
-            m.style.display = 'none';
-        }); 
-        closeAuth(); 
-    }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => { m.style.display = 'none'; }); closeAuth(); }
 
     // ================= TIMER DA SESSÃO =================
     function checkTimer() {
         if (!state.settings.timer.enabled || state.session.expired) return;
-        if (state.session.endTime && Date.now() >= state.session.endTime) {
-            state.session.expired = true;
-            saveState();
-        }
+        if (state.session.endTime && Date.now() >= state.session.endTime) { state.session.expired = true; saveState(); }
     }
 
-    function triggerTimeUp() {
-        if (timerInterval) clearInterval(timerInterval);
-        abortGame(); 
-        document.getElementById('modal-timesup').style.display = 'flex';
-    }
+    function triggerTimeUp() { if (timerInterval) clearInterval(timerInterval); abortGame(); document.getElementById('modal-timesup').style.display = 'flex'; }
 
     function updateLobbyButton() {
         const btn = document.getElementById('btn-start-game');
         if (state.settings.timer.enabled && state.session.expired) {
-            btn.classList.add('disabled');
-            btn.style.background = '#ccc';
-            btn.innerHTML = '<span class="material-icons" style="background: rgba(0,0,0,0.15);">lock</span> Sessão Finalizada';
-            btn.onclick = () => {
-                requireAuth(() => {
-                    state.session.expired = false;
-                    state.session.endTime = null;
-                    saveState();
-                    updateLobbyButton();
-                    customAlert("Sessão Liberada", "O timer foi reiniciado. O jogo está aberto novamente.");
-                });
-            };
+            btn.style.borderColor = '#dcdde1';
+            btn.innerHTML = '<div class="icon-wrapper" style="background:#f1f2f6; color:#7f8c8d;"><span class="material-icons">lock</span></div> Sessão Finalizada';
+            btn.onclick = () => { requireAuth(() => { state.session.expired = false; state.session.endTime = null; saveState(); updateLobbyButton(); customAlert("Sessão Liberada", "O timer foi reiniciado. O jogo está aberto novamente."); }); };
         } else {
-            btn.classList.remove('disabled');
-            btn.style.background = 'var(--primary)';
-            btn.innerHTML = '<span class="material-icons" style="background: rgba(0,0,0,0.15);">play_arrow</span> Iniciar o Game';
+            btn.style.borderColor = '#F1F2F6';
+            btn.innerHTML = '<div class="icon-wrapper"><span class="material-icons">play_arrow</span></div> Iniciar Sessão';
             btn.onclick = openGrid;
         }
 
         const clock = document.getElementById('header-timer-icon');
-        if (state.settings.timer.enabled && !state.session.expired) {
-            clock.style.display = 'inline-block';
+        if (state.settings.timer.enabled && !state.session.expired) clock.style.display = 'block'; else clock.style.display = 'none';
+    }
+
+    // ================= MODO REVISÃO INTELIGENTE =================
+    function toggleReviewMode() {
+        isReviewMode = !isReviewMode;
+        const btn = document.getElementById('btn-review-mode');
+        if(isReviewMode) {
+            btn.style.background = 'var(--warning)';
+            btn.style.color = '#333';
+            btn.innerHTML = '<span class="material-icons">visibility</span> Modo Revisão: ON';
         } else {
-            clock.style.display = 'none';
+            btn.style.background = '#f1f2f6';
+            btn.style.color = 'var(--text-light)';
+            btn.innerHTML = '<span class="material-icons">visibility_off</span> Modo Revisão: OFF';
         }
     }
 
@@ -618,49 +696,24 @@
     let authCallback = null;
     
     function requireAuth(callback) {
-        if (!state.settings.security.enabled) {
-            callback();
-        } else {
-            authCallback = callback;
-            const input = document.getElementById('auth-pin-input');
-            input.value = '';
-            input.style.borderColor = '#ddd'; 
-            input.style.color = 'inherit';
-            document.getElementById('auth-error').innerText = '';
-            document.getElementById('modal-auth').style.display = 'flex';
+        if (!state.settings.security.enabled) { callback(); }
+        else {
+            authCallback = callback; const input = document.getElementById('auth-pin-input'); input.value = '';
+            input.style.borderColor = '#e0e6ed'; input.style.color = 'inherit';
+            document.getElementById('auth-error').innerText = ''; document.getElementById('modal-auth').style.display = 'flex';
             setTimeout(() => input.focus(), 100);
         }
     }
-
-    function closeAuth() {
-        document.getElementById('modal-auth').style.display = 'none';
-        authCallback = null; 
-    }
+    function closeAuth() { document.getElementById('modal-auth').style.display = 'none'; authCallback = null; }
 
     function confirmAuth() {
-        const inputElement = document.getElementById('auth-pin-input');
-        const inputVal = inputElement.value;
-        
+        const inputElement = document.getElementById('auth-pin-input'); const inputVal = inputElement.value;
         if (inputVal === state.settings.security.pin) {
-            playSound('win'); 
-            inputElement.style.borderColor = 'var(--success)';
-            inputElement.style.color = 'var(--success)';
-            
-            const destinationFunction = authCallback;
-            
-            setTimeout(() => {
-                closeAuth(); 
-                if (typeof destinationFunction === 'function') destinationFunction(); 
-            }, 400); 
-            
+            playSound('win'); inputElement.style.borderColor = 'var(--success)'; inputElement.style.color = 'var(--success)';
+            const destinationFunction = authCallback; setTimeout(() => { closeAuth(); if (typeof destinationFunction === 'function') destinationFunction(); }, 400); 
         } else {
-            document.getElementById('auth-error').innerText = 'PIN Incorreto. Acesso Negado.';
-            inputElement.value = '';
-            playSound('click'); 
-            
-            const modal = document.getElementById('auth-content');
-            modal.classList.add('shake');
-            setTimeout(() => modal.classList.remove('shake'), 400);
+            document.getElementById('auth-error').innerText = 'PIN Incorreto. Acesso Negado.'; inputElement.value = ''; playSound('click'); 
+            const modal = document.getElementById('auth-content'); modal.classList.add('shake'); setTimeout(() => modal.classList.remove('shake'), 400);
         }
     }
 
@@ -668,1003 +721,492 @@
     let alertCallback = null;
     
     function customAlert(title, desc, confirmCallback = null, isConfirm = false) {
-        document.getElementById('alert-title').innerText = title;
-        document.getElementById('alert-desc').innerText = desc;
-        alertCallback = confirmCallback;
-        
+        document.getElementById('alert-title').innerText = title; document.getElementById('alert-desc').innerText = desc; alertCallback = confirmCallback;
         const actions = document.getElementById('alert-actions');
         if (isConfirm) {
-            actions.innerHTML = `
-                <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAlert(false)">Cancelar</button>
-                <button type="button" class="btn-action btn-danger" style="flex:1" onclick="closeAlert(true)">Sim, Apagar</button>
-            `;
-        } else {
-            actions.innerHTML = `<button type="button" class="btn-action" style="width:100%" onclick="closeAlert(true)">Entendido</button>`;
-        }
+            actions.innerHTML = `<button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAlert(false)">Cancelar</button><button type="button" class="btn-action btn-danger" style="flex:1" onclick="closeAlert(true)">Sim, Apagar</button>`;
+        } else { actions.innerHTML = `<button type="button" class="btn-action" style="width:100%" onclick="closeAlert(true)">Entendido</button>`; }
         document.getElementById('modal-alert').style.display = 'flex';
     }
-    
-    function closeAlert(confirmed) {
-        document.getElementById('modal-alert').style.display = 'none';
-        if(confirmed && alertCallback) alertCallback();
-        alertCallback = null;
-    }
+    function closeAlert(confirmed) { document.getElementById('modal-alert').style.display = 'none'; if(confirmed && alertCallback) alertCallback(); alertCallback = null; }
 
     function resetApp() {
-        closeModals();
-        customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e alunos salvos neste navegador. Tem certeza absoluta?", () => {
-            localStorage.removeItem('eidos_mts_state');
-            location.reload();
-        }, true);
+        closeModals(); customAlert("Zerar Aplicativo?", "Isso apagará todo o histórico e alunos salvos neste navegador. Tem certeza absoluta?", () => { localStorage.removeItem('eidos_mts_state'); location.reload(); }, true);
     }
 
     // ================= INICIALIZAÇÃO E NAVEGAÇÃO =================
     function init() { 
-        applyTheme(); 
-        updateLobbyButton();
-        if(!state.setupDone) {
-            openSettings(); 
-        }
-
+        applyTheme(); updateLobbyButton(); if(!state.setupDone) openSettings(); 
         window.onclick = function(event) {
             if (event.target.classList.contains('modal-overlay')) {
-                const id = event.target.id;
-                const modaisBloqueados = ['modal-auth', 'modal-timesup', 'modal-result', 'modal-alert'];
-                if (!modaisBloqueados.includes(id)) {
-                    closeModals();
-                }
+                const id = event.target.id; const modaisBloqueados = ['modal-auth', 'modal-timesup', 'modal-result', 'modal-alert'];
+                if (!modaisBloqueados.includes(id)) closeModals();
             }
         };
     }
 
-    function hideAllScreens() {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    }
+    function hideAllScreens() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); }
+    function goSplash() { hideAllScreens(); updateLobbyButton(); document.getElementById('screen-splash').classList.add('active'); }
+    function openGrid() { if (state.settings.timer.enabled && state.session.expired) { updateLobbyButton(); return; } hideAllScreens(); document.getElementById('screen-home').classList.add('active'); renderGrid(); }
+    function openDashboard() { hideAllScreens(); document.getElementById('screen-dashboard').classList.add('active'); renderDashboard(); }
+    function openGame() { hideAllScreens(); document.getElementById('screen-game').classList.add('active'); }
 
-    function goSplash() {
-        hideAllScreens();
-        updateLobbyButton();
-        document.getElementById('screen-splash').classList.add('active');
-    }
-
-    function openGrid() {
-        if (state.settings.timer.enabled && state.session.expired) {
-            updateLobbyButton(); 
+    // ================= MODAL DE REVISÃO (HIGHLIGHTS) =================
+    function openReview(phaseId) {
+        playSound('click');
+        if(phaseId === 'PALAVRAS' && (!state.customWords || state.customWords.trim().length === 0)) {
+            customAlert("Atenção", "Você precisa inserir palavras neste módulo antes de revisá-las. Desative o modo revisão e clique no card para configurar.");
             return;
         }
-        hideAllScreens();
-        document.getElementById('screen-home').classList.add('active');
-        renderGrid();
-    }
 
-    function openDashboard() {
-        hideAllScreens();
-        document.getElementById('screen-dashboard').classList.add('active');
-        renderDashboard();
-    }
+        document.getElementById('review-title').innerText = `Revisão: ${phaseId.length > 2 && phaseId.startsWith('PRE') ? 'PRÉ ' + phaseId.slice(3) : phaseId}`;
+        const grid = document.getElementById('review-grid'); grid.innerHTML = '';
+        const pool = getPhasePool(phaseId);
+        
+        if(pool.length === 0) { grid.innerHTML = '<p style="color:var(--text-light); font-size: 1.2rem; padding: 20px;">Nenhum estímulo configurado para este módulo.</p>'; }
 
-    function openGame() {
-        hideAllScreens();
-        document.getElementById('screen-game').classList.add('active');
+        pool.forEach(item => {
+            const isMarked = state.reviewHighlights && state.reviewHighlights[item];
+            const chip = document.createElement('div'); chip.innerText = item;
+            chip.style.padding = "20px 30px"; chip.style.borderRadius = "20px"; chip.style.fontSize = "1.5rem";
+            chip.style.fontWeight = "900"; chip.style.cursor = "pointer"; chip.style.transition = "0.2s cubic-bezier(0.25, 0.8, 0.25, 1)";
+            chip.style.border = "3px solid " + (isMarked ? "var(--warning)" : "#e0e6ed");
+            chip.style.background = isMarked ? "#fffdf5" : "#fff"; chip.style.color = isMarked ? "#F57F17" : "var(--text)";
+            chip.style.boxShadow = isMarked ? "0 8px 25px rgba(241,196,15,0.2)" : "0 4px 10px rgba(0,0,0,0.02)";
+            
+            chip.onclick = () => {
+                playSound('click');
+                if (!state.reviewHighlights) state.reviewHighlights = {};
+                if (state.reviewHighlights[item]) {
+                    delete state.reviewHighlights[item];
+                    chip.style.border = "3px solid #e0e6ed"; chip.style.background = "#fff"; chip.style.color = "var(--text)"; chip.style.boxShadow = "0 4px 10px rgba(0,0,0,0.02)";
+                } else {
+                    state.reviewHighlights[item] = true;
+                    chip.style.border = "3px solid var(--warning)"; chip.style.background = "#fffdf5"; chip.style.color = "#F57F17"; chip.style.boxShadow = "0 8px 25px rgba(241,196,15,0.2)";
+                }
+                saveState();
+            };
+            chip.onmousedown = () => { chip.style.transform = 'scale(0.9)'; };
+            chip.onmouseup = () => { chip.style.transform = 'scale(1)'; };
+            chip.onmouseleave = () => { chip.style.transform = 'scale(1)'; };
+            grid.appendChild(chip);
+        });
+        document.getElementById('modal-review').style.display = 'flex';
     }
 
     // ================= GERENCIADOR DE MÓDULOS =================
     function openModulesManager() {
-        const container = document.getElementById('modules-list-container');
-        container.innerHTML = '';
-        
+        const container = document.getElementById('modules-list-container'); container.innerHTML = '';
         const allModules = [...curriculumOrder, ...extraModules];
         
         allModules.forEach(mod => {
             const isChecked = state.unlocked.includes(mod);
-            const isLockedIcon = isChecked ? 'lock_open' : 'lock';
-            const iconColor = isChecked ? 'var(--primary-dark)' : '#999';
-            
-            const label = document.createElement('label');
-            label.className = 'mod-label';
-            label.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="material-icons" style="color:${iconColor}">${isLockedIcon}</span>
-                    <span style="font-weight:bold; color:var(--text);">${mod}</span>
-                </div>
-                <input type="checkbox" value="${mod}" class="mod-checkbox" ${isChecked ? 'checked' : ''} style="width:20px; height:20px;">
-            `;
+            const isLockedIcon = isChecked ? 'lock_open' : 'lock'; const iconColor = isChecked ? 'var(--primary-dark)' : '#7f8c8d';
+            const label = document.createElement('label'); label.className = 'mod-label';
+            label.innerHTML = `<div style="display:flex; align-items:center; gap:15px;"><span class="material-icons" style="color:${iconColor}; font-size:1.8rem;">${isLockedIcon}</span><span style="font-weight:900; color:var(--text); font-size:1.2rem;">${mod}</span></div><input type="checkbox" value="${mod}" class="mod-checkbox" ${isChecked ? 'checked' : ''} style="width:28px; height:28px; cursor:pointer;">`;
             container.appendChild(label);
         });
-
         document.getElementById('modal-modules').style.display = 'flex';
     }
 
     function saveModulesManager() {
-        const checkboxes = document.querySelectorAll('.mod-checkbox');
-        let newUnlocked = [];
-        checkboxes.forEach(chk => {
-            if (chk.checked) newUnlocked.push(chk.value);
-        });
-        
-        // Garante que PRE1 sempre fique desbloqueado por segurança básica
+        const checkboxes = document.querySelectorAll('.mod-checkbox'); let newUnlocked = [];
+        checkboxes.forEach(chk => { if (chk.checked) newUnlocked.push(chk.value); });
         if(!newUnlocked.includes('PRE1')) newUnlocked.push('PRE1');
-        
-        state.unlocked = newUnlocked;
-        saveState();
-        closeModals();
-        if(document.getElementById('screen-home').classList.contains('active')) renderGrid();
+        state.unlocked = newUnlocked; saveState(); closeModals(); if(document.getElementById('screen-home').classList.contains('active')) renderGrid();
     }
 
-    // ================= EXPORTAR RELATÓRIO PDF (WEB SHARE API) =================
+    // ================= EXPORTAR RELATÓRIO PDF =================
     function exportPDF() {
-        if (state.log.length === 0) {
-            customAlert("Aviso", "Nenhum dado registrado para exportar.");
-            return;
-        }
+        if (state.log.length === 0) { customAlert("Aviso", "Nenhum dado registrado para exportar."); return; }
+        const { jsPDF } = window.jspdf; const doc = new jsPDF();
+        doc.setFontSize(18); doc.setTextColor(0, 151, 167); doc.text("Relatório de Sessão - AlfaMTS", 14, 22);
+        doc.setFontSize(11); doc.setTextColor(51, 51, 51); doc.text(`Aluno: ${state.student}`, 14, 32); doc.text(`Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}`, 14, 38);
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        doc.setFontSize(18);
-        doc.setTextColor(0, 151, 167); // var(--primary-dark)
-        doc.text("Relatório de Sessão - AlfaMTS", 14, 22);
-        
-        doc.setFontSize(11);
-        doc.setTextColor(51, 51, 51);
-        doc.text(`Aluno: ${state.student}`, 14, 32);
-        doc.text(`Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}`, 14, 38);
+        const tableBody = [...state.log].reverse().map(entry => { let det = entry.tipo === 'PRE_REQUISITO' ? entry.status : `${entry.acc}%`; return [entry.d, entry.fase, entry.tipo, entry.nv || '-', det]; });
+        doc.autoTable({ startY: 48, head: [['Data', 'Fase', 'Tipo', 'Nível', 'Resultado']], body: tableBody, theme: 'grid', headStyles: { fillColor: [0, 188, 212] }, styles: { fontSize: 9 } });
 
-        const tableBody = [...state.log].reverse().map(entry => {
-            let det = entry.tipo === 'PRE_REQUISITO' ? entry.status : `${entry.acc}%`;
-            let level = entry.nv || '-';
-            return [entry.d, entry.fase, entry.tipo, level, det];
-        });
-
-        doc.autoTable({
-            startY: 48,
-            head: [['Data', 'Fase', 'Tipo', 'Nível', 'Resultado']],
-            body: tableBody,
-            theme: 'grid',
-            headStyles: { fillColor: [0, 188, 212] }, // var(--primary)
-            styles: { fontSize: 9 }
-        });
-
-        const fileName = `Relatorio_${state.student.replace(/\s+/g, '_')}_AlfaMTS.pdf`;
-        
-        try {
-            const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    title: 'Relatório AlfaMTS',
-                    text: `Histórico de desempenho do aluno ${state.student}.`,
-                    files: [file]
-                }).catch(err => {
-                    console.log("Compartilhamento cancelado ou falhou:", err);
-                });
-            } else {
-                doc.save(fileName);
-            }
-        } catch (error) {
-            doc.save(fileName);
-        }
+        const fileName = `Relatorio_${state.student.replace(/\s+/g, '_')}_AlfaMTS.pdf`; const dataUri = doc.output('datauristring');
+        if (window.AppInventor) { window.AppInventor.setWebViewString("SALVAR_PDF:" + fileName + "|" + dataUri); } else { doc.save(fileName); }
     }
 
     // ================= RENDERIZADORES =================
     function renderGrid() {
         const grid = document.getElementById('grid-phases'); grid.innerHTML = '';
         curriculumOrder.forEach(p => {
-            const isUnlocked = state.unlocked.includes(p);
-            const isPre = p.startsWith('PRE');
+            const isUnlocked = state.unlocked.includes(p); const isPre = p.startsWith('PRE');
             const card = document.createElement('div');
             
-            let displayName = p.length > 2 ? p.substring(0,3) : p;
-            let displayDesc = p;
+            let displayName = p.length > 2 ? p.substring(0,3) : p; let displayDesc = p;
             if(p === 'PRE1') { displayName = "PRÉ 1"; displayDesc = "Vogal / Consoante"; }
             if(p === 'PRE2') { displayName = "PRÉ 2"; displayDesc = "Sílaba / Palavra"; }
             if(p === 'PRE3') { displayName = "PRÉ 3"; displayDesc = "Mistura (Os 4)"; }
 
             card.className = `phase-card ${isUnlocked ? '' : 'locked'} ${isPre ? 'module-prereq' : ''}`;
             card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon">check_circle</span>' : '<span class="material-icons status-icon" style="color:#999">lock</span>'}
-                <h2>${displayName}</h2><p>${displayDesc}</p>`;
+                <h2 style="font-size: ${displayName.length > 3 ? '2.2rem' : '3rem'}; margin-top: 15px;">${displayName}</h2>
+                <p>${displayDesc}</p>`;
             
-            if(isUnlocked) card.onclick = () => { playSound('click'); startGame(p); };
+            if(isUnlocked) card.onclick = () => { playSound('click'); if(isReviewMode) openReview(p); else startGame(p); };
             grid.appendChild(card);
         });
 
         extraModules.forEach(p => {
-            const isUnlocked = state.unlocked.includes(p);
-            const card = document.createElement('div');
+            const isUnlocked = state.unlocked.includes(p); const card = document.createElement('div');
             card.className = `phase-card module-extra ${isUnlocked ? '' : 'locked'}`;
             
             if (p === 'ANOTAÇÕES') {
-                card.style.borderColor = '#9C27B0';
-                card.style.background = '#f3e5f5';
-                card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon" style="color:#9C27B0">edit_note</span>' : '<span class="material-icons status-icon" style="color:#999">lock</span>'}
-                    <h2 style="color:#7B1FA2">NOTAS</h2><p>Planejamento</p>`;
+                card.style.borderColor = 'rgba(156, 39, 176, 0.2)'; card.style.background = '#fdfafc';
+                card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon" style="color:#9C27B0;">edit_note</span>' : '<span class="material-icons status-icon" style="color:#999;">lock</span>'}
+                    <h2 style="color:#7B1FA2; margin-top: 15px; font-size: 2.2rem;">NOTAS</h2>
+                    <p style="margin-bottom: 5px;">Planejamento</p>`;
                 if(isUnlocked) card.onclick = () => { playSound('click'); requireAuth(openNotesModal); };
             } else {
-                card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon" style="color:var(--warning)">star</span>' : '<span class="material-icons status-icon" style="color:#999">lock</span>'}
-                    <h2>${p === 'PSEUDOPALAVRAS' ? 'PSEUDO' : 'PALAVRAS'}</h2><p>${p}</p>`;
-                if(isUnlocked) card.onclick = () => { playSound('click'); startGame(p); };
+                card.innerHTML = `${isUnlocked ? '<span class="material-icons status-icon" style="color:var(--warning);">star</span>' : '<span class="material-icons status-icon" style="color:#999;">lock</span>'}
+                    <h2 style="color:#F57F17; margin-top: 15px; font-size: 2.2rem;">${p === 'PSEUDOPALAVRAS' ? 'PSEUDO' : 'PALAVRAS'}</h2>
+                    <p style="margin-bottom: 5px;">${p}</p>`;
+                if(isUnlocked) card.onclick = () => { playSound('click'); if(isReviewMode) openReview(p); else startGame(p); };
             }
             grid.appendChild(card);
         });
     }
 
     function renderDashboard() {
-        const container = document.getElementById('dashboard-content');
-        container.innerHTML = '';
-        
+        const container = document.getElementById('dashboard-content'); container.innerHTML = '';
         if(state.log.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:40px 0; color:var(--text-light);"><span class="material-icons" style="font-size:3rem; margin-bottom:10px; opacity:0.5;">inbox</span><p>Nenhuma lição finalizada ainda.</p></div>';
-            return;
+            container.innerHTML = '<div style="text-align:center; padding:80px 0; color:var(--text-light);"><span class="material-icons" style="font-size:5rem; margin-bottom:20px; opacity:0.3;">inbox</span><p style="font-size:1.3rem; font-weight:bold;">Nenhuma lição finalizada ainda.</p></div>'; return;
         }
 
         [...state.log].reverse().forEach(entry => {
-            const card = document.createElement('div');
-            const isSuccess = entry.acc >= entry.crit;
-            card.className = 'log-card';
-            card.style.borderLeftColor = isSuccess ? 'var(--success)' : 'var(--danger)';
+            const card = document.createElement('div'); const isSuccess = entry.acc >= entry.crit;
+            card.className = 'log-card'; card.style.borderLeftColor = isSuccess ? 'var(--success)' : 'var(--danger)';
             
-            let detailsHTML = '';
-            if(entry.tipo === 'PRE_REQUISITO') {
-                detailsHTML = `
-                    <p style="margin-top:10px; font-weight:bold; color: ${isSuccess ? 'var(--success)' : 'var(--danger)'};">Status: ${entry.status}</p>
-                    <div class="log-cycles-grid" style="margin-top:12px;">
-                        <div class="cycle-stat-box"><strong>C1 (Visual)</strong><span class="c-indep">✔ ${entry.ciclos.c1.indep}</span> | <span class="c-dica">💡 ${entry.ciclos.c1.dica}</span> | <span class="c-erro">✖ ${entry.ciclos.c1.erro}</span></div>
-                        <div class="cycle-stat-box"><strong>C2 (Áudio)</strong><span class="c-indep">✔ ${entry.ciclos.c2.indep}</span> | <span class="c-dica">💡 ${entry.ciclos.c2.dica}</span> | <span class="c-erro">✖ ${entry.ciclos.c2.erro}</span></div>
-                        <div class="cycle-stat-box"><strong>C3 (Fala)</strong><span class="c-indep">✔ ${entry.ciclos.c3.indep}</span> | <span class="c-dica">💡 ${entry.ciclos.c3.dica}</span> | <span class="c-erro">✖ ${entry.ciclos.c3.erro}</span></div>
-                    </div>
-                `;
-            } else {
-                const c1 = entry.ciclos.c1; const c2 = entry.ciclos.c2; const c3 = entry.ciclos.c3;
-                detailsHTML = `
-                    <div class="log-cycles-grid" style="margin-top:12px;">
-                        <div class="cycle-stat-box"><strong>C1 (Visual)</strong><span class="c-indep">✔ ${c1.indep}</span> | <span class="c-dica">💡 ${c1.dica}</span> | <span class="c-erro">✖ ${c1.erro}</span></div>
-                        <div class="cycle-stat-box"><strong>C2 (Áudio)</strong><span class="c-indep">✔ ${c2.indep}</span> | <span class="c-dica">💡 ${c2.dica}</span> | <span class="c-erro">✖ ${c2.erro}</span></div>
-                        <div class="cycle-stat-box"><strong>C3 (Fala)</strong><span class="c-indep">✔ ${c3.indep}</span> | <span class="c-dica">💡 ${c3.dica}</span> | <span class="c-erro">✖ ${c3.erro}</span></div>
-                    </div>
-                `;
-            }
+            let detailsHTML = `<div class="log-cycles-grid" style="margin-top:15px;">
+                <div class="cycle-stat-box"><strong>C1 (Visual)</strong><span class="c-indep">✔ ${entry.ciclos.c1.indep}</span> | <span class="c-dica">💡 ${entry.ciclos.c1.dica}</span> | <span class="c-erro">✖ ${entry.ciclos.c1.erro}</span></div>
+                <div class="cycle-stat-box"><strong>C2 (Áudio)</strong><span class="c-indep">✔ ${entry.ciclos.c2.indep}</span> | <span class="c-dica">💡 ${entry.ciclos.c2.dica}</span> | <span class="c-erro">✖ ${entry.ciclos.c2.erro}</span></div>
+                <div class="cycle-stat-box"><strong>C3 (Fala)</strong><span class="c-indep">✔ ${entry.ciclos.c3.indep}</span> | <span class="c-dica">💡 ${entry.ciclos.c3.dica}</span> | <span class="c-erro">✖ ${entry.ciclos.c3.erro}</span></div>
+            </div>`;
 
-            card.innerHTML = `
-                <div class="log-card-top">
-                    <h3>${entry.fase} <span style="font-size:0.8rem; font-weight:normal; color:var(--text-light);">(${entry.tipo})</span></h3>
-                    <span class="log-badge" style="background:${isSuccess ? 'var(--success)' : 'var(--danger)'};">${entry.acc}%</span>
-                </div>
-                <div class="log-info"><strong>Data:</strong> ${entry.d} | <strong>Aluno:</strong> ${entry.n} | <strong>Nível:</strong> ${entry.nv || '-'}</div>
-                ${detailsHTML}
-            `;
+            card.innerHTML = `<div class="log-card-top">
+                <h3>${entry.fase} <span style="font-size:1rem; font-weight:bold; color:var(--text-light);">(${entry.tipo})</span></h3>
+                <span class="log-badge" style="background:${isSuccess ? 'var(--success)' : 'var(--danger)'}; padding: 8px 16px; font-size:1rem;">${entry.acc}%</span>
+            </div>
+            <div class="log-info" style="font-size: 1.1rem;"><strong>Data:</strong> ${entry.d} | <strong>Aluno:</strong> ${entry.n} | <strong>Nível:</strong> ${entry.nv || '-'}</div>
+            ${entry.tipo === 'PRE_REQUISITO' ? `<p style="margin-top:8px; font-weight:900; font-size:1.1rem; color: ${isSuccess ? 'var(--success)' : 'var(--danger)'};">Status: ${entry.status}</p>` : ''}
+            ${detailsHTML}`;
             container.appendChild(card);
         });
     }
 
-    // ================= MENUS DE CONFIGURAÇÃO =================
+    // ================= MENUS DE CONFIGURAÇÃO (NOVA TELA) =================
     function togglePasswordField() {
         const isEnabled = document.getElementById('set-sec-enable').checked;
         document.getElementById('pin-group').style.display = isEnabled ? 'block' : 'none';
-        
-        if (!isEnabled && document.getElementById('set-timer-enable').checked) {
-            document.getElementById('set-timer-enable').checked = false;
-            toggleTimerField();
-        }
+        if (!isEnabled && document.getElementById('set-timer-enable').checked) { document.getElementById('set-timer-enable').checked = false; toggleTimerField(); }
     }
 
     function toggleTimerField() {
         const isEnabled = document.getElementById('set-timer-enable').checked;
         document.getElementById('timer-group').style.display = isEnabled ? 'block' : 'none';
-        
-        if (isEnabled && !document.getElementById('set-sec-enable').checked) {
-            document.getElementById('set-sec-enable').checked = true;
-            togglePasswordField();
-        }
+        if (isEnabled && !document.getElementById('set-sec-enable').checked) { document.getElementById('set-sec-enable').checked = true; togglePasswordField(); }
     }
 
     function openSettings() { 
-        document.getElementById('set-name').value = state.student; 
-        document.getElementById('set-crit').value = state.settings.crit; 
-        document.getElementById('set-opts').value = state.settings.opts; 
-        document.getElementById('set-hard').checked = state.settings.hard; 
-        document.getElementById('set-theme').value = state.settings.theme;
-        document.getElementById('set-latency').value = state.settings.latency;
+        document.getElementById('set-name').value = state.student; document.getElementById('set-crit').value = state.settings.crit; 
+        document.getElementById('set-opts').value = state.settings.opts; document.getElementById('set-hard').checked = state.settings.hard; 
+        document.getElementById('set-theme').value = state.settings.theme; document.getElementById('set-latency').value = state.settings.latency;
         
-        // Etapas
-        document.getElementById('set-stg-c1').checked = state.settings.stages.c1;
-        document.getElementById('set-stg-c2').checked = state.settings.stages.c2;
-        document.getElementById('set-stg-c3').checked = state.settings.stages.c3;
-        document.getElementById('set-use-mic').checked = state.settings.useMic;
+        document.getElementById('set-stg-c1').checked = state.settings.stages.c1; document.getElementById('set-stg-c2').checked = state.settings.stages.c2;
+        document.getElementById('set-stg-c3').checked = state.settings.stages.c3; document.getElementById('set-use-mic').checked = state.settings.useMic;
 
-        document.getElementById('set-sec-enable').checked = state.settings.security.enabled;
-        document.getElementById('set-sec-pin').value = state.settings.security.pin;
+        document.getElementById('set-sec-enable').checked = state.settings.security.enabled; document.getElementById('set-sec-pin').value = state.settings.security.pin;
         togglePasswordField();
 
-        document.getElementById('set-timer-enable').checked = state.settings.timer.enabled;
-        document.getElementById('set-timer-min').value = state.settings.timer.min;
+        document.getElementById('set-timer-enable').checked = state.settings.timer.enabled; document.getElementById('set-timer-min').value = state.settings.timer.min;
         toggleTimerField();
 
-        document.getElementById('modal-settings').style.display = 'flex'; 
+        hideAllScreens();
+        document.getElementById('screen-settings').classList.add('active'); 
     }
     
     function saveSettings() { 
-        const isSecEnabled = document.getElementById('set-sec-enable').checked;
-        const pinValue = document.getElementById('set-sec-pin').value;
+        const isSecEnabled = document.getElementById('set-sec-enable').checked; const pinValue = document.getElementById('set-sec-pin').value;
         const isTimerEnabled = document.getElementById('set-timer-enable').checked;
 
-        if (isSecEnabled && !pinValue) {
-            customAlert("Atenção", "Você ativou a segurança, mas não definiu um PIN. Defina uma senha numérica.");
-            return;
-        }
-
-        if (isTimerEnabled && !isSecEnabled) {
-            customAlert("Atenção", "Para usar o Timer da Sessão, você DEVE ativar a Segurança com PIN.");
-            return;
-        }
+        if (isSecEnabled && !pinValue) { customAlert("Atenção", "Você ativou a segurança, mas não definiu um PIN."); return; }
+        if (isTimerEnabled && !isSecEnabled) { customAlert("Atenção", "Para usar o Timer da Sessão, você DEVE ativar a Segurança com PIN."); return; }
         
-        let c1_active = document.getElementById('set-stg-c1').checked;
-        let c2_active = document.getElementById('set-stg-c2').checked;
-        let c3_active = document.getElementById('set-stg-c3').checked;
-
-        if(!c1_active && !c2_active && !c3_active) {
-            c1_active = true;
-            customAlert("Atenção", "Pelo menos uma etapa da tarefa deve estar ativada. A Etapa 1 foi reativada automaticamente.");
-        }
+        let c1_active = document.getElementById('set-stg-c1').checked; let c2_active = document.getElementById('set-stg-c2').checked; let c3_active = document.getElementById('set-stg-c3').checked;
+        if(!c1_active && !c2_active && !c3_active) { c1_active = true; customAlert("Atenção", "Pelo menos uma etapa da tarefa deve estar ativada. A Etapa 1 foi reativada."); }
 
         state.student = document.getElementById('set-name').value.toUpperCase() || "NÃO INFORMADO"; 
-        state.settings.crit = parseInt(document.getElementById('set-crit').value); 
-        state.settings.opts = parseInt(document.getElementById('set-opts').value); 
-        state.settings.hard = document.getElementById('set-hard').checked; 
-        state.settings.theme = document.getElementById('set-theme').value;
+        state.settings.crit = parseInt(document.getElementById('set-crit').value); state.settings.opts = parseInt(document.getElementById('set-opts').value); 
+        state.settings.hard = document.getElementById('set-hard').checked; state.settings.theme = document.getElementById('set-theme').value;
         state.settings.latency = parseInt(document.getElementById('set-latency').value) || 500;
-        state.settings.stages = { c1: c1_active, c2: c2_active, c3: c3_active };
-        state.settings.useMic = document.getElementById('set-use-mic').checked;
-        state.settings.security = { enabled: isSecEnabled, pin: pinValue };
-        state.settings.timer = { enabled: isTimerEnabled, min: parseInt(document.getElementById('set-timer-min').value) };
+        state.settings.stages = { c1: c1_active, c2: c2_active, c3: c3_active }; state.settings.useMic = document.getElementById('set-use-mic').checked;
+        state.settings.security = { enabled: isSecEnabled, pin: pinValue }; state.settings.timer = { enabled: isTimerEnabled, min: parseInt(document.getElementById('set-timer-min').value) };
         
-        state.setupDone = true;
-
-        saveState(); applyTheme(); updateLobbyButton(); closeModals(); 
-        
-        if(document.getElementById('screen-home').classList.contains('active')) renderGrid();
+        state.setupDone = true; saveState(); applyTheme(); updateLobbyButton(); 
+        goSplash();
     }
     
     function openReport() { 
-        document.getElementById('modal-settings').style.display = 'none';
         if(state.log.length === 0) document.getElementById('json-output').value = "Nenhum dado registrado ainda."; 
         else document.getElementById('json-output').value = JSON.stringify(state.log[state.log.length - 1], null, 2); 
         document.getElementById('modal-report').style.display = 'flex'; 
     }
     
     function copyJSON() { 
-        const txt = document.getElementById('json-output'); 
-        if(txt.value.includes("Nenhum dado")) return; 
-        txt.select(); document.execCommand('copy'); 
-        customAlert('Copiado!', 'O código JSON foi copiado para a área de transferência.'); 
+        const txt = document.getElementById('json-output'); if(txt.value.includes("Nenhum dado")) return; 
+        txt.select(); document.execCommand('copy'); customAlert('Copiado!', 'O código JSON foi copiado para a área de transferência.'); 
     }
 
     // ================= GERENCIADOR DE NOTAS (ENTER) =================
-    function openNotesModal() {
-        document.getElementById('new-note-input').value = '';
-        renderNotesList();
-        document.getElementById('modal-notes').style.display = 'flex';
-        setTimeout(() => document.getElementById('new-note-input').focus(), 100);
-    }
-
-    function addNoteBlock() {
-        const input = document.getElementById('new-note-input');
-        const val = input.value.trim().toUpperCase();
-        
-        if (val) {
-            state.notes.push(val);
-            saveState();
-            renderNotesList();
-        }
-        input.value = '';
-    }
-
+    function openNotesModal() { document.getElementById('new-note-input').value = ''; renderNotesList(); document.getElementById('modal-notes').style.display = 'flex'; setTimeout(() => document.getElementById('new-note-input').focus(), 100); }
+    function addNoteBlock() { const input = document.getElementById('new-note-input'); const val = input.value.trim().toUpperCase(); if (val) { state.notes.push(val); saveState(); renderNotesList(); } input.value = ''; }
     function renderNotesList() {
-        const container = document.getElementById('notes-list');
-        container.innerHTML = '';
-
-        if(state.notes.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#999; font-size:0.9rem; margin-top:20px;">Nenhum bloco salvo. Digite acima e pressione <strong>Enter</strong>.</p>';
-            return;
-        }
-
+        const container = document.getElementById('notes-list'); container.innerHTML = '';
+        if(state.notes.length === 0) { container.innerHTML = '<p style="text-align:center; color:#999; font-size:1.1rem; margin-top:20px;">Nenhum bloco salvo. Digite acima e pressione <strong>Enter</strong>.</p>'; return; }
         state.notes.forEach((note, index) => {
-            const card = document.createElement('div');
-            card.className = 'note-card';
-            card.innerHTML = `
-                <div class="note-text">${note}</div>
-                <div class="note-actions">
-                    <button type="button" class="note-btn copy" onclick="copyNoteBlock(${index})" title="Copiar"><span class="material-icons" style="font-size:1.2rem;">content_copy</span></button>
-                    <button type="button" class="note-btn del" onclick="deleteNoteBlock(${index})" title="Excluir"><span class="material-icons" style="font-size:1.2rem;">delete</span></button>
-                </div>
-            `;
+            const card = document.createElement('div'); card.className = 'note-card';
+            card.innerHTML = `<div class="note-text">${note}</div><div class="note-actions"><button type="button" class="note-btn copy" onclick="copyNoteBlock(${index})" title="Copiar"><span class="material-icons">content_copy</span></button><button type="button" class="note-btn del" onclick="deleteNoteBlock(${index})" title="Excluir"><span class="material-icons">delete</span></button></div>`;
             container.appendChild(card);
         });
     }
-
     function copyNoteBlock(index) {
         const textToCopy = state.notes[index];
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            customAlert("Copiado!", "Bloco copiado! Agora é só colar no módulo de Palavras.");
-        }).catch(err => {
-            const temp = document.createElement('textarea');
-            temp.value = textToCopy;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
-            customAlert("Copiado!", "Bloco copiado! Agora é só colar no módulo de Palavras.");
-        });
+        navigator.clipboard.writeText(textToCopy).then(() => { customAlert("Copiado!", "Bloco copiado! Agora é só colar no módulo de Palavras.");
+        }).catch(err => { const temp = document.createElement('textarea'); temp.value = textToCopy; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); customAlert("Copiado!", "Bloco copiado! Agora é só colar no módulo de Palavras."); });
     }
-
-    function deleteNoteBlock(index) {
-        state.notes.splice(index, 1);
-        saveState();
-        renderNotesList();
-    }
+    function deleteNoteBlock(index) { state.notes.splice(index, 1); saveState(); renderNotesList(); }
 
     // ================= PALAVRAS CUSTOMIZADAS =================
-    function checkWordsInput() {
-        const val = document.getElementById('custom-words-input').value.trim();
-        document.getElementById('btn-start-words').disabled = val.length === 0;
-    }
-    
+    function checkWordsInput() { const val = document.getElementById('custom-words-input').value.trim(); document.getElementById('btn-start-words').disabled = val.length === 0; }
     function startCustomWords() {
-        const wordsVal = document.getElementById('custom-words-input').value.trim();
-        if(!wordsVal) return;
+        const wordsVal = document.getElementById('custom-words-input').value.trim(); if(!wordsVal) return;
         state.customWords = wordsVal; saveState(); closeModals();
 
-        let pool = wordsVal.split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
-        pool = [...new Set(pool)]; shuffleArray(pool);
-        const targets = pool;
-        
-        let activeCycles = [];
-        if (state.settings.stages.c1) activeCycles.push(1);
-        if (state.settings.stages.c2) activeCycles.push(2);
-        if (state.settings.stages.c3) activeCycles.push(3);
-        if (activeCycles.length === 0) activeCycles = [1];
-
+        let pool = wordsVal.split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0); pool = [...new Set(pool)]; shuffleArray(pool); const targets = pool;
+        let activeCycles = []; if (state.settings.stages.c1) activeCycles.push(1); if (state.settings.stages.c2) activeCycles.push(2); if (state.settings.stages.c3) activeCycles.push(3); if (activeCycles.length === 0) activeCycles = [1];
         session = { phase: 'PALAVRAS', pool: pool, trials: targets, activeCycles: activeCycles, currentCycleIdx: 0, currentCycle: activeCycles[0], isOnlyCycle3: false, isPreReq: false, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: activeCycles.includes(1) ? targets.length : 0 }, c2: { indep:0, dica:0, erro:0, total: activeCycles.includes(2) ? targets.length : 0 }, c3: { indep:0, dica:0, erro:0, total: activeCycles.includes(3) ? targets.length : 0 } } };
         
-        openGame();
-        renderTrial();
+        openGame(); renderTrial();
     }
 
     // ================= MOTOR DO JOGO =================
     function startGame(phaseId) {
-        if(phaseId === 'PALAVRAS') {
-            document.getElementById('custom-words-input').value = state.customWords || '';
-            checkWordsInput(); document.getElementById('modal-words').style.display = 'flex';
-            return;
-        }
-
-        // --- TIMER INÍCIO ---
+        if(phaseId === 'PALAVRAS') { document.getElementById('custom-words-input').value = state.customWords || ''; checkWordsInput(); document.getElementById('modal-words').style.display = 'flex'; return; }
         if (state.settings.timer.enabled) {
-            if (!state.session.endTime && !state.session.expired) {
-                state.session.endTime = Date.now() + (state.settings.timer.min * 60000);
-                saveState();
-            }
-            if (state.session.expired) {
-                triggerTimeUp();
-                return;
-            }
+            if (!state.session.endTime && !state.session.expired) { state.session.endTime = Date.now() + (state.settings.timer.min * 60000); saveState(); }
+            if (state.session.expired) { triggerTimeUp(); return; }
             if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
         }
-        // ---------------------
 
-        let pool = []; let targets = [];
-        let targetCount = 5;
-        let isOnlyCycle3 = false;
-        let isPreReq = false;
+        let pool = []; let targets = []; let targetCount = 5; let isOnlyCycle3 = false; let isPreReq = false;
 
-        if (phaseId === 'PRE1') {
-            isPreReq = true;
-            targetCount = 10;
-            const cons = shuffleArray(['C','P','B','F','T','D','Q','G','M','N']).slice(0, 5);
-            const vow = shuffleArray([...vowels]).slice(0, 5);
-            pool = [...cons, ...vow];
-            targets = shuffleArray([...pool]);
-        } 
-        else if (phaseId === 'PRE2') {
-            isPreReq = true;
-            targetCount = 10;
-            const syls = shuffleArray(['BA','CA','DA','FA','GA','PRA','BOI','FLA','MA','NA']).slice(0, 5);
-            const wrds = shuffleArray(['BOLA','GATO','BOLO','MACACO','CAVALO','SAPATO']).slice(0, 5);
-            pool = [...syls, ...wrds];
-            targets = shuffleArray([...pool]); 
-        }
-        else if (phaseId === 'PRE3') {
-            isPreReq = true;
-            targetCount = 12; // 3 de cada
-            const cons = shuffleArray(['C','P','B','F','T']).slice(0, 3);
-            const vow = shuffleArray([...vowels]).slice(0, 3);
-            const syls = shuffleArray(['BA','CA','DA','FA','GA']).slice(0, 3);
-            const wrds = shuffleArray(['BOLA','GATO','BOLO','MACACO','CAVALO']).slice(0, 3);
-            pool = [...cons, ...vow, ...syls, ...wrds];
-            targets = shuffleArray([...pool]);
-        }
+        if (phaseId === 'PRE1') { isPreReq = true; targetCount = 10; const cons = shuffleArray(['C','P','B','F','T','D','Q','G','M','N']).slice(0, 5); const vow = shuffleArray([...vowels]).slice(0, 5); pool = [...cons, ...vow]; targets = shuffleArray([...pool]); } 
+        else if (phaseId === 'PRE2') { isPreReq = true; targetCount = 10; const syls = shuffleArray(['BA','CA','DA','FA','GA','PRA','BOI','FLA','MA','NA']).slice(0, 5); const wrds = shuffleArray(['BOLA','GATO','BOLO','MACACO','CAVALO','SAPATO']).slice(0, 5); pool = [...syls, ...wrds]; targets = shuffleArray([...pool]); }
+        else if (phaseId === 'PRE3') { isPreReq = true; targetCount = 12; const cons = shuffleArray(['C','P','B','F','T']).slice(0, 3); const vow = shuffleArray([...vowels]).slice(0, 3); const syls = shuffleArray(['BA','CA','DA','FA','GA']).slice(0, 3); const wrds = shuffleArray(['BOLA','GATO','BOLO','MACACO','CAVALO']).slice(0, 3); pool = [...cons, ...vow, ...syls, ...wrds]; targets = shuffleArray([...pool]); }
         else if (phaseId === 'VOGAIS') { pool = [...vowels]; shuffleArray(pool); targets = pool.slice(0, targetCount); }
         else if(phaseId === 'ENCONTROS') { pool = [...encounters]; shuffleArray(pool); targets = pool.slice(0, targetCount); }
-        else if(phaseId === 'PSEUDOPALAVRAS') {
-            pool = generatePseudoWords(); targetCount = 20; isOnlyCycle3 = true; targets = pool;
-        }
+        else if(phaseId === 'PSEUDOPALAVRAS') { pool = generatePseudoWords(); targetCount = 20; isOnlyCycle3 = true; targets = pool; }
         else { pool = generateSyllables(phaseId, state.settings.hard); shuffleArray(pool); targets = pool.slice(0, targetCount); }
         
         let activeCycles = [];
-        if (isOnlyCycle3) {
-            activeCycles = state.settings.stages.c3 ? [3] : [3]; // Força ciclo 3 neste módulo
-        } else {
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (state.settings.stages.c3) activeCycles.push(3);
-            if (activeCycles.length === 0) activeCycles = [1];
-        }
+        if (isOnlyCycle3) { activeCycles = state.settings.stages.c3 ? [3] : [3]; } else { if (state.settings.stages.c1) activeCycles.push(1); if (state.settings.stages.c2) activeCycles.push(2); if (state.settings.stages.c3) activeCycles.push(3); if (activeCycles.length === 0) activeCycles = [1]; }
 
-        session = { 
-            phase: phaseId, pool: pool, trials: targets, 
-            activeCycles: activeCycles,
-            currentCycleIdx: 0,
-            currentCycle: activeCycles[0],
-            isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, 
-            currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, 
-            stats: { 
-                c1: { indep:0, dica:0, erro:0, total: activeCycles.includes(1) ? targetCount : 0 }, 
-                c2: { indep:0, dica:0, erro:0, total: activeCycles.includes(2) ? targetCount : 0 }, 
-                c3: { indep:0, dica:0, erro:0, total: activeCycles.includes(3) ? targetCount : 0 } 
-            } 
-        };
-        
-        openGame();
-        renderTrial();
+        session = { phase: phaseId, pool: pool, trials: targets, activeCycles: activeCycles, currentCycleIdx: 0, currentCycle: activeCycles[0], isOnlyCycle3: isOnlyCycle3, isPreReq: isPreReq, currentTrialIdx: 0, attemptsOnCurrent: 0, isRepeating: false, stats: { c1: { indep:0, dica:0, erro:0, total: activeCycles.includes(1) ? targetCount : 0 }, c2: { indep:0, dica:0, erro:0, total: activeCycles.includes(2) ? targetCount : 0 }, c3: { indep:0, dica:0, erro:0, total: activeCycles.includes(3) ? targetCount : 0 } } };
+        openGame(); renderTrial();
     }
 
-    function abortGame() {
-        if(isListening) {
-            stopMicrophone();
-        }
-        openGrid(); // Retorna direto para a trilha
-    }
-
+    function abortGame() { if(isListening) stopMicrophone(); openGrid(); }
     function getSpokenPrompt(target) {
-        if(session.isPreReq) {
-            if(session.phase === 'PRE1') return "Diga: 'Vogal' ou 'Consoante'";
-            if(session.phase === 'PRE2') return "Diga: 'Sílaba' ou 'Palavra'";
-            if(session.phase === 'PRE3') return "Diga o que é isso";
-        }
+        if(session.isPreReq) { if(session.phase === 'PRE1') return "Diga: 'Vogal' ou 'Consoante'"; if(session.phase === 'PRE2') return "Diga: 'Sílaba' ou 'Palavra'"; if(session.phase === 'PRE3') return "Diga o que é isso"; }
         if (session.phase === 'VOGAIS') return "Letra " + target;
         if (session.phase === 'PALAVRAS' || session.phase === 'PSEUDOPALAVRAS') return "Palavra " + target;
         return "Sílaba " + target;
     }
 
-    function advanceTrial() {
-        setTimeout(() => {
-            session.currentTrialIdx++;
-            if(session.currentTrialIdx >= session.trials.length) finishCycle();
-            else renderTrial();
-        }, 600);
-    }
+    function advanceTrial() { setTimeout(() => { session.currentTrialIdx++; if(session.currentTrialIdx >= session.trials.length) finishCycle(); else renderTrial(); }, 600); }
 
     function renderTrial() {
-        session.attemptsOnCurrent = 0;
-        blockClicks = true;
-        
-        const target = session.trials[session.currentTrialIdx];
-        const modelArea = document.getElementById('model-area');
-        const compArea = document.getElementById('comparisons-area');
-        const badge = document.getElementById('cycle-indicator');
-        
+        session.attemptsOnCurrent = 0; blockClicks = true;
+        const target = session.trials[session.currentTrialIdx]; const modelArea = document.getElementById('model-area'); const compArea = document.getElementById('comparisons-area'); const badge = document.getElementById('cycle-indicator');
         compArea.innerHTML = '';
+        
+        const isHighlighted = state.reviewHighlights && state.reviewHighlights[target];
+        let highlightStyle = isHighlighted ? 'border-color: var(--warning); background-color: #fffdf5; color: #F57F17; box-shadow: 0 5px 25px rgba(241,196,15,0.2);' : '';
+        let highlightIcon = isHighlighted ? '<span class="material-icons" style="position:absolute; top:-15px; right:-15px; background:var(--warning); color:white; border-radius:50%; padding:10px; font-size:2rem; box-shadow:0 8px 20px rgba(0,0,0,0.15);">star</span>' : '';
         
         let optionsToRender = [];
         if (session.isPreReq) {
             if (session.phase === 'PRE1') optionsToRender = ['VOGAL', 'CONSOANTE'];
             if (session.phase === 'PRE2') optionsToRender = ['SÍLABA', 'PALAVRA'];
             if (session.phase === 'PRE3') optionsToRender = ['VOGAL', 'CONSOANTE', 'SÍLABA', 'PALAVRA'];
-        } else {
-            optionsToRender = generateComparisons(target);
-        }
+        } else { optionsToRender = generateComparisons(target); }
 
         if(session.currentCycle === 1) {
             badge.innerText = session.isPreReq ? "Ciclo 1: Classifique a Imagem" : "Ciclo 1: Encontre o Igual";
-            modelArea.innerHTML = `<div class="model-card">${target}</div>`;
+            modelArea.innerHTML = `<div class="model-card" style="${highlightStyle}">${target}${highlightIcon}</div>`;
             optionsToRender.forEach(opt => {
-                const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
-                if(opt.length >= 8) btn.style.fontSize = '1.8rem'; 
-                
+                const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt; if(opt.length >= 8) btn.style.fontSize = '2.5rem'; 
                 let isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
-                btn.onclick = (e) => handleAnswer(isCorrect, e.target);
-                compArea.appendChild(btn);
+                btn.onclick = (e) => handleAnswer(isCorrect, e.target); compArea.appendChild(btn);
             });
         }
         else if (session.currentCycle === 2) {
             badge.innerText = session.isPreReq ? "Ciclo 2: Ouça e Classifique" : "Ciclo 2: Ouvir e Achar";
-            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>`;
-            speakTTS(target); 
+            modelArea.innerHTML = `<div style="position:relative;"><button type="button" class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>${highlightIcon}</div>`; speakTTS(target); 
             optionsToRender.forEach(opt => {
-                const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt;
-                if(opt.length >= 8) btn.style.fontSize = '1.8rem';
-                
+                const btn = document.createElement('div'); btn.className = 'comp-card'; btn.innerText = opt; if(opt.length >= 8) btn.style.fontSize = '2.5rem';
                 let isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
-                btn.onclick = (e) => handleAnswer(isCorrect, e.target);
-                compArea.appendChild(btn);
+                btn.onclick = (e) => handleAnswer(isCorrect, e.target); compArea.appendChild(btn);
             });
         }
         else if (session.currentCycle === 3) {
             badge.innerText = session.isPreReq ? "Ciclo 3: Classificação Oral" : (session.isOnlyCycle3 ? "Leitura Direta" : "Ciclo 3: Sua vez de ler!");
-            modelArea.innerHTML = `<div class="model-card">${target}</div>`;
-            
+            modelArea.innerHTML = `<div class="model-card" style="${highlightStyle}">${target}${highlightIcon}</div>`;
             if (state.settings.useMic) {
-                compArea.innerHTML = `
-                    <div class="stt-area">
-                        <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
-                        <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px;">Fale: '${getSpokenPrompt(target)}'</p>
-                        <div class="stt-controls">
-                            <button type="button" class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)">
-                                <span class="material-icons">close</span> Erro
-                            </button>
-                            
-                            <!-- BOTÃO DE MIC PUSH TO TALK -->
-                            <button type="button" class="stt-btn" id="mic-btn" 
-                                onmousedown="startMicrophone()" 
-                                onmouseup="stopMicrophone()" 
-                                onmouseleave="stopMicrophone()"
-                                ontouchstart="event.preventDefault(); startMicrophone()" 
-                                ontouchend="event.preventDefault(); stopMicrophone()">
-                                <span class="material-icons">mic</span>
-                            </button>
-
-                            <button type="button" class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)">
-                                <span class="material-icons">check</span> Acerto
-                            </button>
-                        </div>
-                    </div>
-                `;
+                compArea.innerHTML = `<div class="stt-area"><input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
+                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:5px; font-size: 1.3rem;">Fale: '${getSpokenPrompt(target)}'</p>
+                    <div class="stt-controls">
+                        <button type="button" class="btn-override" style="background:var(--danger);" onclick="forceAnswer(false)"><span class="material-icons">close</span> Erro</button>
+                        <button type="button" class="stt-btn" id="mic-btn" onmousedown="startMicrophone()" onmouseup="stopMicrophone()" onmouseleave="stopMicrophone()" ontouchstart="event.preventDefault(); startMicrophone()" ontouchend="event.preventDefault(); stopMicrophone()"><span class="material-icons">mic</span></button>
+                        <button type="button" class="btn-override" style="background:var(--success);" onclick="forceAnswer(true)"><span class="material-icons">check</span> Acerto</button>
+                    </div></div>`;
             } else {
-                compArea.innerHTML = `
-                    <div class="stt-area">
-                        <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:15px; font-size:1.1rem;">Mediação: Avalie a leitura de '${getSpokenPrompt(target)}'</p>
-                        <div class="stt-controls" style="gap: 40px; justify-content: center;">
-                            <button type="button" class="btn-override" style="background:var(--danger); padding: 15px 35px; font-size: 1.2rem;" onclick="forceAnswer(false)">
-                                <span class="material-icons" style="font-size:1.8rem;">close</span> Errou
-                            </button>
-                            <button type="button" class="btn-override" style="background:var(--success); padding: 15px 35px; font-size: 1.2rem;" onclick="forceAnswer(true)">
-                                <span class="material-icons" style="font-size:1.8rem;">check</span> Acertou
-                            </button>
-                        </div>
-                    </div>
-                `;
+                compArea.innerHTML = `<div class="stt-area">
+                    <p id="mic-feedback" style="color:var(--text-light); font-weight:bold; margin-bottom:15px; font-size:1.5rem;">Mediação: Avalie a leitura de '${getSpokenPrompt(target)}'</p>
+                    <div class="stt-controls" style="gap: 50px; justify-content: center;">
+                        <button type="button" class="btn-override" style="background:var(--danger); padding: 25px 50px; font-size: 1.5rem;" onclick="forceAnswer(false)"><span class="material-icons" style="font-size:2.2rem;">close</span> Errou</button>
+                        <button type="button" class="btn-override" style="background:var(--success); padding: 25px 50px; font-size: 1.5rem;" onclick="forceAnswer(true)"><span class="material-icons" style="font-size:2.2rem;">check</span> Acertou</button>
+                    </div></div>`;
             }
         }
-        
-        setTimeout(() => {
-            blockClicks = false;
-        }, state.settings.latency);
+        setTimeout(() => { blockClicks = false; }, state.settings.latency);
     }
 
     function generateComparisons(target) {
-        let opts = [target];
-        let available = session.pool.filter(x => x !== target);
-        shuffleArray(available);
-        while(opts.length < state.settings.opts) {
-            if(available.length > 0) opts.push(available.pop());
-            else { const gen = generateSyllables('C', false); opts.push(gen[Math.floor(Math.random()*gen.length)]); }
-        }
+        let opts = [target]; let available = session.pool.filter(x => x !== target); shuffleArray(available);
+        while(opts.length < state.settings.opts) { if(available.length > 0) opts.push(available.pop()); else { const gen = generateSyllables('C', false); opts.push(gen[Math.floor(Math.random()*gen.length)]); } }
         return shuffleArray(opts);
     }
 
     function handleAnswer(isCorrect, element) {
-        if(blockClicks) return;
-        if (isListening) stopMicrophone();
-
+        if(blockClicks) return; if (isListening) stopMicrophone();
         const modelCard = document.querySelector('.model-card') || document.querySelector('.model-audio-btn');
-
         if(isCorrect) {
             playSound('win');
-            
-            if (element) element.classList.add('feedback-success');
-            if (modelCard) modelCard.classList.add('feedback-success');
-
-            if(!session.isRepeating) {
-                let cat = `c${session.currentCycle}`;
-                if(session.attemptsOnCurrent === 0) session.stats[cat].indep++;
-                else session.stats[cat].dica++; 
-            }
+            if (element) element.classList.add('feedback-success'); if (modelCard) modelCard.classList.add('feedback-success');
+            if(!session.isRepeating) { let cat = `c${session.currentCycle}`; if(session.attemptsOnCurrent === 0) session.stats[cat].indep++; else session.stats[cat].dica++; }
             advanceTrial();
         } else {
             session.attemptsOnCurrent++;
-            
-            if(element) element.style.visibility = 'hidden'; 
-            playSound('click'); 
-            
-            if (modelCard) {
-                modelCard.classList.add('feedback-error');
-                setTimeout(() => {
-                    modelCard.classList.remove('feedback-error');
-                }, 400);
-            }
-            
-            if(session.attemptsOnCurrent >= 2) {
-                if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
-                advanceTrial();
-            }
+            if(element) element.style.visibility = 'hidden'; playSound('click'); 
+            if (modelCard) { modelCard.classList.add('feedback-error'); setTimeout(() => { modelCard.classList.remove('feedback-error'); }, 400); }
+            if(session.attemptsOnCurrent >= 2) { if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++; advanceTrial(); }
         }
     }
 
     // ================= STT PUSH TO TALK =================
-    let sttRecognition = null;
-    let isListening = false;
-
+    let sttRecognition = null; let isListening = false;
     function removeAccents(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim(); }
-
     function initSpeechRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!SpeechRecognition) return null;
-        
-        let rec = new SpeechRecognition();
-        rec.lang = 'pt-BR';
-        rec.interimResults = true;
-        rec.maxAlternatives = 1;
-        
-        rec.onresult = function(event) {
-            let transcript = Array.from(event.results).map(r => r[0].transcript).join('');
-            document.getElementById('ghost-stt').value = transcript;
-            document.getElementById('mic-feedback').innerText = `Ouvindo: "${transcript}"`;
-        };
-
-        rec.onerror = function(event) {
-            isListening = false;
-            let btn = document.getElementById('mic-btn');
-            if (btn) btn.classList.remove('listening');
-            let fb = document.getElementById('mic-feedback');
-            fb.innerText = event.error === 'not-allowed' ? "Permissão negada." : (event.error === 'no-speech' ? "Som não detectado." : `Erro (${event.error}).`);
-        };
-
-        rec.onend = function() {
-            if(isListening) return; 
-            processSpeech(document.getElementById('ghost-stt').value);
-        };
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition; if(!SpeechRecognition) return null;
+        let rec = new SpeechRecognition(); rec.lang = 'pt-BR'; rec.interimResults = true; rec.maxAlternatives = 1;
+        rec.onresult = function(event) { let transcript = Array.from(event.results).map(r => r[0].transcript).join(''); document.getElementById('ghost-stt').value = transcript; document.getElementById('mic-feedback').innerText = `Ouvindo: "${transcript}"`; };
+        rec.onerror = function(event) { isListening = false; let btn = document.getElementById('mic-btn'); if (btn) btn.classList.remove('listening'); let fb = document.getElementById('mic-feedback'); fb.innerText = event.error === 'not-allowed' ? "Permissão negada." : (event.error === 'no-speech' ? "Som não detectado." : `Erro (${event.error}).`); };
+        rec.onend = function() { if(isListening) return; processSpeech(document.getElementById('ghost-stt').value); };
         return rec;
     }
-
     function startMicrophone() {
         if (isListening || !state.settings.useMic) return;
-        isListening = true;
-        
-        const btn = document.getElementById('mic-btn');
-        const feedback = document.getElementById('mic-feedback');
-        const ghostInput = document.getElementById('ghost-stt');
-
-        if (btn) btn.classList.add('listening');
-        if (ghostInput) ghostInput.value = "";
-        if (feedback) feedback.innerText = "Gravando...";
-        
-        playSound('click');
-
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("Ouvir_Mic");
-        } else {
-            sttRecognition = initSpeechRecognition();
-            if (sttRecognition) {
-                try { sttRecognition.start(); } catch(err) {}
-            } else {
-                if (feedback) feedback.innerText = "API indisponível.";
-            }
-        }
+        isListening = true; const btn = document.getElementById('mic-btn'); const feedback = document.getElementById('mic-feedback'); const ghostInput = document.getElementById('ghost-stt');
+        if (btn) btn.classList.add('listening'); if (ghostInput) ghostInput.value = ""; if (feedback) feedback.innerText = "Gravando..."; playSound('click');
+        if (window.AppInventor) { window.AppInventor.setWebViewString("Ouvir_Mic"); } else { sttRecognition = initSpeechRecognition(); if (sttRecognition) { try { sttRecognition.start(); } catch(err) {} } else { if (feedback) feedback.innerText = "API indisponível."; } }
     }
-
     function stopMicrophone() {
         if (!isListening) return;
-        isListening = false;
-        
-        const btn = document.getElementById('mic-btn');
-        const feedback = document.getElementById('mic-feedback');
-
-        if (btn) btn.classList.remove('listening');
-        
-        // Mantém o texto visual até a ponte processar
-        if (feedback && feedback.innerText === "Gravando...") {
-            feedback.innerText = "Processando áudio...";
-        }
-
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("Parar_Mic");
-        } else {
-            if (sttRecognition) {
-                try { sttRecognition.stop(); } catch(err) {}
-            }
-        }
+        isListening = false; const btn = document.getElementById('mic-btn'); const feedback = document.getElementById('mic-feedback');
+        if (btn) btn.classList.remove('listening'); if (feedback && feedback.innerText === "Gravando...") feedback.innerText = "Processando áudio...";
+        if (window.AppInventor) { window.AppInventor.setWebViewString("Parar_Mic"); } else { if (sttRecognition) { try { sttRecognition.stop(); } catch(err) {} } }
     }
 
     function processSpeech(transcript) {
-        isListening = false;
-        const btn = document.getElementById('mic-btn');
-        if(btn) btn.classList.remove('listening');
-
-        const feedback = document.getElementById('mic-feedback');
-        
-        if (!transcript || transcript.trim() === "") {
-            feedback.innerText = "Som não detectado. Tente de novo.";
-            setTimeout(() => { 
-                feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; 
-            }, 2000);
-            return;
-        }
-
-        let currentSpeech = removeAccents(transcript);
-        let expectedTarget = session.isPreReq ? getCategory(session.trials[session.currentTrialIdx]) : session.trials[session.currentTrialIdx];
-        let targetClean = removeAccents(expectedTarget);
-        
-        let acceptedTerms = [targetClean];
-        if (!session.isPreReq && phoneticsMap[targetClean]) acceptedTerms = acceptedTerms.concat(phoneticsMap[targetClean]);
-        if (session.isPreReq && preReqTerms[targetClean]) acceptedTerms = acceptedTerms.concat(preReqTerms[targetClean]);
-
-        const regexStr = '(^|\\s)(' + acceptedTerms.join('|') + ')($|\\s)';
-        const regex = new RegExp(regexStr);
-
-        if(regex.test(currentSpeech)) {
-            feedback.innerText = "Detectado!";
-            setTimeout(() => { handleAnswer(true, null); }, 400);
-        } else {
+        isListening = false; const btn = document.getElementById('mic-btn'); if(btn) btn.classList.remove('listening'); const feedback = document.getElementById('mic-feedback');
+        if (!transcript || transcript.trim() === "") { feedback.innerText = "Som não detectado. Tente de novo."; setTimeout(() => { feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000); return; }
+        let currentSpeech = removeAccents(transcript); let expectedTarget = session.isPreReq ? getCategory(session.trials[session.currentTrialIdx]) : session.trials[session.currentTrialIdx];
+        let targetClean = removeAccents(expectedTarget); let acceptedTerms = [targetClean];
+        if (!session.isPreReq && phoneticsMap[targetClean]) acceptedTerms = acceptedTerms.concat(phoneticsMap[targetClean]); if (session.isPreReq && preReqTerms[targetClean]) acceptedTerms = acceptedTerms.concat(preReqTerms[targetClean]);
+        const regexStr = '(^|\\s)(' + acceptedTerms.join('|') + ')($|\\s)'; const regex = new RegExp(regexStr);
+        if(regex.test(currentSpeech)) { feedback.innerText = "Detectado!"; setTimeout(() => { handleAnswer(true, null); }, 400); } 
+        else {
             session.attemptsOnCurrent++;
-            if(session.attemptsOnCurrent >= 2) {
-                feedback.innerText = `Você disse: "${transcript}". Seguindo...`;
-                if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
-                advanceTrial();
-            } else {
-                feedback.innerText = `Você disse: "${transcript}" errôneo.`;
-                setTimeout(() => { 
-                    if(feedback.innerText.includes("errôneo")) feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; 
-                }, 2000);
-            }
+            if(session.attemptsOnCurrent >= 2) { feedback.innerText = `Você disse: "${transcript}". Seguindo...`; if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++; advanceTrial(); } 
+            else { feedback.innerText = `Você disse: "${transcript}" errôneo.`; setTimeout(() => { if(feedback.innerText.includes("errôneo")) feedback.innerText = `Fale: '${getSpokenPrompt(session.trials[session.currentTrialIdx])}'`; }, 2000); }
         }
     }
-
-    // ================= PONTE NATIVA (KODULAR) =================
-    window.receberTextoDoKodular = function(transcript) {
-        processSpeech(transcript);
-    };
-
+    window.receberTextoDoKodular = function(transcript) { processSpeech(transcript); };
     function forceAnswer(isCorrect) {
-        if(blockClicks) return;
-        
-        if (isListening) stopMicrophone();
-
-        if(isCorrect) {
-            handleAnswer(true, null);
-        } else { 
+        if(blockClicks) return; if (isListening) stopMicrophone();
+        if(isCorrect) { handleAnswer(true, null); } else { 
             session.attemptsOnCurrent++; 
-            if(session.attemptsOnCurrent >= 2) {
-                document.getElementById('mic-feedback').innerText = "Seguindo...";
-                if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++;
-                advanceTrial();
-            } else {
-                document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!"; 
-            }
+            if(session.attemptsOnCurrent >= 2) { document.getElementById('mic-feedback').innerText = "Seguindo..."; if(!session.isRepeating) session.stats[`c${session.currentCycle}`].erro++; advanceTrial(); } 
+            else { document.getElementById('mic-feedback').innerText = "O professor marcou Erro. Tente de novo!"; }
         }
     }
 
     // ================= PROGRESSÃO E MODAIS =================
-    function finishCycle() {
-        session.currentTrialIdx = 0;
-        session.currentCycleIdx++;
-        
-        if(session.currentCycleIdx >= session.activeCycles.length) {
-            checkBlockMastery();
-        } else {
-            session.currentCycle = session.activeCycles[session.currentCycleIdx];
-            renderTrial();
-        }
-    }
+    function finishCycle() { session.currentTrialIdx = 0; session.currentCycleIdx++; if(session.currentCycleIdx >= session.activeCycles.length) { checkBlockMastery(); } else { session.currentCycle = session.activeCycles[session.currentCycleIdx]; renderTrial(); } }
 
     function showResultModal(isSuccess, accuracy, nextPhase) {
-        const title = document.getElementById('result-title');
-        const desc = document.getElementById('result-desc');
-        const actions = document.getElementById('result-actions');
-        actions.innerHTML = '';
-
-        if (state.settings.timer.enabled && state.session.expired) {
-            triggerTimeUp();
-            return;
-        }
-
+        const title = document.getElementById('result-title'); const desc = document.getElementById('result-desc'); const actions = document.getElementById('result-actions'); actions.innerHTML = '';
+        if (state.settings.timer.enabled && state.session.expired) { triggerTimeUp(); return; }
         if (isSuccess) {
-            title.innerText = "Desempenho Excelente!";
-            desc.innerText = `Parabéns! A precisão foi de ${Math.round(accuracy)}%. Fase concluída com sucesso!`;
-            actions.innerHTML = `
-                <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); openGrid()"><span class="material-icons">arrow_back</span> Voltar às Tarefas</button>
-                <button type="button" class="btn-action" style="width:100%; background:var(--warning)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir</button>
-                ${nextPhase ? `<button type="button" class="btn-action" style="width:100%; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar <span class="material-icons">arrow_forward</span></button>` : ''}
-            `;
+            title.innerText = "Desempenho Excelente!"; desc.innerText = `Parabéns! A precisão foi de ${Math.round(accuracy)}%. Fase concluída com sucesso!`;
+            actions.innerHTML = `<button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); openGrid()"><span class="material-icons">arrow_back</span> Voltar às Tarefas</button>
+                <button type="button" class="btn-action" style="width:100%; background:var(--warning); color:#333;" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Repetir Fase</button>
+                ${nextPhase ? `<button type="button" class="btn-action" style="width:100%; background:var(--success)" onclick="closeResult(); startGame('${nextPhase}')">Avançar Módulo <span class="material-icons">arrow_forward</span></button>` : ''}`;
         } else {
-            title.innerText = "Quase lá...";
-            desc.innerText = `Parabéns pelo esforço! Precisão de ${Math.round(accuracy)}%. A meta é ${state.settings.crit}%.`;
-            actions.innerHTML = `
-                <button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); openGrid()"><span class="material-icons">arrow_back</span> Voltar às Tarefas</button>
-                <button type="button" class="btn-action" style="width:100%; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>
-            `;
+            title.innerText = "Quase lá..."; desc.innerText = `Parabéns pelo esforço! Precisão de ${Math.round(accuracy)}%. A meta é ${state.settings.crit}%.`;
+            actions.innerHTML = `<button type="button" class="btn-action btn-cancel" style="width:100%" onclick="closeResult(); openGrid()"><span class="material-icons">arrow_back</span> Voltar às Tarefas</button>
+                <button type="button" class="btn-action" style="width:100%; background:var(--primary-dark)" onclick="closeResult(); repeatLesson()"><span class="material-icons">replay</span> Fazer de Novo</button>`;
         }
         document.getElementById('modal-result').style.display = 'flex';
     }
 
     function closeResult() { document.getElementById('modal-result').style.display = 'none'; }
-    
-    function repeatLesson() {
-        session.isRepeating = true; 
-        session.currentCycleIdx = 0;
-        session.currentCycle = session.activeCycles[0]; 
-        renderTrial();
-    }
+    function repeatLesson() { session.isRepeating = true; session.currentCycleIdx = 0; session.currentCycle = session.activeCycles[0]; renderTrial(); }
 
     function checkBlockMastery() {
-        let totalTrials = 0; let totalIndep = 0;
-
-        // O total será dinâmico baseado apenas nas etapas (activeCycles) que o usuário realizou
-        totalTrials = session.stats.c1.total + session.stats.c2.total + session.stats.c3.total; 
-        totalIndep = session.stats.c1.indep + session.stats.c2.indep + session.stats.c3.indep;
-        
+        let totalTrials = session.stats.c1.total + session.stats.c2.total + session.stats.c3.total; let totalIndep = session.stats.c1.indep + session.stats.c2.indep + session.stats.c3.indep;
         const accuracy = totalTrials > 0 ? (totalIndep / totalTrials) * 100 : 0;
 
         if(!session.isRepeating) {
             if (session.isPreReq) {
                 let logFaseDesc = session.phase === 'PRE1' ? "Discrim. (Vogal/Cons.)" : (session.phase === 'PRE2' ? "Discrim. (Sílaba/Palav.)" : "Discrim. (Mistura)");
-                const dataObj = { 
-                    n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), 
-                    tipo: "PRE_REQUISITO", fase: logFaseDesc, 
-                    crit: state.settings.crit, acc: Math.round(accuracy), 
-                    status: accuracy >= state.settings.crit ? "Atingiu Pré-requisito" : "Não Atingiu",
-                    ciclos: session.stats
-                };
+                const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "PRE_REQUISITO", fase: logFaseDesc, crit: state.settings.crit, acc: Math.round(accuracy), status: accuracy >= state.settings.crit ? "Atingiu Pré-requisito" : "Não Atingiu", ciclos: session.stats };
                 state.log.push(dataObj);
             } else {
                 const dataObj = { n: state.student || "NÃO INFORMADO", d: new Date().toLocaleDateString('pt-BR'), tipo: "MTS", fase: session.phase, nv: state.settings.hard ? "Avançado (+CCV)" : "Básico", crit: state.settings.crit, acc: Math.round(accuracy), ciclos: session.stats };
                 state.log.push(dataObj);
             }
         }
-
         let nextPhase = null;
         if(accuracy >= state.settings.crit) {
             const curIdx = curriculumOrder.indexOf(session.phase);
-            if(curIdx >= 0 && curIdx < curriculumOrder.length - 1) {
-                nextPhase = curriculumOrder[curIdx + 1];
-                if(!state.unlocked.includes(nextPhase)) {
-                    state.unlocked.push(nextPhase);
-                    saveState();
-                }
-            }
+            if(curIdx >= 0 && curIdx < curriculumOrder.length - 1) { nextPhase = curriculumOrder[curIdx + 1]; if(!state.unlocked.includes(nextPhase)) { state.unlocked.push(nextPhase); saveState(); } }
             showResultModal(true, accuracy, nextPhase);
-        } else {
-            showResultModal(false, accuracy, null);
-        }
+        } else { showResultModal(false, accuracy, null); }
     }
 
     // ================= INTERCEPÇÃO DO BOTÃO VOLTAR NATIVO (KODULAR) =================
     window.handleAndroidBack = function() {
-        let modalAberto = false;
-        document.querySelectorAll('.modal-overlay').forEach(m => {
-            if(m.style.display === 'flex') modalAberto = true;
-        });
-
-        if(modalAberto) { 
-            closeModals(); 
-            return; 
-        }
-
-        if(document.getElementById('screen-game').classList.contains('active')) { 
-            abortGame(); 
-            return; 
-        }
-
-        if(document.getElementById('screen-dashboard').classList.contains('active') ||
-           document.getElementById('screen-home').classList.contains('active')) { 
-            goSplash(); 
-            return; 
-        }
-
-        if(document.getElementById('screen-splash').classList.contains('active')) {
-            if (window.AppInventor) {
-                window.AppInventor.setWebViewString("VOLTAR_MENU");
-            }
-        }
+        let modalAberto = false; document.querySelectorAll('.modal-overlay').forEach(m => { if(m.style.display === 'flex') modalAberto = true; });
+        if(modalAberto) { closeModals(); return; }
+        if(document.getElementById('screen-game').classList.contains('active')) { abortGame(); return; }
+        if(document.getElementById('screen-dashboard').classList.contains('active') || document.getElementById('screen-home').classList.contains('active') || document.getElementById('screen-settings').classList.contains('active')) { goSplash(); return; }
+        if(document.getElementById('screen-splash').classList.contains('active')) { if (window.AppInventor) { window.AppInventor.setWebViewString("VOLTAR_MENU"); } }
     };
 
     window.onload = init;
