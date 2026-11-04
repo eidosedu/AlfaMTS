@@ -33,7 +33,7 @@
 
 <!-- INDICADOR DE TIMER FLUTUANTE -->
 <div id="header-timer-icon" title="Timer de Sessão Ativo">
-    <span class="material-icons" style="font-size: 1.3rem;">timer</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/></svg>
     <span id="header-timer-text">30:00</span>
 </div>
 
@@ -41,75 +41,87 @@
 <div id="screen-splash" class="screen active">
     <div class="splash-logo">
         <div class="logo-icon-box">
-            <span class="material-icons">extension</span>
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02Z"/></svg>
         </div>
         <h1>AlfaMTS</h1>
         <div class="student-pill" id="splash-student-pill">
-            <span class="material-icons" style="color:var(--primary); font-size:1.2rem;">person</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span id="splash-student-name">Aluno: Não Configurado</span>
         </div>
     </div>
     
     <div class="splash-buttons">
         <div class="splash-btn" id="btn-start-game" onclick="openGrid()">
-            <div class="icon-wrapper"><span class="material-icons">play_arrow</span></div>
+            <div class="icon-wrapper">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+            </div>
             Iniciar Sessão
         </div>
         <div class="splash-btn" onclick="requireAuth(openDashboard)">
-            <div class="icon-wrapper" style="background:#D1FAE5; color:#047857;"><span class="material-icons">insights</span></div>
+            <div class="icon-wrapper" style="background:#D1FAE5; color:#047857;">
+                <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            </div>
             Desempenho
         </div>
         <div class="splash-btn" onclick="requireAuth(openSettings)">
-            <div class="icon-wrapper" style="background:#FEF3C7; color:#B45309;"><span class="material-icons">tune</span></div>
+            <div class="icon-wrapper" style="background:#FEF3C7; color:#B45309;">
+                <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            </div>
             Configurações
         </div>
     </div>
 </div>
 
-<!-- ================= TELA 1: TRILHA DE ATIVIDADES ================= -->
+<!-- ================= TELA 1: TRILHA DE ATIVIDADES (HEADER FINO + SWIPE + TOGGLE CONFIG) ================= -->
 <div id="screen-home" class="screen">
-    <div class="home-header">
-        <h2>Atividades</h2>
-        <div style="display:flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" class="btn-action" id="btn-review-mode" style="background:#F1F5F9; color:var(--text-light);" onclick="toggleReviewMode()">
-                <span class="material-icons">visibility_off</span> Revisão: OFF
+    <div class="home-header-slim">
+        <button type="button" class="icon-circle-btn" onclick="goSplash()" title="Voltar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        </button>
+        
+        <h2 id="carousel-level-title" class="dynamic-level-title">Nível 1</h2>
+        
+        <div class="header-right-actions">
+            <button type="button" class="icon-circle-btn" id="btn-review-mode" onclick="toggleReviewMode()" title="Modo Revisão (Toque em um card para revisar)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
-            <button type="button" class="btn-action" style="background:#F1F5F9; color:var(--primary-dark);" onclick="requireAuth(openModulesManager)">
-                <span class="material-icons">lock_open</span> Gerenciar
+            <button type="button" class="icon-circle-btn" id="btn-config-mode" onclick="toggleConfigMode()" title="Modo Configurar Tarefa (Toque em um card para configurar)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
-            <button type="button" class="btn-action btn-cancel" onclick="goSplash()">
-                <span class="material-icons">home</span> Início
+            <button type="button" class="icon-circle-btn" onclick="requireAuth(openModulesManager)" title="Gerenciar Módulos">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
             </button>
         </div>
     </div>
 
-    <!-- ABAS DE NÍVEIS -->
-    <div class="level-tabs" id="level-tabs-bar">
-        <button class="level-tab active" onclick="selectLevelTab('N1', this)">Nível 1</button>
-        <button class="level-tab" onclick="selectLevelTab('N2', this)">Nível 2</button>
-        <button class="level-tab" onclick="selectLevelTab('N3', this)">Nível 3</button>
-        <button class="level-tab" onclick="selectLevelTab('N4', this)">Nível 4</button>
-        <button class="level-tab" onclick="selectLevelTab('N5', this)">Nível 5</button>
-        <button class="level-tab" onclick="selectLevelTab('SILABARIO', this)">Silabário</button>
-        <button class="level-tab" onclick="selectLevelTab('EXTRAS', this)">Extras</button>
+    <!-- CARROSSEL HORIZONTAL (SWIPE) -->
+    <div class="carousel-viewport" id="levels-carousel" onscroll="onCarouselScroll()">
+        <div class="carousel-track" id="carousel-track"></div>
     </div>
 
-    <div class="curriculum-grid" id="grid-phases"></div>
+    <!-- INDICADORES DE PÁGINA (DOTS) -->
+    <div class="carousel-dots" id="carousel-dots"></div>
 </div>
 
 <!-- ================= TELA 2: CONFIGURAÇÕES GLOBAIS ================= -->
 <div id="screen-settings" class="screen">
     <div class="settings-header">
-        <h2><span class="material-icons" style="font-size: 2.2rem; color: var(--primary);">tune</span> Configurações Globais</h2>
+        <h2 style="display:flex; align-items:center; gap:10px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            Configurações Globais
+        </h2>
         <div style="display:flex; gap: 12px;">
             <button type="button" class="btn-action btn-cancel" onclick="goSplash()">Cancelar</button>
-            <button type="button" class="btn-action" onclick="saveSettings()"><span class="material-icons">save</span> Salvar</button>
+            <button type="button" class="btn-action" onclick="saveSettings()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Salvar
+            </button>
         </div>
     </div>
     
     <div class="settings-single-col">
         <div class="settings-card">
-            <div class="settings-card-title"><span class="material-icons">psychology</span> Parâmetros de Ensino</div>
+            <div class="settings-card-title">Parâmetros de Ensino</div>
             <div class="input-group">
                 <label>Nome do Aluno:</label>
                 <input type="text" id="set-name" placeholder="Ex: MIGUEL">
@@ -154,7 +166,7 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-card-title"><span class="material-icons">Abc</span> Estrutura do Silabário</div>
+            <div class="settings-card-title">Estrutura do Silabário</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
                     <input type="checkbox" id="set-syl-ccv" style="width:22px; height:22px;"> Encontros (+CCV)
@@ -172,13 +184,13 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-card-title"><span class="material-icons">layers</span> Etapas e Topografia Global</div>
+            <div class="settings-card-title">Etapas e Topografia Global</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c1" style="width:22px; height:22px;"> 1. Identidade Visual
+                    <input type="checkbox" id="set-stg-c1" style="width:22px; height:22px;"> 1. Identidade Visual / Boca
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c2" style="width:22px; height:22px;"> 2. Receptivo (Áudio)
+                    <input type="checkbox" id="set-stg-c2" style="width:22px; height:22px;"> 2. Receptivo (Áudio → Letra)
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
                     <input type="checkbox" id="set-stg-c3" style="width:22px; height:22px;"> 3. Expressivo (Fala)
@@ -219,7 +231,7 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-card-title"><span class="material-icons">shield</span> Segurança e Tempo</div>
+            <div class="settings-card-title">Segurança e Tempo</div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px;">
                 <input type="checkbox" id="set-sec-enable" style="width:24px; height:24px;" onchange="togglePasswordField()">
                 <label style="margin:0;">Exigir Senha Numérica (PIN)</label>
@@ -244,10 +256,11 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-card-title"><span class="material-icons">storage</span> Sistema e Memória Local</div>
+            <div class="settings-card-title">Sistema e Memória Local</div>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                <button type="button" class="btn-action" style="background:var(--danger); flex:1;" onclick="resetApp()">
-                    <span class="material-icons">delete_forever</span> Apagar Dados e Resetar Fábrica
+                <button type="button" class="btn-action" style="background:var(--danger); flex:1;" onclick="hardResetAppCache()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Limpar Todo Cache e Resetar App
                 </button>
             </div>
         </div>
@@ -259,21 +272,26 @@
     <div class="dash-header">
         <div>
             <h2 style="display:flex; align-items:center; gap:10px; font-weight:900;">
-                <span class="material-icons" style="font-size:2.2rem; color:var(--primary);">insights</span> Desempenho
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                Desempenho
             </h2>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <button type="button" class="btn-action" style="background:#10B981;" onclick="copyWhatsAppSummary()">
-                <span class="material-icons">chat</span> Resumo Texto
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Resumo Texto
             </button>
             <button type="button" class="btn-action" style="background:var(--danger);" onclick="exportEidosChecklistPDF()">
-                <span class="material-icons">assignment_turned_in</span> Laudo PDF
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Laudo PDF
             </button>
             <button type="button" class="btn-action" style="background:#3B82F6;" onclick="exportSessionLogPDF()">
-                <span class="material-icons">picture_as_pdf</span> Histórico PDF
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Histórico PDF
             </button>
             <button type="button" class="btn-action" style="background:var(--primary-dark);" onclick="openReport()">
-                <span class="material-icons">data_object</span> Dados
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Dados
             </button>
             <button type="button" class="btn-action btn-cancel" onclick="goSplash()">Voltar</button>
         </div>
@@ -313,12 +331,14 @@
 <div id="screen-game" class="screen">
     <div class="game-top-bar">
         <button type="button" class="btn-exit-game" onclick="requestAbortGame()" title="Sair">
-            <span class="material-icons" style="font-size:1.8rem;">close</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <div id="cycle-indicator" class="cycle-badge">Identidade Visual</div>
         <div style="display:flex; align-items:center; gap:10px;">
+            <button type="button" class="icon-circle-btn" onclick="openQuickPeekModal()" title="Ver Estímulo e Resposta em Texto">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
             <div id="fluency-timer-pill" class="trial-progress-pill" style="display:none; border-color:var(--warning); color:#B45309;">
-                <span class="material-icons" style="font-size:1.1rem;">timer</span>
                 <span id="fluency-ms-text">0.0s</span>
             </div>
             <div id="trial-counter-pill" class="trial-progress-pill">1 / 5</div>
@@ -335,16 +355,16 @@
         <div class="dock-label">Registro do Aplicador</div>
         <div class="dock-buttons">
             <button type="button" class="btn-aba undo" id="btn-dock-undo" onclick="undoLastTrial()" style="display:none;" title="Desfazer">
-                <span class="material-icons">undo</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
             </button>
             <button type="button" class="btn-aba erro" onclick="recordMediatedTrial('N')" title="Erro / Não Emite">
-                <span class="material-icons">close</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             <button type="button" class="btn-aba dica" onclick="recordMediatedTrial('D')" title="Com Dica">
-                <span class="material-icons">lightbulb</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
             </button>
             <button type="button" class="btn-aba indep" onclick="recordMediatedTrial('I')" title="Independente">
-                <span class="material-icons">check</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </button>
         </div>
     </div>
@@ -352,90 +372,155 @@
 
 <!-- ================= MODAIS DO SISTEMA ================= -->
 
-<!-- PAINEL DE CONFIGURAÇÃO DA TAREFA (3 ABAS: ESTÍMULOS, TOPOGRAFIA, PARÂMETROS ABA) -->
+<!-- PAINEL DE CONFIGURAÇÃO DA TAREFA REPAGINADO -->
 <div id="modal-stimuli-editor" class="modal-overlay" data-backdrop-close="true" style="z-index: 280;">
-    <div class="modal-content" style="text-align: left; max-width: 700px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-            <div>
-                <h2 class="modal-title" id="stim-editor-title">Configurar Tarefa</h2>
-                <p class="modal-desc" id="stim-editor-rules" style="margin-bottom:8px;">Ajuste estímulos, apresentação e parâmetros ABA desta atividade.</p>
-            </div>
-            <span class="material-icons" style="font-size:2.4rem; color:var(--primary);">tune</span>
-        </div>
-
-        <!-- 3 ABAS PRINCIPAIS DO MODAL -->
-        <div class="task-panel-tabs">
-            <button type="button" class="task-tab-btn active" id="tab-btn-stim" onclick="switchTaskEditorTab('STIM')">
-                <span class="material-icons" style="font-size:1.1rem;">list_alt</span> 1. Estímulos
-            </button>
-            <button type="button" class="task-tab-btn" id="tab-btn-topo" onclick="switchTaskEditorTab('TOPO')">
-                <span class="material-icons" style="font-size:1.1rem;">text_fields</span> 2. Apresentação
-            </button>
-            <button type="button" class="task-tab-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">
-                <span class="material-icons" style="font-size:1.1rem;">timer</span> 3. Parâmetros ABA
+    <div class="modal-content" style="text-align: left; max-width: 640px; padding: 24px;" onclick="closeAllTooltips(event)">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" id="stim-editor-title" style="margin:0;">Configurar Tarefa</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()" title="Fechar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
 
-        <!-- ABA 1: ESTÍMULOS E VARIAÇÕES -->
+        <!-- BARRA SEGMENTADA COMPACTA (3 ABAS) -->
+        <div class="segmented-control">
+            <button type="button" class="seg-btn active" id="tab-btn-stim" onclick="switchTaskEditorTab('STIM')">Estímulos</button>
+            <button type="button" class="seg-btn" id="tab-btn-topo" onclick="switchTaskEditorTab('TOPO')">Apresentação</button>
+            <button type="button" class="seg-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">Parâmetros ABA</button>
+        </div>
+
+        <!-- ABA 1: ESTÍMULOS -->
         <div id="task-tab-content-stim">
-            <div class="var-tabs-bar" id="stim-var-tabs"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                <div class="var-tabs-bar" id="stim-var-tabs" style="margin:0; border:none; padding:0;"></div>
+                <div id="stim-editor-rules" class="meta-chips-box"></div>
+            </div>
             <div class="stim-editor-list" id="stim-items-list"></div>
-            <div id="stim-add-bar" style="display:flex; gap:8px; margin-bottom:16px;">
-                <input type="text" id="stim-new-input" placeholder="Novo estímulo..." style="flex:1; padding:12px 14px; border:2px solid var(--border); border-radius:12px; font-weight:700; outline:none;">
-                <button type="button" class="btn-action" id="stim-btn-add" onclick="addStimulusItemToEditor()">
-                    <span class="material-icons">add</span> Adicionar
+            <div id="stim-add-bar" style="display:flex; gap:8px; margin-bottom:14px;">
+                <input type="text" id="stim-new-input" placeholder="Adicionar estímulo..." style="flex:1; padding:10px 14px; border:2px solid var(--border); border-radius:12px; font-weight:700; outline:none;">
+                <button type="button" class="btn-action" id="stim-btn-add" style="padding:10px 18px;" onclick="addStimulusItemToEditor()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Adicionar
                 </button>
             </div>
         </div>
 
-        <!-- ABA 2: APRESENTAÇÃO / TOPOGRAFIA LOCAL -->
-        <div id="task-tab-content-topo" style="display:none; padding: 6px 0 18px 0;">
-            <div class="input-group">
-                <label>Fonte e Caixa dos Cartões (Específico desta tarefa):</label>
-                <select id="task-cfg-font">
-                    <option value="GLOBAL">Seguir Padrão Global das Configurações</option>
-                    <option value="UPPER">Fixar CAIXA ALTA Bastão (Padrão)</option>
-                    <option value="LOWER">Fixar letras minúsculas (imprensa)</option>
-                    <option value="SERIF">Fixar Fonte Serifada (Georgia)</option>
-                    <option value="SCHOOL">Fixar Fonte Escolar (Comic Neue)</option>
+        <!-- ABA 2: APRESENTAÇÃO (TOGGLE SWITCHES MODERNOS) -->
+        <div id="task-tab-content-topo" style="display:none; padding: 4px 0 14px 0;">
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Tipografia dos Cartões</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-font')">?</button>
+                    <div id="tip-font" class="floating-popover">Fixar letras minúsculas ou serifadas permite testar a generalização visual sem alterar os demais módulos.</div>
+                </div>
+                <select id="task-cfg-font" class="compact-select">
+                    <option value="GLOBAL">Padrão Global</option>
+                    <option value="UPPER">CAIXA ALTA</option>
+                    <option value="LOWER">minúsculas</option>
+                    <option value="SERIF">Serifada</option>
+                    <option value="SCHOOL">Escolar Cursiva</option>
                 </select>
             </div>
-            <p style="font-size:0.86rem; color:var(--text-light); font-weight:600;">
-                Dica clínica: Fixar em letras minúsculas ou serifadas permite testar a generalização de leitura sem alterar os demais jogos.
-            </p>
-        </div>
 
-        <!-- ABA 3: PARÂMETROS ABA (DMTS TIME DELAY & TIMEOUT DE LATÊNCIA) -->
-        <div id="task-tab-content-aba" style="display:none; padding: 6px 0 18px 0;">
-            <div class="input-group" id="dmts-config-box">
-                <label>Time Delay Visual - DMTS (Segundos de atraso do modelo):</label>
-                <div style="display:flex; align-items:center; gap:14px;">
-                    <input type="range" id="task-cfg-dmts" min="0" max="5" step="1" value="0" style="flex:1;" oninput="document.getElementById('dmts-val-label').innerText = this.value == 0 ? 'Desativado (MTS Simultâneo)' : this.value + 's de atraso'">
-                    <strong id="dmts-val-label" style="min-width:195px; font-size:0.92rem; color:var(--primary-dark);">Desativado (MTS Simultâneo)</strong>
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Colorizar Consoante / Vogal</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-cv')">?</button>
+                    <div id="tip-cv" class="floating-popover">Exibe consoantes em preto e vogais em vermelho para destacar a estrutura intrassilábica.</div>
                 </div>
-                <p style="font-size:0.82rem; color:var(--text-light); margin-top:6px;">
-                    Quando maior que 0s, o aluno deve tocar no modelo visual para observá-lo; o modelo se apaga e as alternativas surgem após o intervalo. Ignorado em modelos puramente auditivos.
-                </p>
+                <label class="pill-switch">
+                    <input type="checkbox" id="task-cfg-color-cv">
+                    <span class="pill-slider"></span>
+                </label>
             </div>
 
-            <div class="input-group" style="margin-bottom:0;">
-                <label>Cronômetro de Latência / Timeout da Tentativa (Segundos):</label>
-                <input type="number" id="task-cfg-timeout" min="0" max="60" value="0" placeholder="0 = Sem limite">
-                <p style="font-size:0.82rem; color:var(--text-light); margin-top:6px;">
-                    Se definido (ex: 10 segundos), caso o aprendiz não emita resposta dentro do tempo, o sistema registra não-emissão [N] e avança automaticamente. (0 = desativado).
-                </p>
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Moldura Silábica Azul</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-box')">?</button>
+                    <div id="tip-box" class="floating-popover">Enquadra visualmente cada sílaba da palavra com uma borda azul para apoiar a fusão silábica.</div>
+                </div>
+                <label class="pill-switch">
+                    <input type="checkbox" id="task-cfg-syl-box">
+                    <span class="pill-slider"></span>
+                </label>
             </div>
         </div>
 
+        <!-- ABA 3: PARÂMETROS ABA (2 COLUNAS COMPACTAS) -->
+        <div id="task-tab-content-aba" style="display:none; padding: 4px 0 14px 0;">
+            <div class="compact-param-row" id="dmts-config-box">
+                <div class="param-label-group">
+                    <span>Time Delay Visual (DMTS)</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-dmts')">?</button>
+                    <div id="tip-dmts" class="floating-popover">Exige toque de observação no modelo visual; o modelo apaga e as escolhas surgem após o atraso. Fortalece retenção e controle condicional.</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; width: 220px;">
+                    <input type="range" id="task-cfg-dmts" min="0" max="5" step="1" value="0" style="flex:1;" oninput="document.getElementById('dmts-val-label').innerText = this.value == 0 ? '0s (Off)' : this.value + 's'">
+                    <strong id="dmts-val-label" style="min-width:65px; text-align:right; font-size:0.9rem; color:var(--primary-dark);">0s (Off)</strong>
+                </div>
+            </div>
+
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Timeout de Latência (s)</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-lat')">?</button>
+                    <div id="tip-lat" class="floating-popover">Tempo máximo em segundos para emissão da resposta antes de registrar não-emissão [N] e avançar. (0 = sem limite).</div>
+                </div>
+                <input type="number" id="task-cfg-timeout" class="compact-input-num" min="0" max="60" value="0" placeholder="0">
+            </div>
+        </div>
+
+        <!-- RODAPÉ DE AÇÕES COM SVGS -->
         <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:16px;">
-            <button type="button" class="btn-action btn-cancel" onclick="restoreDefaultModuleStimuli()" title="Restaurar padrão de fábrica deste módulo">
-                <span class="material-icons">restart_alt</span> Padrão
+            <button type="button" class="btn-action btn-cancel" onclick="restoreDefaultModuleStimuli()" title="Redefinir Padrão">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Redefinir Padrão
             </button>
             <div style="display:flex; gap:10px;">
                 <button type="button" class="btn-action btn-cancel" onclick="closeModals()">Cancelar</button>
                 <button type="button" class="btn-action" onclick="saveStimuliEditorChanges()">
-                    <span class="material-icons">save</span> Salvar Tudo
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Salvar Tudo
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL FLUTUANTE "PUSH TO VIEW" (FICHA CLÍNICA AO SEGURAR O CARD) -->
+<div id="modal-push-details" class="modal-overlay" style="z-index: 450; pointer-events: none;">
+    <div class="modal-content" style="max-width: 480px; text-align: left; padding: 26px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span id="push-det-code" class="code-tag" style="margin:0; font-size:0.8rem;">1.1 • DTT</span>
+            <span style="font-size:0.78rem; font-weight:800; color:var(--text-light);">Solte para fechar</span>
+        </div>
+        <h2 id="push-det-title" class="modal-title" style="font-size:1.45rem; margin-bottom:10px;">Título</h2>
+        <p id="push-det-desc" style="font-size:0.98rem; color:var(--text); font-weight:600; line-height:1.5; margin-bottom:14px;"></p>
+        <div style="background:#F8FAFC; border:1.5px solid var(--border); border-radius:14px; padding:12px 14px;">
+            <span style="font-size:0.75rem; font-weight:900; color:var(--primary-dark); text-transform:uppercase; display:block; margin-bottom:4px;">Metodologia & Objetivo Clínico</span>
+            <p id="push-det-method" style="font-size:0.88rem; color:var(--text-light); font-weight:600; line-height:1.4; margin:0;"></p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE VISUALIZAÇÃO RÁPIDA EM TEXTO (ESTÍMULO + RESPOSTA NA TELA DE JOGO) -->
+<div id="modal-quick-peek" class="modal-overlay" data-backdrop-close="true" style="z-index: 420;">
+    <div class="modal-content" style="max-width: 440px; text-align: left; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" style="font-size:1.3rem; margin:0;">Consulta Rápida (Texto)</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+            <div style="background:#F8FAFC; padding:14px; border-radius:14px; border:1.5px solid var(--border);">
+                <span style="font-size:0.75rem; font-weight:900; color:var(--text-light); text-transform:uppercase;">Estímulo Modelo (Alvo)</span>
+                <strong id="peek-stimulus-text" style="display:block; font-size:1.35rem; color:var(--text); margin-top:4px; word-break:break-word;">-</strong>
+            </div>
+            <div style="background:var(--success-light); padding:14px; border-radius:14px; border:1.5px solid var(--success);">
+                <span style="font-size:0.75rem; font-weight:900; color:#065F46; text-transform:uppercase;">Resposta Esperada (Gabarito)</span>
+                <strong id="peek-answer-text" style="display:block; font-size:1.35rem; color:#065F46; margin-top:4px; word-break:break-word;">-</strong>
             </div>
         </div>
     </div>
@@ -455,7 +540,10 @@
         <div id="modules-list-container" style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; margin-bottom: 20px; padding-right:8px;"></div>
         <div style="display:flex; gap:12px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
-            <button type="button" class="btn-action" style="flex:2" onclick="confirmSaveModulesManager()"><span class="material-icons">save</span> Aplicar Seleção</button>
+            <button type="button" class="btn-action" style="flex:2" onclick="confirmSaveModulesManager()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Aplicar Seleção
+            </button>
         </div>
     </div>
 </div>
@@ -464,7 +552,9 @@
 <div id="modal-auth" class="modal-overlay" style="z-index: 350;">
     <div class="modal-content" style="max-width: 420px;" id="auth-content">
         <div style="display:flex; justify-content:center; margin-bottom:14px;">
-            <span class="material-icons" style="font-size:3.8rem; color:var(--danger); background:var(--danger-light); padding:18px; border-radius:50%;">lock</span>
+            <div style="color:var(--danger); background:var(--danger-light); padding:18px; border-radius:50%; display:inline-flex;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
         </div>
         <h2 class="modal-title" style="color:var(--danger);">Acesso Restrito</h2>
         <p class="modal-desc">Digite o PIN numérico para desbloquear.</p>
@@ -485,7 +575,7 @@
                 <h2 class="modal-title" id="review-title" style="margin-bottom: 2px;">Revisão de Estímulos</h2>
                 <p class="modal-desc" style="margin:0;">Toque nos itens para destacá-los durante o treino.</p>
             </div>
-            <span class="material-icons" style="font-size:3rem; color:var(--warning);">visibility</span>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
         <div id="review-grid" style="display: flex; flex-wrap: wrap; gap: 12px; max-height: 48vh; overflow-y: auto; padding: 10px 4px; margin-bottom: 24px;"></div>
         <div style="display:flex; justify-content:flex-end;">
@@ -515,7 +605,10 @@
         <textarea id="json-output" readonly style="font-family:monospace; font-size:0.9rem; height:220px;"></textarea>
         <div style="display:flex; gap: 12px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1;" onclick="closeModals()">Fechar</button>
-            <button type="button" class="btn-action" style="flex:1;" onclick="copyJSON()"><span class="material-icons">content_copy</span> Copiar</button>
+            <button type="button" class="btn-action" style="flex:1;" onclick="copyJSON()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar
+            </button>
         </div>
     </div>
 </div>
@@ -546,7 +639,9 @@
 <div id="modal-timesup" class="modal-overlay" style="z-index: 500;">
     <div class="modal-content" style="max-width: 460px;">
         <div style="display:flex; justify-content:center; margin-bottom:20px;">
-            <span class="material-icons" style="font-size:4.5rem; color:var(--danger); background:var(--danger-light); padding:22px; border-radius:50%;">timer_off</span>
+            <div style="color:var(--danger); background:var(--danger-light); padding:22px; border-radius:50%; display:inline-flex;">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+            </div>
         </div>
         <h2 class="modal-title" style="color:var(--danger); font-size: 2rem;">Tempo Concluído</h2>
         <p class="modal-desc">O tempo programado para esta sessão terminou.</p>
