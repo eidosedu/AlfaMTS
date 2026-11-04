@@ -82,10 +82,10 @@ const PHONOLOGICAL_ALPHABET_MODULES = [
 function getPhonemeAudioPath(letter, varIdx = '1') {
     const k = String(letter || '').toUpperCase().trim();
     const entry = (typeof FONEMAS_AUDIO_MAP !== 'undefined') ? FONEMAS_AUDIO_MAP[k] : null;
-    if (!entry) return `assets/audios/fonemas/c-${k.toLowerCase()}-${varIdx}.ogg`;
-    if (typeof entry === 'string') return `assets/audios/fonemas/${entry}`;
+    if (!entry) return `assets/audio/fonemas/c-${k.toLowerCase()}-${varIdx}.ogg`;
+    if (typeof entry === 'string') return `assets/audio/fonemas/${entry}`;
     const file = entry[String(varIdx)] || entry['1'] || Object.values(entry)[0];
-    return `assets/audios/fonemas/${file}`;
+    return `assets/audio/fonemas/${file}`;
 }
 
 function getMouthImagePath(letter, varIdx = '1') {
