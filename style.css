@@ -1182,3 +1182,348 @@
             .screen { padding: 18px; }
             .multimodel-board { grid-template-columns: 1fr; gap: 14px; }
         }
+/* ================= ATUALIZAÇÃO V2: HEADER FINO, CARROSSEL SWIPE, CARDS LIMPOS & SLIDER FONOLÓGICO ================= */
+#screen-home {
+    overflow: hidden !important;
+    padding: 14px 24px 10px 24px !important;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+}
+#screen-home.active { display: flex; }
+
+.home-header-slim {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+.dynamic-level-title {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    text-align: center;
+}
+.header-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.icon-circle-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: #FFFFFF;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.18s;
+    box-shadow: var(--shadow-card);
+}
+.icon-circle-btn:active { transform: scale(0.92); }
+.icon-circle-btn.review-active {
+    background: var(--warning);
+    border-color: var(--warning);
+    color: #1E293B;
+}
+
+/* CARROSSEL HORIZONTAL SEM ROLAGEM VERTICAL */
+.carousel-viewport {
+    flex: 1;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.carousel-viewport::-webkit-scrollbar { display: none; }
+
+.carousel-track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+.carousel-page {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+    grid-auto-rows: minmax(115px, 138px);
+    gap: 14px;
+    padding: 4px 6px;
+    align-content: center;
+    overflow-y: auto;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    height: 26px;
+    flex-shrink: 0;
+}
+.page-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    transition: 0.25s;
+    cursor: pointer;
+}
+.page-dot.active {
+    width: 24px;
+    border-radius: 10px;
+    background: var(--primary);
+}
+
+/* CARDS DESPOLUÍDOS (TÍTULO + PLAY LIMPO) */
+.phase-card.clean-card {
+    min-height: 118px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    touch-action: pan-x;
+}
+.clean-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-right: 2px;
+    flex: 1;
+}
+.clean-card-title {
+    font-size: 1.15rem !important;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.25;
+    padding-right: 8px !important;
+    margin: 0 !important;
+}
+.card-play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 172, 193, 0.28);
+    transition: 0.18s;
+}
+.card-play-btn:active { transform: scale(0.9); }
+
+/* SLIDER HORIZONTAL DE SUSTENTAÇÃO FONOLÓGICA (FASE B) */
+.mouth-articulatory-box {
+    width: 220px;
+    height: 220px;
+    border-radius: 28px;
+    border: 3px solid var(--primary);
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+}
+.drag-track {
+    width: 100%;
+    height: 88px;
+    background: #F1F5F9;
+    border: 3px solid var(--border);
+    border-radius: 26px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    box-shadow: inset 0 3px 8px rgba(15, 23, 42, 0.06);
+    touch-action: none;
+    overflow: hidden;
+}
+.drag-box {
+    width: 104px;
+    height: 70px;
+    background: var(--primary);
+    color: #FFFFFF;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    font-weight: 900;
+    cursor: grab;
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 8px 20px rgba(0, 172, 193, 0.32);
+    user-select: none;
+    touch-action: none;
+}
+.drag-box:active { cursor: grabbing; }
+
+/* MODAL DE TAREFA: SEGMENTED CONTROL, TOOLTIPS & PILL SWITCHES */
+.modal-clean-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+.segmented-control {
+    display: flex;
+    background: #F1F5F9;
+    padding: 5px;
+    border-radius: 14px;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.seg-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: 0.18s;
+}
+.seg-btn.active {
+    background: #FFFFFF;
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-card);
+}
+.meta-chips-box {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.meta-chip {
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: #F1F5F9;
+    color: var(--text-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.compact-param-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: #F8FAFC;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.param-label-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text);
+    position: relative;
+}
+.help-tip-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid #CBD5E1;
+    background: #FFFFFF;
+    color: var(--text-light);
+    font-size: 0.75rem;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.floating-popover {
+    display: none;
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    width: 270px;
+    background: #1E293B;
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 320;
+}
+.floating-popover.show { display: block; }
+
+.compact-select {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    background: #FFFFFF;
+    color: var(--text);
+    outline: none;
+}
+.compact-input-num {
+    width: 90px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-align: center;
+    background: #FFFFFF;
+    outline: none;
+}
+
+/* PILL TOGGLE SWITCH */
+.pill-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+}
+.pill-switch input { opacity: 0; width: 0; height: 0; }
+.pill-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #CBD5E1;
+    transition: 0.22s;
+    border-radius: 30px;
+}
+.pill-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.22s;
+    border-radius: 50%;
+}
+.pill-switch input:checked + .pill-slider { background-color: var(--primary); }
+.pill-switch input:checked + .pill-slider:before { transform: translateX(22px); }
