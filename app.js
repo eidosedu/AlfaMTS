@@ -1,84 +1,6 @@
 /* ============================================================================
-   5.0 MAPA DE ÁUDIOS FONÊMICOS, BOCAS ARTICULATÓRIAS E ALFABETO FONOLÓGICO
+   5.0 AUXILIARES DE ÁUDIO FONÊMICO E BOCAS ARTICULATÓRIAS
    ============================================================================ */
-const FONEMAS_AUDIO_MAP = {
-    // Consoantes regulares (1 som)
-    'D': 'c-d-1.ogg',
-    'F': 'c-f-1.ogg',
-    'J': 'c-j-1.ogg',
-    'K': 'c-k-1.ogg',
-    'M': 'c-m-1.ogg',
-    'N': 'c-n-1.ogg',
-    'P': 'c-p-1.ogg',
-    'T': 'c-t-1.ogg',
-    'V': 'c-v-1.ogg',
-    'Z': 'c-z-1.ogg',
-
-    // Consoantes com variações fonéticas
-    'C': { '1': 'c-c-1.ogg', '2': 'c-c-2.ogg' },
-    'G': { '1': 'c-g-1.ogg', '2': 'c-g-2.ogg' },
-    'L': { '1': 'c-l-1.ogg', '2': 'c-l-2.ogg' },
-    'R': { '1': 'c-r-1.ogg', '2': 'c-r-2.ogg', '3': 'c-r-3.ogg' },
-    'S': { '1': 'c-s-1.ogg', '2': 'c-s-2.ogg' },
-    'W': { '2': 'c-w-2.ogg' },
-    'X': { '1': 'c-x-1.ogg', '2': 'c-x-2.ogg', '3': 'c-x-3.ogg', '4': 'c-x-4.ogg' },
-
-    // Vogais (abertas, fechadas, nasais)
-    'A': { '1': 'v-a-1.ogg', '3': 'v-a-3.ogg' },
-    'E': { '1': 'v-e-1.ogg', '2': 'v-e-2.ogg', '3': 'v-e-3.ogg' },
-    'I': { '1': 'v-i-1.ogg', '3': 'v-i-3.ogg' },
-    'O': { '1': 'v-o-1.ogg', '2': 'v-o-2.ogg', '3': 'v-o-3.ogg' },
-    'U': { '1': 'v-u-1.ogg', '3': 'v-u-3.ogg' }
-};
-
-// Sequência ordenada para a guia Alfabeto Fonológico (Vogais -> Contínuas -> Oclusivas, expondo variações lado a lado)
-const PHONOLOGICAL_ALPHABET_MODULES = [
-    // Vogais (1 = Aberto, 2 = Fechado, 3 = Nasal)
-    { id: 'FA_A_1', letter: 'A', varIdx: '1', title: 'A (Aberto)', desc: 'Modelagem articulatória e sustentação da vogal A aberta.' },
-    { id: 'FA_A_3', letter: 'A', varIdx: '3', title: 'A (Nasal)', desc: 'Modelagem articulatória e sustentação da vogal A nasal.' },
-    { id: 'FA_E_1', letter: 'E', varIdx: '1', title: 'E (Aberto)', desc: 'Modelagem articulatória e sustentação da vogal E aberta.' },
-    { id: 'FA_E_2', letter: 'E', varIdx: '2', title: 'E (Fechado)', desc: 'Modelagem articulatória e sustentação da vogal E fechada.' },
-    { id: 'FA_E_3', letter: 'E', varIdx: '3', title: 'E (Nasal)', desc: 'Modelagem articulatória e sustentação da vogal E nasal.' },
-    { id: 'FA_I_1', letter: 'I', varIdx: '1', title: 'I (Normal)', desc: 'Modelagem articulatória e sustentação da vogal I.' },
-    { id: 'FA_I_3', letter: 'I', varIdx: '3', title: 'I (Nasal)', desc: 'Modelagem articulatória e sustentação da vogal I nasal.' },
-    { id: 'FA_O_1', letter: 'O', varIdx: '1', title: 'O (Aberto)', desc: 'Modelagem articulatória e sustentação da vogal O aberta.' },
-    { id: 'FA_O_2', letter: 'O', varIdx: '2', title: 'O (Fechado)', desc: 'Modelagem articulatória e sustentação da vogal O fechada.' },
-    { id: 'FA_O_3', letter: 'O', varIdx: '3', title: 'O (Nasal)', desc: 'Modelagem articulatória e sustentação da vogal O nasal.' },
-    { id: 'FA_U_1', letter: 'U', varIdx: '1', title: 'U (Normal)', desc: 'Modelagem articulatória e sustentação da vogal U.' },
-    { id: 'FA_U_3', letter: 'U', varIdx: '3', title: 'U (Nasal)', desc: 'Modelagem articulatória e sustentação da vogal U nasal.' },
-
-    // Consoantes Contínuas (F, V, S, Z, X, J, M, N, L, R) com variações lado a lado
-    { id: 'FA_F_1', letter: 'F', varIdx: '1', title: 'F', desc: 'Modelagem articulatória labiodental surda /f/.' },
-    { id: 'FA_V_1', letter: 'V', varIdx: '1', title: 'V', desc: 'Modelagem articulatória labiodental sonora /v/.' },
-    { id: 'FA_S_1', letter: 'S', varIdx: '1', title: 'S (Som 1)', desc: 'Modelagem articulatória alveolar surda /s/.' },
-    { id: 'FA_S_2', letter: 'S', varIdx: '2', title: 'S (Som 2 - /z/)', desc: 'Modelagem articulatória intervocálica sonora /z/.' },
-    { id: 'FA_Z_1', letter: 'Z', varIdx: '1', title: 'Z', desc: 'Modelagem articulatória alveolar sonora /z/.' },
-    { id: 'FA_X_1', letter: 'X', varIdx: '1', title: 'X (Som 1 - /ʃ/)', desc: 'Modelagem articulatória fricativa palatal (ex: Xícara).' },
-    { id: 'FA_X_2', letter: 'X', varIdx: '2', title: 'X (Som 2 - /z/)', desc: 'Modelagem articulatória sonora (ex: Exame).' },
-    { id: 'FA_X_3', letter: 'X', varIdx: '3', title: 'X (Som 3 - /s/)', desc: 'Modelagem articulatória sibilante (ex: Texto).' },
-    { id: 'FA_X_4', letter: 'X', varIdx: '4', title: 'X (Som 4 - /ks/)', desc: 'Modelagem articulatória dupla (ex: Táxi).' },
-    { id: 'FA_J_1', letter: 'J', varIdx: '1', title: 'J', desc: 'Modelagem articulatória palatal sonora /ʒ/.' },
-    { id: 'FA_M_1', letter: 'M', varIdx: '1', title: 'M', desc: 'Modelagem articulatória bilabial nasal /m/.' },
-    { id: 'FA_N_1', letter: 'N', varIdx: '1', title: 'N', desc: 'Modelagem articulatória alveolar nasal /n/.' },
-    { id: 'FA_L_1', letter: 'L', varIdx: '1', title: 'L (Som 1)', desc: 'Modelagem articulatória lateral alveolar (ex: Lata).' },
-    { id: 'FA_L_2', letter: 'L', varIdx: '2', title: 'L (Som 2 - /w/)', desc: 'Modelagem articulatória final velarizada (ex: Sol).' },
-    { id: 'FA_R_1', letter: 'R', varIdx: '1', title: 'R (Forte)', desc: 'Modelagem articulatória vibrante forte inicial (ex: Rato).' },
-    { id: 'FA_R_2', letter: 'R', varIdx: '2', title: 'R (Brando)', desc: 'Modelagem articulatória tepe alveolar (ex: Arara).' },
-    { id: 'FA_R_3', letter: 'R', varIdx: '3', title: 'R (Final)', desc: 'Modelagem articulatória em coda silábica (ex: Mar).' },
-    { id: 'FA_W_2', letter: 'W', varIdx: '2', title: 'W', desc: 'Modelagem articulatória aproximante /w/.' },
-
-    // Consoantes Oclusivas (P, B, T, D, C/K, G) com variações lado a lado
-    { id: 'FA_P_1', letter: 'P', varIdx: '1', title: 'P', desc: 'Modelagem articulatória oclusiva bilabial surda /p/.' },
-    { id: 'FA_B_1', letter: 'B', varIdx: '1', title: 'B', desc: 'Modelagem articulatória oclusiva bilabial sonora /b/.' },
-    { id: 'FA_T_1', letter: 'T', varIdx: '1', title: 'T', desc: 'Modelagem articulatória oclusiva linguodental surda /t/.' },
-    { id: 'FA_D_1', letter: 'D', varIdx: '1', title: 'D', desc: 'Modelagem articulatória oclusiva linguodental sonora /d/.' },
-    { id: 'FA_C_1', letter: 'C', varIdx: '1', title: 'C (Som 1 - /k/)', desc: 'Modelagem articulatória velar forte (CA, CO, CU).' },
-    { id: 'FA_C_2', letter: 'C', varIdx: '2', title: 'C (Som 2 - /s/)', desc: 'Modelagem articulatória fricativa branda (CE, CI).' },
-    { id: 'FA_K_1', letter: 'K', varIdx: '1', title: 'K', desc: 'Modelagem articulatória oclusiva velar /k/.' },
-    { id: 'FA_G_1', letter: 'G', varIdx: '1', title: 'G (Som 1 - /g/)', desc: 'Modelagem articulatória velar sonora (GA, GO, GU).' },
-    { id: 'FA_G_2', letter: 'G', varIdx: '2', title: 'G (Som 2 - /ʒ/)', desc: 'Modelagem articulatória palatal branda (GE, GI).' }
-];
-
 function getPhonemeAudioPath(letter, varIdx = '1') {
     const k = String(letter || '').toUpperCase().trim();
     const entry = (typeof FONEMAS_AUDIO_MAP !== 'undefined') ? FONEMAS_AUDIO_MAP[k] : null;
@@ -139,55 +61,119 @@ function playPhonemeAudioFile(letter, varIdx = '1', playTwice = false) {
 }
 
 /* ============================================================================
-   5. ESTADO GLOBAL, CONFIGURAÇÕES LOCAIS POR TAREFA E DESBLOQUEIO
+   5. ESTADO GLOBAL MULTI-TENANT (POR ALUNO), PERFIS E DESBLOQUEIO
    ============================================================================ */
-let state = JSON.parse(localStorage.getItem('eidos_mts_state')) || {
-    setupDone: false,
-    student: '',
-    manualProgressionOverride: false,
-    unlocked: ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'E1_6'],
-    moduleProgress: {},
-    customCurriculum: {},
-    taskSettings: {},
-    minimalPairSwaps: { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 },
-    settings: {
-        crit: 90,
-        consecDays: 3,
-        strictDay: false,
-        errorless: true,
-        topoVar: false,
-        topoMode: 'AUTO',
-        opts: 3,
-        sylComplex: { ccv: false, cvcL: false, cvcS: false, cvcM: false },
-        theme: 'cyan',
-        latency: 400,
-        security: { enabled: false, pin: '', lockExit: false },
-        timer: { enabled: false, min: 30 },
-        stages: { c1: true, c2: true, c3: true, c4: true },
-        useMic: true
-    },
-    customWords: 'BOLA, GATO, BOLO, SAPATO, FACA, VACA',
-    log: [],
-    session: { expired: false, endTime: null },
-    reviewHighlights: {}
-};
+let activeRole = 'ANALYST'; // 'ANALYST' | 'APPLICATOR'
 
-if (!state.moduleProgress) state.moduleProgress = {};
-if (!state.customCurriculum) state.customCurriculum = {};
-if (!state.taskSettings) state.taskSettings = {};
-if (!state.minimalPairSwaps) state.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
-if (!state.settings.consecDays) state.settings.consecDays = 3;
-if (!state.settings.topoMode) state.settings.topoMode = 'AUTO';
-if (!state.settings.sylComplex) {
-    state.settings.sylComplex = { ccv: false, cvcL: false, cvcS: false, cvcM: false };
+function createFreshStudentState(firstName = 'ALUNO') {
+    const cleanFirst = String(firstName || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
+    const unlockedInit = ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'E1_6'];
+    if (typeof EIDOS_MODULES !== 'undefined') {
+        EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
+            if (!unlockedInit.includes(m.id)) unlockedInit.push(m.id);
+        });
+    }
+    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
+        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+            if (!unlockedInit.includes(pm.id)) unlockedInit.push(pm.id);
+        });
+    }
+    return {
+        setupDone: true,
+        student: cleanFirst,
+        manualProgressionOverride: false,
+        unlocked: unlockedInit,
+        moduleProgress: {},
+        customCurriculum: {},
+        taskSettings: {},
+        minimalPairSwaps: { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 },
+        settings: {
+            crit: 90,
+            consecDays: 3,
+            strictDay: false,
+            errorless: true,
+            topoVar: false,
+            topoMode: 'AUTO',
+            opts: 3,
+            sylComplex: { ccv: false, cvcL: false, cvcS: false, cvcM: false },
+            theme: 'cyan',
+            latency: 400,
+            security: { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false },
+            timer: { enabled: false, min: 30 },
+            stages: { c1: true, c2: true, c3: true, c4: true },
+            useMic: true
+        },
+        customWords: 'BOLA, GATO, BOLO, SAPATO, FACA, VACA',
+        log: [],
+        session: { expired: false, endTime: null },
+        reviewHighlights: {}
+    };
 }
-if (!state.unlocked.includes('VOGAIS')) state.unlocked.push('VOGAIS');
-EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
-    if (!state.unlocked.includes(m.id)) state.unlocked.push(m.id);
-});
-PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-    if (!state.unlocked.includes(pm.id)) state.unlocked.push(pm.id);
-});
+
+let tenantsIndex = JSON.parse(localStorage.getItem('alfamts_tenants_index')) || null;
+
+function initTenantsAndActiveStudent() {
+    const legacyRaw = localStorage.getItem('eidos_mts_state');
+    if (!tenantsIndex || !Array.isArray(tenantsIndex.students) || tenantsIndex.students.length === 0) {
+        let initialState = null;
+        if (legacyRaw) {
+            try { initialState = JSON.parse(legacyRaw); } catch (e) {}
+        }
+        if (!initialState) initialState = createFreshStudentState('MIGUEL');
+        const firstName = String(initialState.student || 'MIGUEL').trim().split(/\s+/)[0].toUpperCase() || 'MIGUEL';
+        initialState.student = firstName;
+        const firstId = 'stu_' + Date.now();
+        tenantsIndex = {
+            activeStudentId: firstId,
+            analystPin: (initialState.settings && initialState.settings.security && initialState.settings.security.pin) ? initialState.settings.security.pin : '',
+            applicatorPin: '',
+            lockExit: !!(initialState.settings && initialState.settings.security && initialState.settings.security.lockExit),
+            students: [{ id: firstId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') }]
+        };
+        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+        localStorage.setItem('alfamts_student_' + firstId, JSON.stringify(initialState));
+    }
+    const activeId = tenantsIndex.activeStudentId || tenantsIndex.students[0].id;
+    tenantsIndex.activeStudentId = activeId;
+    const stuRaw = localStorage.getItem('alfamts_student_' + activeId);
+    let loaded = null;
+    if (stuRaw) {
+        try { loaded = JSON.parse(stuRaw); } catch (e) {}
+    }
+    if (!loaded) {
+        const meta = tenantsIndex.students.find(s => s.id === activeId) || { firstName: 'ALUNO' };
+        loaded = createFreshStudentState(meta.firstName);
+    }
+    normalizeStudentState(loaded);
+    return loaded;
+}
+
+function normalizeStudentState(st) {
+    if (!st.moduleProgress) st.moduleProgress = {};
+    if (!st.customCurriculum) st.customCurriculum = {};
+    if (!st.taskSettings) st.taskSettings = {};
+    if (!st.minimalPairSwaps) st.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
+    if (!st.settings) st.settings = createFreshStudentState(st.student).settings;
+    if (!st.settings.consecDays) st.settings.consecDays = 3;
+    if (!st.settings.topoMode) st.settings.topoMode = 'AUTO';
+    if (!st.settings.sylComplex) st.settings.sylComplex = { ccv: false, cvcL: false, cvcS: false, cvcM: false };
+    if (!st.settings.security) st.settings.security = { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false };
+    if (!st.unlocked) st.unlocked = ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'E1_6'];
+    if (!st.unlocked.includes('VOGAIS')) st.unlocked.push('VOGAIS');
+    if (typeof EIDOS_MODULES !== 'undefined') {
+        EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
+            if (!st.unlocked.includes(m.id)) st.unlocked.push(m.id);
+        });
+    }
+    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
+        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+            if (!st.unlocked.includes(pm.id)) st.unlocked.push(pm.id);
+        });
+    }
+    st.student = String(st.student || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
+}
+
+let state = initTenantsAndActiveStudent();
 
 let currentLevelTab = 'N1';
 let isReviewMode = false;
@@ -210,7 +196,64 @@ function shuffleArray(arr) {
 }
 
 function saveState() {
+    if (tenantsIndex && tenantsIndex.activeStudentId) {
+        const activeMeta = tenantsIndex.students.find(s => s.id === tenantsIndex.activeStudentId);
+        if (activeMeta && state.student) {
+            activeMeta.firstName = String(state.student).trim().split(/\s+/)[0].toUpperCase();
+        }
+        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+        localStorage.setItem('alfamts_student_' + tenantsIndex.activeStudentId, JSON.stringify(state));
+    }
     localStorage.setItem('eidos_mts_state', JSON.stringify(state));
+}
+
+function switchActiveStudent(studentId) {
+    if (!tenantsIndex) return;
+    const targetMeta = tenantsIndex.students.find(s => s.id === studentId);
+    if (!targetMeta) return;
+    saveState();
+    tenantsIndex.activeStudentId = studentId;
+    localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+
+    const raw = localStorage.getItem('alfamts_student_' + studentId);
+    let loaded = null;
+    if (raw) {
+        try { loaded = JSON.parse(raw); } catch (e) {}
+    }
+    if (!loaded) loaded = createFreshStudentState(targetMeta.firstName);
+    normalizeStudentState(loaded);
+    state = loaded;
+    saveState();
+    applyTheme();
+    if (document.getElementById('screen-home').classList.contains('active')) renderGrid();
+    if (document.getElementById('screen-dashboard').classList.contains('active')) renderDashboard();
+}
+
+function createNewStudentTenant(rawName) {
+    const firstName = String(rawName || '').trim().split(/\s+/)[0].toUpperCase();
+    if (!firstName) return false;
+    const newId = 'stu_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    const fresh = createFreshStudentState(firstName);
+    fresh.settings.theme = state.settings.theme || 'cyan';
+    tenantsIndex.students.push({ id: newId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') });
+    localStorage.setItem('alfamts_student_' + newId, JSON.stringify(fresh));
+    switchActiveStudent(newId);
+    return true;
+}
+
+function deleteStudentTenant(studentId) {
+    if (!tenantsIndex || tenantsIndex.students.length <= 1) {
+        customAlert("Ação Bloqueada", "É necessário manter pelo menos um aluno cadastrado.");
+        return;
+    }
+    tenantsIndex.students = tenantsIndex.students.filter(s => s.id !== studentId);
+    localStorage.removeItem('alfamts_student_' + studentId);
+    if (tenantsIndex.activeStudentId === studentId) {
+        switchActiveStudent(tenantsIndex.students[0].id);
+    } else {
+        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+    }
+    renderStudentSwitcherModalList();
 }
 
 function getTaskConfig(modId) {
@@ -370,7 +413,7 @@ let session = {
 };
 
 /* ============================================================================
-   6. ÁUDIO SINTÉTICO, TTS E EFEITOS SONOROS
+   6. ÁUDIO SINTÉTICO, TTS, TEMA E ATUALIZAÇÃO DOS SWITCHERS DE ALUNO
    ============================================================================ */
 let audioCtx = null;
 
@@ -419,18 +462,41 @@ function speakTTS(text) {
     }
 }
 
+function getActiveFirstName() {
+    const raw = state.student || 'ALUNO';
+    return String(raw).trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
+}
+
 function applyTheme() {
     document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan');
-    const nameEl = document.getElementById('splash-student-name');
-    if (nameEl) nameEl.innerText = state.student ? `Aluno(a): ${state.student}` : 'Aluno: Não Configurado';
+    const first = getActiveFirstName();
+    document.querySelectorAll('.student-first-name-label').forEach(el => {
+        el.innerText = first;
+    });
+    const legacyNameEl = document.getElementById('splash-student-name');
+    if (legacyNameEl) legacyNameEl.innerText = first;
 }
 
 /* ============================================================================
-   7. NAVEGAÇÃO, BLINDAGEM DE MODAIS E TIMERS
+   7. SPLASH SCREEN OFICIAL, GATEKEEPER DE PERFIS, NAVEGAÇÃO E MODAIS
    ============================================================================ */
 let authCallback = null;
+let expectedAuthPin = '';
 let alertCallback = null;
 let backdropMouseDownTarget = null;
+
+function dismissSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (splash && !splash.classList.contains('fade-out')) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 480);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(dismissSplashScreen, 900);
+});
+setTimeout(dismissSplashScreen, 3000);
 
 function clearAllTrialTimers() {
     if (fluencyTimerInterval) { clearInterval(fluencyTimerInterval); fluencyTimerInterval = null; }
@@ -460,15 +526,86 @@ function setupBackdropClosing() {
 function hideAllScreens() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 }
+
 function closeModals() {
     document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
     closeAuth();
 }
 
-function goSplash() {
+function openGatekeeper() {
     clearAllTrialTimers();
     hideAllScreens();
     applyTheme();
+    const gk = document.getElementById('screen-gatekeeper');
+    if (gk) {
+        gk.classList.add('active');
+    } else {
+        goSplash();
+    }
+}
+
+function selectRoleProfile(role) {
+    playSound('click');
+    const analystPin = (tenantsIndex && tenantsIndex.analystPin) ? String(tenantsIndex.analystPin).trim() : '';
+    const applicatorPin = (tenantsIndex && tenantsIndex.applicatorPin) ? String(tenantsIndex.applicatorPin).trim() : '';
+
+    if (role === 'ANALYST') {
+        const proceedAnalyst = () => {
+            activeRole = 'ANALYST';
+            syncRoleUIElements();
+            goSplash();
+        };
+        if (analystPin.length > 0) {
+            promptPinWithExpected(analystPin, proceedAnalyst);
+        } else {
+            proceedAnalyst();
+        }
+    } else {
+        const proceedApplicator = () => {
+            activeRole = 'APPLICATOR';
+            isConfigMode = false;
+            syncRoleUIElements();
+            openGrid();
+        };
+        if (applicatorPin.length > 0) {
+            promptPinWithExpected(applicatorPin, proceedApplicator);
+        } else {
+            proceedApplicator();
+        }
+    }
+}
+
+function syncRoleUIElements() {
+    const isAnalyst = (activeRole === 'ANALYST');
+    const cfgBtn = document.getElementById('btn-config-mode');
+    const mgrBtn = document.getElementById('btn-modules-mgr');
+    const homeSwitcher = document.getElementById('analyst-home-switcher');
+    const gridSwitcher = document.getElementById('applicator-grid-switcher');
+
+    if (cfgBtn) cfgBtn.style.display = isAnalyst ? 'inline-flex' : 'none';
+    if (mgrBtn) mgrBtn.style.display = isAnalyst ? 'inline-flex' : 'none';
+    if (homeSwitcher) homeSwitcher.style.display = isAnalyst ? 'inline-flex' : 'none';
+    if (gridSwitcher) gridSwitcher.style.display = isAnalyst ? 'none' : 'inline-flex';
+}
+
+function handleGridBackNavigation() {
+    playSound('click');
+    if (activeRole === 'APPLICATOR') {
+        openGatekeeper();
+    } else {
+        goSplash();
+    }
+}
+
+function goSplash() {
+    clearAllTrialTimers();
+    if (activeRole === 'APPLICATOR') {
+        openGrid();
+        return;
+    }
+    hideAllScreens();
+    applyTheme();
+    syncRoleUIElements();
     updateLobbyButton();
     document.getElementById('screen-splash').classList.add('active');
 }
@@ -479,6 +616,8 @@ function openGrid() {
         return;
     }
     hideAllScreens();
+    applyTheme();
+    syncRoleUIElements();
     document.getElementById('screen-home').classList.add('active');
     renderGrid();
 }
@@ -494,27 +633,37 @@ function openGame() {
     document.getElementById('screen-game').classList.add('active');
 }
 
+function promptPinWithExpected(pinStr, callback) {
+    expectedAuthPin = pinStr;
+    authCallback = callback;
+    const input = document.getElementById('auth-pin-input');
+    input.value = '';
+    document.getElementById('auth-error').innerText = '';
+    document.getElementById('modal-auth').style.display = 'flex';
+    setTimeout(() => input.focus(), 100);
+}
+
 function requireAuth(callback) {
-    if (!state.settings.security.enabled) {
+    const analystPin = (tenantsIndex && tenantsIndex.analystPin)
+        ? String(tenantsIndex.analystPin).trim()
+        : (state.settings.security.enabled ? String(state.settings.security.pin).trim() : '');
+    if (!analystPin) {
         callback();
     } else {
-        authCallback = callback;
-        const input = document.getElementById('auth-pin-input');
-        input.value = '';
-        document.getElementById('auth-error').innerText = '';
-        document.getElementById('modal-auth').style.display = 'flex';
-        setTimeout(() => input.focus(), 100);
+        promptPinWithExpected(analystPin, callback);
     }
 }
 
 function closeAuth() {
     document.getElementById('modal-auth').style.display = 'none';
     authCallback = null;
+    expectedAuthPin = '';
 }
 
 function confirmAuth() {
     const input = document.getElementById('auth-pin-input');
-    if (input.value === state.settings.security.pin) {
+    const pinToMatch = expectedAuthPin || (tenantsIndex && tenantsIndex.analystPin) || state.settings.security.pin;
+    if (input.value === pinToMatch) {
         playSound('win');
         const fn = authCallback;
         closeAuth();
@@ -530,8 +679,10 @@ function confirmAuth() {
 }
 
 function requestAbortGame() {
-    if (state.settings.security.enabled && state.settings.security.lockExit) {
-        requireAuth(abortGame);
+    const lockExit = (tenantsIndex && tenantsIndex.lockExit) || (state.settings.security.enabled && state.settings.security.lockExit);
+    const activePin = (tenantsIndex && (tenantsIndex.analystPin || tenantsIndex.applicatorPin)) || state.settings.security.pin;
+    if (lockExit && activePin) {
+        promptPinWithExpected(activePin, abortGame);
     } else {
         abortGame();
     }
@@ -569,8 +720,9 @@ function triggerTimeUp() {
 function updateLobbyButton() {
     const btn = document.getElementById('btn-start-game');
     const clock = document.getElementById('header-timer-icon');
+    if (!btn) return;
     if (state.settings.timer.enabled && state.session.expired) {
-        btn.innerHTML = `<div class="icon-wrapper" style="background:#FEE2E2; color:#EF4444;"><span class="material-icons">lock</span></div>Sessão Finalizada`;
+        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Sessão Finalizada`;
         btn.onclick = () => {
             requireAuth(() => {
                 state.session.expired = false;
@@ -580,16 +732,100 @@ function updateLobbyButton() {
                 customAlert("Sessão Liberada", "O cronômetro de sessão foi reiniciado.");
             });
         };
-        clock.style.display = 'none';
+        if (clock) clock.style.display = 'none';
     } else {
-        btn.innerHTML = `<div class="icon-wrapper"><span class="material-icons">play_arrow</span></div>Iniciar Sessão`;
+        btn.innerHTML = `<div class="icon-wrapper"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>Iniciar Sessão`;
         btn.onclick = openGrid;
-        clock.style.display = (state.settings.timer.enabled && state.session.endTime) ? 'flex' : 'none';
+        if (clock) clock.style.display = (state.settings.timer.enabled && state.session.endTime) ? 'flex' : 'none';
     }
 }
 
+/* MODAL SWITCHER MULTI-TENANT DE ALUNOS */
+function openStudentSwitcherModal() {
+    playSound('click');
+    renderStudentSwitcherModalList();
+    const inp = document.getElementById('new-tenant-name-input');
+    if (inp) inp.value = '';
+    const modal = document.getElementById('modal-student-switcher');
+    if (modal) modal.style.display = 'flex';
+}
+
+function renderStudentSwitcherModalList() {
+    const listEl = document.getElementById('tenant-students-list');
+    if (!listEl || !tenantsIndex) return;
+    listEl.innerHTML = '';
+
+    tenantsIndex.students.forEach(stu => {
+        const isCurrent = (stu.id === tenantsIndex.activeStudentId);
+        const row = document.createElement('div');
+        row.className = `tenant-list-item ${isCurrent ? 'active' : ''}`;
+        row.onclick = () => {
+            playSound('click');
+            switchActiveStudent(stu.id);
+            closeModals();
+        };
+
+        const left = document.createElement('div');
+        left.style.display = 'flex';
+        left.style.alignItems = 'center';
+        left.style.gap = '10px';
+        left.innerHTML = `
+            <div style="width:32px; height:32px; border-radius:50%; background:#FFFFFF; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.85rem; color:var(--text);">
+                ${stu.firstName.charAt(0)}
+            </div>
+            <div style="text-align:left;">
+                <strong style="display:block; font-size:0.98rem; color:var(--text);">${stu.firstName}</strong>
+                <span style="font-size:0.74rem; color:var(--text-light); font-weight:600;">Instância Isolada</span>
+            </div>
+        `;
+
+        const right = document.createElement('div');
+        right.style.display = 'flex';
+        right.style.alignItems = 'center';
+        right.style.gap = '8px';
+
+        if (isCurrent) {
+            right.innerHTML += `<span class="meta-chip" style="background:var(--primary); color:#fff;">Ativo</span>`;
+        }
+        if (activeRole === 'ANALYST' && tenantsIndex.students.length > 1) {
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'btn-icon-del';
+            delBtn.title = 'Remover Aluno';
+            delBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                playSound('click');
+                deleteStudentTenant(stu.id);
+            };
+            right.appendChild(delBtn);
+        }
+
+        row.appendChild(left);
+        row.appendChild(right);
+        listEl.appendChild(row);
+    });
+}
+
+function handleAddStudentFromModal() {
+    const inp = document.getElementById('new-tenant-name-input');
+    if (!inp || !inp.value.trim()) return;
+    if (createNewStudentTenant(inp.value.trim())) {
+        playSound('win');
+        inp.value = '';
+        closeModals();
+    }
+}
+
+/* MODAL DE OPÇÕES DA TELEMETRIA (⋮) */
+function openTelemetryOptionsModal() {
+    playSound('click');
+    const modal = document.getElementById('modal-telemetry-options');
+    if (modal) modal.style.display = 'flex';
+}
+
 /* ============================================================================
-   8. CARROSSEL HORIZONTAL, CARDS LIMPOS, TOGGLE DE CONFIG NO HEADER E PUSH-TO-VIEW
+   8. CARROSSEL HORIZONTAL, CANCEL-ON-MOVE (700ms) E ALFABETO FONOLÓGICO LIMPO
    ============================================================================ */
 const CAROUSEL_LEVELS = [
     { key: 'N1', title: 'Nível 1' },
@@ -604,12 +840,20 @@ const CAROUSEL_LEVELS = [
 
 let pushHoldTimer = null;
 let isPushModalOpen = false;
+let pointerDownCoords = { x: 0, y: 0 };
 
 function selectLevelTab(lvl, btnEl) {
     playSound('click');
     currentLevelTab = lvl;
     const idx = CAROUSEL_LEVELS.findIndex(l => l.key === lvl);
     if (idx >= 0) scrollToLevelIndex(idx);
+}
+
+function stepCarouselLevel(delta) {
+    playSound('click');
+    const curIdx = Math.max(0, CAROUSEL_LEVELS.findIndex(l => l.key === currentLevelTab));
+    const nextIdx = Math.min(CAROUSEL_LEVELS.length - 1, Math.max(0, curIdx + delta));
+    scrollToLevelIndex(nextIdx);
 }
 
 function toggleReviewMode() {
@@ -625,6 +869,7 @@ function toggleReviewMode() {
 }
 
 function toggleConfigMode() {
+    if (activeRole !== 'ANALYST') return;
     playSound('click');
     isConfigMode = !isConfigMode;
     if (isConfigMode && isReviewMode) {
@@ -643,9 +888,9 @@ function ensureHeaderConfigModeBtn() {
     btn.type = 'button';
     btn.className = 'icon-circle-btn';
     btn.id = 'btn-config-mode';
-    btn.title = 'Modo Configurar Tarefa (Toque em um card para configurar)';
+    btn.title = 'Modo Configurar Tarefa';
     btn.onclick = () => toggleConfigMode();
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
+    btn.innerHTML = `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
     const revBtn = document.getElementById('btn-review-mode');
     if (revBtn && revBtn.nextSibling) {
         rightActions.insertBefore(btn, revBtn.nextSibling);
@@ -655,6 +900,10 @@ function ensureHeaderConfigModeBtn() {
 }
 
 function renderDotsHTML(modId, hasVariations = false) {
+    if (String(modId).startsWith('FA_')) {
+        // Alfabeto Fonológico: sem bolinhas de maestria/progresso nos cards
+        return '';
+    }
     const prog = getModuleProgress(modId);
     const target = state.settings.consecDays || 3;
     const activeV = getActiveVariationForModule(modId);
@@ -667,7 +916,7 @@ function renderDotsHTML(modId, hasVariations = false) {
     const dmtsBadge = (tCfg.dmtsDelay > 0) ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">DMTS ${tCfg.dmtsDelay}s</span>` : '';
     const varBadge = hasVariations ? `<span class="var-pill-tag">Var ${activeV}</span>` : '';
     const statusText = prog.status === 'mastered'
-        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+        ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
         : `${Math.min(prog.streak, target)}/${target}`;
 
     return `<div class="card-footer-mastery"><div class="days-dots">${dots}</div><span class="day-label">${dmtsBadge}${varBadge} ${statusText}</span></div>`;
@@ -682,6 +931,8 @@ function scrollToLevelIndex(idx) {
 function onCarouselScroll() {
     const viewport = document.getElementById('levels-carousel');
     if (!viewport || viewport.clientWidth === 0) return;
+    if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
+
     const pageIdx = Math.round(viewport.scrollLeft / viewport.clientWidth);
     const lvlObj = CAROUSEL_LEVELS[pageIdx] || CAROUSEL_LEVELS[0];
     currentLevelTab = lvlObj.key;
@@ -692,6 +943,11 @@ function onCarouselScroll() {
     document.querySelectorAll('#carousel-dots .page-dot').forEach((d, i) => {
         d.classList.toggle('active', i === pageIdx);
     });
+
+    const leftArrow = document.getElementById('carousel-arrow-left');
+    const rightArrow = document.getElementById('carousel-arrow-right');
+    if (leftArrow) leftArrow.style.opacity = pageIdx <= 0 ? '0.25' : '1';
+    if (rightArrow) rightArrow.style.opacity = pageIdx >= CAROUSEL_LEVELS.length - 1 ? '0.25' : '1';
 }
 
 function attachPushToViewEvents(cardEl, metaInfo) {
@@ -707,6 +963,7 @@ function attachPushToViewEvents(cardEl, metaInfo) {
     cardEl.addEventListener('pointerdown', (e) => {
         if (isConfigMode || isReviewMode) return;
         if (e.target.closest('button')) return;
+        pointerDownCoords = { x: e.clientX, y: e.clientY };
         pushHoldTimer = setTimeout(() => {
             isPushModalOpen = true;
             playSound('click');
@@ -715,16 +972,33 @@ function attachPushToViewEvents(cardEl, metaInfo) {
             document.getElementById('push-det-desc').innerText = metaInfo.desc;
             document.getElementById('push-det-method').innerText = metaInfo.methodText;
             document.getElementById('modal-push-details').style.display = 'flex';
-        }, 250);
+        }, 700);
     });
 
+    cardEl.addEventListener('pointermove', (e) => {
+        if (!pushHoldTimer) return;
+        const dist = Math.hypot(e.clientX - pointerDownCoords.x, e.clientY - pointerDownCoords.y);
+        if (dist > 6) {
+            clearTimeout(pushHoldTimer);
+            pushHoldTimer = null;
+        }
+    });
+
+    cardEl.addEventListener('touchmove', () => {
+        if (pushHoldTimer) {
+            clearTimeout(pushHoldTimer);
+            pushHoldTimer = null;
+        }
+    }, { passive: true });
+
+    cardEl.addEventListener('wheel', clearHold, { passive: true });
     cardEl.addEventListener('pointerup', clearHold);
     cardEl.addEventListener('pointercancel', clearHold);
     cardEl.addEventListener('pointerleave', clearHold);
 }
 
 function getMethodExplanation(engine) {
-    if (engine === 'PHON_MODEL') return 'Modelagem Fonológica em 2 Fases: Fase A (Exposição com imagem articulatória da boca + repetição dupla do fonema com 600ms) e Fase B (Sustentação motora via slider horizontal).';
+    if (engine === 'PHON_MODEL') return 'Modelagem Fonológica em 2 Fases: Fase A (Exposição com imagem articulatória da boca + repetição dupla do fonema com 600ms) e Fase B (Sustentação motora livre via slider horizontal até validação do mediador).';
     if (engine === 'MULTIMTS') return 'Emparelhamento Multimodelo: exige parear simultaneamente múltiplos estímulos modelo e comparações, fortalecendo varredura visual e equivalência.';
     if (engine === 'CRMTS') return 'Resposta Construída (CRMTS): montagem ativa de unidades menores (letras, sílabas ou palavras) com tolerância a frustração e leitura vocal.';
     if (engine === 'FLUENCY') return 'Treino de Fluência sob Velocidade: leitura oral ágil sob controle de tempo (< 3s) para automatização lexical.';
@@ -733,18 +1007,23 @@ function getMethodExplanation(engine) {
 }
 
 function buildCleanCardElement(itemData) {
+    const isPhon = String(itemData.id).startsWith('FA_');
     const card = document.createElement('div');
-    card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${itemData.isMastered ? 'mastered' : ''}`;
+    card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${(!isPhon && itemData.isMastered) ? 'mastered' : ''}`;
+    if (isPhon) {
+        card.style.minHeight = '92px';
+        card.style.justifyContent = 'center';
+    }
 
     const playBtnHTML = itemData.isUnlocked
         ? `<button type="button" class="card-play-btn" title="Iniciar Atividade" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos})">
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
            </button>`
         : '';
 
     card.innerHTML = `
         <div class="clean-card-body">
-            <h3 class="clean-card-title" style="padding-right: 8px !important;">${itemData.title}</h3>
+            <h3 class="clean-card-title">${itemData.title}</h3>
             ${playBtnHTML}
         </div>
         ${renderDotsHTML(itemData.id, itemData.hasVar)}
@@ -770,7 +1049,7 @@ function buildCleanCardElement(itemData) {
 
 function triggerCardPlay(id, isEidos) {
     playSound('click');
-    if (isConfigMode) {
+    if (isConfigMode && activeRole === 'ANALYST') {
         requireAuth(() => openStimuliEditor(id));
         return;
     }
@@ -789,6 +1068,7 @@ function triggerCardPlay(id, isEidos) {
 
 function renderGrid() {
     ensureHeaderConfigModeBtn();
+    syncRoleUIElements();
     const track = document.getElementById('carousel-track');
     const dotsBox = document.getElementById('carousel-dots');
     if (!track || !dotsBox) return;
@@ -799,6 +1079,9 @@ function renderGrid() {
     CAROUSEL_LEVELS.forEach((lvl, idx) => {
         const page = document.createElement('div');
         page.className = 'carousel-page';
+        page.addEventListener('scroll', () => {
+            if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
+        }, { passive: true });
 
         if (['N1', 'N2', 'N3', 'N4', 'N5'].includes(lvl.key)) {
             const modules = EIDOS_MODULES.filter(m => m.level === lvl.key);
@@ -824,8 +1107,6 @@ function renderGrid() {
         } else if (lvl.key === 'FONOLOGICO') {
             PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
                 const isUnlocked = state.unlocked.includes(pm.id);
-                const prog = getModuleProgress(pm.id);
-
                 page.appendChild(buildCleanCardElement({
                     id: pm.id,
                     title: pm.title,
@@ -833,7 +1114,7 @@ function renderGrid() {
                     codeBadge: `FONEMA • MODELAGEM A/B`,
                     methodText: getMethodExplanation('PHON_MODEL'),
                     isUnlocked,
-                    isMastered: prog.status === 'mastered',
+                    isMastered: false,
                     canConfigure: true,
                     hasVar: false,
                     isEidos: false
@@ -2005,7 +2286,15 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     fillEl.style.width = '100%';
                     fillEl.style.background = 'var(--success-light)';
                     boxEl.style.background = 'var(--success)';
-                    handleAnswer(true, trackEl);
+                    playSound('win');
+                    playPhonemeAudioFile(letter, varIdx, false);
+                    // Não encerra prematuramente: retorna suavemente para permitir múltiplas repetições até o mediador avançar na barra inferior
+                    setTimeout(() => {
+                        completedSlide = false;
+                        fillEl.style.background = 'var(--primary-light)';
+                        boxEl.style.background = 'var(--primary)';
+                        resetDragPosition();
+                    }, 650);
                 }
             };
 
@@ -3566,28 +3855,34 @@ function exportEidosChecklistPDF() {
 }
 
 /* ============================================================================
-   18. CONFIGURAÇÕES GLOBAIS, GERENCIADOR DE MÓDULOS COM AVISO E INIT
+   18. CONFIGURAÇÕES GLOBAIS (PIN ANALISTA/APLICADOR), GERENCIADOR E INIT
    ============================================================================ */
 function togglePasswordField() {
-    const isEnabled = document.getElementById('set-sec-enable').checked;
-    document.getElementById('pin-group').style.display = isEnabled ? 'block' : 'none';
-    if (!isEnabled && document.getElementById('set-timer-enable').checked) {
+    const chk = document.getElementById('set-sec-enable');
+    const pinGrp = document.getElementById('pin-group');
+    if (!chk || !pinGrp) return;
+    const isEnabled = chk.checked;
+    pinGrp.style.display = isEnabled ? 'block' : 'none';
+    if (!isEnabled && document.getElementById('set-timer-enable') && document.getElementById('set-timer-enable').checked) {
         document.getElementById('set-timer-enable').checked = false;
         toggleTimerField();
     }
 }
 
 function toggleTimerField() {
-    const isEnabled = document.getElementById('set-timer-enable').checked;
-    document.getElementById('timer-group').style.display = isEnabled ? 'block' : 'none';
-    if (isEnabled && !document.getElementById('set-sec-enable').checked) {
+    const chk = document.getElementById('set-timer-enable');
+    const tGrp = document.getElementById('timer-group');
+    if (!chk || !tGrp) return;
+    const isEnabled = chk.checked;
+    tGrp.style.display = isEnabled ? 'block' : 'none';
+    if (isEnabled && document.getElementById('set-sec-enable') && !document.getElementById('set-sec-enable').checked) {
         document.getElementById('set-sec-enable').checked = true;
         togglePasswordField();
     }
 }
 
 function openSettings() {
-    document.getElementById('set-name').value = state.student;
+    document.getElementById('set-name').value = getActiveFirstName();
     document.getElementById('set-crit').value = state.settings.crit;
     document.getElementById('set-consec-days').value = state.settings.consecDays || 3;
     document.getElementById('set-strict-day').checked = !!state.settings.strictDay;
@@ -3610,9 +3905,22 @@ function openSettings() {
     document.getElementById('set-stg-c4').checked = state.settings.stages.c4 !== false;
     document.getElementById('set-use-mic').checked = state.settings.useMic;
 
-    document.getElementById('set-sec-enable').checked = state.settings.security.enabled;
-    document.getElementById('set-sec-pin').value = state.settings.security.pin;
-    document.getElementById('set-kiosk-exit').checked = !!state.settings.security.lockExit;
+    const analystPinVal = (tenantsIndex && tenantsIndex.analystPin) ? tenantsIndex.analystPin : (state.settings.security.pin || '');
+    const applicatorPinVal = (tenantsIndex && tenantsIndex.applicatorPin) ? tenantsIndex.applicatorPin : '';
+    const lockExitVal = (tenantsIndex && typeof tenantsIndex.lockExit === 'boolean') ? tenantsIndex.lockExit : !!state.settings.security.lockExit;
+
+    const elAnalystPin = document.getElementById('set-analyst-pin');
+    const elApplicatorPin = document.getElementById('set-applicator-pin');
+    const elLegacyPin = document.getElementById('set-sec-pin');
+    const elSecEnable = document.getElementById('set-sec-enable');
+
+    if (elAnalystPin) elAnalystPin.value = analystPinVal;
+    if (elApplicatorPin) elApplicatorPin.value = applicatorPinVal;
+    if (elLegacyPin) elLegacyPin.value = analystPinVal;
+    if (elSecEnable) elSecEnable.checked = !!(analystPinVal || applicatorPinVal);
+
+    const elKioskExit = document.getElementById('set-kiosk-exit');
+    if (elKioskExit) elKioskExit.checked = lockExitVal;
     togglePasswordField();
 
     document.getElementById('set-timer-enable').checked = state.settings.timer.enabled;
@@ -3624,13 +3932,23 @@ function openSettings() {
 }
 
 function saveSettings() {
-    const isSecEnabled = document.getElementById('set-sec-enable').checked;
-    const pinValue = document.getElementById('set-sec-pin').value.trim();
-    const isTimerEnabled = document.getElementById('set-timer-enable').checked;
+    const elAnalystPin = document.getElementById('set-analyst-pin');
+    const elApplicatorPin = document.getElementById('set-applicator-pin');
+    const elLegacyPin = document.getElementById('set-sec-pin');
+    const elSecEnable = document.getElementById('set-sec-enable');
 
-    if (isSecEnabled && !pinValue) {
-        customAlert("PIN Obrigatório", "Informe o código PIN para ativar a senha.");
-        return;
+    let analystPin = '';
+    let applicatorPin = '';
+
+    if (elAnalystPin || elApplicatorPin) {
+        analystPin = elAnalystPin ? elAnalystPin.value.trim() : '';
+        applicatorPin = elApplicatorPin ? elApplicatorPin.value.trim() : '';
+    } else if (elSecEnable && elSecEnable.checked) {
+        analystPin = elLegacyPin ? elLegacyPin.value.trim() : '';
+        if (!analystPin) {
+            customAlert("PIN Obrigatório", "Informe o código PIN para ativar a senha.");
+            return;
+        }
     }
 
     let c1 = document.getElementById('set-stg-c1').checked;
@@ -3639,7 +3957,8 @@ function saveSettings() {
     let c4 = document.getElementById('set-stg-c4').checked;
     if (!c1 && !c2 && !c3 && !c4) c1 = true;
 
-    state.student = document.getElementById('set-name').value.toUpperCase().trim() || "ALUNO";
+    const firstName = String(document.getElementById('set-name').value || "ALUNO").trim().split(/\s+/)[0].toUpperCase() || "ALUNO";
+    state.student = firstName;
     state.settings.crit = parseInt(document.getElementById('set-crit').value) || 90;
     state.settings.consecDays = parseInt(document.getElementById('set-consec-days').value) || 3;
     state.settings.strictDay = document.getElementById('set-strict-day').checked;
@@ -3657,13 +3976,23 @@ function saveSettings() {
     state.settings.latency = parseInt(document.getElementById('set-latency').value) || 400;
     state.settings.stages = { c1, c2, c3, c4 };
     state.settings.useMic = document.getElementById('set-use-mic').checked;
+
+    const lockExit = document.getElementById('set-kiosk-exit') ? document.getElementById('set-kiosk-exit').checked : false;
     state.settings.security = {
-        enabled: isSecEnabled,
-        pin: pinValue,
-        lockExit: document.getElementById('set-kiosk-exit').checked
+        enabled: !!(analystPin || applicatorPin),
+        pin: analystPin,
+        analystPin,
+        applicatorPin,
+        lockExit
     };
+    if (tenantsIndex) {
+        tenantsIndex.analystPin = analystPin;
+        tenantsIndex.applicatorPin = applicatorPin;
+        tenantsIndex.lockExit = lockExit;
+    }
+
     state.settings.timer = {
-        enabled: isTimerEnabled,
+        enabled: document.getElementById('set-timer-enable').checked,
         min: parseInt(document.getElementById('set-timer-min').value) || 30
     };
 
@@ -3675,9 +4004,9 @@ function saveSettings() {
 
 function openReview(phaseId) {
     const pool = getPhasePool(phaseId);
-    const mod = EIDOS_MODULES.find(m => m.id === phaseId);
+    const mod = EIDOS_MODULES.find(m => m.id === phaseId) || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
     const activeV = getActiveVariationForModule(phaseId);
-    document.getElementById('review-title').innerText = mod ? `Revisão: ${mod.code} ${mod.title} (Var ${activeV})` : `Revisão: ${phaseId}`;
+    document.getElementById('review-title').innerText = mod ? `Revisão: ${mod.title}` : `Revisão: ${phaseId}`;
     const grid = document.getElementById('review-grid');
     grid.innerHTML = '';
 
@@ -3750,7 +4079,7 @@ function confirmSaveModulesManager() {
     closeModals();
     customAlert(
         "Controle Manual de Progressão",
-        "Atenção: A liberação ou bloqueio manual de módulos desativará a progressão automática da trilha do aluno (ideal para testes de Linha de Base). Deseja aplicar esta seleção?",
+        "Atenção: A liberação ou bloqueio manual de módulos desativará a progressão automática da trilha deste aluno (ideal para Linha de Base). Deseja aplicar?",
         () => {
             state.unlocked = unlocked;
             state.manualProgressionOverride = true;
@@ -3808,11 +4137,12 @@ function startCustomWords() {
 }
 
 function openReport() {
-    document.getElementById('report-modal-title').innerText = "Dados da Última Sessão";
-    document.getElementById('report-modal-desc').innerText = "Registro estruturado para auditoria.";
+    closeModals();
+    document.getElementById('report-modal-title').innerText = "Dados Estruturados (JSON)";
+    document.getElementById('report-modal-desc').innerText = `Histórico completo do aluno: ${getActiveFirstName()}`;
     document.getElementById('json-output').value = state.log.length === 0
         ? "Nenhum dado registrado."
-        : JSON.stringify(state.log[state.log.length - 1], null, 2);
+        : JSON.stringify(state.log, null, 2);
     document.getElementById('modal-report').style.display = 'flex';
 }
 
@@ -3846,56 +4176,12 @@ function closeAlert(confirmed) {
 }
 
 function resetApp() {
-    closeModals();
-    customAlert("Apagar Dados?", "Todo o histórico e edições locais salvas neste dispositivo serão removidos.", () => {
-        localStorage.removeItem('eidos_mts_state');
-        location.reload();
-    }, true);
+    hardResetAppCache();
 }
 
-// Injeta os checkboxes de Colorização Consoante/Vogal e Moldura Silábica na Aba 2 do Modal de Tarefa
 function injectCVColorControlsIntoTaskModal() {
     const topoPane = document.getElementById('task-tab-content-topo');
     if (!topoPane || document.getElementById('task-cfg-color-cv')) return;
-
-    const extraDiv = document.createElement('div');
-    extraDiv.style.marginTop = '14px';
-    extraDiv.innerHTML = `
-        <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:12px; border:1.5px solid var(--border); font-weight:800; cursor:pointer; margin-bottom:10px;">
-            <input type="checkbox" id="task-cfg-color-cv" style="width:22px; height:22px;">
-            <span>Colorizar Consoantes (Preto) e Vogais (Vermelho)</span>
-        </label>
-        <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:12px; border:1.5px solid var(--border); font-weight:800; cursor:pointer;">
-            <input type="checkbox" id="task-cfg-syl-box" style="width:22px; height:22px;">
-            <span>Enquadrar Sílabas com Moldura Azul</span>
-        </label>
-    `;
-    topoPane.appendChild(extraDiv);
-
-    const origOpen = openStimuliEditor;
-    openStimuliEditor = function(modId) {
-        origOpen(modId);
-        const tCfg = getTaskConfig(modId);
-        const chkCV = document.getElementById('task-cfg-color-cv');
-        const chkBox = document.getElementById('task-cfg-syl-box');
-        if (chkCV) chkCV.checked = !!tCfg.colorCV;
-        if (chkBox) chkBox.checked = !!tCfg.sylBox;
-    };
-
-    const origSave = saveStimuliEditorChanges;
-    saveStimuliEditorChanges = function() {
-        const modId = editorSession.modId;
-        const chkCV = document.getElementById('task-cfg-color-cv');
-        const chkBox = document.getElementById('task-cfg-syl-box');
-        const cvVal = chkCV ? chkCV.checked : false;
-        const boxVal = chkBox ? chkBox.checked : false;
-        origSave();
-        if (modId && state.taskSettings[modId]) {
-            state.taskSettings[modId].colorCV = cvVal;
-            state.taskSettings[modId].sylBox = boxVal;
-            saveState();
-        }
-    };
 }
 
 window.handleAndroidBack = function() {
@@ -3903,7 +4189,12 @@ window.handleAndroidBack = function() {
     document.querySelectorAll('.modal-overlay').forEach(m => { if (m.style.display === 'flex') modalOpen = true; });
     if (modalOpen) { closeModals(); return; }
     if (document.getElementById('screen-game').classList.contains('active')) { requestAbortGame(); return; }
-    if (!document.getElementById('screen-splash').classList.contains('active')) { goSplash(); return; }
+    if (document.getElementById('screen-home').classList.contains('active')) { handleGridBackNavigation(); return; }
+    if (document.getElementById('screen-dashboard').classList.contains('active') || document.getElementById('screen-settings').classList.contains('active')) { goSplash(); return; }
+    if (document.getElementById('screen-splash').classList.contains('active')) {
+        const gk = document.getElementById('screen-gatekeeper');
+        if (gk) { openGatekeeper(); return; }
+    }
     if (window.AppInventor) window.AppInventor.setWebViewString("VOLTAR_MENU");
 };
 
@@ -3912,5 +4203,10 @@ window.onload = function() {
     injectCVColorControlsIntoTaskModal();
     applyTheme();
     updateLobbyButton();
-    if (!state.setupDone) openSettings();
+    const gk = document.getElementById('screen-gatekeeper');
+    if (gk) {
+        openGatekeeper();
+    } else {
+        goSplash();
+    }
 };
