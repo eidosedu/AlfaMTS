@@ -508,3 +508,83 @@ const preReqTerms = {
     'SÍLABA': ['SILABA', 'SÍLABA', 'SILABAS'],
     'PALAVRA': ['PALAVRA', 'PALAVRAS']
 };
+/* ============================================================================
+   5. MAPA DE ÁUDIOS FONÊMICOS E MÓDULOS DO ALFABETO FONOLÓGICO (MINIMALISTA)
+   ============================================================================ */
+const FONEMAS_AUDIO_MAP = {
+    // Consoantes regulares (1 som)
+    'B': 'c-b-1.ogg',
+    'D': 'c-d-1.ogg',
+    'F': 'c-f-1.ogg',
+    'J': 'c-j-1.ogg',
+    'K': 'c-k-1.ogg',
+    'M': 'c-m-1.ogg',
+    'N': 'c-n-1.ogg',
+    'P': 'c-p-1.ogg',
+    'T': 'c-t-1.ogg',
+    'V': 'c-v-1.ogg',
+    'Z': 'c-z-1.ogg',
+
+    // Consoantes com variações fonéticas
+    'C': { '1': 'c-c-1.ogg', '2': 'c-c-2.ogg' },
+    'G': { '1': 'c-g-1.ogg', '2': 'c-g-2.ogg' },
+    'L': { '1': 'c-l-1.ogg', '2': 'c-l-2.ogg' },
+    'R': { '1': 'c-r-1.ogg', '2': 'c-r-2.ogg', '3': 'c-r-3.ogg' },
+    'S': { '1': 'c-s-1.ogg', '2': 'c-s-2.ogg' },
+    'W': { '2': 'c-w-2.ogg' },
+    'X': { '1': 'c-x-1.ogg', '2': 'c-x-2.ogg', '3': 'c-x-3.ogg', '4': 'c-x-4.ogg' },
+
+    // Vogais (abertas, fechadas, nasais)
+    'A': { '1': 'v-a-1.ogg', '3': 'v-a-3.ogg' },
+    'E': { '1': 'v-e-1.ogg', '2': 'v-e-2.ogg', '3': 'v-e-3.ogg' },
+    'I': { '1': 'v-i-1.ogg', '3': 'v-i-3.ogg' },
+    'O': { '1': 'v-o-1.ogg', '2': 'v-o-2.ogg', '3': 'v-o-3.ogg' },
+    'U': { '1': 'v-u-1.ogg', '3': 'v-u-3.ogg' }
+};
+
+const PHONOLOGICAL_ALPHABET_MODULES = [
+    // Vogais (Nomenclatura direta e limpa)
+    { id: 'FA_A_1', letter: 'A', varIdx: '1', title: 'A - Som 1', desc: 'Modelagem articulatória e sustentação da vogal A aberta.' },
+    { id: 'FA_A_3', letter: 'A', varIdx: '3', title: 'A - Som 2', desc: 'Modelagem articulatória e sustentação da vogal A nasal.' },
+    { id: 'FA_E_1', letter: 'E', varIdx: '1', title: 'E - Som 1', desc: 'Modelagem articulatória e sustentação da vogal E aberta.' },
+    { id: 'FA_E_2', letter: 'E', varIdx: '2', title: 'E - Som 2', desc: 'Modelagem articulatória e sustentação da vogal E fechada.' },
+    { id: 'FA_E_3', letter: 'E', varIdx: '3', title: 'E - Som 3', desc: 'Modelagem articulatória e sustentação da vogal E nasal.' },
+    { id: 'FA_I_1', letter: 'I', varIdx: '1', title: 'I - Som 1', desc: 'Modelagem articulatória e sustentação da vogal I oral.' },
+    { id: 'FA_I_3', letter: 'I', varIdx: '3', title: 'I - Som 2', desc: 'Modelagem articulatória e sustentação da vogal I nasal.' },
+    { id: 'FA_O_1', letter: 'O', varIdx: '1', title: 'O - Som 1', desc: 'Modelagem articulatória e sustentação da vogal O aberta.' },
+    { id: 'FA_O_2', letter: 'O', varIdx: '2', title: 'O - Som 2', desc: 'Modelagem articulatória e sustentação da vogal O fechada.' },
+    { id: 'FA_O_3', letter: 'O', varIdx: '3', title: 'O - Som 3', desc: 'Modelagem articulatória e sustentação da vogal O nasal.' },
+    { id: 'FA_U_1', letter: 'U', varIdx: '1', title: 'U - Som 1', desc: 'Modelagem articulatória e sustentação da vogal U oral.' },
+    { id: 'FA_U_3', letter: 'U', varIdx: '3', title: 'U - Som 2', desc: 'Modelagem articulatória e sustentação da vogal U nasal.' },
+
+    // Consoantes Contínuas
+    { id: 'FA_F_1', letter: 'F', varIdx: '1', title: 'F', desc: 'Modelagem articulatória labiodental surda /f/.' },
+    { id: 'FA_V_1', letter: 'V', varIdx: '1', title: 'V', desc: 'Modelagem articulatória labiodental sonora /v/.' },
+    { id: 'FA_S_1', letter: 'S', varIdx: '1', title: 'S - Som 1', desc: 'Modelagem articulatória alveolar surda /s/.' },
+    { id: 'FA_S_2', letter: 'S', varIdx: '2', title: 'S - Som 2', desc: 'Modelagem articulatória intervocálica sonora /z/.' },
+    { id: 'FA_Z_1', letter: 'Z', varIdx: '1', title: 'Z', desc: 'Modelagem articulatória alveolar sonora /z/.' },
+    { id: 'FA_X_1', letter: 'X', varIdx: '1', title: 'X - Som 1', desc: 'Modelagem articulatória fricativa palatal (ex: Xícara).' },
+    { id: 'FA_X_2', letter: 'X', varIdx: '2', title: 'X - Som 2', desc: 'Modelagem articulatória sonora (ex: Exame).' },
+    { id: 'FA_X_3', letter: 'X', varIdx: '3', title: 'X - Som 3', desc: 'Modelagem articulatória sibilante (ex: Texto).' },
+    { id: 'FA_X_4', letter: 'X', varIdx: '4', title: 'X - Som 4', desc: 'Modelagem articulatória dupla (ex: Táxi).' },
+    { id: 'FA_J_1', letter: 'J', varIdx: '1', title: 'J', desc: 'Modelagem articulatória palatal sonora /ʒ/.' },
+    { id: 'FA_M_1', letter: 'M', varIdx: '1', title: 'M', desc: 'Modelagem articulatória bilabial nasal /m/.' },
+    { id: 'FA_N_1', letter: 'N', varIdx: '1', title: 'N', desc: 'Modelagem articulatória alveolar nasal /n/.' },
+    { id: 'FA_L_1', letter: 'L', varIdx: '1', title: 'L - Som 1', desc: 'Modelagem articulatória lateral alveolar (ex: Lata).' },
+    { id: 'FA_L_2', letter: 'L', varIdx: '2', title: 'L - Som 2', desc: 'Modelagem articulatória velarizada final (ex: Sol).' },
+    { id: 'FA_R_1', letter: 'R', varIdx: '1', title: 'R - Som 1', desc: 'Modelagem articulatória vibrante forte (ex: Rato).' },
+    { id: 'FA_R_2', letter: 'R', varIdx: '2', title: 'R - Som 2', desc: 'Modelagem articulatória branda intervocálica (ex: Arara).' },
+    { id: 'FA_R_3', letter: 'R', varIdx: '3', title: 'R - Som 3', desc: 'Modelagem articulatória em coda silábica (ex: Mar).' },
+    { id: 'FA_W_2', letter: 'W', varIdx: '2', title: 'W', desc: 'Modelagem articulatória aproximante /w/.' },
+
+    // Consoantes Oclusivas
+    { id: 'FA_P_1', letter: 'P', varIdx: '1', title: 'P', desc: 'Modelagem articulatória oclusiva bilabial surda /p/.' },
+    { id: 'FA_B_1', letter: 'B', varIdx: '1', title: 'B', desc: 'Modelagem articulatória oclusiva bilabial sonora /b/.' },
+    { id: 'FA_T_1', letter: 'T', varIdx: '1', title: 'T', desc: 'Modelagem articulatória oclusiva linguodental surda /t/.' },
+    { id: 'FA_D_1', letter: 'D', varIdx: '1', title: 'D', desc: 'Modelagem articulatória oclusiva linguodental sonora /d/.' },
+    { id: 'FA_C_1', letter: 'C', varIdx: '1', title: 'C - Som 1', desc: 'Modelagem articulatória oclusiva velar (CA, CO, CU).' },
+    { id: 'FA_C_2', letter: 'C', varIdx: '2', title: 'C - Som 2', desc: 'Modelagem articulatória fricativa alveolar (CE, CI).' },
+    { id: 'FA_K_1', letter: 'K', varIdx: '1', title: 'K', desc: 'Modelagem articulatória oclusiva velar /k/.' },
+    { id: 'FA_G_1', letter: 'G', varIdx: '1', title: 'G - Som 1', desc: 'Modelagem articulatória velar sonora (GA, GO, GU).' },
+    { id: 'FA_G_2', letter: 'G', varIdx: '2', title: 'G - Som 2', desc: 'Modelagem articulatória palatal sonora (GE, GI).' }
+];
