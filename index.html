@@ -851,4 +851,247 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span id="arcade-countdown-text">45s</span>
         </div>
-        <button type="button" class="btn-action" style="background:var(--danger); padding:8px 16px; font-size:0.88rem;
+        <button type="button" class="btn-action" style="background:var(--danger); padding:8px 16px; font-size:0.88rem;" onclick="closeArcadeSandbox()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Encerrar Reforço
+        </button>
+    </div>
+    <iframe id="arcade-game-frame" sandbox="allow-scripts allow-same-origin" src="about:blank"></iframe>
+</div>
+
+<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (BANCO INDEXEDDB OU EMOJI) -->
+<div id="modal-media-picker" class="modal-overlay" style="z-index: 340;">
+    <div class="modal-content" style="max-width: 520px; text-align: left; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" id="media-picker-word-title" style="margin:0; font-size:1.25rem;">Associar Figura</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeMediaAssignPicker()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:8px;">1. Toque em uma imagem do seu Banco Particular (IndexedDB):</p>
+        <div id="media-picker-idb-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(95px, 1fr)); gap:8px; max-height:180px; overflow-y:auto; background:#F8FAFC; border:1.5px solid var(--border); border-radius:12px; padding:10px; margin-bottom:14px;"></div>
+
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:6px;">2. Ou associe um Emoji / Símbolo direto:</p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <input type="text" id="media-picker-emoji-input" placeholder="Ex: 🐶" style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:1.2rem; text-align:center; outline:none;">
+            <button type="button" class="btn-action" onclick="saveEmojiForActiveWord()">Aplicar Emoji</button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border); padding-top:12px;">
+            <button type="button" class="btn-action btn-cancel" onclick="clearCustomMediaForActiveWord()">Restaurar Padrão</button>
+            <button type="button" class="btn-action btn-cancel" onclick="closeMediaAssignPicker()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SWITCHER MULTI-TENANT DE ALUNOS -->
+<div id="modal-student-switcher" class="modal-overlay" data-backdrop-close="true" style="z-index: 380;">
+    <div class="modal-content" style="max-width: 460px; text-align: left; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" style="margin:0;">Alunos</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="tenant-students-list" style="display:flex; flex-direction:column; gap:10px; max-height:40vh; overflow-y:auto; margin-bottom:18px; padding-right:4px;"></div>
+        <div style="display:flex; gap:8px; align-items:center; border-top:1.5px solid var(--border); padding-top:14px;">
+            <input type="text" id="new-tenant-name-input" placeholder="Primeiro nome..." style="flex:1; padding:11px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:800; font-size:0.95rem; outline:none;" onkeypress="if(event.key==='Enter') handleAddStudentFromModal()">
+            <button type="button" class="btn-action" onclick="handleAddStudentFromModal()">Novo</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL OPÇÕES DE TELEMETRIA -->
+<div id="modal-telemetry-options" class="modal-overlay" data-backdrop-close="true" style="z-index: 380;">
+    <div class="modal-content" style="max-width: 400px; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" style="margin:0; font-size:1.3rem;">Exportar Telemetria</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" class="menu-option-row" onclick="copyWhatsAppSummary()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Resumo em Texto
+            </button>
+            <button type="button" class="menu-option-row" onclick="exportEidosChecklistPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Protocolo / Laudo PDF
+            </button>
+            <button type="button" class="menu-option-row" onclick="exportSessionLogPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Histórico de Sessões PDF
+            </button>
+            <button type="button" class="menu-option-row" onclick="openReport()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Dados Brutos (JSON)
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL FLUTUANTE "PUSH TO VIEW" -->
+<div id="modal-push-details" class="modal-overlay" style="z-index: 450; pointer-events: none;">
+    <div class="modal-content" style="max-width: 480px; text-align: left; padding: 26px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span id="push-det-code" class="code-tag" style="margin:0; font-size:0.8rem;">1.1 • DTT</span>
+            <span style="font-size:0.78rem; font-weight:800; color:var(--text-light);">Solte para fechar</span>
+        </div>
+        <h2 id="push-det-title" class="modal-title" style="font-size:1.45rem; margin-bottom:10px;">Título</h2>
+        <p id="push-det-desc" style="font-size:0.98rem; color:var(--text); font-weight:600; line-height:1.5; margin-bottom:14px;"></p>
+        <div style="background:#F8FAFC; border:1.5px solid var(--border); border-radius:14px; padding:12px 14px;">
+            <span style="font-size:0.75rem; font-weight:900; color:var(--primary-dark); text-transform:uppercase; display:block; margin-bottom:4px;">Metodologia & Objetivo Clínico</span>
+            <p id="push-det-method" style="font-size:0.88rem; color:var(--text-light); font-weight:600; line-height:1.4; margin:0;"></p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE VISUALIZAÇÃO RÁPIDA EM TEXTO -->
+<div id="modal-quick-peek" class="modal-overlay" data-backdrop-close="true" style="z-index: 420;">
+    <div class="modal-content" style="max-width: 440px; text-align: left; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" style="font-size:1.3rem; margin:0;">Consulta Rápida (Texto)</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+            <div style="background:#F8FAFC; padding:14px; border-radius:14px; border:1.5px solid var(--border);">
+                <span style="font-size:0.75rem; font-weight:900; color:var(--text-light); text-transform:uppercase;">Estímulo Modelo (Alvo)</span>
+                <strong id="peek-stimulus-text" style="display:block; font-size:1.35rem; color:var(--text); margin-top:4px; word-break:break-word;">-</strong>
+            </div>
+            <div style="background:var(--success-light); padding:14px; border-radius:14px; border:1.5px solid var(--success);">
+                <span style="font-size:0.75rem; font-weight:900; color:#065F46; text-transform:uppercase;">Resposta Esperada (Gabarito)</span>
+                <strong id="peek-answer-text" style="display:block; font-size:1.35rem; color:#065F46; margin-top:4px; word-break:break-word;">-</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GERENCIADOR DE MÓDULOS -->
+<div id="modal-modules" class="modal-overlay" data-backdrop-close="true">
+    <div class="modal-content" style="text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
+        <h2 class="modal-title">Liberar ou Bloquear Módulos</h2>
+        <p class="modal-desc" style="margin-bottom:12px;">Selecione os módulos disponíveis ou marque todos para avaliação de Linha de Base.</p>
+        
+        <label style="display:flex; align-items:center; justify-content:space-between; background:var(--primary-light); color:var(--primary-dark); padding:12px 16px; border-radius:14px; font-weight:900; margin-bottom:12px; cursor:pointer;">
+            <span>Selecionar Todos os Módulos (Linha de Base / Avaliação)</span>
+            <input type="checkbox" id="mod-select-all-chk" onchange="toggleSelectAllModules(this.checked)" style="width:24px; height:24px;">
+        </label>
+
+        <div id="modules-list-container" style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; margin-bottom: 20px; padding-right:8px;"></div>
+        <div style="display:flex; gap:12px;">
+            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
+            <button type="button" class="btn-action" style="flex:2" onclick="confirmSaveModulesManager()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Aplicar Seleção
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PIN AUTH -->
+<div id="modal-auth" class="modal-overlay" style="z-index: 350;">
+    <div class="modal-content" style="max-width: 420px;" id="auth-content">
+        <div style="display:flex; justify-content:center; margin-bottom:14px;">
+            <div style="color:var(--danger); background:var(--danger-light); padding:18px; border-radius:50%; display:inline-flex;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+        </div>
+        <h2 class="modal-title" style="color:var(--danger);">Acesso Restrito</h2>
+        <p class="modal-desc">Digite o PIN numérico para desbloquear.</p>
+        <input type="password" id="auth-pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="width: 100%; text-align:center; font-size: 2.5rem; letter-spacing: 14px; padding: 16px; border: 2px solid var(--border); border-radius: 18px; margin-bottom: 8px; outline:none;" onkeypress="if(event.key==='Enter') confirmAuth()">
+        <div id="auth-error" style="color:var(--danger); font-size:0.95rem; font-weight:800; height:22px; margin-bottom:14px;"></div>
+        <div style="display:flex; gap:12px;">
+            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeAuth()">Cancelar</button>
+            <button type="button" class="btn-action" style="flex:1" onclick="confirmAuth()">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL REVISÃO DE ESTÍMULOS -->
+<div id="modal-review" class="modal-overlay" data-backdrop-close="true" style="z-index: 250;">
+    <div class="modal-content" style="max-width: 780px; text-align: left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid var(--border); padding-bottom:14px; margin-bottom: 18px;">
+            <div>
+                <h2 class="modal-title" id="review-title" style="margin-bottom: 2px;">Revisão de Estímulos</h2>
+                <p class="modal-desc" style="margin:0;">Toque nos itens para destacá-los durante o treino.</p>
+            </div>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div id="review-grid" style="display: flex; flex-wrap: wrap; gap: 12px; max-height: 48vh; overflow-y: auto; padding: 10px 4px; margin-bottom: 24px;"></div>
+        <div style="display:flex; justify-content:flex-end;">
+            <button type="button" class="btn-action" onclick="closeModals()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PALAVRAS CUSTOMIZADAS -->
+<div id="modal-words" class="modal-overlay" data-backdrop-close="true">
+    <div class="modal-content" style="text-align: left;">
+        <h2 class="modal-title" style="color: #B45309;">Palavras Customizadas</h2>
+        <p class="modal-desc">Insira as palavras separadas por vírgula.</p>
+        <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, SAPATO, FACA, VACA"></textarea>
+        <div style="display:flex; gap:12px;">
+            <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
+            <button type="button" class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning); color:#1E293B;" onclick="startCustomWords()" disabled>Iniciar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RELATÓRIO DADOS / TEXTO -->
+<div id="modal-report" class="modal-overlay" data-backdrop-close="true" style="z-index: 400;">
+    <div class="modal-content">
+        <h2 class="modal-title" id="report-modal-title">Dados</h2>
+        <p class="modal-desc" id="report-modal-desc">Dados estruturados da sessão.</p>
+        <textarea id="json-output" readonly style="font-family:monospace; font-size:0.9rem; height:220px;"></textarea>
+        <div style="display:flex; gap: 12px;">
+            <button type="button" class="btn-action btn-cancel" style="flex:1;" onclick="closeModals()">Fechar</button>
+            <button type="button" class="btn-action" style="flex:1;" onclick="copyJSON()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ALERTA GENÉRICO -->
+<div id="modal-alert" class="modal-overlay" style="z-index: 400;">
+    <div class="modal-content" style="max-width: 480px;">
+        <h2 class="modal-title" id="alert-title">Aviso</h2>
+        <p class="modal-desc" id="alert-desc" style="color:var(--text);"></p>
+        <div id="alert-actions" style="display:flex; gap:12px; margin-top: 20px;">
+            <button type="button" class="btn-action" style="width:100%" onclick="closeAlert(true)">Entendido</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RESULTADO FINAL DO BLOCO -->
+<div id="modal-result" class="modal-overlay" style="z-index: 300;">
+    <div class="modal-content" style="max-width: 560px;">
+        <div id="result-icon-box" style="margin-bottom:14px;"></div>
+        <h2 class="modal-title" id="result-title" style="font-size:2.1rem;"></h2>
+        <p class="modal-desc" id="result-desc" style="font-size:1.15rem; color:var(--text);"></p>
+        <div id="result-streak-banner" style="background:#F8FAFC; border:2px solid var(--border); border-radius:18px; padding:14px; margin-bottom:24px; font-weight:800;"></div>
+        <div id="result-actions" style="display:flex; gap:12px; flex-wrap: wrap; justify-content:center;"></div>
+    </div>
+</div>
+
+<!-- MODAL FIM DO TEMPO -->
+<div id="modal-timesup" class="modal-overlay" style="z-index: 500;">
+    <div class="modal-content" style="max-width: 460px;">
+        <div style="display:flex; justify-content:center; margin-bottom:20px;">
+            <div style="color:var(--danger); background:var(--danger-light); padding:22px; border-radius:50%; display:inline-flex;">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+            </div>
+        </div>
+        <h2 class="modal-title" style="color:var(--danger); font-size: 2rem;">Tempo Concluído</h2>
+        <p class="modal-desc">O tempo programado para esta sessão terminou.</p>
+        <button type="button" class="btn-action" style="width:100%;" onclick="document.getElementById('modal-timesup').style.display='none'; goSplash();">Voltar ao Início</button>
+    </div>
+</div>
+
+</body>
+</html>
