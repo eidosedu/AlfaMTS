@@ -1,28 +1,31 @@
 {
-  "name": "AlfaMTS - Eidos",
+  "id": "./",
+  "name": "AlfaMTS",
   "short_name": "AlfaMTS",
-  "description": "Ensino por Equivalência de Estímulos e Telemetria ABA",
+  "description": "Plataforma Clínica de Alfabetização e Equivalência de Estímulos",
   "start_url": "./index.html",
-  "display": "fullscreen",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
   "background_color": "#6BAEF5",
   "theme_color": "#6BAEF5",
-  "orientation": "landscape",
-  "scope": "./",
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "./assets/icons/icon-192.png",
+      "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./assets/icons/icon-512.png",
+      "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./assets/icons/icon-512.png",
+      "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
