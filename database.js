@@ -74,7 +74,7 @@ const WORD_BANK = {
     'GELO': { word: 'GELO', syllables: ['GE','LO'], count: 2, struct: 'IRREG', cat: 'NATUREZA', icon: '🧊' },
     'GIRAFA': { word: 'GIRAFA', syllables: ['GI','RA','FA'], count: 3, struct: 'IRREG', cat: 'ANIMAL', icon: '🦒' },
     'XÍCARA': { word: 'XÍCARA', syllables: ['XÍ','CA','RA'], count: 3, struct: 'IRREG', cat: 'OBJETO', icon: '☕' },
-    'TÁXI': { word: 'TÁXI', syllables: ['TÁ','XI'], count: 2, struct: 'IRREG', cat: 'OBJETO', icon: '🚕' },
+    'TÁXI': { word: 'TÁXI', syllables: ['TÁ','XI'], count: 2, struct: 'IRREG', cat: 'IRREG', icon: '🚕' },
     'PEIXE': { word: 'PEIXE', syllables: ['PEI','XE'], count: 2, struct: 'IRREG', cat: 'ANIMAL', icon: '🐟' },
     'RELÓGIO': { word: 'RELÓGIO', syllables: ['RE','LÓ','GIO'], count: 3, struct: 'IRREG', cat: 'OBJETO', icon: '⌚' },
     'QUEIJO': { word: 'QUEIJO', syllables: ['QUEI','JO'], count: 2, struct: 'QU_GU', cat: 'COMIDA', icon: '🧀' },
@@ -84,7 +84,40 @@ const WORD_BANK = {
 };
 
 /* ============================================================================
-   2. PRESETS DE VARIAÇÕES NATIVAS PARA OS MÓDULOS EDITÁVEIS
+   2. ESTRUTURA PADRÃO DA ECONOMIA DE FICHAS & MERCADINHO DE REFORÇADORES
+   ============================================================================ */
+const DEFAULT_TOKEN_STATE = {
+    balance: 0,
+    totalEarned: 0,
+    rules: {
+        enabled: true,
+        pointsPerMasteryBlock: 2,
+        bonusConsecutiveStreak: 5,
+        enableImmediateMiniReward: false,
+        immediateMiniRewardDurationSec: 20,
+        requirePinOnRocket: true
+    },
+    ledger: [],
+    catalog: [
+        { id: 'vouch_1', title: '5 Min de Massinha', cost: 4, mediaType: 'EMOJI', mediaVal: '🎨', desc: 'Tempo livre com massinha de modelar.' },
+        { id: 'vouch_2', title: 'Bolhas de Sabão', cost: 3, mediaType: 'EMOJI', mediaVal: '🫧', desc: 'Brincadeira sensorial com bolhas.' },
+        { id: 'vouch_3', title: 'Escolher Adesivo', cost: 5, mediaType: 'EMOJI', mediaVal: '⭐', desc: 'Direito a escolher um adesivo especial.' }
+    ]
+};
+
+const DEFAULT_ARCADE_MANIFEST = [
+    {
+        id: 'baloes',
+        title: 'Estourar Balões',
+        desc: 'Toque nos balões coloridos que sobem pela tela antes que escapem!',
+        cost: 3,
+        durationSec: 45,
+        entry: 'arcade/baloes/index.html'
+    }
+];
+
+/* ============================================================================
+   3. PRESETS DE VARIAÇÕES NATIVAS PARA OS MÓDULOS EDITÁVEIS (TRILHA NOVA)
    ============================================================================ */
 const DEFAULT_MODULE_VARIATIONS = {
     'E1_1': {
@@ -107,24 +140,24 @@ const DEFAULT_MODULE_VARIATIONS = {
         }
     },
     'E1_3': {
-        editable: true, min: 3, max: 12, unit: 'Palavra (Ciclo 1: MTS | Ciclo 2: Multi-MTS)',
+        editable: true, min: 3, max: 12, unit: 'Palavra (MTS Simples e Multimodelo)',
         variations: {
             1: ['BOLA', 'MALA', 'SAPO', 'FACA', 'BOLO', 'GATO'],
             2: ['PATO', 'VACA', 'COLA', 'BOTA', 'DEDO', 'LUVA']
         }
     },
     'E2_3': {
-        editable: true, min: 4, max: 12, unit: 'Consoante Contínua (Som -> Boca -> Letra)',
+        editable: true, min: 4, max: 12, unit: 'Consoante Contínua (F,V,S,Z,X,J,M,N,L,R)',
         variations: {
-            1: ['F', 'V', 'S', 'Z', 'M', 'N'],
-            2: ['L', 'R', 'X', 'J', 'F', 'S']
+            1: ['F', 'V', 'M', 'S', 'L', 'N'],
+            2: ['Z', 'J', 'R', 'X', 'F', 'S']
         }
     },
     'E2_4': {
-        editable: true, min: 4, max: 12, unit: 'Consoante Oclusiva Regular (Som -> Boca -> Letra)',
+        editable: true, min: 4, max: 10, unit: 'Consoante Oclusiva (P,B,T,D,C,K,G)',
         variations: {
-            1: ['P', 'B', 'T', 'D'],
-            2: ['C', 'K', 'G', 'P', 'B', 'T']
+            1: ['P', 'B', 'T', 'D', 'C'],
+            2: ['B', 'D', 'G', 'K', 'P', 'T']
         }
     },
     'E2_5': {
@@ -137,40 +170,40 @@ const DEFAULT_MODULE_VARIATIONS = {
     'E2_6': {
         editable: true, min: 4, max: 14, unit: 'Sílaba CV (Var 1: Contínuas | Var 2: Oclusivas)',
         variations: {
-            1: ['FA', 'VE', 'MA', 'NO', 'SA', 'LA', 'ZE', 'XI', 'JA', 'RO'],
-            2: ['PA', 'BE', 'TI', 'DO', 'CA', 'GO', 'PU', 'BO', 'TA', 'DE']
+            1: ['FA', 'VE', 'MA', 'LA', 'SA', 'NO', 'LU', 'FE'],
+            2: ['PA', 'BO', 'TA', 'DE', 'CA', 'GO', 'PI', 'TU']
         }
     },
     'E2_7': {
-        editable: true, min: 5, max: 16, unit: 'Sílaba Direta para Discriminação',
+        editable: true, min: 5, max: 16, unit: 'Sílaba para Reconhecimento',
         variations: {
             1: ['FA', 'FE', 'VA', 'VO', 'MA', 'ME', 'LA', 'LU', 'SA', 'SO'],
-            2: ['PA', 'PE', 'BO', 'BU', 'TA', 'TE', 'DA', 'DO', 'CA', 'GO']
+            2: ['PA', 'PE', 'BO', 'BI', 'TA', 'TU', 'DA', 'DO', 'CA', 'CO']
         }
     },
     'E3_1': {
-        editable: true, min: 4, max: 12, unit: 'Palavra para Construção (CRMTS + Sondagem Limpa)',
+        editable: true, min: 4, max: 12, unit: 'Palavra Dissílaba (Construção CRMTS + Sondagem)',
         variations: {
             1: ['MALA', 'FACA', 'SALA', 'LUVA', 'VELA', 'BOLA'],
             2: ['MOLA', 'FOGO', 'SAPO', 'VACA', 'BOLO', 'GATO']
         }
     },
     'E3_2': {
-        editable: true, min: 3, max: 12, unit: 'Palavra com Figura (Equivalência em 4 Ciclos)',
+        editable: true, min: 3, max: 12, unit: 'Palavra com Figura (Equivalência 4 Ciclos)',
         variations: {
-            1: ['BOLA', 'GATO', 'BOLO', 'SAPO', 'FACA', 'MACACO'],
-            2: ['COLA', 'PATO', 'BOTA', 'VACA', 'DEDO', 'PANELA']
+            1: ['BOLA', 'GATO', 'BOLO', 'SAPO', 'FACA', 'MALA'],
+            2: ['COLA', 'PATO', 'BOTA', 'VACA', 'DEDO', 'LUVA']
         }
     },
     'E3_3': {
-        editable: true, min: 4, max: 12, unit: 'Palavra para Transcrição e Cópia',
+        editable: true, min: 4, max: 12, unit: 'Palavra para Cópia',
         variations: {
             1: ['BOLA', 'GATO', 'BOLO', 'FACA', 'SAPO'],
             2: ['PATO', 'VACA', 'COLA', 'BOTA', 'DADO']
         }
     },
     'E3_4': {
-        editable: true, min: 4, max: 12, unit: 'Palavra para Escrita sob Ditado',
+        editable: true, min: 4, max: 12, unit: 'Palavra para Ditado',
         variations: {
             1: ['BOLA', 'GATO', 'BOLO', 'FACA', 'SAPO'],
             2: ['MOLA', 'RATO', 'BOTA', 'VACA', 'DEDO']
@@ -193,8 +226,8 @@ const DEFAULT_MODULE_VARIATIONS = {
             ]
         }
     },
-    'EX_CAT_SEM': {
-        editable: true, min: 3, max: 12, unit: 'Palavra Categorizável (Extras)',
+    'EX_SEM': {
+        editable: true, min: 3, max: 12, unit: 'Palavra Categorizável',
         variations: {
             1: ['GATO', 'BOLO', 'BOLA', 'PATO', 'PIPOCA', 'SAPATO'],
             2: ['VACA', 'PÃO', 'CHAVE', 'MACACO', 'MAÇÃ', 'PANELA']
@@ -337,7 +370,7 @@ const ALLIT_VARIATIONS = {
 };
 
 /* ============================================================================
-   3. MATRIZ SINTÁTICA PARA COMPREENSÃO WH (5.3) E NARRATIVAS (NÍVEL 5)
+   4. MATRIZ SINTÁTICA PARA COMPREENSÃO WH (5.3) E NARRATIVAS (NÍVEL 5)
    ============================================================================ */
 const SYNTACTIC_MATRIX = {
     agents: [
@@ -414,7 +447,7 @@ function generateLogicalSentenceTrial() {
         wordsArray,
         question,
         correct,
-        distractors: [...new Set(distractors)].sort(() => 0.5 - Math.random()).slice(0, 3)
+        distractors: [...new Set(distractors)].sort(() => Math.random() - 0.5).slice(0, 3)
     };
 }
 
@@ -458,36 +491,35 @@ const NARRATIVES_DB = [
 ];
 
 /* ============================================================================
-   4. CURRÍCULO REESTRUTURADO (COM PORTAIS DE RECOMPENSA E EXTRAS)
+   5. CURRÍCULO DEFINITIVO REORGANIZADO (N1 A N5, PORTAIS DE RECOMPENSA E EXTRAS)
    ============================================================================ */
 const EIDOS_MODULES = [
     // NÍVEL 1: Prontidão, Símbolos e Vogais
     { id: 'E1_1', code: '1.1', level: 'N1', title: 'Rastreio Visual', desc: 'Varredura esquerda-direita e cima-baixo em 2-3 linhas.', engine: 'DTT', subType: 'TRACKING' },
     { id: 'E1_2', code: '1.2', level: 'N1', title: 'Discriminação de Símbolos', desc: 'Separar letras de números e formas.', engine: 'MTS', subType: 'SYM_DISC' },
-    { id: 'E1_3', code: '1.3', level: 'N1', title: 'Identidade de Palavras', desc: 'Ciclo 1: MTS simples (treino de mecânica) + Ciclo 2: Pareamento Multimodelo 3x3.', engine: 'MULTIMTS', subType: 'WORD_IDENT_MM' },
+    { id: 'E1_3', code: '1.3', level: 'N1', title: 'Identidade de Palavras', desc: 'Ciclo 1 em MTS Simples (1x3) e Ciclo 2 em Pareamento Multimodelo (3x3).', engine: 'MULTIMTS', subType: 'WORD_IDENT_MM' },
     { id: 'E1_4', code: '1.4', level: 'N1', title: 'Orientação do Grafema', desc: 'Identificar letras espelhadas (b/d, p/q).', engine: 'MTS', subType: 'MIRROR_GRAPH' },
-    { id: 'E1_5', code: '1.5', level: 'N1', title: 'Vogais Puras', desc: 'Identificação e nomeação de A, E, I, O, U.', engine: 'MTS', subType: 'VOWELS_PURE', unlockSyl: ['VOGAIS', 'ENCONTROS'], alsoUnlock: ['R_N1_VC', 'EX_CLASS_VC', 'E2_1'] },
-    { id: 'R_N1_VC', code: '★', level: 'N1', title: 'Desbloquear Extra: Vogal vs. Consoante', desc: 'Atalho opcional de recompensa para a atividade de classificação estrutural nos Extras.', engine: 'REWARD_PORTAL', targetTab: 'EXTRAS', openModuleId: 'EX_CLASS_VC', unlockTargets: ['EX_CLASS_VC', 'E2_1'] },
+    { id: 'E1_5', code: '1.5', level: 'N1', title: 'Vogais Puras', desc: 'Identificação e nomeação de A, E, I, O, U.', engine: 'MTS', subType: 'VOWELS_PURE', unlockSyl: ['VOGAIS', 'ENCONTROS'] },
+    { id: 'R_N1_VC', code: '★', level: 'N1', title: 'Extra: Vogal vs. Consoante', desc: 'Desbloqueia e acessa o treino extra de classificação Vogal vs. Consoante.', engine: 'REWARD_PORTAL', targetTab: 'EXTRAS', unlockTargets: ['EX_VC'], openModuleId: 'EX_VC' },
 
-    // NÍVEL 2: Consciência Fonológica, Consoantes (Contínuas e Oclusivas) e Sílabas
+    // NÍVEL 2: Fonemas, Consoantes e Fusão Silábica (Sem misturar letras e sílabas)
     { id: 'E2_1', code: '2.1', level: 'N2', title: 'Rimas', desc: 'Figuras que terminam com o mesmo som.', engine: 'MTS', subType: 'RHYME', isAudioModel: true },
-    { id: 'E2_2', code: '2.2', level: 'N2', title: 'Aliteração', desc: 'Figuras que começam com o mesmo som.', engine: 'MTS', subType: 'ALLITERATION', isAudioModel: true, alsoUnlock: ['R_N2_FON', 'E2_3'] },
-    { id: 'R_N2_FON', code: '★', level: 'N2', title: 'Abrir Alfabeto Fonológico', desc: 'Portal de recompensa: leva diretamente para o treino articulatório de bocas e sons.', engine: 'REWARD_PORTAL', targetTab: 'FONOLOGICO', unlockTargets: ['E2_3'] },
-    { id: 'E2_3', code: '2.3', level: 'N2', title: 'Consoantes Contínuas', desc: 'Discriminação Som -> Boca -> Letra (Var 1: F,V,S,Z,M,N | Var 2: L,R,X,J,F,S).', engine: 'MTS', subType: 'CONT_PHON', unlockSyl: ['F','V','M','N','S','Z','L','R','X','J'] },
-    { id: 'E2_4', code: '2.4', level: 'N2', title: 'Consoantes Oclusivas Regulares', desc: 'Discriminação Som -> Boca -> Letra (Var 1: P,B,T,D | Var 2: C,K,G,P,B,T).', engine: 'MTS', subType: 'OCCL_PHON', unlockSyl: ['P','B','T','D'] },
+    { id: 'E2_2', code: '2.2', level: 'N2', title: 'Aliteração', desc: 'Figuras que começam com o mesmo som.', engine: 'MTS', subType: 'ALLITERATION', isAudioModel: true },
+    { id: 'R_N2_FON', code: '★', level: 'N2', title: 'Acessar Alfabeto Fonológico', desc: 'Desbloqueia e leva direto para a guia de Modelagem Articulatória do Alfabeto Fonológico.', engine: 'REWARD_PORTAL', targetTab: 'FONOLOGICO', unlockTargets: ['FA_A_1'] },
+    { id: 'E2_3', code: '2.3', level: 'N2', title: 'Consoantes Contínuas', desc: 'Discriminação som-boca, som-letra e leitura de F, V, S, Z, X, J, M, N, L, R (2 Variações).', engine: 'MTS', subType: 'CONT_PHON' },
+    { id: 'E2_4', code: '2.4', level: 'N2', title: 'Consoantes Oclusivas Regulares', desc: 'Discriminação som-boca, som-letra e leitura de P, B, T, D, C, K, G (2 Variações).', engine: 'MTS', subType: 'OCCL_PHON' },
     { id: 'E2_5', code: '2.5', level: 'N2', title: 'Segmentação Silábica', desc: 'Contagem de sílabas da palavra ouvida.', engine: 'DTT', subType: 'SYL_COUNT', isAudioModel: true },
-    { id: 'E2_6', code: '2.6', level: 'N2', title: 'Formação de Sílabas', desc: 'Ciclo 1: Triplo Slider (Consoante + Vogal -> Sílaba) | Ciclo 2: Ouvir e Selecionar | Ciclo 3: Ler.', engine: 'SYL_SLIDER', subType: 'SYL_BUILD_SLIDER' },
-    { id: 'E2_7', code: '2.7', level: 'N2', title: 'Reconhecimento de Sílabas', desc: 'Discriminação de sílabas diretas contínuas e oclusivas.', engine: 'MTS', subType: 'CV_FUSION', alsoUnlock: ['R_N2_SIL', 'R_N2_SP', 'EX_CLASS_SP', 'EX_CLASS_TOT', 'E3_1', 'E3_2'] },
-    { id: 'R_N2_SIL', code: '★', level: 'N2', title: 'Abrir Guia do Silabário', desc: 'Portal de recompensa: desbloqueia e leva direto para o treino das famílias silábicas.', engine: 'REWARD_PORTAL', targetTab: 'SILABARIO', unlockTargets: ['E3_1', 'E3_2'] },
-    { id: 'R_N2_SP', code: '★', level: 'N2', title: 'Desbloquear Extra: Sílaba vs. Palavra', desc: 'Atalho opcional para os jogos de classificação estrutural na guia Extras.', engine: 'REWARD_PORTAL', targetTab: 'EXTRAS', openModuleId: 'EX_CLASS_SP', unlockTargets: ['EX_CLASS_SP', 'EX_CLASS_TOT', 'E3_1', 'E3_2'] },
+    { id: 'E2_6', code: '2.6', level: 'N2', title: 'Formação de Sílabas', desc: 'Ciclo 1: Triplo Slider (Consoante + Vogal → Sílaba) | Ciclo 2: Ouvir e Selecionar | Ciclo 3: Ler.', engine: 'SYL_SLIDER', subType: 'SYL_BUILD_SLIDER' },
+    { id: 'E2_7', code: '2.7', level: 'N2', title: 'Reconhecimento de Sílabas', desc: 'Discriminação de sílabas contínuas e oclusivas inteiras.', engine: 'MTS', subType: 'CV_FUSION', unlockSyl: ['F','V','M','N','S','Z','L','R','X','J','P','B','T','D'], alsoUnlock: ['E3_1', 'E3_2'] },
+    { id: 'R_N2_SYL', code: '★', level: 'N2', title: 'Acessar Silabário & Extras', desc: 'Desbloqueia e leva direto para o Silabário e libera Classificação Sílaba/Palavra nos Extras.', engine: 'REWARD_PORTAL', targetTab: 'SILABARIO', unlockTargets: ['EX_SP', 'EX_TOT', 'F', 'V', 'M', 'P', 'B'] },
 
     // NÍVEL 3: Construção de Palavras, Equivalência em 4 Ciclos e Escrita
-    { id: 'E3_1', code: '3.1', level: 'N3', title: 'Construção de Palavras', desc: 'Montar sílabas nos slots com apoio de imagem e realizar leitura limpa (sem figura/som).', engine: 'CRMTS', subType: 'SYL_WORD_BUILD', alsoUnlock: ['E3_2'] },
-    { id: 'E3_2', code: '3.2', level: 'N3', title: 'Equivalência Figura-Palavra', desc: '4 Ciclos: 1. Identidade de Figuras + Nomear | 2. BC->C com dica | 3. B->C sem dica | 4. Ler palavras.', engine: 'MULTIMTS', subType: 'EQUIV_4STEPS_MM', alsoUnlock: ['E3_3'] },
+    { id: 'E3_1', code: '3.1', level: 'N3', title: 'Construção de Palavras', desc: 'Montar palavra por sílabas (CRMTS) com sondagem de leitura sem dicas visuais ou sonoras.', engine: 'CRMTS', subType: 'SYL_WORD_BUILD', alsoUnlock: ['E3_2'] },
+    { id: 'E3_2', code: '3.2', level: 'N3', title: 'Equivalência Figura-Palavra', desc: '4 Ciclos: 1. Identidade de Figuras + Nomear | 2. BC→C (Com Dica) | 3. B→C (Sem Dica) | 4. Ler Palavras.', engine: 'MULTIMTS', subType: 'EQUIV_4STEPS_MM' },
     { id: 'E3_3', code: '3.3', level: 'N3', title: 'Transcrição e Cópia', desc: 'Montar palavra com letras móveis a partir do modelo visual.', engine: 'CRMTS', subType: 'COPY_CRMTS' },
     { id: 'E3_4', code: '3.4', level: 'N3', title: 'Escrita sob Ditado', desc: 'Montar palavra com letras móveis a partir do áudio.', engine: 'CRMTS', subType: 'DICT_CRMTS', isAudioModel: true },
-    { id: 'E3_5', code: '3.5', level: 'N3', title: 'Espaço na Frase', desc: 'Segmentar a sentença aglutinada tocando nos limites das palavras.', engine: 'CRMTS', subType: 'WORD_SPACE', alsoUnlock: ['R_N3_CAT', 'EX_CAT_SEM', 'E4_1'] },
-    { id: 'R_N3_CAT', code: '★', level: 'N3', title: 'Desbloquear Extra: Categorização Semântica', desc: 'Portal de recompensa para o jogo de categorias semânticas (Animal, Comida, Objeto) nos Extras.', engine: 'REWARD_PORTAL', targetTab: 'EXTRAS', openModuleId: 'EX_CAT_SEM', unlockTargets: ['EX_CAT_SEM', 'E4_1'] },
+    { id: 'E3_5', code: '3.5', level: 'N3', title: 'Espaço na Frase', desc: 'Segmentar a sentença aglutinada tocando nos limites das palavras.', engine: 'CRMTS', subType: 'WORD_SPACE' },
+    { id: 'R_N3_SEM', code: '★', level: 'N3', title: 'Extra: Categorização Semântica', desc: 'Desbloqueia e leva para a atividade de Categorização Semântica nos Extras.', engine: 'REWARD_PORTAL', targetTab: 'EXTRAS', unlockTargets: ['EX_SEM'], openModuleId: 'EX_SEM' },
 
     // NÍVEL 4: Dificuldades Ortográficas, Pares Mínimos e Recombinação
     { id: 'E4_1', code: '4.1', level: 'N4', title: 'Pares Mínimos Auditivos', desc: 'Contraste auditivo fino (F/V, P/B, T/D, C/G).', engine: 'MTS', subType: 'MIN_PAIRS', isAudioModel: true },
@@ -506,11 +538,11 @@ const EIDOS_MODULES = [
     { id: 'E5_4', code: '5.4', level: 'N5', title: 'Autocorreção Semântica', desc: 'Localizar palavra intrusa absurda na frase e substituir pela correta.', engine: 'CRMTS', subType: 'INTRUDER_WORD' },
     { id: 'E5_5', code: '5.5', level: 'N5', title: 'Sequência Lógica', desc: 'Ordenar frases cronologicamente em 1º, 2º e 3º.', engine: 'CRMTS', subType: 'CHRONO_SEQ' },
 
-    // GUIA EXTRAS: Atividades Complementares de Classificação e Categorização
-    { id: 'EX_CLASS_VC', code: 'EX.1', level: 'EXTRAS', title: 'Classificação 1: Vogal vs. Consoante', desc: 'Discriminação visual estrutural entre vogais e consoantes.', engine: 'MTS', subType: 'CLASS_VC' },
-    { id: 'EX_CLASS_SP', code: 'EX.2', level: 'EXTRAS', title: 'Classificação 2: Sílaba vs. Palavra', desc: 'Categorização por extensão e unidade gráfica.', engine: 'MTS', subType: 'CLASS_SP' },
-    { id: 'EX_CLASS_TOT', code: 'EX.3', level: 'EXTRAS', title: 'Classificação 3: Estrutura Total', desc: 'Pareamento Multimodelo: Vogal, Consoante, Sílaba e Palavra.', engine: 'MULTIMTS', subType: 'CLASS_TOTAL_MM' },
-    { id: 'EX_CAT_SEM', code: 'EX.4', level: 'EXTRAS', title: 'Categorização Semântica', desc: 'Parear palavras lidas às suas categorias (Animal, Comida, Objeto).', engine: 'MULTIMTS', subType: 'SEMANTIC_CAT_MM' }
+    // MÓDULOS DE CLASSIFICAÇÃO E CATEGORIZAÇÃO (ALOCADOS NA GUIA EXTRAS)
+    { id: 'EX_VC', code: 'EX.1', level: 'EXTRAS', title: 'Classificação: Vogal vs. Consoante', desc: 'Discriminação visual estrutural de letras.', engine: 'MTS', subType: 'CLASS_VC' },
+    { id: 'EX_SP', code: 'EX.2', level: 'EXTRAS', title: 'Classificação: Sílaba vs. Palavra', desc: 'Categorização por extensão e unidade.', engine: 'MTS', subType: 'CLASS_SP' },
+    { id: 'EX_TOT', code: 'EX.3', level: 'EXTRAS', title: 'Classificação: Estrutura Total', desc: 'Pareamento Multimodelo: Vogal, Consoante, Sílaba e Palavra.', engine: 'MULTIMTS', subType: 'CLASS_TOTAL_MM' },
+    { id: 'EX_SEM', code: 'EX.4', level: 'EXTRAS', title: 'Categorização Semântica', desc: 'Parear palavras lidas às suas categorias (Animal, Comida, Objeto).', engine: 'MULTIMTS', subType: 'SEMANTIC_CAT_MM' }
 ];
 
 const syllabaryOrder = ['VOGAIS', 'ENCONTROS', 'F','V','M','N','S','Z','L','R','X','J', 'P','B','T','D', 'C','G','Q'];
@@ -530,6 +562,7 @@ const phoneticsMap = {
     'CHA': ['XA'], 'CHE': ['XE'], 'CHI': ['XI'], 'CHO': ['XO'], 'CHU': ['XU'],
     'SE': ['CE'], 'SI': ['CI'], 'JE': ['GE'], 'JI': ['GI']
 };
+
 const preReqTerms = {
     'VOGAL': ['VOGAL', 'VOGAIS'],
     'CONSOANTE': ['CONSOANTE', 'CONSOANTES'],
@@ -538,7 +571,7 @@ const preReqTerms = {
 };
 
 /* ============================================================================
-   5. MAPA DE ÁUDIOS FONÊMICOS E MÓDULOS DO ALFABETO FONOLÓGICO (MINIMALISTA)
+   6. MAPA DE ÁUDIOS FONÊMICOS E MÓDULOS DO ALFABETO FONOLÓGICO (MINIMALISTA)
    ============================================================================ */
 const FONEMAS_AUDIO_MAP = {
     'B': 'c-b-1.ogg',
@@ -552,7 +585,6 @@ const FONEMAS_AUDIO_MAP = {
     'T': 'c-t-1.ogg',
     'V': 'c-v-1.ogg',
     'Z': 'c-z-1.ogg',
-
     'C': { '1': 'c-c-1.ogg', '2': 'c-c-2.ogg' },
     'G': { '1': 'c-g-1.ogg', '2': 'c-g-2.ogg' },
     'L': { '1': 'c-l-1.ogg', '2': 'c-l-2.ogg' },
@@ -560,7 +592,6 @@ const FONEMAS_AUDIO_MAP = {
     'S': { '1': 'c-s-1.ogg', '2': 'c-s-2.ogg' },
     'W': { '2': 'c-w-2.ogg' },
     'X': { '1': 'c-x-1.ogg', '2': 'c-x-2.ogg', '3': 'c-x-3.ogg', '4': 'c-x-4.ogg' },
-
     'A': { '1': 'v-a-1.ogg', '3': 'v-a-3.ogg' },
     'E': { '1': 'v-e-1.ogg', '2': 'v-e-2.ogg', '3': 'v-e-3.ogg' },
     'I': { '1': 'v-i-1.ogg', '3': 'v-i-3.ogg' },
@@ -581,7 +612,6 @@ const PHONOLOGICAL_ALPHABET_MODULES = [
     { id: 'FA_O_3', letter: 'O', varIdx: '3', title: 'O - Som 3', desc: 'Modelagem articulatória e sustentação da vogal O nasal.' },
     { id: 'FA_U_1', letter: 'U', varIdx: '1', title: 'U - Som 1', desc: 'Modelagem articulatória e sustentação da vogal U oral.' },
     { id: 'FA_U_3', letter: 'U', varIdx: '3', title: 'U - Som 2', desc: 'Modelagem articulatória e sustentação da vogal U nasal.' },
-
     { id: 'FA_F_1', letter: 'F', varIdx: '1', title: 'F', desc: 'Modelagem articulatória labiodental surda /f/.' },
     { id: 'FA_V_1', letter: 'V', varIdx: '1', title: 'V', desc: 'Modelagem articulatória labiodental sonora /v/.' },
     { id: 'FA_S_1', letter: 'S', varIdx: '1', title: 'S - Som 1', desc: 'Modelagem articulatória alveolar surda /s/.' },
@@ -600,7 +630,6 @@ const PHONOLOGICAL_ALPHABET_MODULES = [
     { id: 'FA_R_2', letter: 'R', varIdx: '2', title: 'R - Som 2', desc: 'Modelagem articulatória branda intervocálica (ex: Arara).' },
     { id: 'FA_R_3', letter: 'R', varIdx: '3', title: 'R - Som 3', desc: 'Modelagem articulatória em coda silábica (ex: Mar).' },
     { id: 'FA_W_2', letter: 'W', varIdx: '2', title: 'W', desc: 'Modelagem articulatória aproximante /w/.' },
-
     { id: 'FA_P_1', letter: 'P', varIdx: '1', title: 'P', desc: 'Modelagem articulatória oclusiva bilabial surda /p/.' },
     { id: 'FA_B_1', letter: 'B', varIdx: '1', title: 'B', desc: 'Modelagem articulatória oclusiva bilabial sonora /b/.' },
     { id: 'FA_T_1', letter: 'T', varIdx: '1', title: 'T', desc: 'Modelagem articulatória oclusiva linguodental surda /t/.' },
