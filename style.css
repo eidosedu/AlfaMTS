@@ -1,3 +1,15 @@
+/* ================= FONTES LOCAIS OFFLINE (MAMÃE QUE NOS FAZ) ================= */
+@font-face {
+    font-family: 'MamaeQueNosFaz';
+    src: url('assets/fonts/mamae-que-nos-faz.ttf') format('truetype'),
+         url('assets/fonts/MamaeQueNosFaz.ttf') format('truetype'),
+         url('assets/fonts/mamaequenosfaz.ttf') format('truetype'),
+         url('assets/fonts/mamae-que-nos-faz.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     --splash-bg: #6baef5;
     --primary: #0284C7;
@@ -40,7 +52,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
 }
@@ -80,12 +92,12 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 16px;
     animation: splashIntro 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .splash-content .logo-box {
-    width: 175px;
+    width: 115px;
     height: auto;
     aspect-ratio: 2423 / 1691;
     color: #ffffff;
@@ -96,42 +108,36 @@ body {
 
 .splash-content .brand-name {
     color: #ffffff;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 900;
-    letter-spacing: -1px;
+    letter-spacing: -0.8px;
 }
 
 @keyframes splashIntro {
-    from {
-        opacity: 0;
-        transform: scale(0.92);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
 }
 
-/* ÍCONE DE TIMER FLUTUANTE NO CANTO INFERIOR ESQUERDO (NÃO SOBREPÕE TÍTULOS) */
+/* INDICADOR DE TIMER FLUTUANTE (CANTO INFERIOR ESQUERDO) */
 #header-timer-icon {
     position: fixed;
     bottom: 16px;
     left: 20px;
     top: auto;
+    right: auto;
     transform: none;
     color: var(--text);
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(6px);
-    padding: 7px 14px;
+    background: #FFFFFF;
+    padding: 6px 14px;
     border-radius: 30px;
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-card);
     z-index: 95;
     display: none;
     align-items: center;
     gap: 6px;
     border: 1.5px solid var(--border);
     font-weight: 800;
-    font-size: 0.86rem;
+    font-size: 0.88rem;
 }
 
 /* ESTRUTURA BASE DE TELAS */
@@ -242,7 +248,7 @@ body {
     line-height: 1.35;
 }
 
-/* ================= 2. MULTI-TENANT: PÍLULA SWITCHER DE ALUNO ================= */
+/* ================= 2. MULTI-TENANT SWITCHER & PÍLULA DE FICHAS ================= */
 .student-switcher-pill {
     background: #F1F5F9;
     border: 1.5px solid var(--border);
@@ -259,13 +265,8 @@ body {
     height: 40px;
 }
 
-.student-switcher-pill:hover {
-    background: #E2E8F0;
-}
-
-.student-switcher-pill:active {
-    transform: scale(0.96);
-}
+.student-switcher-pill:hover { background: #E2E8F0; }
+.student-switcher-pill:active { transform: scale(0.96); }
 
 .student-switcher-pill .avatar-mini {
     width: 24px;
@@ -278,7 +279,46 @@ body {
     justify-content: center;
 }
 
-/* ================= 3. TELA HOME DO ANALISTA (LOGO ALINHADA AO NOME) ================= */
+.token-balance-pill {
+    background: #FFFBEB;
+    border: 1.5px solid #FDE68A;
+    color: #92400E;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    cursor: pointer;
+    transition: 0.15s ease;
+    box-shadow: var(--shadow-card);
+}
+.token-balance-pill:hover { background: #FEF3C7; }
+.token-balance-pill:active { transform: scale(0.96); }
+
+.btn-rocket-arcade {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.15s ease;
+    box-shadow: var(--shadow-card);
+}
+.btn-rocket-arcade:hover {
+    background: var(--primary);
+    color: #FFFFFF;
+}
+.btn-rocket-arcade:active { transform: scale(0.93); }
+
+/* ================= 3. TELA HOME DO ANALISTA (4 COLUNAS) ================= */
 #screen-splash {
     align-items: center;
     justify-content: center;
@@ -299,7 +339,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 36px;
+    margin-bottom: 34px;
     text-align: center;
 }
 
@@ -307,7 +347,7 @@ body {
     width: 185px;
     height: auto;
     aspect-ratio: 2423 / 1691;
-    margin: 0 auto 8px auto;
+    margin: 0 auto 10px auto;
     color: var(--primary, #6baef5);
     display: flex;
     align-items: center;
@@ -317,17 +357,17 @@ body {
 .home-brand-title {
     font-size: 2.75rem;
     font-weight: 900;
-    letter-spacing: -1.2px;
+    letter-spacing: -1.5px;
     color: var(--text);
-    line-height: 1.05;
+    line-height: 1.1;
 }
 
 .splash-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
     width: 100%;
-    max-width: 780px;
+    max-width: 920px;
 }
 
 .splash-btn {
@@ -335,8 +375,8 @@ body {
     color: var(--text);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 28px 20px;
-    font-size: 1.08rem;
+    padding: 26px 16px;
+    font-size: 1.02rem;
     font-weight: 800;
     display: flex;
     flex-direction: column;
@@ -346,6 +386,7 @@ body {
     cursor: pointer;
     transition: all 0.18s ease;
     box-shadow: var(--shadow-card);
+    text-align: center;
 }
 
 .splash-btn:hover {
@@ -354,16 +395,14 @@ body {
     box-shadow: var(--shadow-soft);
 }
 
-.splash-btn:active {
-    transform: scale(0.97);
-}
+.splash-btn:active { transform: scale(0.97); }
 
 .splash-btn .icon-wrapper {
     background: #F8FAFC;
     border: 1.5px solid var(--border);
     color: var(--text);
-    width: 56px;
-    height: 56px;
+    width: 54px;
+    height: 54px;
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -377,7 +416,109 @@ body {
     color: var(--primary-dark);
 }
 
-/* ================= 4. TELA DE JOGOS / TRILHA (CARROSSEL + PORTAIS) ================= */
+/* ================= 4. TELA DE COMPLEMENTOS & STUDIO COMPORTAMENTAL ================= */
+.complements-container {
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 40px;
+}
+
+.studio-cycle-card {
+    background: #F8FAFC;
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+}
+
+.studio-cycle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+}
+
+.studio-grid-2col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.token-store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.store-item-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    box-shadow: var(--shadow-card);
+    transition: 0.16s;
+}
+.store-item-card:hover { border-color: var(--primary); }
+
+/* ================= 5. MODAL FULLSCREEN DO HUB ARCADE (SANDBOX IFRAME) ================= */
+#modal-reward-arcade {
+    position: fixed;
+    inset: 0;
+    background: #0F172A;
+    z-index: 9500;
+    display: none;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+.arcade-top-bar {
+    height: 54px;
+    background: #1E293B;
+    border-bottom: 1px solid #334155;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #FFFFFF;
+    flex-shrink: 0;
+}
+
+.arcade-timer-badge {
+    background: #0F172A;
+    border: 1.5px solid #38BDF8;
+    color: #38BDF8;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#arcade-game-frame {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #0F172A;
+    display: block;
+}
+
+/* ================= 6. TELA DE JOGOS / TRILHA (CARROSSEL) ================= */
 #screen-home {
     overflow: hidden !important;
     padding: 16px 32px 14px 32px !important;
@@ -425,14 +566,8 @@ body {
     transition: 0.15s;
     box-shadow: var(--shadow-card);
 }
-
-.icon-circle-btn:hover {
-    background: #F8FAFC;
-    border-color: #CBD5E1;
-}
-
+.icon-circle-btn:hover { background: #F8FAFC; border-color: #CBD5E1; }
 .icon-circle-btn:active { transform: scale(0.93); }
-
 .icon-circle-btn.review-active {
     background: var(--text);
     border-color: var(--text);
@@ -468,17 +603,12 @@ body {
     transition: all 0.18s ease;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
-
 .carousel-nav-arrow:hover {
     background: rgba(255, 255, 255, 0.95);
     color: var(--text);
     border-color: #CBD5E1;
 }
-
-.carousel-nav-arrow:active {
-    transform: translateY(-50%) scale(0.92);
-}
-
+.carousel-nav-arrow:active { transform: translateY(-50%) scale(0.92); }
 .carousel-nav-arrow.left { left: 4px; }
 .carousel-nav-arrow.right { right: 4px; }
 
@@ -508,9 +638,9 @@ body {
     scroll-snap-align: start;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    grid-auto-rows: minmax(112px, 134px);
+    grid-auto-rows: minmax(112px, 132px);
     gap: 16px;
-    padding: 16px 48px 34px 48px;
+    padding: 16px 48px 28px 48px;
     align-content: flex-start;
     overflow-y: auto;
 }
@@ -532,14 +662,12 @@ body {
     transition: 0.25s;
     cursor: pointer;
 }
-
 .page-dot.active {
     width: 22px;
     border-radius: 10px;
     background: var(--text);
 }
 
-/* CARDS DESPOLUÍDOS E CARDS DE RECOMPENSA (PORTAL) */
 .phase-card {
     background: var(--card);
     border-radius: 20px;
@@ -555,41 +683,31 @@ body {
     transition: transform 0.16s ease, border-color 0.16s ease;
     touch-action: pan-x pan-y;
 }
-
-.phase-card:hover {
-    border-color: #CBD5E1;
-}
-
-.phase-card:active {
-    transform: scale(0.98);
-}
-
+.phase-card:hover { border-color: #CBD5E1; }
+.phase-card:active { transform: scale(0.98); }
 .phase-card.locked {
     opacity: 0.45;
     filter: grayscale(0.9);
     background: #F1F5F9;
     cursor: not-allowed;
 }
-
 .phase-card.mastered {
     border-color: rgba(16, 185, 129, 0.45);
     background: #FFFFFF;
 }
-
 .phase-card.reward-portal-card {
-    border: 2px dashed var(--warning);
+    border-color: #FCD34D;
     background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 100%);
 }
-
 .phase-card .code-tag {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 800;
     color: var(--text-light);
     background: #F1F5F9;
     padding: 3px 8px;
     border-radius: 6px;
     display: inline-block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .clean-card-body {
@@ -601,7 +719,7 @@ body {
 }
 
 .clean-card-title {
-    font-size: 1.06rem !important;
+    font-size: 1.1rem !important;
     font-weight: 800;
     color: var(--text);
     line-height: 1.25;
@@ -622,8 +740,9 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22);
     transition: 0.16s;
+    position: relative;
+    z-index: 8;
 }
-
 .card-play-btn:active { transform: scale(0.9); }
 
 .card-footer-mastery {
@@ -634,24 +753,9 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
-.days-dots {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-
-.day-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: #E2E8F0;
-}
-
-.day-dot.filled {
-    background: var(--success);
-}
-
+.days-dots { display: flex; gap: 5px; align-items: center; }
+.day-dot { width: 9px; height: 9px; border-radius: 50%; background: #E2E8F0; }
+.day-dot.filled { background: var(--success); }
 .day-label {
     font-size: 0.72rem;
     font-weight: 700;
@@ -660,7 +764,6 @@ body {
     align-items: center;
     gap: 4px;
 }
-
 .var-pill-tag {
     font-size: 0.66rem;
     font-weight: 800;
@@ -670,7 +773,7 @@ body {
     border-radius: 6px;
 }
 
-/* ================= 5. ARENA DE INTERVENÇÃO (GAME ENGINE) ================= */
+/* ================= 7. ARENA DE INTERVENÇÃO & TOPOGRAFIAS ================= */
 #screen-game {
     background: #FFFFFF;
     padding: 16px 24px;
@@ -700,7 +803,6 @@ body {
     cursor: pointer;
     transition: 0.15s;
 }
-
 .btn-exit-game:active { transform: scale(0.92); }
 
 .cycle-badge {
@@ -767,7 +869,6 @@ body {
     position: relative;
     text-align: center;
 }
-
 .model-card.sentence-mode {
     font-size: 1.95rem;
     line-height: 1.35;
@@ -800,7 +901,6 @@ body {
     margin-right: 12px;
     vertical-align: middle;
 }
-
 .anchor-square-end {
     display: inline-block;
     width: 18px;
@@ -811,8 +911,13 @@ body {
     vertical-align: middle;
 }
 
+/* CLASSES TOPOGRÁFICAS (INCLUINDO FONTE MAMÃE QUE NOS FAZ) */
 .topo-serif { font-family: Georgia, 'Times New Roman', serif !important; }
-.topo-school { font-family: 'Comic Neue', cursive, sans-serif !important; }
+.topo-school, .topo-mamae {
+    font-family: 'MamaeQueNosFaz', cursive, sans-serif !important;
+    font-weight: normal !important;
+    letter-spacing: 1px;
+}
 .topo-lower { text-transform: lowercase !important; }
 
 .model-audio-btn {
@@ -830,7 +935,6 @@ body {
     transition: 0.18s;
 }
 .model-audio-btn:active { transform: scale(0.92); }
-.model-audio-btn .material-icons { font-size: 4rem; }
 
 .comparisons-area {
     display: flex;
@@ -865,10 +969,7 @@ body {
     text-align: center;
     position: relative;
 }
-.comp-card:active {
-    transform: scale(0.96);
-    border-color: var(--primary);
-}
+.comp-card:active { transform: scale(0.96); border-color: var(--primary); }
 .comp-card.img-only { font-size: 4rem; }
 
 .errorless-prompt {
@@ -908,10 +1009,7 @@ body {
     transition: 0.16s;
     box-shadow: var(--shadow-card);
 }
-.mm-card.selected {
-    border-color: var(--primary);
-    background: var(--primary-light);
-}
+.mm-card.selected { border-color: var(--primary); background: var(--primary-light); }
 .mm-card.paired {
     border-color: var(--success);
     background: var(--success-light);
@@ -1058,7 +1156,7 @@ body {
     font-weight: 900;
 }
 
-/* SLIDER HORIZONTAL DO ALFABETO FONOLÓGICO E TRIPLO SLIDER SILÁBICO */
+/* SLIDER HORIZONTAL DO ALFABETO FONOLÓGICO */
 .mouth-articulatory-box {
     width: 220px;
     height: 220px;
@@ -1161,7 +1259,6 @@ body {
     transition: all 0.12s ease;
     outline: none;
 }
-.stt-btn .material-icons { font-size: 3.6rem; pointer-events: none; }
 .stt-btn.listening {
     background: var(--danger);
     transform: scale(0.92);
@@ -1174,7 +1271,7 @@ body {
 }
 .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
-/* ================= 6. TELEMETRIA E CONFIGURAÇÕES (CLEAN SAAS) ================= */
+/* ================= 8. TELEMETRIA, CONFIGURAÇÕES E MODAIS ================= */
 .dash-header {
     display: flex;
     justify-content: space-between;
@@ -1279,7 +1376,6 @@ body {
     padding-bottom: 10px;
 }
 
-/* FEEDBACKS E MODAIS */
 .feedback-error {
     border-color: var(--danger) !important;
     color: var(--danger) !important;
@@ -1383,7 +1479,6 @@ textarea {
     background: #F8FAFC;
 }
 
-/* SEGMENTED CONTROL, TOOLTIPS & PILL SWITCHES */
 .modal-clean-header {
     display: flex;
     justify-content: space-between;
@@ -1395,7 +1490,7 @@ textarea {
     background: #F1F5F9;
     padding: 4px;
     border-radius: 12px;
-    gap: 4px;
+    gap: 6px;
     margin-bottom: 16px;
 }
 .seg-btn {
@@ -1403,13 +1498,12 @@ textarea {
     border: none;
     background: transparent;
     color: var(--text-light);
-    padding: 9px 10px;
+    padding: 9px 12px;
     border-radius: 9px;
     font-weight: 800;
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     cursor: pointer;
     transition: 0.16s;
-    white-space: nowrap;
 }
 .seg-btn.active {
     background: #FFFFFF;
@@ -1600,7 +1694,6 @@ textarea {
 .pill-switch input:checked + .pill-slider { background-color: var(--primary); }
 .pill-switch input:checked + .pill-slider:before { transform: translateX(20px); }
 
-/* LISTA DE ALUNOS NO MODAL MULTI-TENANT E OPÇÕES DE TELEMETRIA */
 .tenant-list-item {
     display: flex;
     align-items: center;
@@ -1638,7 +1731,8 @@ textarea {
 }
 
 @media (max-width: 900px) {
-    .splash-buttons, .profile-cards-grid { grid-template-columns: 1fr; max-width: 440px; }
+    .splash-buttons { grid-template-columns: repeat(2, 1fr); max-width: 520px; }
+    .profile-cards-grid { grid-template-columns: 1fr; max-width: 440px; }
     .dash-kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .screen { padding: 16px; }
     .carousel-page { padding: 12px 36px 24px 36px; }
