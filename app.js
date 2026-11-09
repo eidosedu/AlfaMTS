@@ -1,4 +1,3123 @@
 /* ============================================================================
+   ALFAMTS PRO - MOTOR PRINCIPAL (app.js - PARTE 1 DE 2: SEÇÕES 5.0 A 11)
+   100% OFFLINE • ZERO MATERIAL-ICONS • MULTI-TENANT • STUDIO • TOKENS • ARCADE
+   ============================================================================ */
+
+/* ============================================================================
+   5.0 CATÁLOGO DE SVGS INLINE, ÁUDIO FONÊMICO E BANCO DE IMAGENS (INDEXEDDB)
+   ============================================================================ */
+const UI_SVGS = {
+    volume: `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
+    volumeSm: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
+    mic: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>`,
+    eye: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    hourglass: `<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>`,
+    arrowRight: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
+    checkCircle: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+    check: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    touch: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>`,
+    spaceBar: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17v1c0 .5-.5 1-1 1H3c-.5 0-1-.5-1-1v-1"/></svg>`,
+    backspace: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>`,
+    trophy: `<svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`,
+    target: `<svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+    grid: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+    replay: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`,
+    coin: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>`
+};
+
+function getPhonemeAudioPath(letter, varIdx = '1') {
+    const k = String(letter || '').toUpperCase().trim();
+    const entry = (typeof FONEMAS_AUDIO_MAP !== 'undefined') ? FONEMAS_AUDIO_MAP[k] : null;
+    if (!entry) return `assets/audio/fonemas/c-${k.toLowerCase()}-${varIdx}.ogg`;
+    if (typeof entry === 'string') return `assets/audio/fonemas/${entry}`;
+    const file = entry[String(varIdx)] || entry['1'] || Object.values(entry)[0];
+    return `assets/audio/fonemas/${file}`;
+}
+
+function getMouthImagePath(letter, varIdx = '1') {
+    const k = String(letter || '').toLowerCase().trim();
+    return `assets/img/b-${k}-${varIdx}.webp`;
+}
+
+let activePhonemeAudioObj = null;
+let phonemeDoublePlayTimer = null;
+
+function playPhonemeAudioFile(letter, varIdx = '1', playTwice = false) {
+    if (phonemeDoublePlayTimer) { clearTimeout(phonemeDoublePlayTimer); phonemeDoublePlayTimer = null; }
+    if (activePhonemeAudioObj) {
+        try { activePhonemeAudioObj.pause(); activePhonemeAudioObj.currentTime = 0; } catch (e) {}
+    }
+
+    const src = getPhonemeAudioPath(letter, varIdx);
+    const playOnce = (onFinishCallback) => {
+        try {
+            const aud = new Audio(src);
+            activePhonemeAudioObj = aud;
+            aud.onended = () => {
+                if (typeof onFinishCallback === 'function') onFinishCallback();
+            };
+            aud.onerror = () => {
+                speakTTS(getPhoneticAudioModel(letter));
+                if (typeof onFinishCallback === 'function') setTimeout(onFinishCallback, 400);
+            };
+            const playPromise = aud.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    speakTTS(getPhoneticAudioModel(letter));
+                    if (typeof onFinishCallback === 'function') setTimeout(onFinishCallback, 400);
+                });
+            }
+        } catch (err) {
+            speakTTS(getPhoneticAudioModel(letter));
+            if (typeof onFinishCallback === 'function') setTimeout(onFinishCallback, 400);
+        }
+    };
+
+    if (playTwice) {
+        playOnce(() => {
+            phonemeDoublePlayTimer = setTimeout(() => {
+                playOnce(null);
+            }, 600);
+        });
+    } else {
+        playOnce(null);
+    }
+}
+
+/* BANCO DE IMAGENS PARTICULAR (INDEXEDDB + COMPRESSÃO WEBP 100%, 50%, 25%) */
+const MEDIA_DB_NAME = 'AlfaMTS_MediaDB';
+const MEDIA_STORE_NAME = 'custom_images';
+let mediaDBInstance = null;
+let customImagesCache = {};
+
+function openMediaIndexedDB() {
+    return new Promise((resolve) => {
+        if (mediaDBInstance) return resolve(mediaDBInstance);
+        if (!window.indexedDB) return resolve(null);
+        const req = indexedDB.open(MEDIA_DB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(MEDIA_STORE_NAME)) {
+                db.createObjectStore(MEDIA_STORE_NAME, { keyPath: 'id' });
+            }
+        };
+        req.onsuccess = (e) => {
+            mediaDBInstance = e.target.result;
+            resolve(mediaDBInstance);
+        };
+        req.onerror = () => resolve(null);
+    });
+}
+
+async function loadAllCustomImagesIntoCache() {
+    const db = await openMediaIndexedDB();
+    if (!db) return;
+    return new Promise((resolve) => {
+        try {
+            const tx = db.transaction(MEDIA_STORE_NAME, 'readonly');
+            const store = tx.objectStore(MEDIA_STORE_NAME);
+            const req = store.getAll();
+            req.onsuccess = () => {
+                customImagesCache = {};
+                (req.result || []).forEach(item => {
+                    customImagesCache[item.id] = item;
+                });
+                resolve();
+            };
+            req.onerror = () => resolve();
+        } catch (e) {
+            resolve();
+        }
+    });
+}
+
+async function saveCustomImageToIndexedDB(record) {
+    const db = await openMediaIndexedDB();
+    customImagesCache[record.id] = record;
+    if (!db) return record;
+    return new Promise((resolve) => {
+        try {
+            const tx = db.transaction(MEDIA_STORE_NAME, 'readwrite');
+            tx.objectStore(MEDIA_STORE_NAME).put(record);
+            tx.oncomplete = () => resolve(record);
+            tx.onerror = () => resolve(record);
+        } catch (e) {
+            resolve(record);
+        }
+    });
+}
+
+async function deleteCustomImageFromIndexedDB(imgId) {
+    delete customImagesCache[imgId];
+    const db = await openMediaIndexedDB();
+    if (!db) return;
+    return new Promise((resolve) => {
+        try {
+            const tx = db.transaction(MEDIA_STORE_NAME, 'readwrite');
+            tx.objectStore(MEDIA_STORE_NAME).delete(imgId);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => resolve();
+        } catch (e) {
+            resolve();
+        }
+    });
+}
+
+function compressAndConvertImageToWebP(file, scaleFactor = 0.5, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                let targetW = Math.max(48, Math.round(img.width * scaleFactor));
+                let targetH = Math.max(48, Math.round(img.height * scaleFactor));
+                const maxDim = 640;
+                if (targetW > maxDim || targetH > maxDim) {
+                    if (targetW > targetH) {
+                        targetH = Math.round((targetH * maxDim) / targetW);
+                        targetW = maxDim;
+                    } else {
+                        targetW = Math.round((targetW * maxDim) / targetH);
+                        targetH = maxDim;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, targetW, targetH);
+                ctx.drawImage(img, 0, 0, targetW, targetH);
+                const dataUrl = canvas.toDataURL('image/webp', quality);
+                const sizeKB = Math.round((dataUrl.length * 3) / 4 / 1024);
+                const cleanName = file.name.replace(/\.[^/.]+$/, '').toUpperCase().trim();
+                resolve({
+                    id: 'img_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+                    name: cleanName,
+                    dataUrl,
+                    width: targetW,
+                    height: targetH,
+                    sizeKB
+                });
+            };
+            img.onerror = () => reject(new Error('Falha ao abrir imagem'));
+            img.src = ev.target.result;
+        };
+        reader.onerror = () => reject(new Error('Falha ao ler arquivo'));
+        reader.readAsDataURL(file);
+    });
+}
+
+function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
+    const cleanKey = String(wordKey || '').trim().toUpperCase();
+    const customMedia = (state && state.customWordMedia && state.customWordMedia[cleanKey]) ? state.customWordMedia[cleanKey] : null;
+
+    if (customMedia) {
+        if (customMedia.type === 'IDB' && customImagesCache[customMedia.val]) {
+            const src = customImagesCache[customMedia.val].dataUrl;
+            const px = Math.round(sizeRem * 22);
+            return `<img src="${src}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
+        }
+        if (customMedia.type === 'EMOJI' && customMedia.val) {
+            return `<span style="font-size:${sizeRem}rem; line-height:1;">${customMedia.val}</span>`;
+        }
+    }
+
+    const matchedByName = Object.values(customImagesCache).find(item => item.name === cleanKey);
+    if (matchedByName) {
+        const px = Math.round(sizeRem * 22);
+        return `<img src="${matchedByName.dataUrl}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
+    }
+
+    const wObj = (typeof WORD_BANK !== 'undefined') ? WORD_BANK[cleanKey] : null;
+    if (wObj && wObj.img) {
+        const px = Math.round(sizeRem * 22);
+        return `<img src="${wObj.img}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
+    }
+    if (wObj && wObj.icon) {
+        return `<span style="font-size:${sizeRem}rem; line-height:1;">${wObj.icon}</span>`;
+    }
+    return `<svg width="${Math.round(sizeRem * 16)}" height="${Math.round(sizeRem * 16)}" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+}
+
+function hasValidVisualRepresentation(wordKey) {
+    const cleanKey = String(wordKey || '').trim().toUpperCase();
+    if (state && state.customWordMedia && state.customWordMedia[cleanKey]) return true;
+    if (Object.values(customImagesCache).some(item => item.name === cleanKey)) return true;
+    if (typeof WORD_BANK !== 'undefined' && WORD_BANK[cleanKey] && (WORD_BANK[cleanKey].icon || WORD_BANK[cleanKey].img)) return true;
+    return false;
+}
+
+/* ============================================================================
+   5. ESTADO GLOBAL MULTI-TENANT (POR ALUNO), TOKENS, STUDIO E DESBLOQUEIO
+   ============================================================================ */
+let activeRole = 'ANALYST'; // 'ANALYST' | 'APPLICATOR'
+
+function getDefaultTokensClone() {
+    if (typeof DEFAULT_TOKEN_STATE !== 'undefined') {
+        return JSON.parse(JSON.stringify(DEFAULT_TOKEN_STATE));
+    }
+    return {
+        balance: 0,
+        totalEarned: 0,
+        rules: {
+            enabled: true,
+            pointsPerMasteryBlock: 2,
+            bonusConsecutiveStreak: 5,
+            enableImmediateMiniReward: false,
+            immediateMiniRewardDurationSec: 20,
+            requirePinOnRocket: true
+        },
+        ledger: [],
+        catalog: [
+            { id: 'vouch_1', title: '5 Min de Massinha', cost: 4, mediaType: 'EMOJI', mediaVal: '🎨', desc: 'Tempo livre com massinha de modelar.' },
+            { id: 'vouch_2', title: 'Bolhas de Sabão', cost: 3, mediaType: 'EMOJI', mediaVal: '🫧', desc: 'Brincadeira sensorial com bolhas.' }
+        ]
+    };
+}
+
+function createFreshStudentState(firstName = 'ALUNO') {
+    const cleanFirst = String(firstName || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
+    const unlockedInit = ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'R_N1_VC'];
+    if (typeof EIDOS_MODULES !== 'undefined') {
+        EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
+            if (!unlockedInit.includes(m.id)) unlockedInit.push(m.id);
+        });
+    }
+    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
+        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+            if (!unlockedInit.includes(pm.id)) unlockedInit.push(pm.id);
+        });
+    }
+    return {
+        setupDone: true,
+        student: cleanFirst,
+        manualProgressionOverride: false,
+        unlocked: unlockedInit,
+        moduleProgress: {},
+        customCurriculum: {},
+        customWordMedia: {},
+        customModules: [],
+        tokens: getDefaultTokensClone(),
+        taskSettings: {},
+        minimalPairSwaps: { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 },
+        settings: {
+            crit: 90,
+            consecDays: 3,
+            strictDay: false,
+            errorless: true,
+            topoVar: false,
+            topoMode: 'AUTO',
+            opts: 3,
+            sylComplex: { ccv: false, cvcL: false, cvcS: false, cvcM: false },
+            theme: 'cyan',
+            latency: 400,
+            security: { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false },
+            timer: { enabled: false, min: 30 },
+            stages: { c1: true, c2: true, c3: true, c4: true },
+            useMic: true
+        },
+        customWords: 'BOLA, GATO, BOLO, SAPATO, FACA, VACA',
+        log: [],
+        session: { expired: false, endTime: null, configuredMin: 30 },
+        reviewHighlights: {}
+    };
+}
+
+let tenantsIndex = JSON.parse(localStorage.getItem('alfamts_tenants_index')) || null;
+
+function initTenantsAndActiveStudent() {
+    const legacyRaw = localStorage.getItem('eidos_mts_state');
+    if (!tenantsIndex || !Array.isArray(tenantsIndex.students) || tenantsIndex.students.length === 0) {
+        let initialState = null;
+        if (legacyRaw) {
+            try { initialState = JSON.parse(legacyRaw); } catch (e) {}
+        }
+        if (!initialState) initialState = createFreshStudentState('MIGUEL');
+        const firstName = String(initialState.student || 'MIGUEL').trim().split(/\s+/)[0].toUpperCase() || 'MIGUEL';
+        initialState.student = firstName;
+        const firstId = 'stu_' + Date.now();
+        tenantsIndex = {
+            activeStudentId: firstId,
+            analystPin: (initialState.settings && initialState.settings.security && initialState.settings.security.pin) ? initialState.settings.security.pin : '',
+            applicatorPin: '',
+            lockExit: !!(initialState.settings && initialState.settings.security && initialState.settings.security.lockExit),
+            students: [{ id: firstId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') }]
+        };
+        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+        localStorage.setItem('alfamts_student_' + firstId, JSON.stringify(initialState));
+    }
+    const activeId = tenantsIndex.activeStudentId || tenantsIndex.students[0].id;
+    tenantsIndex.activeStudentId = activeId;
+    const stuRaw = localStorage.getItem('alfamts_student_' + activeId);
+    let loaded = null;
+    if (stuRaw) {
+        try { loaded = JSON.parse(stuRaw); } catch (e) {}
+    }
+    if (!loaded) {
+        const meta = tenantsIndex.students.find(s => s.id === activeId) || { firstName: 'ALUNO' };
+        loaded = createFreshStudentState(meta.firstName);
+    }
+    normalizeStudentState(loaded);
+    return loaded;
+}
+
+function normalizeStudentState(st) {
+    if (!st.moduleProgress) st.moduleProgress = {};
+    if (!st.customCurriculum) st.customCurriculum = {};
+    if (!st.customWordMedia) st.customWordMedia = {};
+    if (!Array.isArray(st.customModules)) st.customModules = [];
+    if (!st.tokens || typeof st.tokens !== 'object') {
+        st.tokens = getDefaultTokensClone();
+    } else {
+        const defTok = getDefaultTokensClone();
+        if (typeof st.tokens.balance !== 'number') st.tokens.balance = 0;
+        if (typeof st.tokens.totalEarned !== 'number') st.tokens.totalEarned = 0;
+        if (!st.tokens.rules) st.tokens.rules = defTok.rules;
+        if (!Array.isArray(st.tokens.catalog)) st.tokens.catalog = defTok.catalog;
+        if (!Array.isArray(st.tokens.ledger)) st.tokens.ledger = [];
+    }
+    if (!st.taskSettings) st.taskSettings = {};
+    if (!st.minimalPairSwaps) st.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
+    if (!st.settings) st.settings = createFreshStudentState(st.student).settings;
+    if (!st.settings.consecDays) st.settings.consecDays = 3;
+    if (!st.settings.topoMode) st.settings.topoMode = 'AUTO';
+    if (!st.settings.sylComplex) st.settings.sylComplex = { ccv: false, cvcL: false, cvcS: false, cvcM: false };
+    if (!st.settings.security) st.settings.security = { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false };
+    if (!st.session) st.session = { expired: false, endTime: null, configuredMin: st.settings.timer ? st.settings.timer.min : 30 };
+    if (!st.unlocked) st.unlocked = ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'R_N1_VC'];
+    if (!st.unlocked.includes('VOGAIS')) st.unlocked.push('VOGAIS');
+    if (typeof EIDOS_MODULES !== 'undefined') {
+        EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
+            if (!st.unlocked.includes(m.id)) st.unlocked.push(m.id);
+        });
+    }
+    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
+        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+            if (!st.unlocked.includes(pm.id)) st.unlocked.push(pm.id);
+        });
+    }
+    st.customModules.forEach(cm => {
+        if (cm && cm.id && !st.unlocked.includes(cm.id)) st.unlocked.push(cm.id);
+    });
+    st.student = String(st.student || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
+}
+
+let state = initTenantsAndActiveStudent();
+
+let currentLevelTab = 'N1';
+let isReviewMode = false;
+let isConfigMode = false;
+let blockClicks = false;
+let timerInterval = null;
+let trialStartTime = 0;
+let fluencyTimerInterval = null;
+let responseTimeoutTimer = null;
+let responseCountdownInterval = null;
+let dmtsDelayTimer = null;
+let undoSnapshot = null;
+
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function saveState() {
+    if (tenantsIndex && tenantsIndex.activeStudentId) {
+        const activeMeta = tenantsIndex.students.find(s => s.id === tenantsIndex.activeStudentId);
+        if (activeMeta && state.student) {
+            activeMeta.firstName = String(state.student).trim().split(/\s+/)[0].toUpperCase();
+        }
+        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+        localStorage.setItem('alfamts_student_' + tenantsIndex.activeStudentId, JSON.stringify(state));
+    }
+    localStorage.setItem('eidos_mts_state', JSON.stringify(state));
+}
+
+function switchActiveStudent(studentId) {
+    if (!tenantsIndex) return;
+    const targetMeta = tenantsIndex.students.find(s => s.id === studentId);
+    if (!targetMeta) return;
+    saveState();
+    tenantsIndex.activeStudentId = studentId;
+    localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+
+    const raw = localStorage.getItem('alfamts_student_' + studentId);
+    let loaded = null;
+    if (raw) {
+        try { loaded = JSON.parse(raw); } catch (e) {}
+    }
+    if (!loaded) loaded = createFreshStudentState(targetMeta.firstName);
+    normalizeStudentState(loaded);
+    state = loaded;
+    saveState();
+    applyTheme();
+    if (document.getElementById('screen-home').classList.contains('active')) renderGrid();
+    if (document.getElementById('screen-dashboard').classList.contains('active')) renderDashboard();
+    if (document.getElementById('screen-complements') && document.getElementById('screen-complements').classList.contains('active')) {
+        renderStudioSavedModulesList();
+        renderTokensManagementUI();
+    }
+}
+
+function createNewStudentTenant(rawName) {
+    const firstName = String(rawName || '').trim().split(/\s+/)[0].toUpperCase();
+    if (!firstName) return false;
+    const newId = 'stu_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    const fresh = createFreshStudentState(firstName);
+    fresh.settings.theme = state.settings.theme || 'cyan';
+    tenantsIndex.students.push({ id: newId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') });
+    localStorage.setItem('alfamts_student_' + newId, JSON.stringify(fresh));
+    switchActiveStudent(newId);
+    return true;
+}
+
+function deleteStudentTenant(studentId) {
+    if (!tenantsIndex || tenantsIndex.students.length <= 1) {
+        customAlert("Ação Bloqueada", "É necessário manter pelo menos um aluno cadastrado.");
+        return;
+    }
+    tenantsIndex.students = tenantsIndex.students.filter(s => s.id !== studentId);
+    localStorage.removeItem('alfamts_student_' + studentId);
+    if (tenantsIndex.activeStudentId === studentId) {
+        switchActiveStudent(tenantsIndex.students[0].id);
+    } else {
+        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
+    }
+    renderStudentSwitcherModalList();
+}
+
+function getTaskConfig(modId) {
+    if (!state.taskSettings[modId]) {
+        state.taskSettings[modId] = { font: 'GLOBAL', dmtsDelay: 0, responseTimeout: 0, colorCV: false, sylBox: false, rewardTokens: -1 };
+    }
+    if (typeof state.taskSettings[modId].rewardTokens !== 'number') {
+        state.taskSettings[modId].rewardTokens = -1;
+    }
+    return state.taskSettings[modId];
+}
+
+function getModuleVariationsMap(modId) {
+    if (state.customCurriculum && state.customCurriculum[modId]) {
+        return state.customCurriculum[modId];
+    }
+    const customMod = (state.customModules || []).find(m => m.id === modId);
+    if (customMod && Array.isArray(customMod.targets)) {
+        return { 1: [...customMod.targets] };
+    }
+    if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId]) {
+        return JSON.parse(JSON.stringify(DEFAULT_MODULE_VARIATIONS[modId].variations));
+    }
+    return null;
+}
+
+function getAvailableVariationKeys(modId) {
+    const map = getModuleVariationsMap(modId);
+    if (!map) return [1, 2];
+    const keys = Object.keys(map).map(Number).filter(k => Array.isArray(map[k]) && map[k].length > 0).sort((a, b) => a - b);
+    return keys.length > 0 ? keys : [1];
+}
+
+function getModuleProgress(modId) {
+    if (!state.moduleProgress[modId]) {
+        state.moduleProgress[modId] = {
+            streak: 0,
+            lastDate: '',
+            status: 'in_progress',
+            bestAcc: 0,
+            avgLatency: 0,
+            activeVar: 1,
+            pendingVar: null,
+            pendingVarDate: ''
+        };
+    }
+    if (!state.moduleProgress[modId].activeVar) state.moduleProgress[modId].activeVar = 1;
+    return state.moduleProgress[modId];
+}
+
+function getActiveVariationForModule(modId) {
+    const prog = getModuleProgress(modId);
+    const availKeys = getAvailableVariationKeys(modId);
+
+    if (state.settings.topoMode !== 'AUTO') {
+        const fixed = parseInt(state.settings.topoMode) || 1;
+        return availKeys.includes(fixed) ? fixed : availKeys[0];
+    }
+
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    if (prog.pendingVar && prog.pendingVarDate && prog.pendingVarDate !== todayStr) {
+        prog.activeVar = prog.pendingVar;
+        prog.pendingVar = null;
+        prog.pendingVarDate = '';
+        saveState();
+    }
+
+    if (!availKeys.includes(prog.activeVar)) {
+        prog.activeVar = availKeys[0];
+    }
+    return prog.activeVar;
+}
+
+function registerMasteryAttempt(modId, accuracy, avgLatencySec) {
+    const prog = getModuleProgress(modId);
+    const wasMastered = (prog.status === 'mastered');
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    const targetDays = state.settings.consecDays || 3;
+    const crit = state.settings.crit || 90;
+    const availKeys = getAvailableVariationKeys(modId);
+
+    if (accuracy > prog.bestAcc) prog.bestAcc = Math.round(accuracy);
+    if (avgLatencySec > 0) prog.avgLatency = avgLatencySec;
+
+    let earnedTokensNow = 0;
+
+    if (accuracy >= crit) {
+        const curIdx = availKeys.indexOf(prog.activeVar);
+        const nextVar = availKeys[(curIdx + 1) % availKeys.length];
+
+        if (state.settings.strictDay) {
+            if (prog.lastDate !== todayStr) {
+                prog.streak = (prog.streak || 0) + 1;
+                prog.lastDate = todayStr;
+            }
+            if (availKeys.length > 1) {
+                prog.pendingVar = nextVar;
+                prog.pendingVarDate = todayStr;
+            }
+        } else {
+            prog.streak = (prog.streak || 0) + 1;
+            prog.lastDate = todayStr;
+            if (availKeys.length > 1) {
+                prog.activeVar = nextVar;
+                prog.pendingVar = null;
+            }
+        }
+
+        // Concessão de fichas por bloco com meta atingida (respeitando remuneração individual da tarefa ou global)
+        if (state.tokens && state.tokens.rules && state.tokens.rules.enabled) {
+            const tCfg = getTaskConfig(modId);
+            const customMod = (state.customModules || []).find(m => m.id === modId);
+            let blockReward = state.tokens.rules.pointsPerMasteryBlock;
+            if (tCfg && typeof tCfg.rewardTokens === 'number' && tCfg.rewardTokens >= 0) {
+                blockReward = tCfg.rewardTokens;
+            } else if (customMod && typeof customMod.rewardTokens === 'number' && customMod.rewardTokens >= 0) {
+                blockReward = customMod.rewardTokens;
+            }
+            earnedTokensNow += blockReward;
+        }
+
+        if (prog.streak >= targetDays) {
+            prog.status = 'mastered';
+            if (!wasMastered && state.tokens && state.tokens.rules && state.tokens.rules.enabled) {
+                earnedTokensNow += (state.tokens.rules.bonusConsecutiveStreak || 0);
+            }
+            if (!state.manualProgressionOverride) {
+                unlockNextInSequence(modId);
+            }
+        }
+
+        if (earnedTokensNow > 0) {
+            awardTokensToActiveStudent(earnedTokensNow, `Meta atingida no módulo ${modId}`);
+        }
+    } else {
+        if (prog.status !== 'mastered') {
+            prog.streak = 0;
+        }
+    }
+    prog.lastEarnedTokens = earnedTokensNow;
+    saveState();
+    return prog;
+}
+
+function unlockNextInSequence(modId) {
+    const modObj = EIDOS_MODULES.find(m => m.id === modId);
+    if (modObj && Array.isArray(modObj.unlockSyl)) {
+        modObj.unlockSyl.forEach(s => {
+            if (!state.unlocked.includes(s)) state.unlocked.push(s);
+        });
+    }
+    if (modObj && Array.isArray(modObj.alsoUnlock)) {
+        modObj.alsoUnlock.forEach(id => {
+            if (!state.unlocked.includes(id)) state.unlocked.push(id);
+        });
+    }
+
+    const eIdx = EIDOS_MODULES.findIndex(m => m.id === modId);
+    if (eIdx >= 0) {
+        let cursor = eIdx + 1;
+        while (cursor < EIDOS_MODULES.length) {
+            const candidate = EIDOS_MODULES[cursor];
+            if (!state.unlocked.includes(candidate.id)) state.unlocked.push(candidate.id);
+            if (candidate.alsoUnlock && Array.isArray(candidate.alsoUnlock)) {
+                candidate.alsoUnlock.forEach(sibId => {
+                    if (!state.unlocked.includes(sibId)) state.unlocked.push(sibId);
+                });
+            }
+            if (candidate.engine === 'REWARD_PORTAL') {
+                if (Array.isArray(candidate.unlockTargets)) {
+                    candidate.unlockTargets.forEach(t => {
+                        if (!state.unlocked.includes(t)) state.unlocked.push(t);
+                    });
+                }
+                cursor++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    const cIdx = curriculumOrder.indexOf(modId);
+    if (cIdx >= 0 && cIdx < curriculumOrder.length - 1) {
+        const nextClassic = curriculumOrder[cIdx + 1];
+        if (!state.unlocked.includes(nextClassic)) state.unlocked.push(nextClassic);
+    }
+}
+
+let session = {
+    phase: '',
+    eidosMod: null,
+    activeVar: 1,
+    pool: [],
+    trials: [],
+    activeCycles: [],
+    currentCycleIdx: 0,
+    currentCycle: 1,
+    isOnlyCycle3: false,
+    isPreReq: false,
+    currentTrialIdx: 0,
+    attemptsOnCurrent: 0,
+    currentRenderedOptions: null,
+    isRepeating: false,
+    latencies: [],
+    stats: {
+        c1: { indep: 0, dica: 0, erro: 0, total: 0 },
+        c2: { indep: 0, dica: 0, erro: 0, total: 0 },
+        c3: { indep: 0, dica: 0, erro: 0, total: 0 },
+        c4: { indep: 0, dica: 0, erro: 0, total: 0 },
+        c5: { indep: 0, dica: 0, erro: 0, total: 0 }
+    }
+};
+
+/* ============================================================================
+   6. ÁUDIO SINTÉTICO, TTS, TEMA, SALDO DE FICHAS E ECONOMIA COMPORTAMENTAL
+   ============================================================================ */
+let audioCtx = null;
+
+function playSound(type) {
+    try {
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'win') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.09);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.28);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.28);
+        } else if (type === 'click') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+    } catch (e) {}
+}
+
+function speakTTS(text) {
+    if (window.AppInventor) {
+        window.AppInventor.setWebViewString("FALAR:" + text);
+    } else {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(String(text).toLowerCase());
+        utter.lang = 'pt-BR';
+        utter.rate = 0.85;
+        window.speechSynthesis.speak(utter);
+    }
+}
+
+function getActiveFirstName() {
+    const raw = state.student || 'ALUNO';
+    return String(raw).trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
+}
+
+function updateTokenBalanceUI() {
+    const bal = (state && state.tokens && typeof state.tokens.balance === 'number') ? state.tokens.balance : 0;
+    const tot = (state && state.tokens && typeof state.tokens.totalEarned === 'number') ? state.tokens.totalEarned : 0;
+    document.querySelectorAll('.token-balance-count').forEach(el => {
+        el.innerText = bal;
+    });
+    const totLbl = document.getElementById('token-total-earned-label');
+    if (totLbl) totLbl.innerText = tot;
+}
+
+function applyTheme() {
+    document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan');
+    const first = getActiveFirstName();
+    document.querySelectorAll('.student-first-name-label').forEach(el => {
+        el.innerText = first;
+    });
+    const legacyNameEl = document.getElementById('splash-student-name');
+    if (legacyNameEl) legacyNameEl.innerText = first;
+    updateTokenBalanceUI();
+}
+
+function awardTokensToActiveStudent(amount, reason = '') {
+    if (!state.tokens) state.tokens = getDefaultTokensClone();
+    const val = parseInt(amount) || 0;
+    if (val === 0) return;
+    state.tokens.balance = Math.max(0, (state.tokens.balance || 0) + val);
+    if (val > 0) {
+        state.tokens.totalEarned = (state.tokens.totalEarned || 0) + val;
+    }
+    state.tokens.ledger.unshift({
+        date: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        delta: val,
+        reason: reason || (val > 0 ? 'Crédito' : 'Resgate')
+    });
+    if (state.tokens.ledger.length > 40) state.tokens.ledger.pop();
+    saveState();
+    updateTokenBalanceUI();
+}
+
+/* ============================================================================
+   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, TECLADO, COMPLEMENTOS, STUDIO & ARCADE
+   ============================================================================ */
+let authCallback = null;
+let expectedAuthPin = '';
+let alertCallback = null;
+let backdropMouseDownTarget = null;
+let arcadeCountdownInterval = null;
+let arcadeCatalogList = (typeof DEFAULT_ARCADE_MANIFEST !== 'undefined') ? [...DEFAULT_ARCADE_MANIFEST] : [];
+
+function dismissSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (splash && !splash.classList.contains('fade-out')) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 480);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(dismissSplashScreen, 900);
+});
+setTimeout(dismissSplashScreen, 3000);
+
+document.addEventListener('keydown', (e) => {
+    const homeActive = document.getElementById('screen-home') && document.getElementById('screen-home').classList.contains('active');
+    if (!homeActive) return;
+    let modalOpen = false;
+    document.querySelectorAll('.modal-overlay').forEach(m => { if (m.style.display === 'flex') modalOpen = true; });
+    if (modalOpen) return;
+    if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+    if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        stepCarouselLevel(1);
+    } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        stepCarouselLevel(-1);
+    }
+});
+
+// Listener Bidirecional do Sandbox Arcade (postMessage ARCADE_EXIT)
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'ARCADE_EXIT') {
+        closeArcadeSandbox();
+    }
+});
+
+async function loadArcadeManifest() {
+    try {
+        const res = await fetch('arcade/manifest.json');
+        if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                arcadeCatalogList = data;
+            }
+        }
+    } catch (e) {}
+}
+
+function clearAllTrialTimers() {
+    if (fluencyTimerInterval) { clearInterval(fluencyTimerInterval); fluencyTimerInterval = null; }
+    if (responseTimeoutTimer) { clearTimeout(responseTimeoutTimer); responseTimeoutTimer = null; }
+    if (responseCountdownInterval) { clearInterval(responseCountdownInterval); responseCountdownInterval = null; }
+    if (dmtsDelayTimer) { clearTimeout(dmtsDelayTimer); dmtsDelayTimer = null; }
+    if (phonemeDoublePlayTimer) { clearTimeout(phonemeDoublePlayTimer); phonemeDoublePlayTimer = null; }
+    if (activePhonemeAudioObj) {
+        try { activePhonemeAudioObj.pause(); activePhonemeAudioObj.currentTime = 0; } catch (e) {}
+        activePhonemeAudioObj = null;
+    }
+    const latPill = document.getElementById('latency-countdown-pill');
+    if (latPill) latPill.style.display = 'none';
+}
+
+function setupBackdropClosing() {
+    document.querySelectorAll('.modal-overlay[data-backdrop-close="true"]').forEach(overlay => {
+        overlay.addEventListener('mousedown', (e) => {
+            backdropMouseDownTarget = e.target;
+        });
+        overlay.addEventListener('mouseup', (e) => {
+            if (e.target === overlay && backdropMouseDownTarget === overlay) {
+                closeModals();
+            }
+            backdropMouseDownTarget = null;
+        });
+    });
+}
+
+function hideAllScreens() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+}
+
+function closeModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    closeAuth();
+}
+
+function openGatekeeper() {
+    clearAllTrialTimers();
+    hideAllScreens();
+    applyTheme();
+    const gk = document.getElementById('screen-gatekeeper');
+    if (gk) {
+        gk.classList.add('active');
+    } else {
+        goSplash();
+    }
+}
+
+function selectRoleProfile(role) {
+    playSound('click');
+    const analystPin = (tenantsIndex && tenantsIndex.analystPin) ? String(tenantsIndex.analystPin).trim() : '';
+    const applicatorPin = (tenantsIndex && tenantsIndex.applicatorPin) ? String(tenantsIndex.applicatorPin).trim() : '';
+
+    if (role === 'ANALYST') {
+        const proceedAnalyst = () => {
+            activeRole = 'ANALYST';
+            syncRoleUIElements();
+            goSplash();
+        };
+        if (analystPin.length > 0) {
+            promptPinWithExpected(analystPin, proceedAnalyst);
+        } else {
+            proceedAnalyst();
+        }
+    } else {
+        const proceedApplicator = () => {
+            activeRole = 'APPLICATOR';
+            isConfigMode = false;
+            syncRoleUIElements();
+            openGrid();
+        };
+        if (applicatorPin.length > 0) {
+            promptPinWithExpected(applicatorPin, proceedApplicator);
+        } else {
+            proceedApplicator();
+        }
+    }
+}
+
+function syncRoleUIElements() {
+    const isAnalyst = (activeRole === 'ANALYST');
+    const cfgBtn = document.getElementById('btn-config-mode');
+    const mgrBtn = document.getElementById('btn-modules-mgr');
+    const homeSwitcher = document.getElementById('analyst-home-switcher');
+    const gridSwitcher = document.getElementById('applicator-grid-switcher');
+
+    if (cfgBtn) cfgBtn.style.display = isAnalyst ? 'inline-flex' : 'none';
+    if (mgrBtn) mgrBtn.style.display = isAnalyst ? 'inline-flex' : 'none';
+    if (homeSwitcher) homeSwitcher.style.display = isAnalyst ? 'inline-flex' : 'none';
+    if (gridSwitcher) gridSwitcher.style.display = isAnalyst ? 'none' : 'inline-flex';
+    updateTokenBalanceUI();
+}
+
+function handleGridBackNavigation() {
+    playSound('click');
+    if (activeRole === 'APPLICATOR') {
+        openGatekeeper();
+    } else {
+        goSplash();
+    }
+}
+
+function goSplash() {
+    clearAllTrialTimers();
+    if (activeRole === 'APPLICATOR') {
+        openGrid();
+        return;
+    }
+    hideAllScreens();
+    applyTheme();
+    syncRoleUIElements();
+    updateLobbyButton();
+    document.getElementById('screen-splash').classList.add('active');
+}
+
+function openGrid() {
+    if (state.settings.timer.enabled && state.session.expired) {
+        updateLobbyButton();
+        customAlert("Tempo de Sessão Esgotado", "Desbloqueie a sessão na tela inicial informando o PIN do Analista.");
+        return;
+    }
+    hideAllScreens();
+    applyTheme();
+    syncRoleUIElements();
+    document.getElementById('screen-home').classList.add('active');
+    renderGrid();
+}
+
+function openDashboard() {
+    hideAllScreens();
+    document.getElementById('screen-dashboard').classList.add('active');
+    renderDashboard();
+}
+
+function openGame() {
+    hideAllScreens();
+    document.getElementById('screen-game').classList.add('active');
+}
+
+/* TELA DE COMPLEMENTOS: OFICINA DE TAREFAS (STUDIO) & ECONOMIA DE FICHAS */
+let studioCyclesDraft = [];
+
+function openComplements(initialTab = 'STUDIO') {
+    playSound('click');
+    hideAllScreens();
+    applyTheme();
+    const sc = document.getElementById('screen-complements');
+    if (sc) sc.classList.add('active');
+    if (studioCyclesDraft.length === 0) resetStudioForm();
+    renderStudioSavedModulesList();
+    renderTokensManagementUI();
+    switchComplementsSection(initialTab);
+}
+
+function switchComplementsSection(sec) {
+    playSound('click');
+    const btnS = document.getElementById('comp-tab-btn-studio');
+    const btnT = document.getElementById('comp-tab-btn-tokens');
+    const paneS = document.getElementById('comp-section-studio');
+    const paneT = document.getElementById('comp-section-tokens');
+    if (btnS) btnS.classList.toggle('active', sec === 'STUDIO');
+    if (btnT) btnT.classList.toggle('active', sec === 'TOKENS');
+    if (paneS) paneS.style.display = (sec === 'STUDIO') ? 'block' : 'none';
+    if (paneT) paneT.style.display = (sec === 'TOKENS') ? 'block' : 'none';
+}
+
+function resetStudioForm() {
+    const idInp = document.getElementById('studio-edit-id');
+    const tInp = document.getElementById('studio-title');
+    const dInp = document.getElementById('studio-desc');
+    const rInp = document.getElementById('studio-reward-tokens');
+    const tgInp = document.getElementById('studio-targets-input');
+    if (idInp) idInp.value = '';
+    if (tInp) tInp.value = '';
+    if (dInp) dInp.value = '';
+    if (rInp) rInp.value = '2';
+    if (tgInp) tgInp.value = 'BOLA, GATO, BOLO, SAPO';
+
+    studioCyclesDraft = [
+        {
+            mechanic: 'MTS',
+            sdMode: 'SIMPLE',
+            sdChannel1: 'IMAGE',
+            sdChannel2: 'TEXT',
+            compChannel: 'TEXT',
+            dmtsDelay: 0,
+            timeoutSec: 0,
+            errorless: true
+        }
+    ];
+    renderStudioCyclesDraftUI();
+}
+
+function addStudioCycleRow() {
+    playSound('click');
+    if (studioCyclesDraft.length >= 5) {
+        customAlert("Limite de Ciclos", "Cada tarefa personalizada comporta até 5 ciclos sequenciais.");
+        return;
+    }
+    studioCyclesDraft.push({
+        mechanic: 'MTS',
+        sdMode: 'SIMPLE',
+        sdChannel1: 'AUDIO',
+        sdChannel2: 'TEXT',
+        compChannel: 'TEXT',
+        dmtsDelay: 0,
+        timeoutSec: 0,
+        errorless: true
+    });
+    renderStudioCyclesDraftUI();
+}
+
+function removeStudioCycleRow(idx) {
+    if (studioCyclesDraft.length <= 1) return;
+    playSound('click');
+    studioCyclesDraft.splice(idx, 1);
+    renderStudioCyclesDraftUI();
+}
+
+function renderStudioCyclesDraftUI() {
+    const container = document.getElementById('studio-cycles-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    studioCyclesDraft.forEach((cyc, idx) => {
+        const card = document.createElement('div');
+        card.className = 'studio-cycle-card';
+        const showChannel2 = (cyc.sdMode === 'COMPOUND');
+        const showCompChannel = (cyc.mechanic !== 'EXPRESSIVE');
+
+        card.innerHTML = `
+            <div class="studio-cycle-header">
+                <strong style="font-size:0.95rem; color:var(--primary-dark);">Ciclo ${idx + 1}</strong>
+                ${studioCyclesDraft.length > 1 ? `<button type="button" class="btn-icon-del" style="width:28px; height:28px;" onclick="removeStudioCycleRow(${idx})" title="Remover Ciclo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
+            </div>
+            <div class="studio-grid-2col">
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Formato da Mecânica:</label>
+                    <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].mechanic = this.value; renderStudioCyclesDraftUI();">
+                        <option value="MTS" ${cyc.mechanic === 'MTS' ? 'selected' : ''}>MTS Comum (1 Modelo x Alternativas)</option>
+                        <option value="MULTIMTS" ${cyc.mechanic === 'MULTIMTS' ? 'selected' : ''}>Multi-MTS (Pareamento 3x3 em Colunas)</option>
+                        <option value="CRMTS" ${cyc.mechanic === 'CRMTS' ? 'selected' : ''}>CRMTS (Construção por Letras/Sílabas)</option>
+                        <option value="EXPRESSIVE" ${cyc.mechanic === 'EXPRESSIVE' ? 'selected' : ''}>Expressivo / Sondagem Oral (Registro Dock)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Apresentação do Modelo (SD):</label>
+                    <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdMode = this.value; renderStudioCyclesDraftUI();">
+                        <option value="SIMPLE" ${cyc.sdMode === 'SIMPLE' ? 'selected' : ''}>Estímulo Simples (1 Canal)</option>
+                        <option value="COMPOUND" ${cyc.sdMode === 'COMPOUND' ? 'selected' : ''}>Estímulo Composto Duplo (Ex: BC Lado a Lado)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="studio-grid-2col">
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Canal Principal do Modelo (SD 1):</label>
+                    <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdChannel1 = this.value;">
+                        <option value="TEXT" ${cyc.sdChannel1 === 'TEXT' ? 'selected' : ''}>Texto Impresso (Palavra / Sílaba / Letra)</option>
+                        <option value="IMAGE" ${cyc.sdChannel1 === 'IMAGE' ? 'selected' : ''}>Figura (Banco IndexedDB / Emoji)</option>
+                        <option value="AUDIO" ${cyc.sdChannel1 === 'AUDIO' ? 'selected' : ''}>Áudio ( Voz Sintetizada TTS / Fonema)</option>
+                    </select>
+                </div>
+                ${showChannel2 ? `
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>2º Canal Conjugado (SD 2 - Composto):</label>
+                    <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdChannel2 = this.value;">
+                        <option value="TEXT" ${cyc.sdChannel2 === 'TEXT' ? 'selected' : ''}>Texto Impresso</option>
+                        <option value="IMAGE" ${cyc.sdChannel2 === 'IMAGE' ? 'selected' : ''}>Figura (IndexedDB / Emoji)</option>
+                        <option value="AUDIO" ${cyc.sdChannel2 === 'AUDIO' ? 'selected' : ''}>Áudio (TTS)</option>
+                    </select>
+                </div>` : ''}
+                ${showCompChannel ? `
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Canal das Comparações (Escolhas):</label>
+                    <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].compChannel = this.value;">
+                        <option value="TEXT" ${cyc.compChannel === 'TEXT' ? 'selected' : ''}>Texto Impresso</option>
+                        <option value="IMAGE" ${cyc.compChannel === 'IMAGE' ? 'selected' : ''}>Figura (IndexedDB / Emoji)</option>
+                    </select>
+                </div>` : ''}
+            </div>
+            <div class="studio-grid-2col" style="padding-top:6px; border-top:1px dashed var(--border);">
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Time Delay DMTS (0 a 5s):</label>
+                    <input type="number" class="compact-input-num" style="width:100%;" min="0" max="5" value="${cyc.dmtsDelay || 0}" onchange="studioCyclesDraft[${idx}].dmtsDelay = parseInt(this.value) || 0;">
+                </div>
+                <div class="input-group" style="margin-bottom:0;">
+                    <label>Timeout de Latência (s):</label>
+                    <input type="number" class="compact-input-num" style="width:100%;" min="0" max="60" value="${cyc.timeoutSec || 0}" onchange="studioCyclesDraft[${idx}].timeoutSec = parseInt(this.value) || 0;">
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function saveStudioCustomModule() {
+    const titleVal = (document.getElementById('studio-title').value || '').trim();
+    const descVal = (document.getElementById('studio-desc').value || '').trim() || 'Tarefa clínica personalizada.';
+    const rewardTok = Math.max(0, parseInt(document.getElementById('studio-reward-tokens').value) || 0);
+    const rawTargets = (document.getElementById('studio-targets-input').value || '').split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
+    const editId = document.getElementById('studio-edit-id').value;
+
+    if (!titleVal) {
+        customAlert("Título Obrigatório", "Informe um nome para identificar a tarefa personalizada.");
+        return;
+    }
+    if (rawTargets.length < 2) {
+        customAlert("Estímulos Insuficientes", "Insira pelo menos 2 estímulos separados por vírgula.");
+        return;
+    }
+
+    if (!Array.isArray(state.customModules)) state.customModules = [];
+    const modId = editId || ('CUST_' + Date.now());
+    const moduleObj = {
+        id: modId,
+        code: 'PERS',
+        level: 'PERSONALIZADOS',
+        title: titleVal,
+        desc: descVal,
+        engine: 'CUSTOM_STUDIO',
+        subType: 'CUSTOM_STUDIO',
+        rewardTokens: rewardTok,
+        targets: [...new Set(rawTargets)],
+        cyclesConfig: JSON.parse(JSON.stringify(studioCyclesDraft))
+    };
+
+    const existingIdx = state.customModules.findIndex(m => m.id === modId);
+    if (existingIdx >= 0) {
+        state.customModules[existingIdx] = moduleObj;
+    } else {
+        state.customModules.push(moduleObj);
+    }
+
+    if (!state.unlocked.includes(modId)) state.unlocked.push(modId);
+    state.customCurriculum[modId] = { 1: [...moduleObj.targets] };
+    saveState();
+    playSound('win');
+    resetStudioForm();
+    renderStudioSavedModulesList();
+    customAlert("Tarefa Salva!", `A atividade "${titleVal}" já está disponível na aba "Personalizados" da trilha.`);
+}
+
+function editStudioCustomModule(modId) {
+    const mod = (state.customModules || []).find(m => m.id === modId);
+    if (!mod) return;
+    playSound('click');
+    document.getElementById('studio-edit-id').value = mod.id;
+    document.getElementById('studio-title').value = mod.title;
+    document.getElementById('studio-desc').value = mod.desc || '';
+    document.getElementById('studio-reward-tokens').value = (typeof mod.rewardTokens === 'number') ? mod.rewardTokens : 2;
+    document.getElementById('studio-targets-input').value = (mod.targets || []).join(', ');
+    studioCyclesDraft = JSON.parse(JSON.stringify(mod.cyclesConfig || []));
+    renderStudioCyclesDraftUI();
+}
+
+function deleteStudioCustomModule(modId) {
+    playSound('click');
+    state.customModules = (state.customModules || []).filter(m => m.id !== modId);
+    delete state.customCurriculum[modId];
+    delete state.moduleProgress[modId];
+    saveState();
+    renderStudioSavedModulesList();
+}
+
+function renderStudioSavedModulesList() {
+    const box = document.getElementById('studio-saved-modules-list');
+    if (!box) return;
+    box.innerHTML = '';
+    const list = state.customModules || [];
+    if (list.length === 0) {
+        box.innerHTML = `<p style="color:var(--text-light); font-size:0.88rem; font-weight:700; text-align:center; padding:16px;">Nenhuma tarefa personalizada criada para este aluno ainda.</p>`;
+        return;
+    }
+    list.forEach(m => {
+        const row = document.createElement('div');
+        row.className = 'tenant-list-item';
+        row.innerHTML = `
+            <div style="text-align:left;">
+                <strong style="font-size:0.98rem; color:var(--text); display:block;">${m.title}</strong>
+                <span style="font-size:0.76rem; color:var(--text-light); font-weight:700;">${(m.cyclesConfig || []).length} Ciclo(s) • Estímulos: ${(m.targets || []).join(', ')} • +${m.rewardTokens} Fichas</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-action btn-cancel" style="padding:7px 12px; font-size:0.8rem;" onclick="editStudioCustomModule('${m.id}')">Editar</button>
+                <button type="button" class="btn-icon-del" onclick="deleteStudioCustomModule('${m.id}')" title="Excluir"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            </div>
+        `;
+        box.appendChild(row);
+    });
+}
+
+/* GESTÃO DA ECONOMIA DE FICHAS, LOJA E ARCADE SANDBOX */
+function renderTokensManagementUI() {
+    if (!state.tokens) state.tokens = getDefaultTokensClone();
+    updateTokenBalanceUI();
+    const r = state.tokens.rules;
+    const chkEn = document.getElementById('tok-rule-enabled');
+    const inpBlk = document.getElementById('tok-rule-per-block');
+    const inpBon = document.getElementById('tok-rule-bonus-mastery');
+    const chkPin = document.getElementById('tok-rule-pin-rocket');
+    const chkImm = document.getElementById('tok-rule-imm-enable');
+    const inpImmS = document.getElementById('tok-rule-imm-sec');
+
+    if (chkEn) chkEn.checked = r.enabled !== false;
+    if (inpBlk) inpBlk.value = r.pointsPerMasteryBlock ?? 2;
+    if (inpBon) inpBon.value = r.bonusConsecutiveStreak ?? 5;
+    if (chkPin) chkPin.checked = r.requirePinOnRocket !== false;
+    if (chkImm) chkImm.checked = !!r.enableImmediateMiniReward;
+    if (inpImmS) inpImmS.value = r.immediateMiniRewardDurationSec || 20;
+
+    const catGrid = document.getElementById('analyst-catalog-list');
+    if (catGrid) {
+        catGrid.innerHTML = '';
+        (state.tokens.catalog || []).forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'store-item-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:2rem;">${item.mediaVal || '🎁'}</span>
+                    <span class="token-balance-pill" style="height:30px; padding:4px 10px; font-size:0.8rem;">${UI_SVGS.coin} ${item.cost}</span>
+                </div>
+                <div style="text-align:left;">
+                    <strong style="font-size:0.95rem; color:var(--text); display:block;">${item.title}</strong>
+                    <span style="font-size:0.75rem; color:var(--text-light); font-weight:600;">${item.desc || ''}</span>
+                </div>
+                <button type="button" class="btn-action btn-cancel" style="width:100%; padding:7px; font-size:0.78rem; color:var(--danger);" onclick="deleteCatalogStoreItem('${item.id}')">Remover Item</button>
+            `;
+            catGrid.appendChild(card);
+        });
+    }
+}
+
+function saveTokenRulesFromUI() {
+    if (!state.tokens) state.tokens = getDefaultTokensClone();
+    state.tokens.rules = {
+        enabled: document.getElementById('tok-rule-enabled').checked,
+        pointsPerMasteryBlock: Math.max(0, parseInt(document.getElementById('tok-rule-per-block').value) || 0),
+        bonusConsecutiveStreak: Math.max(0, parseInt(document.getElementById('tok-rule-bonus-mastery').value) || 0),
+        requirePinOnRocket: document.getElementById('tok-rule-pin-rocket').checked,
+        enableImmediateMiniReward: document.getElementById('tok-rule-imm-enable').checked,
+        immediateMiniRewardDurationSec: Math.max(5, parseInt(document.getElementById('tok-rule-imm-sec').value) || 20)
+    };
+    saveState();
+}
+
+function injectManualTokens() {
+    const amtInp = document.getElementById('token-grant-amount');
+    const rsnInp = document.getElementById('token-grant-reason');
+    const val = parseInt(amtInp ? amtInp.value : 0) || 0;
+    if (val === 0) return;
+    const reason = (rsnInp && rsnInp.value.trim()) ? rsnInp.value.trim() : 'Concessão manual do Analista';
+    awardTokensToActiveStudent(val, reason);
+    playSound('win');
+    if (rsnInp) rsnInp.value = '';
+    customAlert("Saldo Atualizado", `Foram ${val > 0 ? 'adicionadas' : 'debitadas'} ${Math.abs(val)} ficha(s). Saldo atual: ${state.tokens.balance}.`);
+}
+
+function addCatalogStoreItem() {
+    const title = (document.getElementById('store-new-title').value || '').trim();
+    const cost = Math.max(1, parseInt(document.getElementById('store-new-cost').value) || 3);
+    const icon = (document.getElementById('store-new-icon').value || '').trim() || '🎁';
+    const desc = (document.getElementById('store-new-desc').value || '').trim();
+    if (!title) {
+        customAlert("Nome Obrigatório", "Informe o nome do reforçador ou voucher.");
+        return;
+    }
+    state.tokens.catalog.push({
+        id: 'vouch_' + Date.now(),
+        title,
+        cost,
+        mediaType: 'EMOJI',
+        mediaVal: icon,
+        desc
+    });
+    saveState();
+    playSound('win');
+    document.getElementById('store-new-title').value = '';
+    document.getElementById('store-new-desc').value = '';
+    renderTokensManagementUI();
+}
+
+function deleteCatalogStoreItem(itemId) {
+    playSound('click');
+    state.tokens.catalog = (state.tokens.catalog || []).filter(i => i.id !== itemId);
+    saveState();
+    renderTokensManagementUI();
+}
+
+function handleRocketRewardClick() {
+    playSound('click');
+    const needPin = state.tokens && state.tokens.rules && state.tokens.rules.requirePinOnRocket && getEffectiveMasterPin().length > 0 && activeRole === 'APPLICATOR';
+    if (needPin) {
+        requireAuth(openRewardStoreCheckoutModal);
+    } else {
+        openRewardStoreCheckoutModal();
+    }
+}
+
+function openRewardStoreCheckoutModal() {
+    updateTokenBalanceUI();
+    const arcGrid = document.getElementById('checkout-arcade-grid');
+    const vchGrid = document.getElementById('checkout-vouchers-grid');
+    const bal = (state.tokens && typeof state.tokens.balance === 'number') ? state.tokens.balance : 0;
+
+    if (arcGrid) {
+        arcGrid.innerHTML = '';
+        arcadeCatalogList.forEach(game => {
+            const canAfford = bal >= game.cost;
+            const card = document.createElement('div');
+            card.className = 'store-item-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="meta-chip" style="background:var(--primary-light); color:var(--primary-dark);">${game.durationSec}s</span>
+                    <span class="token-balance-pill" style="height:30px; padding:4px 10px; font-size:0.8rem;">${UI_SVGS.coin} ${game.cost}</span>
+                </div>
+                <div style="text-align:left;">
+                    <strong style="font-size:1rem; color:var(--text); display:block;">${game.title}</strong>
+                    <span style="font-size:0.76rem; color:var(--text-light); font-weight:600;">${game.desc || ''}</span>
+                </div>
+                <button type="button" class="btn-action" style="width:100%; padding:9px;" ${canAfford ? '' : 'disabled'} onclick="redeemArcadeGame('${game.id}', false)">
+                    ${canAfford ? 'Jogar Agora' : 'Fichas Insuficientes'}
+                </button>
+            `;
+            arcGrid.appendChild(card);
+        });
+    }
+
+    if (vchGrid) {
+        vchGrid.innerHTML = '';
+        (state.tokens.catalog || []).forEach(v => {
+            const canAfford = bal >= v.cost;
+            const card = document.createElement('div');
+            card.className = 'store-item-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:2rem;">${v.mediaVal || '🎁'}</span>
+                    <span class="token-balance-pill" style="height:30px; padding:4px 10px; font-size:0.8rem;">${UI_SVGS.coin} ${v.cost}</span>
+                </div>
+                <div style="text-align:left;">
+                    <strong style="font-size:0.95rem; color:var(--text); display:block;">${v.title}</strong>
+                    <span style="font-size:0.75rem; color:var(--text-light); font-weight:600;">${v.desc || ''}</span>
+                </div>
+                <button type="button" class="btn-action" style="width:100%; padding:9px; background:var(--success);" ${canAfford ? '' : 'disabled'} onclick="redeemPhysicalVoucher('${v.id}')">
+                    ${canAfford ? 'Resgatar Prêmio' : 'Fichas Insuficientes'}
+                </button>
+            `;
+            vchGrid.appendChild(card);
+        });
+    }
+
+    document.getElementById('modal-store-checkout').style.display = 'flex';
+}
+
+function redeemPhysicalVoucher(vouchId) {
+    const item = (state.tokens.catalog || []).find(i => i.id === vouchId);
+    if (!item) return;
+    if ((state.tokens.balance || 0) < item.cost) return;
+
+    closeModals();
+    customAlert(
+        "Confirmar Resgate de Prêmio",
+        `Deseja descontar ${item.cost} ficha(s) para liberar "${item.title}" ao aluno?`,
+        () => {
+            awardTokensToActiveStudent(-item.cost, `Resgate: ${item.title}`);
+            playSound('win');
+            customAlert("Prêmio Liberado!", `O voucher "${item.title}" foi resgatado com sucesso.`);
+        },
+        true
+    );
+}
+
+function redeemArcadeGame(gameId, isFreeImmediateReward = false, customDurationSec = null) {
+    const game = arcadeCatalogList.find(g => g.id === gameId) || arcadeCatalogList[0];
+    if (!game) return;
+
+    if (!isFreeImmediateReward) {
+        if ((state.tokens.balance || 0) < game.cost) return;
+        awardTokensToActiveStudent(-game.cost, `Jogo Arcade: ${game.title}`);
+    }
+
+    closeModals();
+    const duration = customDurationSec || game.durationSec || 45;
+    launchArcadeSandboxIframe(game.title, game.entry, duration);
+}
+
+function launchArcadeSandboxIframe(title, entryUrl, durationSec) {
+    const modal = document.getElementById('modal-reward-arcade');
+    const frame = document.getElementById('arcade-game-frame');
+    const titleEl = document.getElementById('arcade-active-title');
+    const countEl = document.getElementById('arcade-countdown-text');
+    if (!modal || !frame) return;
+
+    if (arcadeCountdownInterval) { clearInterval(arcadeCountdownInterval); arcadeCountdownInterval = null; }
+    let remaining = parseInt(durationSec) || 45;
+    if (titleEl) titleEl.innerText = title || 'Reforço Ativo';
+    if (countEl) countEl.innerText = `${remaining}s`;
+
+    const sep = entryUrl.includes('?') ? '&' : '?';
+    frame.src = `${entryUrl}${sep}time=${remaining}`;
+    modal.style.display = 'flex';
+
+    arcadeCountdownInterval = setInterval(() => {
+        remaining--;
+        if (countEl) countEl.innerText = `${Math.max(0, remaining)}s`;
+        if (remaining <= 0) {
+            clearInterval(arcadeCountdownInterval);
+            arcadeCountdownInterval = null;
+            setTimeout(() => closeArcadeSandbox(), 1200);
+        }
+    }, 1000);
+}
+
+function closeArcadeSandbox() {
+    if (arcadeCountdownInterval) { clearInterval(arcadeCountdownInterval); arcadeCountdownInterval = null; }
+    const modal = document.getElementById('modal-reward-arcade');
+    const frame = document.getElementById('arcade-game-frame');
+    if (frame) frame.src = 'about:blank';
+    if (modal) modal.style.display = 'none';
+}
+
+function getEffectiveMasterPin() {
+    if (tenantsIndex && tenantsIndex.analystPin && String(tenantsIndex.analystPin).trim().length > 0) {
+        return String(tenantsIndex.analystPin).trim();
+    }
+    if (state.settings.security && state.settings.security.pin && String(state.settings.security.pin).trim().length > 0) {
+        return String(state.settings.security.pin).trim();
+    }
+    return '';
+}
+
+function promptPinWithExpected(pinStr, callback) {
+    expectedAuthPin = pinStr;
+    authCallback = callback;
+    const input = document.getElementById('auth-pin-input');
+    input.value = '';
+    document.getElementById('auth-error').innerText = '';
+    document.getElementById('modal-auth').style.display = 'flex';
+    setTimeout(() => input.focus(), 100);
+}
+
+function requireAuth(callback) {
+    const analystPin = getEffectiveMasterPin();
+    if (!analystPin) {
+        callback();
+    } else {
+        promptPinWithExpected(analystPin, callback);
+    }
+}
+
+function closeAuth() {
+    document.getElementById('modal-auth').style.display = 'none';
+    authCallback = null;
+    expectedAuthPin = '';
+}
+
+function confirmAuth() {
+    const input = document.getElementById('auth-pin-input');
+    const pinToMatch = expectedAuthPin || getEffectiveMasterPin();
+    if (input.value === pinToMatch) {
+        playSound('win');
+        const fn = authCallback;
+        closeAuth();
+        if (typeof fn === 'function') fn();
+    } else {
+        document.getElementById('auth-error').innerText = 'PIN Incorreto.';
+        input.value = '';
+        playSound('click');
+        const box = document.getElementById('auth-content');
+        box.classList.add('shake');
+        setTimeout(() => box.classList.remove('shake'), 400);
+    }
+}
+
+function requestAbortGame() {
+    const lockExit = (tenantsIndex && tenantsIndex.lockExit) || (state.settings.security.enabled && state.settings.security.lockExit);
+    const activePin = getEffectiveMasterPin() || (tenantsIndex && tenantsIndex.applicatorPin);
+    if (lockExit && activePin) {
+        promptPinWithExpected(activePin, abortGame);
+    } else {
+        abortGame();
+    }
+}
+
+function abortGame() {
+    if (isListening) stopMicrophone();
+    clearAllTrialTimers();
+    openGrid();
+}
+
+function checkTimer() {
+    const clock = document.getElementById('header-timer-icon');
+    if (!state.settings.timer.enabled) {
+        if (clock) clock.style.display = 'none';
+        return;
+    }
+    if (state.session.expired) {
+        if (clock) clock.style.display = 'none';
+        return;
+    }
+    if (state.session.endTime) {
+        const remaining = state.session.endTime - Date.now();
+        if (remaining <= 0) {
+            state.session.expired = true;
+            state.session.endTime = null;
+            saveState();
+            if (clock) clock.style.display = 'none';
+            triggerTimeUp();
+        } else {
+            if (clock) clock.style.display = 'flex';
+            const mins = Math.floor(remaining / 60000);
+            const secs = Math.floor((remaining % 60000) / 1000);
+            const txt = document.getElementById('header-timer-text');
+            if (txt) txt.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+    }
+}
+
+function triggerTimeUp() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    clearAllTrialTimers();
+    updateLobbyButton();
+    document.getElementById('modal-timesup').style.display = 'flex';
+}
+
+function updateLobbyButton() {
+    const btn = document.getElementById('btn-start-game');
+    const clock = document.getElementById('header-timer-icon');
+    if (!btn) return;
+    if (state.settings.timer.enabled && state.session.expired) {
+        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Sessão Finalizada (PIN)`;
+        btn.onclick = () => {
+            requireAuth(() => {
+                state.session.expired = false;
+                state.session.endTime = Date.now() + ((state.settings.timer.min || 30) * 60000);
+                state.session.configuredMin = state.settings.timer.min || 30;
+                saveState();
+                if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
+                checkTimer();
+                updateLobbyButton();
+                customAlert("Sessão Liberada", `O cronômetro de ${state.settings.timer.min} minutos foi reiniciado.`);
+            });
+        };
+        if (clock) clock.style.display = 'none';
+    } else {
+        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>Iniciar Sessão`;
+        btn.onclick = openGrid;
+        if (clock) {
+            clock.style.display = (state.settings.timer.enabled && state.session.endTime && !state.session.expired) ? 'flex' : 'none';
+        }
+    }
+}
+
+/* MODAL SWITCHER MULTI-TENANT DE ALUNOS */
+function openStudentSwitcherModal() {
+    playSound('click');
+    renderStudentSwitcherModalList();
+    const inp = document.getElementById('new-tenant-name-input');
+    if (inp) inp.value = '';
+    const modal = document.getElementById('modal-student-switcher');
+    if (modal) modal.style.display = 'flex';
+}
+
+function renderStudentSwitcherModalList() {
+    const listEl = document.getElementById('tenant-students-list');
+    if (!listEl || !tenantsIndex) return;
+    listEl.innerHTML = '';
+
+    tenantsIndex.students.forEach(stu => {
+        const isCurrent = (stu.id === tenantsIndex.activeStudentId);
+        const row = document.createElement('div');
+        row.className = `tenant-list-item ${isCurrent ? 'active' : ''}`;
+        row.onclick = () => {
+            playSound('click');
+            switchActiveStudent(stu.id);
+            closeModals();
+        };
+
+        const left = document.createElement('div');
+        left.style.display = 'flex';
+        left.style.alignItems = 'center';
+        left.style.gap = '10px';
+        left.innerHTML = `
+            <div style="width:32px; height:32px; border-radius:50%; background:#FFFFFF; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.85rem; color:var(--text);">
+                ${stu.firstName.charAt(0)}
+            </div>
+            <div style="text-align:left;">
+                <strong style="display:block; font-size:0.98rem; color:var(--text);">${stu.firstName}</strong>
+                <span style="font-size:0.74rem; color:var(--text-light); font-weight:600;">Instância Isolada</span>
+            </div>
+        `;
+
+        const right = document.createElement('div');
+        right.style.display = 'flex';
+        right.style.alignItems = 'center';
+        right.style.gap = '8px';
+
+        if (isCurrent) {
+            right.innerHTML += `<span class="meta-chip" style="background:var(--primary); color:#fff;">Ativo</span>`;
+        }
+        if (activeRole === 'ANALYST' && tenantsIndex.students.length > 1) {
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'btn-icon-del';
+            delBtn.title = 'Remover Aluno';
+            delBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                playSound('click');
+                deleteStudentTenant(stu.id);
+            };
+            right.appendChild(delBtn);
+        }
+
+        row.appendChild(left);
+        row.appendChild(right);
+        listEl.appendChild(row);
+    });
+}
+
+function handleAddStudentFromModal() {
+    const inp = document.getElementById('new-tenant-name-input');
+    if (!inp || !inp.value.trim()) return;
+    if (createNewStudentTenant(inp.value.trim())) {
+        playSound('win');
+        inp.value = '';
+        closeModals();
+    }
+}
+
+function openTelemetryOptionsModal() {
+    playSound('click');
+    const modal = document.getElementById('modal-telemetry-options');
+    if (modal) modal.style.display = 'flex';
+}
+
+/* ============================================================================
+   8. CARROSSEL HORIZONTAL, ABA PERSONALIZADOS E BOTÃO PLAY BLINDADO
+   ============================================================================ */
+const CAROUSEL_LEVELS = [
+    { key: 'N1', title: 'Nível 1' },
+    { key: 'N2', title: 'Nível 2' },
+    { key: 'N3', title: 'Nível 3' },
+    { key: 'N4', title: 'Nível 4' },
+    { key: 'N5', title: 'Nível 5' },
+    { key: 'FONOLOGICO', title: 'Alfabeto Fonológico' },
+    { key: 'SILABARIO', title: 'Silabário' },
+    { key: 'EXTRAS', title: 'Extras' },
+    { key: 'PERSONALIZADOS', title: 'Personalizados' }
+];
+
+let pushHoldTimer = null;
+let isPushModalOpen = false;
+let pointerDownCoords = { x: 0, y: 0 };
+
+function selectLevelTab(lvl) {
+    playSound('click');
+    currentLevelTab = lvl;
+    const idx = CAROUSEL_LEVELS.findIndex(l => l.key === lvl);
+    if (idx >= 0) scrollToLevelIndex(idx);
+}
+
+function stepCarouselLevel(delta) {
+    playSound('click');
+    const curIdx = Math.max(0, CAROUSEL_LEVELS.findIndex(l => l.key === currentLevelTab));
+    const nextIdx = Math.min(CAROUSEL_LEVELS.length - 1, Math.max(0, curIdx + delta));
+    scrollToLevelIndex(nextIdx);
+}
+
+function toggleReviewMode() {
+    playSound('click');
+    isReviewMode = !isReviewMode;
+    if (isReviewMode && isConfigMode) {
+        isConfigMode = false;
+        const cfgBtn = document.getElementById('btn-config-mode');
+        if (cfgBtn) cfgBtn.classList.remove('review-active');
+    }
+    const btn = document.getElementById('btn-review-mode');
+    if (btn) btn.classList.toggle('review-active', isReviewMode);
+}
+
+function toggleConfigMode() {
+    if (activeRole !== 'ANALYST') return;
+    playSound('click');
+    isConfigMode = !isConfigMode;
+    if (isConfigMode && isReviewMode) {
+        isReviewMode = false;
+        const revBtn = document.getElementById('btn-review-mode');
+        if (revBtn) revBtn.classList.remove('review-active');
+    }
+    const btn = document.getElementById('btn-config-mode');
+    if (btn) btn.classList.toggle('review-active', isConfigMode);
+}
+
+function ensureHeaderConfigModeBtn() {
+    const rightActions = document.querySelector('.header-right-actions');
+    if (!rightActions || document.getElementById('btn-config-mode')) return;
+}
+
+function renderDotsHTML(modId, hasVariations = false) {
+    if (String(modId).startsWith('FA_') || String(modId).startsWith('R_')) {
+        return '';
+    }
+    const prog = getModuleProgress(modId);
+    const target = state.settings.consecDays || 3;
+    const activeV = getActiveVariationForModule(modId);
+    const tCfg = getTaskConfig(modId);
+    let dots = '';
+    for (let i = 0; i < target; i++) {
+        const filled = (prog.status === 'mastered' || i < prog.streak) ? 'filled' : '';
+        dots += `<span class="day-dot ${filled}"></span>`;
+    }
+    const dmtsBadge = (tCfg.dmtsDelay > 0) ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">DMTS ${tCfg.dmtsDelay}s</span>` : '';
+    const varBadge = hasVariations ? `<span class="var-pill-tag">Var ${activeV}</span>` : '';
+    const statusText = prog.status === 'mastered'
+        ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+        : `${Math.min(prog.streak, target)}/${target}`;
+
+    return `<div class="card-footer-mastery"><div class="days-dots">${dots}</div><span class="day-label">${dmtsBadge}${varBadge} ${statusText}</span></div>`;
+}
+
+function scrollToLevelIndex(idx) {
+    const viewport = document.getElementById('levels-carousel');
+    if (!viewport) return;
+    viewport.scrollTo({ left: idx * viewport.clientWidth, behavior: 'smooth' });
+}
+
+function onCarouselScroll() {
+    const viewport = document.getElementById('levels-carousel');
+    if (!viewport || viewport.clientWidth === 0) return;
+    if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
+
+    const pageIdx = Math.round(viewport.scrollLeft / viewport.clientWidth);
+    const lvlObj = CAROUSEL_LEVELS[pageIdx] || CAROUSEL_LEVELS[0];
+    currentLevelTab = lvlObj.key;
+
+    const titleEl = document.getElementById('carousel-level-title');
+    if (titleEl) titleEl.innerText = lvlObj.title;
+
+    document.querySelectorAll('#carousel-dots .page-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === pageIdx);
+    });
+
+    const leftArrow = document.getElementById('carousel-arrow-left');
+    const rightArrow = document.getElementById('carousel-arrow-right');
+    if (leftArrow) leftArrow.style.opacity = pageIdx <= 0 ? '0.25' : '1';
+    if (rightArrow) rightArrow.style.opacity = pageIdx >= CAROUSEL_LEVELS.length - 1 ? '0.25' : '1';
+}
+
+function attachPushToViewEvents(cardEl, metaInfo) {
+    const clearHold = () => {
+        if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
+        if (isPushModalOpen) {
+            isPushModalOpen = false;
+            const modal = document.getElementById('modal-push-details');
+            if (modal) modal.style.display = 'none';
+        }
+    };
+
+    cardEl.addEventListener('pointerdown', (e) => {
+        if (isConfigMode || isReviewMode) return;
+        if (e.target.closest('button')) return;
+        pointerDownCoords = { x: e.clientX, y: e.clientY };
+        pushHoldTimer = setTimeout(() => {
+            isPushModalOpen = true;
+            playSound('click');
+            document.getElementById('push-det-code').innerText = metaInfo.codeBadge;
+            document.getElementById('push-det-title').innerText = metaInfo.title;
+            document.getElementById('push-det-desc').innerText = metaInfo.desc;
+            document.getElementById('push-det-method').innerText = metaInfo.methodText;
+            document.getElementById('modal-push-details').style.display = 'flex';
+        }, 700);
+    });
+
+    cardEl.addEventListener('pointermove', (e) => {
+        if (!pushHoldTimer) return;
+        const dist = Math.hypot(e.clientX - pointerDownCoords.x, e.clientY - pointerDownCoords.y);
+        if (dist > 6) {
+            clearTimeout(pushHoldTimer);
+            pushHoldTimer = null;
+        }
+    });
+
+    cardEl.addEventListener('touchmove', () => {
+        if (pushHoldTimer) {
+            clearTimeout(pushHoldTimer);
+            pushHoldTimer = null;
+        }
+    }, { passive: true });
+
+    cardEl.addEventListener('wheel', clearHold, { passive: true });
+    cardEl.addEventListener('pointerup', clearHold);
+    cardEl.addEventListener('pointercancel', clearHold);
+    cardEl.addEventListener('pointerleave', clearHold);
+}
+
+function getMethodExplanation(engine) {
+    if (engine === 'CUSTOM_STUDIO') return 'Tarefa Clínica Personalizada (Studio): sequência de ciclos desenhada sob medida pelo Analista para o repertório deste aluno.';
+    if (engine === 'REWARD_PORTAL') return 'Card de Recompensa / Portal: desbloqueia atividades complementares ou guias especiais e leva diretamente para lá ao tocar.';
+    if (engine === 'PHON_MODEL') return 'Modelagem Fonológica em 2 Fases: Fase A (Exposição com imagem articulatória da boca + repetição dupla do fonema com 600ms) e Fase B (Sustentação motora livre via slider horizontal).';
+    if (engine === 'SYL_SLIDER') return 'Formação Silábica por Triplo Slider: deslize a Consoante, a Vogal e a Sílaba resultante no Ciclo 1, seguido de seleção auditiva (Ciclo 2) e leitura (Ciclo 3).';
+    if (engine === 'MULTIMTS') return 'Emparelhamento Multimodelo: exige parear simultaneamente múltiplos estímulos modelo e comparações, fortalecendo varredura visual e equivalência.';
+    if (engine === 'CRMTS') return 'Resposta Construída (CRMTS): montagem ativa de unidades menores com sondagem de leitura pura sem dicas visuais ou auditivas.';
+    if (engine === 'FLUENCY') return 'Treino de Fluência sob Velocidade: leitura oral ágil sob controle de tempo (< 3s) para automatização lexical.';
+    if (engine === 'DTT') return 'Tentativa Discreta (DTT): apresentação direta do estímulo com mediação imediata do aplicador.';
+    return 'Emparelhamento ao Modelo (MTS): discriminação condicional entre modelo e comparações com suporte a aprendizagem sem erro e Time Delay.';
+}
+
+function executeRewardPortalAction(modId) {
+    const mod = EIDOS_MODULES.find(m => m.id === modId);
+    if (!mod) return;
+    playSound('win');
+
+    if (Array.isArray(mod.unlockTargets)) {
+        mod.unlockTargets.forEach(t => {
+            if (!state.unlocked.includes(t)) state.unlocked.push(t);
+        });
+    }
+    if (mod.targetTab === 'SILABARIO') {
+        syllabaryOrder.slice(0, 6).forEach(s => {
+            if (!state.unlocked.includes(s)) state.unlocked.push(s);
+        });
+    }
+    if (mod.targetTab === 'FONOLOGICO' && typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
+        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+            if (!state.unlocked.includes(pm.id)) state.unlocked.push(pm.id);
+        });
+    }
+    const prog = getModuleProgress(mod.id);
+    prog.status = 'mastered';
+    saveState();
+
+    if (mod.targetTab) {
+        selectLevelTab(mod.targetTab);
+        setTimeout(() => {
+            if (mod.openModuleId) {
+                startEidosModule(mod.openModuleId);
+            }
+        }, 380);
+    }
+}
+
+// ESCOPO 1.3: Clique no botão Play (.card-play-btn) passa forceDirectPlay = true, ignorando isConfigMode!
+function buildCleanCardElement(itemData) {
+    const isPhon = String(itemData.id).startsWith('FA_');
+    const isPortal = (itemData.engine === 'REWARD_PORTAL');
+    const card = document.createElement('div');
+    card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${(!isPhon && itemData.isMastered) ? 'mastered' : ''} ${isPortal ? 'reward-portal-card' : ''}`;
+
+    if (isPhon) {
+        card.style.minHeight = '92px';
+        card.style.justifyContent = 'center';
+    }
+
+    if (isPortal) {
+        const portalBtn = itemData.isUnlocked
+            ? `<button type="button" class="card-play-btn" style="background:var(--warning); color:#1E293B;" title="Abrir Portal" onclick="event.stopPropagation(); executeRewardPortalAction('${itemData.id}')">
+                   ${UI_SVGS.arrowRight}
+               </button>`
+            : '';
+        card.innerHTML = `
+            <span class="code-tag" style="background:var(--warning-light); color:#92400E; width:fit-content;">RECOMPENSA • OPCIONAL</span>
+            <div class="clean-card-body">
+                <h3 class="clean-card-title">${itemData.title}</h3>
+                ${portalBtn}
+            </div>
+        `;
+        if (itemData.isUnlocked) {
+            card.onclick = () => executeRewardPortalAction(itemData.id);
+        }
+        attachPushToViewEvents(card, {
+            codeBadge: itemData.codeBadge,
+            title: itemData.title,
+            desc: itemData.desc,
+            methodText: itemData.methodText
+        });
+        return card;
+    }
+
+    const playBtnHTML = itemData.isUnlocked
+        ? `<button type="button" class="card-play-btn" title="Iniciar Atividade Agora" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos}, true)">
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+           </button>`
+        : '';
+
+    card.innerHTML = `
+        <div class="clean-card-body">
+            <h3 class="clean-card-title">${itemData.title}</h3>
+            ${playBtnHTML}
+        </div>
+        ${renderDotsHTML(itemData.id, itemData.hasVar)}
+    `;
+
+    if (itemData.isUnlocked) {
+        card.onclick = (e) => {
+            if (e.target.closest('.card-play-btn')) return;
+            if (isConfigMode || isReviewMode) {
+                triggerCardPlay(itemData.id, itemData.isEidos, false);
+            }
+        };
+    }
+
+    attachPushToViewEvents(card, {
+        codeBadge: itemData.codeBadge,
+        title: itemData.title,
+        desc: itemData.desc,
+        methodText: itemData.methodText
+    });
+
+    return card;
+}
+
+function triggerCardPlay(id, isEidos, forceDirectPlay = false) {
+    playSound('click');
+    if (!forceDirectPlay && isConfigMode && activeRole === 'ANALYST') {
+        requireAuth(() => openStimuliEditor(id));
+        return;
+    }
+    if (!forceDirectPlay && isReviewMode) {
+        openReview(id);
+        return;
+    }
+    if (String(id).startsWith('FA_')) {
+        startPhonologicalModelingModule(id);
+    } else if (String(id).startsWith('CUST_')) {
+        startCustomStudioModule(id);
+    } else if (isEidos || EIDOS_MODULES.some(m => m.id === id)) {
+        startEidosModule(id);
+    } else {
+        startLegacyGame(id);
+    }
+}
+
+function renderGrid() {
+    ensureHeaderConfigModeBtn();
+    syncRoleUIElements();
+    const track = document.getElementById('carousel-track');
+    const dotsBox = document.getElementById('carousel-dots');
+    if (!track || !dotsBox) return;
+
+    track.innerHTML = '';
+    dotsBox.innerHTML = '';
+
+    CAROUSEL_LEVELS.forEach((lvl, idx) => {
+        const page = document.createElement('div');
+        page.className = 'carousel-page';
+        page.addEventListener('scroll', () => {
+            if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
+        }, { passive: true });
+
+        if (['N1', 'N2', 'N3', 'N4', 'N5'].includes(lvl.key)) {
+            const modules = EIDOS_MODULES.filter(m => m.level === lvl.key);
+            modules.forEach(mod => {
+                const isUnlocked = state.unlocked.includes(mod.id);
+                const prog = getModuleProgress(mod.id);
+                const isEditable = !!(typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[mod.id] && DEFAULT_MODULE_VARIATIONS[mod.id].editable);
+                const hasVar = isEditable || ['E2_1', 'E2_2', 'E4_1'].includes(mod.id);
+
+                page.appendChild(buildCleanCardElement({
+                    id: mod.id,
+                    title: mod.title,
+                    desc: mod.desc,
+                    engine: mod.engine,
+                    codeBadge: `${mod.code} • ${mod.engine}`,
+                    methodText: getMethodExplanation(mod.engine),
+                    isUnlocked,
+                    isMastered: prog.status === 'mastered',
+                    canConfigure: mod.engine !== 'REWARD_PORTAL',
+                    hasVar,
+                    isEidos: true
+                }));
+            });
+        } else if (lvl.key === 'FONOLOGICO') {
+            PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+                const isUnlocked = state.unlocked.includes(pm.id);
+                page.appendChild(buildCleanCardElement({
+                    id: pm.id,
+                    title: pm.title,
+                    desc: pm.desc,
+                    engine: 'PHON_MODEL',
+                    codeBadge: `FONEMA • MODELAGEM A/B`,
+                    methodText: getMethodExplanation('PHON_MODEL'),
+                    isUnlocked,
+                    isMastered: false,
+                    canConfigure: true,
+                    hasVar: false,
+                    isEidos: false
+                }));
+            });
+        } else if (lvl.key === 'SILABARIO') {
+            syllabaryOrder.forEach(p => {
+                const isUnlocked = state.unlocked.includes(p);
+                const prog = getModuleProgress(p);
+                let displayDesc = `Família Silábica ${p}`;
+                if (p === 'VOGAIS') displayDesc = "Identificação e leitura das vogais A, E, I, O, U.";
+                else if (p === 'ENCONTROS') displayDesc = "Encontros vocálicos AI, EI, OI, UI, AU, OU, ÃO.";
+
+                page.appendChild(buildCleanCardElement({
+                    id: p,
+                    title: p,
+                    desc: displayDesc,
+                    engine: 'MTS',
+                    codeBadge: `SILABÁRIO • MTS`,
+                    methodText: getMethodExplanation('MTS'),
+                    isUnlocked,
+                    isMastered: prog.status === 'mastered',
+                    canConfigure: true,
+                    hasVar: false,
+                    isEidos: false
+                }));
+            });
+        } else if (lvl.key === 'EXTRAS') {
+            const extraEidosMods = EIDOS_MODULES.filter(m => m.level === 'EXTRAS');
+            extraEidosMods.forEach(mod => {
+                const isUnlocked = state.unlocked.includes(mod.id);
+                const prog = getModuleProgress(mod.id);
+                const isEditable = !!(typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[mod.id] && DEFAULT_MODULE_VARIATIONS[mod.id].editable);
+
+                page.appendChild(buildCleanCardElement({
+                    id: mod.id,
+                    title: mod.title,
+                    desc: mod.desc,
+                    engine: mod.engine,
+                    codeBadge: `${mod.code} • ${mod.engine}`,
+                    methodText: getMethodExplanation(mod.engine),
+                    isUnlocked,
+                    isMastered: prog.status === 'mastered',
+                    canConfigure: true,
+                    hasVar: isEditable,
+                    isEidos: true
+                }));
+            });
+
+            extraModules.forEach(p => {
+                const isUnlocked = state.unlocked.includes(p);
+                const prog = getModuleProgress(p);
+                const title = (p === 'PALAVRAS') ? 'PALAVRAS LIVRES' : p;
+                const desc = (p === 'PSEUDOPALAVRAS')
+                    ? 'Decodificação fonológica pura de palavras inventadas.'
+                    : 'Treino customizado com lista aberta de palavras.';
+
+                page.appendChild(buildCleanCardElement({
+                    id: p,
+                    title,
+                    desc,
+                    engine: 'MTS',
+                    codeBadge: `EXTRA • MTS`,
+                    methodText: getMethodExplanation('MTS'),
+                    isUnlocked,
+                    isMastered: prog.status === 'mastered',
+                    canConfigure: true,
+                    hasVar: false,
+                    isEidos: false
+                }));
+            });
+        } else if (lvl.key === 'PERSONALIZADOS') {
+            const customList = state.customModules || [];
+            if (customList.length === 0) {
+                const emptyBox = document.createElement('div');
+                emptyBox.style.cssText = 'grid-column: 1 / -1; text-align:center; padding:40px 20px; color:var(--text-light); font-weight:700;';
+                emptyBox.innerHTML = `Nenhuma tarefa personalizada criada.<br>${activeRole === 'ANALYST' ? '<button type="button" class="btn-action" style="margin-top:12px;" onclick="openComplements(\'STUDIO\')">Abrir Oficina de Tarefas (Studio)</button>' : ''}`;
+                page.appendChild(emptyBox);
+            } else {
+                customList.forEach(cm => {
+                    const prog = getModuleProgress(cm.id);
+                    page.appendChild(buildCleanCardElement({
+                        id: cm.id,
+                        title: cm.title,
+                        desc: cm.desc || 'Tarefa personalizada do Studio.',
+                        engine: 'CUSTOM_STUDIO',
+                        codeBadge: `STUDIO • ${(cm.cyclesConfig || []).length} CICLO(S)`,
+                        methodText: getMethodExplanation('CUSTOM_STUDIO'),
+                        isUnlocked: true,
+                        isMastered: prog.status === 'mastered',
+                        canConfigure: true,
+                        hasVar: false,
+                        isEidos: true
+                    }));
+                });
+            }
+        }
+
+        track.appendChild(page);
+
+        const dot = document.createElement('span');
+        dot.className = `page-dot ${lvl.key === currentLevelTab ? 'active' : ''}`;
+        dot.onclick = () => scrollToLevelIndex(idx);
+        dotsBox.appendChild(dot);
+    });
+
+    const activeIdx = Math.max(0, CAROUSEL_LEVELS.findIndex(l => l.key === currentLevelTab));
+    setTimeout(() => {
+        const viewport = document.getElementById('levels-carousel');
+        if (viewport) viewport.scrollLeft = activeIdx * viewport.clientWidth;
+        onCarouselScroll();
+    }, 30);
+}
+
+/* ============================================================================
+   9. PAINEL DA TAREFA (4 ABAS + REMUNERAÇÃO INDIVIDUAL + UPLOAD INDEXEDDB)
+   ============================================================================ */
+let editorSession = {
+    modId: null,
+    activeVarKey: 1,
+    hasEditableStimuli: false,
+    tempMap: {}
+};
+
+let activeMediaTargetWord = null;
+
+function switchTaskEditorTab(tabName) {
+    playSound('click');
+    ['STIM', 'TOPO', 'ABA', 'IMG'].forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t.toLowerCase());
+        const pane = document.getElementById('task-tab-content-' + t.toLowerCase());
+        if (btn) btn.classList.toggle('active', tabName === t);
+        if (pane) pane.style.display = (tabName === t) ? 'block' : 'none';
+    });
+    if (tabName === 'IMG') {
+        renderCustomImagesBankGallery();
+    }
+}
+
+function toggleTooltip(e, tipId) {
+    e.stopPropagation();
+    const target = document.getElementById(tipId);
+    const wasOpen = target && target.classList.contains('show');
+    document.querySelectorAll('.floating-popover').forEach(p => p.classList.remove('show'));
+    if (target && !wasOpen) target.classList.add('show');
+}
+
+function closeAllTooltips(e) {
+    if (!e.target.closest('.help-tip-btn')) {
+        document.querySelectorAll('.floating-popover').forEach(p => p.classList.remove('show'));
+    }
+}
+
+function openStimuliEditor(modId) {
+    const customMod = (state.customModules || []).find(m => m.id === modId);
+    const mod = EIDOS_MODULES.find(m => m.id === modId)
+        || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId)
+        || customMod
+        || { id: modId, title: String(modId), isAudioModel: false };
+
+    const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId])
+        ? DEFAULT_MODULE_VARIATIONS[modId]
+        : (customMod ? { editable: true, min: 2, max: 20 } : null);
+
+    editorSession.modId = modId;
+    editorSession.hasEditableStimuli = !!(meta && meta.editable);
+
+    const tCfg = getTaskConfig(modId);
+    document.getElementById('task-cfg-font').value = tCfg.font || 'GLOBAL';
+    const chkCV = document.getElementById('task-cfg-color-cv');
+    const chkBox = document.getElementById('task-cfg-syl-box');
+    if (chkCV) chkCV.checked = !!tCfg.colorCV;
+    if (chkBox) chkBox.checked = !!tCfg.sylBox;
+    document.getElementById('task-cfg-dmts').value = tCfg.dmtsDelay || 0;
+    document.getElementById('dmts-val-label').innerText = (tCfg.dmtsDelay > 0) ? `${tCfg.dmtsDelay}s` : '0s (Off)';
+    document.getElementById('task-cfg-timeout').value = tCfg.responseTimeout || 0;
+    const tokInp = document.getElementById('task-cfg-tokens');
+    if (tokInp) tokInp.value = (typeof tCfg.rewardTokens === 'number') ? tCfg.rewardTokens : -1;
+
+    const dmtsBox = document.getElementById('dmts-config-box');
+    if (mod.isAudioModel) {
+        dmtsBox.style.opacity = '0.45';
+        dmtsBox.style.pointerEvents = 'none';
+        document.getElementById('dmts-val-label').innerText = 'N/A (Áudio)';
+    } else {
+        dmtsBox.style.opacity = '1';
+        dmtsBox.style.pointerEvents = 'auto';
+    }
+
+    document.getElementById('stim-editor-title').innerText = mod.title;
+
+    if (editorSession.hasEditableStimuli) {
+        editorSession.tempMap = JSON.parse(JSON.stringify(getModuleVariationsMap(modId)));
+        const keys = Object.keys(editorSession.tempMap).map(Number).sort((a, b) => a - b);
+        editorSession.activeVarKey = keys[0] || 1;
+        document.getElementById('stim-editor-rules').innerHTML = `
+            <span class="meta-chip">Mín: ${meta.min}</span>
+            <span class="meta-chip">Máx: ${meta.max}</span>
+        `;
+        document.getElementById('stim-new-input').value = '';
+        document.getElementById('tab-btn-stim').style.display = 'inline-flex';
+        renderStimuliEditorUI();
+        switchTaskEditorTab('STIM');
+    } else {
+        document.getElementById('stim-editor-rules').innerHTML = '';
+        document.getElementById('tab-btn-stim').style.display = 'none';
+        switchTaskEditorTab('TOPO');
+    }
+
+    document.getElementById('modal-stimuli-editor').style.display = 'flex';
+}
+
+function renderStimuliEditorUI() {
+    if (!editorSession.hasEditableStimuli) return;
+    const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[editorSession.modId])
+        ? DEFAULT_MODULE_VARIATIONS[editorSession.modId]
+        : { min: 2, max: 20 };
+
+    const tabsContainer = document.getElementById('stim-var-tabs');
+    const listContainer = document.getElementById('stim-items-list');
+    tabsContainer.innerHTML = '';
+    listContainer.innerHTML = '';
+
+    const keys = Object.keys(editorSession.tempMap).map(Number).sort((a, b) => a - b);
+    keys.forEach(k => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `var-tab-btn ${k === editorSession.activeVarKey ? 'active' : ''}`;
+        btn.innerText = `Var ${k} (${editorSession.tempMap[k].length})`;
+        btn.onclick = () => {
+            playSound('click');
+            editorSession.activeVarKey = k;
+            renderStimuliEditorUI();
+        };
+        tabsContainer.appendChild(btn);
+    });
+
+    if (keys.length < 5) {
+        const addVarBtn = document.createElement('button');
+        addVarBtn.type = 'button';
+        addVarBtn.className = 'var-tab-btn';
+        addVarBtn.style.borderStyle = 'dashed';
+        addVarBtn.style.color = 'var(--primary-dark)';
+        addVarBtn.innerText = `+ Variação`;
+        addVarBtn.onclick = () => {
+            playSound('click');
+            const nextKey = (keys[keys.length - 1] || 1) + 1;
+            const baseClone = [...(editorSession.tempMap[keys[0]] || []).slice(0, meta.min)];
+            editorSession.tempMap[nextKey] = baseClone;
+            editorSession.activeVarKey = nextKey;
+            renderStimuliEditorUI();
+        };
+        tabsContainer.appendChild(addVarBtn);
+    }
+
+    const items = editorSession.tempMap[editorSession.activeVarKey] || [];
+    const canDelete = items.length > meta.min;
+
+    items.forEach((itemVal, idx) => {
+        const row = document.createElement('div');
+        row.className = 'stim-editor-row';
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.value = itemVal;
+        inp.oninput = (e) => {
+            editorSession.tempMap[editorSession.activeVarKey][idx] = e.target.value;
+        };
+
+        const cleanKey = String(itemVal || '').trim().toUpperCase();
+        const mediaBtn = document.createElement('button');
+        mediaBtn.type = 'button';
+        mediaBtn.className = 'icon-circle-btn';
+        mediaBtn.style.width = '34px';
+        mediaBtn.style.height = '34px';
+        mediaBtn.title = 'Associar Imagem do Banco ou Emoji';
+        const hasCustom = state.customWordMedia && state.customWordMedia[cleanKey];
+        if (hasCustom) {
+            mediaBtn.style.borderColor = 'var(--primary)';
+            mediaBtn.style.background = 'var(--primary-light)';
+        }
+        mediaBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+        mediaBtn.onclick = () => {
+            playSound('click');
+            const currentWord = String(editorSession.tempMap[editorSession.activeVarKey][idx] || '').trim().toUpperCase();
+            if (!currentWord) return;
+            openStimulusMediaAssignPicker(currentWord);
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'btn-icon-del';
+        delBtn.disabled = !canDelete;
+        delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+        delBtn.onclick = () => {
+            if (editorSession.tempMap[editorSession.activeVarKey].length <= meta.min) return;
+            playSound('click');
+            editorSession.tempMap[editorSession.activeVarKey].splice(idx, 1);
+            renderStimuliEditorUI();
+        };
+
+        row.appendChild(inp);
+        row.appendChild(mediaBtn);
+        row.appendChild(delBtn);
+        listContainer.appendChild(row);
+    });
+
+    const addBtn = document.getElementById('stim-btn-add');
+    if (addBtn) addBtn.disabled = items.length >= meta.max;
+}
+
+async function handleBatchImageUpload(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    const scaleSelect = document.getElementById('img-upload-scale');
+    const scaleVal = scaleSelect ? parseFloat(scaleSelect.value) : 0.5;
+    const statusEl = document.getElementById('img-upload-status');
+    if (statusEl) statusEl.innerText = `Convertendo ${fileList.length} imagem(ns) para WebP...`;
+
+    let count = 0;
+    for (let i = 0; i < fileList.length; i++) {
+        const f = fileList[i];
+        if (!f.type.startsWith('image/')) continue;
+        try {
+            const rec = await compressAndConvertImageToWebP(f, scaleVal, 0.82);
+            await saveCustomImageToIndexedDB(rec);
+            count++;
+        } catch (e) {}
+    }
+
+    playSound('win');
+    if (statusEl) statusEl.innerText = `${count} imagem(ns) salva(s) em WebP no banco local!`;
+    const fileInp = document.getElementById('img-upload-input');
+    if (fileInp) fileInp.value = '';
+    renderCustomImagesBankGallery();
+}
+
+function renderCustomImagesBankGallery() {
+    const grid = document.getElementById('custom-images-gallery-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const list = Object.values(customImagesCache);
+    if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-light); font-size:0.88rem; font-weight:700;">Nenhuma imagem no banco local. Envie arquivos acima para converter automaticamente em WebP.</div>`;
+        return;
+    }
+
+    list.forEach(item => {
+        const card = document.createElement('div');
+        card.style.cssText = 'border:1.5px solid var(--border); border-radius:12px; padding:8px; background:#fff; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;';
+        card.innerHTML = `
+            <img src="${item.dataUrl}" alt="${item.name}" style="width:68px; height:68px; object-fit:contain; border-radius:8px;">
+            <strong style="font-size:0.74rem; color:var(--text); max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.name}</strong>
+            <span style="font-size:0.65rem; color:var(--text-light); font-weight:700;">${item.width}x${item.height} • ${item.sizeKB}KB</span>
+        `;
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'btn-icon-del';
+        del.style.cssText = 'position:absolute; top:4px; right:4px; width:24px; height:24px; border-radius:6px;';
+        del.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+        del.onclick = async () => {
+            playSound('click');
+            await deleteCustomImageFromIndexedDB(item.id);
+            renderCustomImagesBankGallery();
+        };
+        card.appendChild(del);
+        grid.appendChild(card);
+    });
+}
+
+function openStimulusMediaAssignPicker(wordStr) {
+    activeMediaTargetWord = String(wordStr || '').trim().toUpperCase();
+    const titleEl = document.getElementById('media-picker-word-title');
+    if (titleEl) titleEl.innerText = `Associar Mídia: "${activeMediaTargetWord}"`;
+
+    const curMedia = state.customWordMedia && state.customWordMedia[activeMediaTargetWord];
+    const emojiInp = document.getElementById('media-picker-emoji-input');
+    if (emojiInp) emojiInp.value = (curMedia && curMedia.type === 'EMOJI') ? curMedia.val : ((WORD_BANK[activeMediaTargetWord] && WORD_BANK[activeMediaTargetWord].icon) || '');
+
+    const gal = document.getElementById('media-picker-idb-grid');
+    if (gal) {
+        gal.innerHTML = '';
+        const list = Object.values(customImagesCache);
+        if (list.length === 0) {
+            gal.innerHTML = `<p style="grid-column:1/-1; color:var(--text-light); font-size:0.85rem; font-weight:700; text-align:center; padding:16px;">Nenhuma imagem no Banco Local. Adicione imagens na aba "Banco de Imagens".</p>`;
+        } else {
+            list.forEach(imgItem => {
+                const isSel = curMedia && curMedia.type === 'IDB' && curMedia.val === imgItem.id;
+                const box = document.createElement('div');
+                box.style.cssText = `border:2px solid ${isSel ? 'var(--primary)' : 'var(--border)'}; background:${isSel ? 'var(--primary-light)' : '#fff'}; border-radius:12px; padding:8px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;`;
+                box.innerHTML = `
+                    <img src="${imgItem.dataUrl}" style="width:60px; height:60px; object-fit:contain; border-radius:8px;">
+                    <span style="font-size:0.72rem; font-weight:800; color:var(--text); max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${imgItem.name}</span>
+                `;
+                box.onclick = () => {
+                    playSound('win');
+                    state.customWordMedia[activeMediaTargetWord] = { type: 'IDB', val: imgItem.id };
+                    saveState();
+                    closeMediaAssignPicker();
+                    renderStimuliEditorUI();
+                };
+                gal.appendChild(box);
+            });
+        }
+    }
+
+    const modal = document.getElementById('modal-media-picker');
+    if (modal) modal.style.display = 'flex';
+}
+
+function saveEmojiForActiveWord() {
+    if (!activeMediaTargetWord) return;
+    const emojiInp = document.getElementById('media-picker-emoji-input');
+    const val = emojiInp ? emojiInp.value.trim() : '';
+    if (val) {
+        state.customWordMedia[activeMediaTargetWord] = { type: 'EMOJI', val };
+    } else {
+        delete state.customWordMedia[activeMediaTargetWord];
+    }
+    saveState();
+    playSound('win');
+    closeMediaAssignPicker();
+    renderStimuliEditorUI();
+}
+
+function clearCustomMediaForActiveWord() {
+    if (!activeMediaTargetWord) return;
+    delete state.customWordMedia[activeMediaTargetWord];
+    saveState();
+    playSound('click');
+    closeMediaAssignPicker();
+    renderStimuliEditorUI();
+}
+
+function closeMediaAssignPicker() {
+    const modal = document.getElementById('modal-media-picker');
+    if (modal) modal.style.display = 'none';
+    activeMediaTargetWord = null;
+}
+
+function addStimulusItemToEditor() {
+    if (!editorSession.hasEditableStimuli) return;
+    const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[editorSession.modId])
+        ? DEFAULT_MODULE_VARIATIONS[editorSession.modId]
+        : { min: 2, max: 20 };
+    const inp = document.getElementById('stim-new-input');
+    const raw = inp.value.trim();
+    if (!raw) return;
+
+    const currentList = editorSession.tempMap[editorSession.activeVarKey];
+    if (currentList.length >= meta.max) {
+        customAlert("Limite Atingido", `Cada variação deste módulo comporta no máximo ${meta.max} itens.`);
+        return;
+    }
+
+    const needsUpper = !['E5_1'].includes(editorSession.modId);
+    const formatted = needsUpper ? raw.toUpperCase() : raw;
+
+    currentList.push(formatted);
+    inp.value = '';
+    playSound('click');
+    renderStimuliEditorUI();
+}
+
+function saveStimuliEditorChanges() {
+    const modId = editorSession.modId;
+    if (!modId) return;
+
+    if (editorSession.hasEditableStimuli) {
+        const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId])
+            ? DEFAULT_MODULE_VARIATIONS[modId]
+            : { min: 2, max: 20 };
+        for (const k of Object.keys(editorSession.tempMap)) {
+            const cleaned = editorSession.tempMap[k].map(s => s.trim()).filter(s => s.length > 0);
+            if (cleaned.length < meta.min) {
+                customAlert("Quantidade Insuficiente", `A Variação ${k} precisa ter pelo menos ${meta.min} estímulos válidos.`);
+                return;
+            }
+            editorSession.tempMap[k] = cleaned;
+        }
+        state.customCurriculum[modId] = JSON.parse(JSON.stringify(editorSession.tempMap));
+    }
+
+    const mod = EIDOS_MODULES.find(m => m.id === modId);
+    const chkCV = document.getElementById('task-cfg-color-cv');
+    const chkBox = document.getElementById('task-cfg-syl-box');
+    const tokInp = document.getElementById('task-cfg-tokens');
+    const tokVal = tokInp ? parseInt(tokInp.value) : -1;
+
+    state.taskSettings[modId] = {
+        font: document.getElementById('task-cfg-font').value || 'GLOBAL',
+        colorCV: chkCV ? chkCV.checked : false,
+        sylBox: chkBox ? chkBox.checked : false,
+        dmtsDelay: (mod && mod.isAudioModel) ? 0 : (parseInt(document.getElementById('task-cfg-dmts').value) || 0),
+        responseTimeout: parseInt(document.getElementById('task-cfg-timeout').value) || 0,
+        rewardTokens: isNaN(tokVal) ? -1 : tokVal
+    };
+
+    saveState();
+    playSound('win');
+    closeModals();
+    renderGrid();
+}
+
+function restoreDefaultModuleStimuli() {
+    if (!editorSession.modId) return;
+    delete state.customCurriculum[editorSession.modId];
+    delete state.taskSettings[editorSession.modId];
+    const prog = getModuleProgress(editorSession.modId);
+    prog.activeVar = 1;
+    prog.pendingVar = null;
+    saveState();
+    playSound('click');
+    closeModals();
+    renderGrid();
+}
+
+function openQuickPeekModal() {
+    playSound('click');
+    const t = session.trials[session.currentTrialIdx];
+    let stimText = '';
+    let ansText = '';
+
+    if (t === undefined || t === null) {
+        stimText = '-';
+        ansText = '-';
+    } else if (Array.isArray(t)) {
+        stimText = t.join(' | ');
+        ansText = t.join(' ');
+    } else if (typeof t === 'object') {
+        if (t.letter && t.varIdx) {
+            stimText = `Fonema ${t.title || t.letter} (Boca: b-${t.letter.toLowerCase()}-${t.varIdx}.webp | Áudio: ${getPhonemeAudioPath(t.letter, t.varIdx)})`;
+            ansText = session.currentCycle === 1 ? 'Fase A: Observar boca, ouvir 2x e imitar' : 'Fase B: Arrastar o bloco até o final';
+        } else if (t.target && t.match) {
+            stimText = `Alvo: ${t.target}`;
+            ansText = `Par Correto: ${t.match}`;
+        } else if (t.target && t.distractor) {
+            stimText = `Áudio / Par Mínimo (${t.contrast || ''}): ${t.target}`;
+            ansText = t.target;
+        } else if (t.sentence && t.question) {
+            stimText = `${t.sentence} — ${t.question}`;
+            ansText = t.correct;
+        } else if (t.shortSpoken || t.wordsArray) {
+            stimText = t.shortSpoken || t.wordsArray.join(' ');
+            ansText = (t.wordsArray || []).join(' ');
+        } else if (t.intruder && t.fix) {
+            stimText = (t.words || []).join(' ');
+            ansText = `Intrusa: ${t.intruder} → Correta: ${t.fix}`;
+        } else if (t.steps) {
+            stimText = 'Sequência de 3 frases';
+            ansText = t.steps.join(' / ');
+        } else {
+            stimText = JSON.stringify(t);
+            ansText = stimText;
+        }
+    } else {
+        stimText = String(t);
+        const wObj = WORD_BANK[stimText];
+        if (session.eidosMod && session.eidosMod.subType === 'SYL_COUNT') {
+            const cnt = wObj ? wObj.count : Math.max(1, Math.ceil(stimText.length / 2));
+            ansText = `${stimText} (${cnt} sílabas)`;
+        } else if (session.isPreReq) {
+            ansText = `${stimText} → ${getCategory(stimText)}`;
+        } else {
+            ansText = wObj && wObj.syllables ? `${stimText} (${wObj.syllables.join('-')})` : stimText;
+        }
+    }
+
+    document.getElementById('peek-stimulus-text').innerText = stimText;
+    document.getElementById('peek-answer-text').innerText = ansText;
+    document.getElementById('modal-quick-peek').style.display = 'flex';
+}
+
+function hardResetAppCache() {
+    closeModals();
+    customAlert(
+        "Limpar Todo o Cache e Dados?",
+        "Isso apagará todo o histórico local, configurações e removerá o cache offline do Service Worker para recarregar o aplicativo limpo.",
+        async () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            try {
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                }
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(regs.map(r => r.unregister()));
+                }
+            } catch (e) {}
+            location.reload(true);
+        },
+        true
+    );
+}
+
+/* ============================================================================
+   10. GERADORES DE POOLS E REVISÃO ESPECÍFICA POR TAREFA
+   ============================================================================ */
+function generateSyllables(cons) {
+    let pool = vowels.map(v => cons + v);
+    if (cons === 'Q') pool = ['QUA','QUE','QUI','QUO'];
+    if (cons === 'G') pool = ['GA','GO','GU','GUE','GUI'];
+    if (cons !== 'Q') pool = pool.concat(['AI','ÃO'].map(v => cons + v));
+
+    const sc = state.settings.sylComplex || {};
+    const baseCV = (cons === 'Q') ? ['QUA','QUE','QUI'] : (cons === 'G' ? ['GA','GO','GU'] : vowels.map(v => cons + v));
+
+    if (sc.ccv) {
+        if (['C','P','B','F','G'].includes(cons)) {
+            pool = pool.concat(vowels.map(v => cons + 'R' + v)).concat(vowels.map(v => cons + 'L' + v));
+        }
+        if (['T','D','V'].includes(cons)) {
+            pool = pool.concat(vowels.map(v => cons + 'R' + v));
+        }
+    }
+    if (sc.cvcL) pool = pool.concat(baseCV.map(cv => cv + 'L'));
+    if (sc.cvcS) pool = pool.concat(baseCV.map(cv => cv + 'S'));
+    if (sc.cvcM) pool = pool.concat(baseCV.map(cv => cv + 'M'));
+    return [...new Set(pool)];
+}
+
+function generatePseudoWords() {
+    const syls = ['BA','CA','DA','FA','GA','LA','MA','PA','SA','TA','VA','BO','CO','DO','FO','GO','LO','MO','PO','SO','TO','TI','PI','LI','MI'];
+    let pseudos = [];
+    for (let i = 0; i < 12; i++) {
+        let s1 = syls[Math.floor(Math.random() * syls.length)];
+        let s2 = syls[Math.floor(Math.random() * syls.length)];
+        pseudos.push(s1 + s2);
+    }
+    return pseudos;
+}
+
+function getModuleVariationItems(modId) {
+    const activeV = getActiveVariationForModule(modId);
+    const map = getModuleVariationsMap(modId);
+    if (map && map[activeV] && map[activeV].length > 0) {
+        return [...map[activeV]];
+    }
+    if (map) {
+        const firstKey = Object.keys(map)[0];
+        return [...(map[firstKey] || [])];
+    }
+    return [];
+}
+
+function getPhasePool(phaseId) {
+    const customMod = (state.customModules || []).find(m => m.id === phaseId);
+    if (customMod) {
+        const map = getModuleVariationsMap(phaseId);
+        return (map && map[1]) ? [...map[1]] : [...(customMod.targets || [])];
+    }
+    const pMod = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
+    if (pMod) return [pMod.letter];
+    const eMod = EIDOS_MODULES.find(m => m.id === phaseId);
+    if (eMod) {
+        const activeV = getActiveVariationForModule(phaseId);
+        if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[phaseId]) {
+            return getModuleVariationItems(phaseId);
+        }
+        if (eMod.subType === 'SYM_DISC') return ['A', 'B', 'E', 'M', 'P', 'S'];
+        if (eMod.subType === 'MIRROR_GRAPH') return ['b', 'd', 'p', 'q', 'E', 'S'];
+        if (eMod.subType === 'VOWELS_PURE') return ['A', 'E', 'I', 'O', 'U'];
+        if (eMod.subType === 'CLASS_VC') return ['F','V','M','N','S','L','P','B','T','D', ...vowels];
+        if (eMod.subType === 'RHYME') {
+            const rList = RHYME_VARIATIONS[activeV] || RHYME_VARIATIONS[1];
+            return rList.map(r => `${r.target} ↔ ${r.match}`);
+        }
+        if (eMod.subType === 'ALLITERATION') {
+            const aList = ALLIT_VARIATIONS[activeV] || ALLIT_VARIATIONS[1];
+            return aList.map(a => `${a.target} ↔ ${a.match}`);
+        }
+        if (eMod.subType === 'CONT_PHON') return ['F','V','S','Z','X','J','M','N','L','R'];
+        if (eMod.subType === 'OCCL_PHON') return ['P','B','T','D','C','K','G'];
+        if (eMod.subType === 'CLASS_SP') return ['FA','MA','LA','SA','BO','TA', 'BOLA','MALA','FACA','SAPO','BOLO','GATO'];
+        if (eMod.subType === 'CLASS_TOTAL_MM') return ['A','E','I','O','U','F','M','L','P','B','FA','MA','LA','BO','BOLA','GATO','MALA','FACA'];
+        if (eMod.subType === 'MIN_PAIRS') {
+            return MINIMAL_PAIRS_DB.filter(p => !p.var || p.var === activeV).map(p => `${p.target} / ${p.distractor}`);
+        }
+        if (eMod.subType === 'WORDS_EQ') {
+            return Object.values(WORD_BANK).filter(w => w.struct === eMod.filterStruct).map(w => w.word);
+        }
+        if (eMod.subType === 'SYNTACTIC_WH') return ['Quem realizou a ação?', 'O que fez?', 'Onde aconteceu?'];
+        if (eMod.subType === 'INTRUDER_WORD') return NARRATIVES_DB.map(n => n.intruderSentence.join(' '));
+        if (eMod.subType === 'CHRONO_SEQ') return NARRATIVES_DB.map((_, i) => `Sequência 3 Passos #${i + 1}`);
+    }
+    if (phaseId === 'VOGAIS') return [...vowels];
+    if (phaseId === 'ENCONTROS') return [...encounters];
+    if (phaseId === 'PSEUDOPALAVRAS') return generatePseudoWords();
+    if (phaseId === 'PALAVRAS') {
+        let pw = (state.customWords || '').split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
+        return [...new Set(pw)];
+    }
+    return generateSyllables(phaseId);
+}
+
+function getCategory(item) {
+    if (vowels.includes(item)) return 'VOGAL';
+    if (item.length === 1 && !vowels.includes(item)) return 'CONSOANTE';
+    if (WORD_BANK[item] || item.length >= 4) return 'PALAVRA';
+    return 'SÍLABA';
+}
+
+/* ============================================================================
+   11. INICIALIZADOR UNIFICADO DE JOGOS (INCLUINDO STUDIO CUSTOMIZADO)
+   ============================================================================ */
+function ensureSessionTimerStarted() {
+    if (state.settings.timer.enabled) {
+        if (state.session.expired) {
+            triggerTimeUp();
+            return false;
+        }
+        const cfgMin = state.settings.timer.min || 30;
+        if (!state.session.endTime || state.session.configuredMin !== cfgMin) {
+            state.session.endTime = Date.now() + (cfgMin * 60000);
+            state.session.configuredMin = cfgMin;
+            saveState();
+        }
+        if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
+        checkTimer();
+    } else {
+        const clock = document.getElementById('header-timer-icon');
+        if (clock) clock.style.display = 'none';
+    }
+    return true;
+}
+
+function resetSessionStats(activeCycles, trialCount) {
+    return {
+        c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? trialCount : 0 },
+        c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? trialCount : 0 },
+        c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? trialCount : 0 },
+        c4: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(4) ? trialCount : 0 },
+        c5: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(5) ? trialCount : 0 }
+    };
+}
+
+function startCustomStudioModule(modId) {
+    const customMod = (state.customModules || []).find(m => m.id === modId);
+    if (!customMod) return;
+    if (!ensureSessionTimerStarted()) return;
+
+    const pool = getPhasePool(modId);
+    const targets = shuffleArray(pool).slice(0, 6);
+    const cyclesCfg = Array.isArray(customMod.cyclesConfig) && customMod.cyclesConfig.length > 0
+        ? customMod.cyclesConfig
+        : [{ mechanic: 'MTS', sdMode: 'SIMPLE', sdChannel1: 'TEXT', compChannel: 'TEXT', dmtsDelay: 0, timeoutSec: 0 }];
+
+    const activeCycles = cyclesCfg.map((_, idx) => idx + 1);
+
+    undoSnapshot = null;
+    session = {
+        phase: customMod.id,
+        eidosMod: customMod,
+        activeVar: 1,
+        pool,
+        trials: targets,
+        activeCycles,
+        currentCycleIdx: 0,
+        currentCycle: activeCycles[0],
+        isOnlyCycle3: false,
+        isPreReq: false,
+        currentTrialIdx: 0,
+        attemptsOnCurrent: 0,
+        currentRenderedOptions: null,
+        isRepeating: false,
+        latencies: [],
+        stats: resetSessionStats(activeCycles, targets.length)
+    };
+    openGame();
+    renderTrial();
+}
+
+function startLegacyGame(phaseId) {
+    if (phaseId === 'PALAVRAS') {
+        document.getElementById('custom-words-input').value = state.customWords || '';
+        checkWordsInput();
+        document.getElementById('modal-words').style.display = 'flex';
+        return;
+    }
+    if (!ensureSessionTimerStarted()) return;
+
+    const pool = getPhasePool(phaseId);
+    const isOnlyCycle3 = (phaseId === 'PSEUDOPALAVRAS');
+    const targetCount = isOnlyCycle3 ? 10 : 5;
+    const targets = shuffleArray(pool).slice(0, targetCount);
+
+    let activeCycles = [];
+    if (isOnlyCycle3) {
+        activeCycles = [3];
+    } else {
+        if (state.settings.stages.c1) activeCycles.push(1);
+        if (state.settings.stages.c2) activeCycles.push(2);
+        if (state.settings.stages.c3) activeCycles.push(3);
+        if (activeCycles.length === 0) activeCycles = [1];
+    }
+
+    undoSnapshot = null;
+    session = {
+        phase: phaseId,
+        eidosMod: null,
+        activeVar: 1,
+        pool,
+        trials: targets,
+        activeCycles,
+        currentCycleIdx: 0,
+        currentCycle: activeCycles[0],
+        isOnlyCycle3,
+        isPreReq: false,
+        currentTrialIdx: 0,
+        attemptsOnCurrent: 0,
+        currentRenderedOptions: null,
+        isRepeating: false,
+        latencies: [],
+        stats: resetSessionStats(activeCycles, targets.length)
+    };
+    openGame();
+    renderTrial();
+}
+
+function startPhonologicalModelingModule(modId) {
+    if (!ensureSessionTimerStarted()) return;
+    const pm = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId);
+    if (!pm) return;
+
+    const modDescriptor = {
+        id: pm.id,
+        code: 'FON',
+        level: 'FONOLOGICO',
+        title: pm.title,
+        desc: pm.desc,
+        engine: 'PHON_MODEL',
+        subType: 'PHON_MODELING',
+        letter: pm.letter,
+        varIdx: pm.varIdx,
+        isAudioModel: true
+    };
+
+    const trials = [{ letter: pm.letter, varIdx: pm.varIdx, title: pm.title }];
+    const activeCycles = [1, 2];
+
+    undoSnapshot = null;
+    session = {
+        phase: pm.id,
+        eidosMod: modDescriptor,
+        activeVar: 1,
+        pool: [pm.letter],
+        trials,
+        activeCycles,
+        currentCycleIdx: 0,
+        currentCycle: 1,
+        isOnlyCycle3: false,
+        isPreReq: false,
+        currentTrialIdx: 0,
+        attemptsOnCurrent: 0,
+        currentRenderedOptions: null,
+        isRepeating: false,
+        latencies: [],
+        stats: resetSessionStats(activeCycles, trials.length)
+    };
+    openGame();
+    renderTrial();
+}
+
+function startEidosModule(modId) {
+    const mod = EIDOS_MODULES.find(m => m.id === modId);
+    if (!mod) return;
+    if (mod.engine === 'REWARD_PORTAL') {
+        executeRewardPortalAction(modId);
+        return;
+    }
+    if (!ensureSessionTimerStarted()) return;
+
+    const activeVar = getActiveVariationForModule(modId);
+    let pool = getPhasePool(modId);
+    let trials = [];
+    let activeCycles = [1];
+    let isPreReq = false;
+
+    switch (mod.subType) {
+        case 'TRACKING':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
+            break;
+        case 'SYM_DISC':
+            trials = ['A', 'B', 'E', 'M', 'P', 'S'];
+            break;
+        case 'WORD_IDENT_MM': {
+            const wList = shuffleArray(getModuleVariationItems(modId));
+            trials = [
+                wList.slice(0, 3),
+                shuffleArray(wList).slice(0, 3),
+                shuffleArray(wList).slice(0, 3),
+                shuffleArray(wList).slice(0, 3)
+            ];
+            activeCycles = [1, 2];
+            break;
+        }
+        case 'MIRROR_GRAPH':
+            trials = ['b', 'd', 'p', 'q', 'E', 'S'];
+            break;
+        case 'VOWELS_PURE':
+        case 'CONT_PHON':
+        case 'OCCL_PHON':
+        case 'CV_FUSION':
+        case 'CG_ALL_SOUNDS':
+        case 'QU_GU_SOUNDS':
+            trials = shuffleArray(pool).slice(0, 6);
+            activeCycles = [];
+            if (state.settings.stages.c1) activeCycles.push(1);
+            if (state.settings.stages.c2) activeCycles.push(2);
+            if (state.settings.stages.c3) activeCycles.push(3);
+            if (activeCycles.length === 0) activeCycles = [1];
+            break;
+        case 'SYL_BUILD_SLIDER':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
+            activeCycles = [1, 2, 3];
+            break;
+        case 'CLASS_VC':
+        case 'CLASS_SP':
+            isPreReq = true;
+            trials = shuffleArray(pool).slice(0, 8);
+            activeCycles = [];
+            if (state.settings.stages.c1) activeCycles.push(1);
+            if (state.settings.stages.c2) activeCycles.push(2);
+            if (activeCycles.length === 0) activeCycles = [1];
+            break;
+        case 'CLASS_TOTAL_MM':
+            trials = [1, 2, 3, 4];
+            break;
+        case 'RHYME':
+            trials = shuffleArray(RHYME_VARIATIONS[activeVar] || RHYME_VARIATIONS[1]);
+            break;
+        case 'ALLITERATION':
+            trials = shuffleArray(ALLIT_VARIATIONS[activeVar] || ALLIT_VARIATIONS[1]);
+            break;
+        case 'SYL_COUNT':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 6);
+            break;
+        case 'SYL_WORD_BUILD':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
+            activeCycles = [1, 2];
+            break;
+        case 'EQUIV_4STEPS_MM': {
+            const eqList = shuffleArray(getModuleVariationItems(modId));
+            trials = [
+                eqList.slice(0, 3),
+                shuffleArray(eqList).slice(0, 3),
+                shuffleArray(eqList).slice(0, 3)
+            ];
+            activeCycles = [1, 2, 3, 4];
+            break;
+        }
+        case 'FIG_WORD_MM': {
+            const fwList = shuffleArray(getModuleVariationItems(modId));
+            trials = [
+                fwList.slice(0, 3),
+                shuffleArray(fwList).slice(0, 3),
+                shuffleArray(fwList).slice(0, 3),
+                shuffleArray(fwList).slice(0, 3)
+            ];
+            break;
+        }
+        case 'SEMANTIC_CAT_MM': {
+            const scList = shuffleArray(getModuleVariationItems(modId));
+            trials = [
+                scList.slice(0, 3),
+                shuffleArray(scList).slice(0, 3),
+                shuffleArray(scList).slice(0, 3),
+                shuffleArray(scList).slice(0, 3)
+            ];
+            break;
+        }
+        case 'COPY_CRMTS':
+        case 'DICT_CRMTS':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
+            break;
+        case 'WORD_SPACE':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 4).map(s =>
+                Array.isArray(s) ? s : String(s).trim().toUpperCase().split(/\s+/)
+            );
+            break;
+        case 'MIN_PAIRS': {
+            const varPairs = MINIMAL_PAIRS_DB.filter(p => !p.var || p.var === activeVar);
+            trials = shuffleArray(varPairs.length >= 4 ? varPairs : MINIMAL_PAIRS_DB).slice(0, 6);
+            break;
+        }
+        case 'WORDS_EQ': {
+            trials = shuffleArray(pool).slice(0, 5);
+            activeCycles = [];
+            if (state.settings.stages.c1) activeCycles.push(1);
+            if (state.settings.stages.c2) activeCycles.push(2);
+            if (state.settings.stages.c3) activeCycles.push(3);
+            const allHaveIcons = trials.every(w => hasValidVisualRepresentation(w));
+            if (state.settings.stages.c4 && allHaveIcons) {
+                activeCycles.push(4);
+                activeCycles.push(5);
+            }
+            if (activeCycles.length === 0) activeCycles = [1];
+            break;
+        }
+        case 'SPRINT_3S':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 8);
+            break;
+        case 'RECOMB_STT':
+            trials = shuffleArray(getModuleVariationItems(modId).map(s => s.trim())).slice(0, 6);
+            activeCycles = [3];
+            break;
+        case 'SYNTACTIC_GROUP':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 4);
+            break;
+        case 'SENTENCE_BUILD':
+            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5).map(s => {
+                const clean = String(s).replace(/[.!?]/g, '').trim().toUpperCase();
+                return {
+                    shortSpoken: clean,
+                    wordsArray: clean.split(/\s+/)
+                };
+            });
+            break;
+        case 'SYNTACTIC_WH':
+            trials = [
+                generateLogicalSentenceTrial(),
+                generateLogicalSentenceTrial(),
+                generateLogicalSentenceTrial(),
+                generateLogicalSentenceTrial(),
+                generateLogicalSentenceTrial()
+            ];
+            break;
+        case 'INTRUDER_WORD':
+            trials = NARRATIVES_DB.map(n => ({
+                words: n.intruderSentence,
+                intruder: n.intruderWord,
+                fix: n.correctReplacement,
+                distractors: n.distractorReplacements || ['PEDRA', 'JANELA']
+            }));
+            break;
+        case 'CHRONO_SEQ':
+            trials = NARRATIVES_DB.map(n => ({
+                steps: n.steps
+            }));
+            break;
+    }
+
+    undoSnapshot = null;
+    session = {
+        phase: mod.id,
+        eidosMod: mod,
+        activeVar,
+        pool,
+        trials,
+        activeCycles,
+        currentCycleIdx: 0,
+        currentCycle: activeCycles[0],
+        isOnlyCycle3: (mod.subType === 'RECOMB_STT'),
+        isPreReq,
+        currentTrialIdx: 0,
+        attemptsOnCurrent: 0,
+        currentRenderedOptions: null,
+        isRepeating: false,
+        latencies: [],
+        stats: resetSessionStats(activeCycles, trials.length)
+    };
+    openGame();
+    renderTrial();
+}
+
+function getTopographicClasses() {
+    const tCfg = getTaskConfig(session.phase);
+    if (tCfg && tCfg.font && tCfg.font !== 'GLOBAL') {
+        if (tCfg.font === 'LOWER') return 'topo-lower';
+        if (tCfg.font === 'SERIF') return 'topo-serif';
+        if (tCfg.font === 'SCHOOL') return 'topo-school';
+        return '';
+    }
+    if (!state.settings.topoVar) return '';
+    const classes = ['', 'topo-serif', 'topo-school', 'topo-lower'];
+    return classes[Math.floor(Math.random() * classes.length)];
+};
+
+/* ============================================================================
    ALFAMTS PRO - MOTOR PRINCIPAL (app.js - PARTE 2 DE 2: SEÇÕES 12 A 18)
    ============================================================================ */
 
@@ -20,25 +3139,31 @@ function ensureLatencyCountdownPill() {
     return pill;
 }
 
-function startResponseTimeoutIfConfigured() {
+function startResponseTimeoutIfConfigured(overrideTimeoutSec = null) {
     if (responseTimeoutTimer) { clearTimeout(responseTimeoutTimer); responseTimeoutTimer = null; }
     if (responseCountdownInterval) { clearInterval(responseCountdownInterval); responseCountdownInterval = null; }
     const pill = ensureLatencyCountdownPill();
     if (pill) pill.style.display = 'none';
 
     const tCfg = getTaskConfig(session.phase);
-    if (!tCfg || !tCfg.responseTimeout || tCfg.responseTimeout <= 0) return;
+    const timeoutVal = (overrideTimeoutSec !== null && overrideTimeoutSec !== undefined)
+        ? parseInt(overrideTimeoutSec)
+        : (tCfg && tCfg.responseTimeout ? parseInt(tCfg.responseTimeout) : 0);
 
-    let remainingSec = parseInt(tCfg.responseTimeout);
+    if (!timeoutVal || timeoutVal <= 0) return;
+
+    let remainingSec = timeoutVal;
+    const clockSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+
     if (pill) {
         pill.style.display = 'inline-flex';
-        pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>${remainingSec}s</span>`;
+        pill.innerHTML = `${clockSvg} <span>${remainingSec}s</span>`;
     }
 
     responseCountdownInterval = setInterval(() => {
         remainingSec--;
         if (pill && remainingSec >= 0) {
-            pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>${remainingSec}s</span>`;
+            pill.innerHTML = `${clockSvg} <span>${remainingSec}s</span>`;
         }
         if (remainingSec <= 0) {
             clearInterval(responseCountdownInterval);
@@ -53,22 +3178,25 @@ function startResponseTimeoutIfConfigured() {
         blockClicks = true;
         playSound('click');
         const cat = getCurrentStatCat();
-        if (!session.isRepeating) session.stats[cat].erro++;
+        if (!session.isRepeating && session.stats[cat]) session.stats[cat].erro++;
         advanceTrial();
-    }, tCfg.responseTimeout * 1000);
+    }, timeoutVal * 1000);
 }
 
-function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel) {
+function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel, overrideDmtsSec = null, overrideTimeoutSec = null) {
     const tCfg = getTaskConfig(session.phase);
-    if (!isVisualModel || !tCfg || !tCfg.dmtsDelay || tCfg.dmtsDelay <= 0) {
+    const delaySec = (overrideDmtsSec !== null && overrideDmtsSec !== undefined)
+        ? parseInt(overrideDmtsSec)
+        : (tCfg && tCfg.dmtsDelay ? parseInt(tCfg.dmtsDelay) : 0);
+
+    if (!isVisualModel || !delaySec || delaySec <= 0) {
         setTimeout(() => {
             blockClicks = false;
-            startResponseTimeoutIfConfigured();
+            startResponseTimeoutIfConfigured(overrideTimeoutSec);
         }, state.settings.latency);
         return;
     }
 
-    const delaySec = tCfg.dmtsDelay;
     compArea.style.display = 'none';
     blockClicks = false;
 
@@ -76,32 +3204,29 @@ function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel) {
     if (modelCardEl) {
         modelCardEl.style.cursor = 'pointer';
         const hint = document.createElement('div');
-        hint.style.fontSize = '0.95rem';
-        hint.style.fontWeight = '800';
-        hint.style.color = 'var(--primary-dark)';
-        hint.style.marginTop = '8px';
-        hint.innerHTML = `<span class="material-icons" style="font-size:1.1rem; vertical-align:middle;">visibility</span> Toque para observar`;
+        hint.style.cssText = 'font-size:0.92rem; font-weight:800; color:var(--primary-dark); margin-top:8px; display:inline-flex; align-items:center; gap:6px;';
+        hint.innerHTML = `${UI_SVGS.eye} <span>Toque para observar</span>`;
         modelCardEl.appendChild(hint);
 
         modelCardEl.onclick = () => {
             modelCardEl.onclick = null;
             playSound('click');
             modelArea.innerHTML = `
-                <div class="model-card" style="border-style:dotted; color:var(--text-light); font-size:1.4rem;">
-                    <span class="material-icons" style="font-size:2.8rem; color:var(--primary); margin-bottom:6px;">hourglass_top</span>
-                    Aguarde ${delaySec}s...
+                <div class="model-card" style="border-style:dotted; color:var(--text-light); font-size:1.35rem; gap:8px;">
+                    ${UI_SVGS.hourglass}
+                    <span>Aguarde ${delaySec}s...</span>
                 </div>
             `;
             dmtsDelayTimer = setTimeout(() => {
                 modelArea.innerHTML = '';
                 compArea.style.display = 'flex';
                 trialStartTime = Date.now();
-                startResponseTimeoutIfConfigured();
+                startResponseTimeoutIfConfigured(overrideTimeoutSec);
             }, delaySec * 1000);
         };
     } else {
         compArea.style.display = 'flex';
-        startResponseTimeoutIfConfigured();
+        startResponseTimeoutIfConfigured(overrideTimeoutSec);
     }
 }
 
@@ -128,6 +3253,11 @@ function renderTrial(restoredOptions = null) {
 
     counterPill.innerText = `${session.currentTrialIdx + 1} / ${session.trials.length}`;
     const target = session.trials[session.currentTrialIdx];
+
+    if (session.eidosMod && session.eidosMod.subType === 'CUSTOM_STUDIO') {
+        renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock);
+        return;
+    }
 
     const stdSubTypes = ['VOWELS_PURE', 'CV_FUSION', 'WORDS_EQ', 'CG_ALL_SOUNDS', 'QU_GU_SOUNDS', 'CLASS_VC', 'CLASS_SP', 'RECOMB_STT'];
     if (session.eidosMod && !stdSubTypes.includes(session.eidosMod.subType)) {
@@ -170,7 +3300,7 @@ function renderTrial(restoredOptions = null) {
     } else if (session.currentCycle === 2) {
         badge.innerText = "Ciclo 2: Ouça e Encontre";
         const spokenModel = getPhoneticAudioModel(target);
-        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${spokenModel}')"><span class="material-icons">volume_up</span></button>`;
+        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${spokenModel}')">${UI_SVGS.volume}</button>`;
         speakTTS(spokenModel);
         optionsToRender.forEach(opt => {
             const btn = document.createElement('div');
@@ -200,7 +3330,7 @@ function renderTrial(restoredOptions = null) {
                     <p id="mic-feedback" style="color:var(--text-light); font-weight:800; font-size:1.2rem;">Segure o microfone e fale: '${target}'</p>
                     <div class="stt-controls">
                         <button type="button" class="stt-btn" id="mic-btn" onmousedown="startMicrophone()" onmouseup="stopMicrophone()" onmouseleave="stopMicrophone()" ontouchstart="event.preventDefault(); startMicrophone()" ontouchend="event.preventDefault(); stopMicrophone()">
-                            <span class="material-icons">mic</span>
+                            ${UI_SVGS.mic}
                         </button>
                     </div>
                 </div>`;
@@ -236,6 +3366,202 @@ function renderTrial(restoredOptions = null) {
         });
         applyDMTSWrapperIfEnabled(modelArea, compArea, true);
     }
+}
+
+/* RENDERIZADOR UNIVERSAL DE TAREFAS DO STUDIO COMPORTAMENTAL */
+function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRem = 3.2) {
+    const clean = String(itemStr || '').trim().toUpperCase();
+    if (channelType === 'IMAGE') {
+        return getWordVisualRepresentationHTML(clean, sizeRem);
+    }
+    if (channelType === 'AUDIO') {
+        return `<button type="button" class="model-audio-btn" style="width:86px; height:86px;" onclick="event.stopPropagation(); speakTTS('${clean}')">${UI_SVGS.volumeSm}</button>`;
+    }
+    return `<span class="${topoClass}">${formatStimulusTextHTML(clean)}</span>`;
+}
+
+function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
+    const customMod = session.eidosMod;
+    const cycIdx = Math.max(0, (session.currentCycle || 1) - 1);
+    const cycCfg = (customMod.cyclesConfig && customMod.cyclesConfig[cycIdx])
+        ? customMod.cyclesConfig[cycIdx]
+        : { mechanic: 'MTS', sdMode: 'SIMPLE', sdChannel1: 'TEXT', compChannel: 'TEXT', dmtsDelay: 0, timeoutSec: 0 };
+
+    const topoClass = getTopographicClasses();
+    const cleanTarget = String(target || '').trim().toUpperCase();
+    badge.innerText = `${customMod.title} • Ciclo ${cycIdx + 1}`;
+
+    const hasAudioSD = (cycCfg.sdChannel1 === 'AUDIO' || (cycCfg.sdMode === 'COMPOUND' && cycCfg.sdChannel2 === 'AUDIO'));
+    if (hasAudioSD) {
+        speakTTS(cleanTarget);
+    }
+
+    // 1. MODO MULTIMODELO 3x3 DO STUDIO
+    if (cycCfg.mechanic === 'MULTIMTS') {
+        const subset = shuffleArray([cleanTarget, ...session.pool.filter(x => x !== cleanTarget)]).slice(0, Math.min(3, session.pool.length));
+        modelArea.style.minHeight = '24px';
+        modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Pareie os elementos equivalentes nas duas colunas:</p>`;
+
+        const board = document.createElement('div');
+        board.className = 'multimodel-board';
+        const colLeft = document.createElement('div');
+        colLeft.className = 'mm-column';
+        const colRight = document.createElement('div');
+        colRight.className = 'mm-column';
+
+        let selectedLeft = null;
+        let completedCount = 0;
+
+        shuffleArray(subset).forEach(w => {
+            const cardL = document.createElement('div');
+            cardL.className = `mm-card ${topoClass}`;
+            const leftContent = (cycCfg.sdMode === 'COMPOUND')
+                ? `<div style="display:flex; align-items:center; gap:10px;">${renderStudioChannelStimulusHTML(w, cycCfg.sdChannel1, topoClass, 2.2)} ${renderStudioChannelStimulusHTML(w, cycCfg.sdChannel2, topoClass, 2.2)}</div>`
+                : renderStudioChannelStimulusHTML(w, cycCfg.sdChannel1, topoClass, 2.5);
+
+            cardL.innerHTML = `<span>${leftContent}</span><span style="color:var(--text-light);">${UI_SVGS.arrowRight}</span>`;
+            cardL.onclick = () => {
+                if (blockClicks || cardL.classList.contains('paired')) return;
+                playSound('click');
+                colLeft.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
+                cardL.classList.add('selected');
+                selectedLeft = { id: w, el: cardL };
+            };
+            colLeft.appendChild(cardL);
+        });
+
+        shuffleArray(subset).forEach(w => {
+            const cardR = document.createElement('div');
+            cardR.className = `mm-card ${topoClass}`;
+            const rightContent = renderStudioChannelStimulusHTML(w, cycCfg.compChannel || 'TEXT', topoClass, 2.5);
+            cardR.innerHTML = `<span>${rightContent}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
+            cardR.onclick = () => {
+                if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
+                if (selectedLeft.id === w) {
+                    playSound('win');
+                    selectedLeft.el.classList.remove('selected');
+                    selectedLeft.el.classList.add('paired');
+                    cardR.classList.add('paired');
+                    cardR.querySelector('.chk-icon').style.color = 'var(--success)';
+                    selectedLeft = null;
+                    completedCount++;
+                    if (completedCount === subset.length) {
+                        handleAnswer(true, board);
+                    }
+                } else {
+                    session.attemptsOnCurrent++;
+                    playSound('click');
+                    cardR.classList.add('feedback-error');
+                    setTimeout(() => cardR.classList.remove('feedback-error'), 380);
+                    if (session.attemptsOnCurrent >= 3) {
+                        handleAnswer(false, board);
+                    }
+                }
+            };
+            colRight.appendChild(cardR);
+        });
+
+        board.appendChild(colLeft);
+        board.appendChild(colRight);
+        compArea.appendChild(board);
+        abaDock.style.display = 'flex';
+        setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(cycCfg.timeoutSec); }, state.settings.latency);
+        return;
+    }
+
+    // Renderiza Modelo (SD Simples ou Composto Duplo BC) para MTS, CRMTS e EXPRESSIVE
+    modelArea.style.minHeight = '140px';
+    if (cycCfg.sdMode === 'COMPOUND') {
+        modelArea.innerHTML = `
+            <div class="model-card ${topoClass}" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:20px; padding:18px 28px;">
+                <div>${renderStudioChannelStimulusHTML(cleanTarget, cycCfg.sdChannel1, topoClass, 3.4)}</div>
+                <div>${renderStudioChannelStimulusHTML(cleanTarget, cycCfg.sdChannel2, topoClass, 3.4)}</div>
+            </div>
+        `;
+    } else {
+        if (cycCfg.sdChannel1 === 'AUDIO') {
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${cleanTarget}')">${UI_SVGS.volume}</button>`;
+        } else {
+            modelArea.innerHTML = `<div class="model-card ${topoClass}">${renderStudioChannelStimulusHTML(cleanTarget, cycCfg.sdChannel1, topoClass, 3.8)}</div>`;
+        }
+    }
+
+    // 2. MODO EXPRESSIVO / SONDAGEM ORAL DO STUDIO
+    if (cycCfg.mechanic === 'EXPRESSIVE') {
+        compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Avalie a resposta expressiva do aluno e registre na barra do aplicador abaixo.</p>`;
+        abaDock.style.display = 'flex';
+        setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(cycCfg.timeoutSec); }, state.settings.latency);
+        return;
+    }
+
+    // 3. MODO CRMTS (CONSTRUÇÃO) DO STUDIO
+    if (cycCfg.mechanic === 'CRMTS') {
+        const units = cleanTarget.split('');
+        const extraDist = shuffleArray(['A','E','O','M','P','B','T','L','S'].filter(c => !units.includes(c))).slice(0, 3);
+        const tilePool = shuffleArray([...units, ...extraDist]);
+        let built = [];
+
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center;';
+        const slotsDiv = document.createElement('div');
+        slotsDiv.className = 'crmts-slots';
+        const poolDiv = document.createElement('div');
+        poolDiv.className = 'crmts-pool';
+
+        const refreshSlots = () => {
+            slotsDiv.innerHTML = '';
+            units.forEach((_, i) => {
+                const s = document.createElement('div');
+                s.className = `crmts-slot ${topoClass}`;
+                s.innerHTML = built[i] ? formatStimulusTextHTML(built[i]) : '';
+                slotsDiv.appendChild(s);
+            });
+        };
+
+        tilePool.forEach(ch => {
+            const t = document.createElement('button');
+            t.type = 'button';
+            t.className = `letter-tile ${topoClass}`;
+            t.innerHTML = formatStimulusTextHTML(ch);
+            t.onclick = () => {
+                if (blockClicks || built.length >= units.length) return;
+                if (ch === units[built.length]) {
+                    playSound('click');
+                    t.classList.add('used');
+                    built.push(ch);
+                    refreshSlots();
+                    if (built.length === units.length) handleAnswer(true, slotsDiv);
+                } else {
+                    session.attemptsOnCurrent++;
+                    playSound('click');
+                    t.classList.add('feedback-error');
+                    setTimeout(() => t.classList.remove('feedback-error'), 350);
+                }
+            };
+            poolDiv.appendChild(t);
+        });
+
+        refreshSlots();
+        wrap.appendChild(slotsDiv);
+        wrap.appendChild(poolDiv);
+        compArea.appendChild(wrap);
+        abaDock.style.display = 'flex';
+        applyDMTSWrapperIfEnabled(modelArea, compArea, cycCfg.sdChannel1 !== 'AUDIO', cycCfg.dmtsDelay, cycCfg.timeoutSec);
+        return;
+    }
+
+    // 4. MODO MTS COMUM DO STUDIO
+    const opts = generateComparisons(cleanTarget);
+    opts.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = `comp-card ${cycCfg.compChannel === 'IMAGE' ? 'img-only' : topoClass}`;
+        btn.innerHTML = renderStudioChannelStimulusHTML(opt, cycCfg.compChannel || 'TEXT', topoClass, 3.6);
+        const isCorrect = (opt === cleanTarget);
+        btn.dataset.correct = isCorrect;
+        btn.onclick = () => handleAnswer(isCorrect, btn);
+        compArea.appendChild(btn);
+    });
+    applyDMTSWrapperIfEnabled(modelArea, compArea, cycCfg.sdChannel1 !== 'AUDIO', cycCfg.dmtsDelay, cycCfg.timeoutSec);
 }
 
 function isVowelChar(ch) {
@@ -280,12 +3606,12 @@ function getPhoneticAudioModel(target) {
 }
 
 /* ============================================================================
-   13. RENDERIZADORES ESPECIALIZADOS (SLIDER FONOLÓGICO, TRIPLO SLIDER, 3.1 E 3.2)
+   13. RENDERIZADORES ESPECIALIZADOS (ZERO MATERIAL-ICONS, 100% SVGS INLINE)
    ============================================================================ */
 function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge, abaDock, fluencyPill) {
     const topoClass = getTopographicClasses();
 
-    // ALFABETO FONOLÓGICO: FASE A (EXPOSIÇÃO) E FASE B (SLIDER SILENCIOSO SEM REPETIR SOM NO ARRASTO)
+    // ALFABETO FONOLÓGICO: FASE A (EXPOSIÇÃO) E FASE B (SLIDER SILENCIOSO)
     if (subType === 'PHON_MODELING') {
         const letter = target.letter || (session.eidosMod ? session.eidosMod.letter : 'A');
         const varIdx = target.varIdx || (session.eidosMod ? session.eidosMod.varIdx : '1');
@@ -308,7 +3634,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             compArea.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
                     <button type="button" class="btn-action" id="btn-listen-train-phoneme" style="padding:18px 34px; font-size:1.3rem; border-radius:22px;">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                        ${UI_SVGS.volumeSm}
                         Ouvir e Treinar
                     </button>
                     <span style="font-size:0.88rem; font-weight:800; color:var(--text-light);">Reproduz o fonema 2x seguidas (600ms). Valide abaixo para ir à Fase B.</span>
@@ -328,7 +3654,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
             return;
         } else {
-            // FASE B: Slider sem repetir o áudio do estímulo durante o arrasto!
             badge.innerText = `Fase B: Produção e Sustentação (${target.title || letter})`;
             modelArea.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -343,7 +3668,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                         <div id="phon-drag-fill" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); transition:none; pointer-events:none;"></div>
                         <div style="position:absolute; right:22px; display:flex; align-items:center; gap:6px; color:var(--text-light); font-weight:900; font-size:0.95rem; pointer-events:none;">
                             <span>CHEGADA</span>
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            ${UI_SVGS.checkCircle}
                         </div>
                         <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">
                             ${formatStimulusTextHTML(letter)}
@@ -423,7 +3748,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    // 2.6 NOVO JOGO: FORMAÇÃO DE SÍLABAS (CICLO 1: TRIPLO SLIDER C + V -> CV | CICLO 2: OUVIR E SELECIONAR | CICLO 3: LER)
+    // 2.6 FORMAÇÃO DE SÍLABAS (TRIPLO SLIDER C + V -> CV)
     if (subType === 'SYL_BUILD_SLIDER') {
         const sylStr = String(target || 'FA').trim().toUpperCase();
         const consChar = sylStr.charAt(0) || 'F';
@@ -436,19 +3761,16 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
             compArea.innerHTML = `
                 <div style="width:100%; max-width:660px; display:flex; flex-direction:column; gap:12px;">
-                    <!-- Slider 1: Consoante -->
                     <div id="tri-track-1" class="drag-track" style="height:68px;">
                         <div id="tri-fill-1" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
                         <span style="position:absolute; right:18px; font-size:0.8rem; font-weight:800; color:var(--text-light); pointer-events:none;">1º SOM (${consChar})</span>
                         <div id="tri-box-1" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem;">${formatStimulusTextHTML(consChar)}</div>
                     </div>
-                    <!-- Slider 2: Vogal -->
                     <div id="tri-track-2" class="drag-track" style="height:68px; opacity:0.45; pointer-events:none;">
                         <div id="tri-fill-2" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
                         <span style="position:absolute; right:18px; font-size:0.8rem; font-weight:800; color:var(--text-light); pointer-events:none;">2º SOM (${vowChar})</span>
                         <div id="tri-box-2" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem;">${formatStimulusTextHTML(vowChar)}</div>
                     </div>
-                    <!-- Slider 3: Sílaba Resultante (Mais abaixo e destacado) -->
                     <div id="tri-track-3" class="drag-track" style="height:82px; margin-top:10px; border-color:var(--primary); opacity:0.45; pointer-events:none;">
                         <div id="tri-fill-3" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--success-light); pointer-events:none;"></div>
                         <span style="position:absolute; right:18px; font-size:0.88rem; font-weight:900; color:var(--primary-dark); pointer-events:none;">SÍLABA (${sylStr})</span>
@@ -519,7 +3841,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             return;
         } else if (session.currentCycle === 2) {
             badge.innerText = `2.6 Formação de Sílabas • Ciclo 2: Ouça e Selecione`;
-            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${sylStr}')"><span class="material-icons">volume_up</span></button>`;
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${sylStr}')">${UI_SVGS.volume}</button>`;
             speakTTS(sylStr);
             const opts = generateComparisons(sylStr);
             opts.forEach(opt => {
@@ -543,7 +3865,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    // 2.3 & 2.4: MÓDULOS DE CONSOANTES (CONT_PHON & OCCL_PHON) COM 2 VARIAÇÕES E ZERO BUGS
+    // 2.3 & 2.4: CONSOANTES CONTÍNUAS E OCLUSIVAS
     if (subType === 'CONT_PHON' || subType === 'OCCL_PHON') {
         const isCont = (subType === 'CONT_PHON');
         const modLabel = isCont ? '2.3 Consoantes Contínuas' : '2.4 Consoantes Oclusivas';
@@ -556,11 +3878,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
         if (session.currentCycle === 1) {
             badge.innerText = `${modLabel} • Ciclo 1: Som → Boca`;
-            modelArea.innerHTML = `
-                <button type="button" class="model-audio-btn" id="btn-cons-audio-c1" title="Ouvir Fonema">
-                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-                </button>
-            `;
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" id="btn-cons-audio-c1" title="Ouvir Fonema">${UI_SVGS.volume}</button>`;
             document.getElementById('btn-cons-audio-c1').onclick = () => playPhonemeAudioFile(cleanTarget, '1', false);
             playPhonemeAudioFile(cleanTarget, '1', false);
 
@@ -586,11 +3904,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             return;
         } else if (session.currentCycle === 2) {
             badge.innerText = `${modLabel} • Ciclo 2: Som → Letra`;
-            modelArea.innerHTML = `
-                <button type="button" class="model-audio-btn" id="btn-cons-audio-c2" title="Ouvir Fonema">
-                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-                </button>
-            `;
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" id="btn-cons-audio-c2" title="Ouvir Fonema">${UI_SVGS.volume}</button>`;
             document.getElementById('btn-cons-audio-c2').onclick = () => playPhonemeAudioFile(cleanTarget, '1', false);
             playPhonemeAudioFile(cleanTarget, '1', false);
 
@@ -616,7 +3930,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    // 1.1: RASTREIO VISUAL EM 2 A 3 LINHAS
+    // 1.1: RASTREIO VISUAL
     if (subType === 'TRACKING') {
         badge.innerText = `1.1 Rastreio Visual (Var ${session.activeVar})`;
         const words = String(target).trim().split(/\s+/);
@@ -643,7 +3957,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 1.2: DISCRIMINAÇÃO DE SÍMBOLOS (COM SUPORTE COMPLETO AO DESTAQUE DO MODO REVISÃO)
+    // 1.2: DISCRIMINAÇÃO DE SÍMBOLOS
     if (subType === 'SYM_DISC') {
         badge.innerText = `1.2 Discriminação de Símbolos`;
         const isHighlighted = state.reviewHighlights && state.reviewHighlights[target];
@@ -669,8 +3983,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 1.3: IDENTIDADE DE PALAVRAS EM 2 CICLOS (CICLO 1: MTS COMUM 1x3 | CICLO 2: MULTI-MTS 3x3)
-    // E DEMAIS MULTIMODELOS (CLASS_TOTAL_MM, FIG_WORD_MM, SEMANTIC_CAT_MM)
+    // 1.3 IDENTIDADE DE PALAVRAS (2 CICLOS) E OUTROS MULTIMODELOS
     if (['WORD_IDENT_MM', 'CLASS_TOTAL_MM', 'FIG_WORD_MM', 'SEMANTIC_CAT_MM'].includes(subType)) {
         if (subType === 'WORD_IDENT_MM' && session.currentCycle === 1) {
             badge.innerText = `1.3 Identidade de Palavras • Ciclo 1: MTS Simples (Var ${session.activeVar})`;
@@ -744,13 +4057,10 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         let selectedLeft = null;
         let completedCount = 0;
 
-        const leftItems = shuffleArray(pairs);
-        const rightItems = shuffleArray(pairs);
-
-        leftItems.forEach(p => {
+        shuffleArray(pairs).forEach(p => {
             const cardL = document.createElement('div');
             cardL.className = `mm-card ${topoClass}`;
-            cardL.innerHTML = `<span>${p.leftHTML}</span><span class="material-icons" style="color:var(--text-light);">arrow_forward</span>`;
+            cardL.innerHTML = `<span>${p.leftHTML}</span><span style="color:var(--text-light);">${UI_SVGS.arrowRight}</span>`;
             cardL.onclick = () => {
                 if (blockClicks || cardL.classList.contains('paired')) return;
                 playSound('click');
@@ -762,10 +4072,10 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             colLeft.appendChild(cardL);
         });
 
-        rightItems.forEach(p => {
+        shuffleArray(pairs).forEach(p => {
             const cardR = document.createElement('div');
             cardR.className = `mm-card ${topoClass}`;
-            cardR.innerHTML = `<span>${p.rightHTML}</span><span class="material-icons" style="color:var(--border);">check_circle</span>`;
+            cardR.innerHTML = `<span>${p.rightHTML}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
             cardR.onclick = () => {
                 if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
                 const isMatch = (subType === 'SEMANTIC_CAT_MM')
@@ -777,7 +4087,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     selectedLeft.el.classList.remove('selected');
                     selectedLeft.el.classList.add('paired');
                     cardR.classList.add('paired');
-                    cardR.querySelector('.material-icons').style.color = 'var(--success)';
+                    cardR.querySelector('.chk-icon').style.color = 'var(--success)';
                     selectedLeft = null;
                     completedCount++;
                     if (completedCount === pairs.length) {
@@ -830,9 +4140,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     if (subType === 'RHYME' || subType === 'ALLITERATION') {
         const isRhyme = subType === 'RHYME';
         badge.innerText = isRhyme ? `2.1 Rimas (Var ${session.activeVar})` : `2.2 Aliteração (Var ${session.activeVar})`;
-        modelArea.innerHTML = `
-            <button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')"><span class="material-icons">volume_up</span></button>
-        `;
+        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target.target);
 
         const rawOpts = [target.match, ...target.distractors.slice(0, state.settings.opts - 1)];
@@ -859,19 +4167,17 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         badge.innerText = `2.5 Segmentação Silábica (Var ${session.activeVar})`;
         const wObj = WORD_BANK[target] || { count: Math.max(1, Math.ceil(target.length / 2)) };
         let tapCount = 0;
-        modelArea.innerHTML = `
-            <button type="button" class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>
-        `;
+        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target);
         compArea.innerHTML = `
             <div style="display:flex; align-items:center; gap:18px;">
                 <button type="button" id="drum-tap-btn" class="btn-action" style="font-size:1.5rem; padding:22px 36px; border-radius:24px;">
-                    <span class="material-icons" style="font-size:2rem;">touch_app</span>
+                    ${UI_SVGS.touch}
                     Sílabas: <span id="drum-count-val">0</span>
                 </button>
                 <button type="button" id="drum-reset-btn" class="btn-action btn-cancel" style="padding:22px;">Zerar</button>
                 <button type="button" id="drum-confirm-btn" class="btn-action" style="background:var(--success); padding:22px 30px;">
-                    <span class="material-icons">check</span> Confirmar
+                    ${UI_SVGS.check} Confirmar
                 </button>
             </div>
         `;
@@ -892,7 +4198,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.1: CONSTRUÇÃO DE PALAVRAS (CRMTS NO CICLO 1 + LEITURA/SONDAGEM SEM FIGURA E SEM TTS NO CICLO 2)
+    // 3.1: CONSTRUÇÃO DE PALAVRAS (CRMTS + LEITURA/SONDAGEM SEM FIGURA E SEM TTS)
     if (subType === 'SYL_WORD_BUILD') {
         const cleanWord = String(target || 'MALA').trim().toUpperCase();
         const wObj = WORD_BANK[cleanWord];
@@ -901,7 +4207,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             : (cleanWord.match(/[^AEIOUÁÉÍÓÚÂÊÔÃÕ]*[AEIOUÁÉÍÓÚÂÊÔÃÕ]+[^AEIOUÁÉÍÓÚÂÊÔÃÕ]?/gi) || [cleanWord]);
 
         if (session.currentCycle === 2) {
-            // Ciclo 2: Sondagem de Leitura Pura (Zero Figura e Zero TTS!)
             badge.innerText = `3.1 Construção de Palavras • Ciclo 2: Sondagem de Leitura`;
             modelArea.style.minHeight = '145px';
             modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.4rem;">${formatStimulusTextHTML(cleanWord)}</div>`;
@@ -917,7 +4222,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         modelArea.innerHTML = `
             <div id="crmts-top-prompt-box" style="display:flex; align-items:center; gap:18px;">
                 <button type="button" class="model-audio-btn" style="width:88px; height:88px;" onclick="speakTTS('${cleanWord}')">
-                    <span class="material-icons" style="font-size:3rem;">volume_up</span>
+                    ${UI_SVGS.volumeSm}
                 </button>
                 <div style="background:#fff; border:2px solid var(--border); border-radius:20px; padding:12px 18px; box-shadow:var(--shadow-card);">
                     ${visualHTML}
@@ -953,7 +4258,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
 
         function triggerReadingWithoutCueGate() {
-            // Oculta imediatamente a figura e o botão TTS para que o aluno leia a palavra construída sem dicas!
             const promptBox = document.getElementById('crmts-top-prompt-box');
             if (promptBox) promptBox.style.display = 'none';
             modelArea.innerHTML = `<p style="font-weight:900; color:var(--primary-dark); font-size:1.35rem;">Agora leia a palavra que você montou:</p>`;
@@ -1017,13 +4321,12 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.2 NOVO JOGO: EQUIVALÊNCIA E PAREAMENTO MULTIMODAL EM 4 CICLOS (C1: B-B + Nomear | C2: BC-C | C3: B-C | C4: Ler C)
+    // 3.2: EQUIVALÊNCIA E PAREAMENTO MULTIMODAL EM 4 CICLOS
     if (subType === 'EQUIV_4STEPS_MM') {
         const words = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
         abaDock.style.display = 'flex';
 
         if (session.currentCycle === 4) {
-            // Ciclo 4: Nomeação / Leitura das palavras isoladas (C -> Fala)
             badge.innerText = `3.2 Equivalência • Ciclo 4: Leitura de Palavras`;
             modelArea.style.minHeight = '30px';
             modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:1rem;">Peça ao aluno para ler as palavras abaixo e registre na barra do aplicador:</p>`;
@@ -1081,13 +4384,10 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         let selectedLeft = null;
         let completedCount = 0;
 
-        const leftItems = shuffleArray(pairs);
-        const rightItems = shuffleArray(pairs);
-
-        leftItems.forEach(p => {
+        shuffleArray(pairs).forEach(p => {
             const cardL = document.createElement('div');
             cardL.className = `mm-card ${topoClass}`;
-            cardL.innerHTML = `<span>${p.leftHTML}</span><span class="material-icons" style="color:var(--text-light);">arrow_forward</span>`;
+            cardL.innerHTML = `<span>${p.leftHTML}</span><span style="color:var(--text-light);">${UI_SVGS.arrowRight}</span>`;
             cardL.onclick = () => {
                 if (blockClicks || cardL.classList.contains('paired')) return;
                 playSound('click');
@@ -1098,10 +4398,10 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             colLeft.appendChild(cardL);
         });
 
-        rightItems.forEach(p => {
+        shuffleArray(pairs).forEach(p => {
             const cardR = document.createElement('div');
             cardR.className = `mm-card ${topoClass}`;
-            cardR.innerHTML = `<span>${p.rightHTML}</span><span class="material-icons" style="color:var(--border);">check_circle</span>`;
+            cardR.innerHTML = `<span>${p.rightHTML}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
             cardR.onclick = () => {
                 if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
                 if (selectedLeft.data.id === p.id) {
@@ -1109,7 +4409,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     selectedLeft.el.classList.remove('selected');
                     selectedLeft.el.classList.add('paired');
                     cardR.classList.add('paired');
-                    cardR.querySelector('.material-icons').style.color = 'var(--success)';
+                    cardR.querySelector('.chk-icon').style.color = 'var(--success)';
                     selectedLeft = null;
                     completedCount++;
                     if (completedCount === pairs.length) {
@@ -1147,9 +4447,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         if (isCopy) {
             modelArea.innerHTML = `<div class="model-card ${topoClass}">${formatStimulusTextHTML(target)}</div>`;
         } else {
-            modelArea.innerHTML = `
-                <button type="button" class="model-audio-btn" onclick="speakTTS('${target}')"><span class="material-icons">volume_up</span></button>
-            `;
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')">${UI_SVGS.volume}</button>`;
             speakTTS(target);
         }
 
@@ -1237,7 +4535,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.5: SEGMENTAÇÃO LEXICAL (ESPAÇO NA FRASE)
+    // 3.5: ESPAÇO NA FRASE
     if (subType === 'WORD_SPACE') {
         badge.innerText = `3.5 Espaço na Frase (Var ${session.activeVar})`;
         const totalGaps = target.length - 1;
@@ -1277,9 +4575,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     // 4.1: PARES MÍNIMOS AUDITIVOS
     if (subType === 'MIN_PAIRS') {
         badge.innerText = `4.1 Pares Mínimos (${target.contrast})`;
-        modelArea.innerHTML = `
-            <button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')"><span class="material-icons">volume_up</span></button>
-        `;
+        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target.target);
 
         const pairOpts = shuffleArray([target.target, target.distractor]);
@@ -1341,7 +4637,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
         modelArea.innerHTML = `
             <div style="display:flex; align-items:center; gap:16px; width:100%; justify-content:center;">
-                <button type="button" class="model-audio-btn" style="width:84px; height:84px; flex-shrink:0;" onclick="speakTTS('${spokenPhrase}')"><span class="material-icons" style="font-size:3rem;">volume_up</span></button>
+                <button type="button" class="model-audio-btn" style="width:84px; height:84px; flex-shrink:0;" onclick="speakTTS('${spokenPhrase}')">${UI_SVGS.volumeSm}</button>
                 <div class="model-card sentence-mode ${topoClass}" style="font-size:1.6rem; flex:1; max-width:680px;">
                     <span id="built-sentence-preview" style="color:var(--primary-dark); font-size:2rem; min-height:42px; display:block;"></span>
                 </div>
@@ -1360,16 +4656,16 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const spaceBtn = document.createElement('button');
         spaceBtn.type = 'button';
         spaceBtn.className = 'space-action-tile';
-        spaceBtn.innerHTML = `<span class="material-icons">space_bar</span> ESPAÇO`;
+        spaceBtn.innerHTML = `${UI_SVGS.spaceBar} ESPAÇO`;
 
         function setSpaceButtonPendingState(isSpaceLocked) {
             waitingForSpace = !isSpaceLocked;
             if (isSpaceLocked) {
                 spaceBtn.classList.add('space-active-locked');
-                spaceBtn.innerHTML = `<span class="material-icons">check</span> ESPAÇO ATIVO`;
+                spaceBtn.innerHTML = `${UI_SVGS.check} ESPAÇO ATIVO`;
             } else {
                 spaceBtn.classList.remove('space-active-locked');
-                spaceBtn.innerHTML = `<span class="material-icons">space_bar</span> ESPAÇO`;
+                spaceBtn.innerHTML = `${UI_SVGS.spaceBar} ESPAÇO`;
             }
         }
 
@@ -1439,7 +4735,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         clearBtn.type = 'button';
         clearBtn.className = 'letter-tile';
         clearBtn.style.fontSize = '1.1rem';
-        clearBtn.innerHTML = `<span class="material-icons" style="margin-right:4px;">backspace</span> Limpar`;
+        clearBtn.innerHTML = `${UI_SVGS.backspace} <span style="margin-left:6px;">Limpar</span>`;
         clearBtn.onclick = () => {
             builtWords = [];
             poolDiv.querySelectorAll('.letter-tile').forEach(b => b.classList.remove('used'));
@@ -1668,7 +4964,7 @@ function handleAnswer(isCorrect, element) {
         if (element) element.classList.add('feedback-success');
         if (modelCard) modelCard.classList.add('feedback-success');
 
-        if (!session.isRepeating) {
+        if (!session.isRepeating && session.stats[cat]) {
             if (session.attemptsOnCurrent === 0) session.stats[cat].indep++;
             else session.stats[cat].dica++;
         }
@@ -1700,7 +4996,7 @@ function handleAnswer(isCorrect, element) {
 
         if (session.attemptsOnCurrent >= 2) {
             saveUndoSnapshot();
-            if (!session.isRepeating) session.stats[cat].erro++;
+            if (!session.isRepeating && session.stats[cat]) session.stats[cat].erro++;
             advanceTrial();
         } else {
             setTimeout(() => {
@@ -1728,7 +5024,7 @@ function recordMediatedTrial(code) {
         code = 'D';
     }
 
-    if (!session.isRepeating) {
+    if (!session.isRepeating && session.stats[cat]) {
         if (code === 'I') {
             playSound('win');
             session.stats[cat].indep++;
@@ -1868,7 +5164,7 @@ function processSpeech(transcript) {
         const cat = getCurrentStatCat();
         if (session.attemptsOnCurrent >= 2) {
             if (feedback) feedback.innerText = `Você disse: "${transcript}". Seguindo...`;
-            if (!session.isRepeating) session.stats[cat].erro++;
+            if (!session.isRepeating && session.stats[cat]) session.stats[cat].erro++;
             advanceTrial();
         } else {
             if (feedback) {
@@ -1885,7 +5181,7 @@ function processSpeech(transcript) {
 window.receberTextoDoKodular = function(transcript) { processSpeech(transcript); };
 
 /* ============================================================================
-   16. FECHAMENTO DE BLOCO, POP-UP DE SÍLABAS COMPLEXAS E TELEMETRIA
+   16. FECHAMENTO DE BLOCO, CRÉDITO DE FICHAS, MINIGAME IMEDIATO E TELEMETRIA
    ============================================================================ */
 function finishCycle() {
     session.currentTrialIdx = 0;
@@ -1958,30 +5254,38 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
     const targetDays = state.settings.consecDays || 3;
 
     if (isSuccess) {
-        iconBox.innerHTML = `<span class="material-icons" style="font-size:4.5rem; color:var(--success); background:var(--success-light); padding:18px; border-radius:50%;">emoji_events</span>`;
+        iconBox.innerHTML = `<div style="background:var(--success-light); padding:18px; border-radius:50%; display:inline-flex;">${UI_SVGS.trophy}</div>`;
         title.innerText = prog.status === 'mastered' ? "Habilidade Consolidada!" : "Meta Atingida!";
         desc.innerText = `Precisão Independente: ${accuracy}% | Latência Média: ${avgLatency}s`;
     } else {
-        iconBox.innerHTML = `<span class="material-icons" style="font-size:4.5rem; color:var(--warning); background:var(--warning-light); padding:18px; border-radius:50%;">fitness_center</span>`;
+        iconBox.innerHTML = `<div style="background:var(--warning-light); padding:18px; border-radius:50%; display:inline-flex;">${UI_SVGS.target}</div>`;
         title.innerText = "Continue Praticando";
         desc.innerText = `Precisão Independente: ${accuracy}% (Meta: ${state.settings.crit}%)`;
     }
+
+    const earnedNow = (isSuccess && prog.lastEarnedTokens > 0)
+        ? `<div style="margin-top:8px; color:#92400E; background:#FEF3C7; padding:6px 14px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; font-weight:900;">${UI_SVGS.coin} +${prog.lastEarnedTokens} Ficha(s) Ganha(s)!</div>`
+        : '';
 
     const nextVarInfo = (!state.settings.strictDay && isSuccess)
         ? ` | Próxima repetição: Variação ${prog.activeVar}`
         : (state.settings.strictDay && prog.pendingVar ? ` | Variação ${prog.pendingVar} agendada para amanhã` : '');
 
-    banner.innerHTML = prog.status === 'mastered'
-        ? `Critério de ${targetDays}/${targetDays} concluído!${nextVarInfo}`
-        : `Progresso: <strong>${prog.streak} de ${targetDays}</strong>${nextVarInfo}`;
+    banner.innerHTML = (prog.status === 'mastered'
+        ? `<div>Critério de ${targetDays}/${targetDays} concluído!${nextVarInfo}</div>`
+        : `<div>Progresso: <strong>${prog.streak} de ${targetDays}</strong>${nextVarInfo}</div>`) + earnedNow;
+
+    const immEnabled = isSuccess && state.tokens && state.tokens.rules && state.tokens.rules.enableImmediateMiniReward;
+    const immSec = (state.tokens && state.tokens.rules && state.tokens.rules.immediateMiniRewardDurationSec) || 20;
 
     actions.innerHTML = `
         <button type="button" class="btn-action btn-cancel" style="flex:1;" onclick="closeResult(); openGrid()">
-            <span class="material-icons">grid_view</span> Atividades
+            ${UI_SVGS.grid} Atividades
         </button>
         <button type="button" class="btn-action" style="flex:1; background:var(--primary-dark);" onclick="closeResult(); repeatLesson()">
-            <span class="material-icons">replay</span> Jogar Novamente
+            ${UI_SVGS.replay} Jogar Novamente
         </button>
+        ${immEnabled ? `<button type="button" class="btn-action" style="width:100%; background:var(--success);" onclick="closeResult(); openGrid(); redeemArcadeGame('baloes', true, ${immSec})">Abrir Minigame de Reforço (${immSec}s)</button>` : ''}
     `;
     document.getElementById('modal-result').style.display = 'flex';
 
@@ -2008,6 +5312,8 @@ function closeResult() {
 function repeatLesson() {
     if (String(session.phase).startsWith('FA_')) {
         startPhonologicalModelingModule(session.phase);
+    } else if (String(session.phase).startsWith('CUST_')) {
+        startCustomStudioModule(session.phase);
     } else if (session.eidosMod) {
         startEidosModule(session.phase);
     } else {
@@ -2097,7 +5403,7 @@ function drawProgressChart() {
         ctx.lineTo(w - padR, y);
         ctx.stroke();
         ctx.fillStyle = '#64748B';
-        ctx.font = 'bold 11px Inter';
+        ctx.font = 'bold 11px Inter, sans-serif';
         ctx.fillText(`${val}%`, 6, y + 4);
     });
 
@@ -2352,7 +5658,6 @@ function saveSettings() {
         }
     }
 
-    // Regra Crítica: O Timer de Sessão NUNCA pode funcionar sem senha de Analista!
     if (isTimerEnabled && !analystPin) {
         document.getElementById('set-sec-enable').checked = true;
         togglePasswordField();
@@ -2410,7 +5715,6 @@ function saveSettings() {
         min: newTimerMin
     };
 
-    // Se o usuário ativou o timer, ou editou os minutos com ele rolando, ou salvou após expirado: recalcula imediatamente!
     if (!isTimerEnabled) {
         state.session.expired = false;
         state.session.endTime = null;
@@ -2433,7 +5737,9 @@ function saveSettings() {
 
 function openReview(phaseId) {
     const pool = getPhasePool(phaseId);
-    const mod = EIDOS_MODULES.find(m => m.id === phaseId) || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
+    const mod = EIDOS_MODULES.find(m => m.id === phaseId)
+        || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId)
+        || (state.customModules || []).find(m => m.id === phaseId);
     document.getElementById('review-title').innerText = mod ? `Revisão: ${mod.title}` : `Revisão: ${phaseId}`;
     const grid = document.getElementById('review-grid');
     grid.innerHTML = '';
@@ -2467,6 +5773,7 @@ function openModulesManager() {
     container.innerHTML = '';
     const allItems = [
         ...EIDOS_MODULES.map(m => ({ id: m.id, label: `${m.code} - ${m.title} (${m.level})` })),
+        ...(state.customModules || []).map(cm => ({ id: cm.id, label: `Personalizado: ${cm.title}` })),
         ...PHONOLOGICAL_ALPHABET_MODULES.map(pm => ({ id: pm.id, label: `Alfabeto Fonológico: ${pm.title}` })),
         ...syllabaryOrder.map(c => ({ id: c, label: `Silabário: ${c}` })),
         ...extraModules.map(e => ({ id: e, label: `Extra: ${e}` }))
@@ -2607,18 +5914,24 @@ function resetApp() {
     hardResetAppCache();
 }
 
-function injectCVColorControlsIntoTaskModal() {
-    const topoPane = document.getElementById('task-tab-content-topo');
-    if (!topoPane || document.getElementById('task-cfg-color-cv')) return;
-}
-
 window.handleAndroidBack = function() {
+    if (document.getElementById('modal-reward-arcade') && document.getElementById('modal-reward-arcade').style.display === 'flex') {
+        closeArcadeSandbox();
+        return;
+    }
     let modalOpen = false;
     document.querySelectorAll('.modal-overlay').forEach(m => { if (m.style.display === 'flex') modalOpen = true; });
     if (modalOpen) { closeModals(); return; }
     if (document.getElementById('screen-game').classList.contains('active')) { requestAbortGame(); return; }
     if (document.getElementById('screen-home').classList.contains('active')) { handleGridBackNavigation(); return; }
-    if (document.getElementById('screen-dashboard').classList.contains('active') || document.getElementById('screen-settings').classList.contains('active')) { goSplash(); return; }
+    if (
+        document.getElementById('screen-dashboard').classList.contains('active') ||
+        document.getElementById('screen-settings').classList.contains('active') ||
+        (document.getElementById('screen-complements') && document.getElementById('screen-complements').classList.contains('active'))
+    ) {
+        goSplash();
+        return;
+    }
     if (document.getElementById('screen-splash').classList.contains('active')) {
         const gk = document.getElementById('screen-gatekeeper');
         if (gk) { openGatekeeper(); return; }
@@ -2629,7 +5942,7 @@ window.handleAndroidBack = function() {
 window.onload = async function() {
     setupBackdropClosing();
     await loadAllCustomImagesIntoCache();
-    injectCVColorControlsIntoTaskModal();
+    await loadArcadeManifest();
     applyTheme();
     if (state.settings.timer && state.settings.timer.enabled && !state.session.expired && state.session.endTime) {
         if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
@@ -2643,2424 +5956,3 @@ window.onload = async function() {
         goSplash();
     }
 };
-
-/* ============================================================================
-   5.0 AUXILIARES DE ÁUDIO FONÊMICO, BOCAS E BANCO DE IMAGENS (INDEXEDDB + WEBP)
-   ============================================================================ */
-function getPhonemeAudioPath(letter, varIdx = '1') {
-    const k = String(letter || '').toUpperCase().trim();
-    const entry = (typeof FONEMAS_AUDIO_MAP !== 'undefined') ? FONEMAS_AUDIO_MAP[k] : null;
-    if (!entry) return `assets/audio/fonemas/c-${k.toLowerCase()}-${varIdx}.ogg`;
-    if (typeof entry === 'string') return `assets/audio/fonemas/${entry}`;
-    const file = entry[String(varIdx)] || entry['1'] || Object.values(entry)[0];
-    return `assets/audio/fonemas/${file}`;
-}
-
-function getMouthImagePath(letter, varIdx = '1') {
-    const k = String(letter || '').toLowerCase().trim();
-    return `assets/img/b-${k}-${varIdx}.webp`;
-}
-
-let activePhonemeAudioObj = null;
-let phonemeDoublePlayTimer = null;
-
-function playPhonemeAudioFile(letter, varIdx = '1', playTwice = false) {
-    if (phonemeDoublePlayTimer) { clearTimeout(phonemeDoublePlayTimer); phonemeDoublePlayTimer = null; }
-    if (activePhonemeAudioObj) {
-        try { activePhonemeAudioObj.pause(); activePhonemeAudioObj.currentTime = 0; } catch (e) {}
-    }
-
-    const src = getPhonemeAudioPath(letter, varIdx);
-    const playOnce = (onFinishCallback) => {
-        try {
-            const aud = new Audio(src);
-            activePhonemeAudioObj = aud;
-            aud.onended = () => {
-                if (typeof onFinishCallback === 'function') onFinishCallback();
-            };
-            aud.onerror = () => {
-                speakTTS(getPhoneticAudioModel(letter));
-                if (typeof onFinishCallback === 'function') setTimeout(onFinishCallback, 400);
-            };
-            const playPromise = aud.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    speakTTS(getPhoneticAudioModel(letter));
-                    if (typeof onFinishCallback === 'function') setTimeout(onFinishCallback, 400);
-                });
-            }
-        } catch (err) {
-            speakTTS(getPhoneticAudioModel(letter));
-            if (typeof onFinishCallback === 'function') setTimeout(onFinishCallback, 400);
-        }
-    };
-
-    if (playTwice) {
-        playOnce(() => {
-            phonemeDoublePlayTimer = setTimeout(() => {
-                playOnce(null);
-            }, 600);
-        });
-    } else {
-        playOnce(null);
-    }
-}
-
-/* BANCO DE IMAGENS PARTICULAR (INDEXEDDB + COMPRESSÃO WEBP 100%, 50%, 25%) */
-const MEDIA_DB_NAME = 'AlfaMTS_MediaDB';
-const MEDIA_STORE_NAME = 'custom_images';
-let mediaDBInstance = null;
-let customImagesCache = {}; // { id: { id, name, dataUrl, width, height, sizeKB } }
-
-function openMediaIndexedDB() {
-    return new Promise((resolve, reject) => {
-        if (mediaDBInstance) return resolve(mediaDBInstance);
-        if (!window.indexedDB) return resolve(null);
-        const req = indexedDB.open(MEDIA_DB_NAME, 1);
-        req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains(MEDIA_STORE_NAME)) {
-                db.createObjectStore(MEDIA_STORE_NAME, { keyPath: 'id' });
-            }
-        };
-        req.onsuccess = (e) => {
-            mediaDBInstance = e.target.result;
-            resolve(mediaDBInstance);
-        };
-        req.onerror = () => resolve(null);
-    });
-}
-
-async function loadAllCustomImagesIntoCache() {
-    const db = await openMediaIndexedDB();
-    if (!db) return;
-    return new Promise((resolve) => {
-        try {
-            const tx = db.transaction(MEDIA_STORE_NAME, 'readonly');
-            const store = tx.objectStore(MEDIA_STORE_NAME);
-            const req = store.getAll();
-            req.onsuccess = () => {
-                customImagesCache = {};
-                (req.result || []).forEach(item => {
-                    customImagesCache[item.id] = item;
-                });
-                resolve();
-            };
-            req.onerror = () => resolve();
-        } catch (e) {
-            resolve();
-        }
-    });
-}
-
-async function saveCustomImageToIndexedDB(record) {
-    const db = await openMediaIndexedDB();
-    customImagesCache[record.id] = record;
-    if (!db) return record;
-    return new Promise((resolve) => {
-        try {
-            const tx = db.transaction(MEDIA_STORE_NAME, 'readwrite');
-            tx.objectStore(MEDIA_STORE_NAME).put(record);
-            tx.oncomplete = () => resolve(record);
-            tx.onerror = () => resolve(record);
-        } catch (e) {
-            resolve(record);
-        }
-    });
-}
-
-async function deleteCustomImageFromIndexedDB(imgId) {
-    delete customImagesCache[imgId];
-    const db = await openMediaIndexedDB();
-    if (!db) return;
-    return new Promise((resolve) => {
-        try {
-            const tx = db.transaction(MEDIA_STORE_NAME, 'readwrite');
-            tx.objectStore(MEDIA_STORE_NAME).delete(imgId);
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => resolve();
-        } catch (e) {
-            resolve();
-        }
-    });
-}
-
-function compressAndConvertImageToWebP(file, scaleFactor = 0.5, quality = 0.82) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const img = new Image();
-            img.onload = () => {
-                let targetW = Math.max(48, Math.round(img.width * scaleFactor));
-                let targetH = Math.max(48, Math.round(img.height * scaleFactor));
-                const maxDim = 640;
-                if (targetW > maxDim || targetH > maxDim) {
-                    if (targetW > targetH) {
-                        targetH = Math.round((targetH * maxDim) / targetW);
-                        targetW = maxDim;
-                    } else {
-                        targetW = Math.round((targetW * maxDim) / targetH);
-                        targetH = maxDim;
-                    }
-                }
-                const canvas = document.createElement('canvas');
-                canvas.width = targetW;
-                canvas.height = targetH;
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, targetW, targetH);
-                ctx.drawImage(img, 0, 0, targetW, targetH);
-                const dataUrl = canvas.toDataURL('image/webp', quality);
-                const sizeKB = Math.round((dataUrl.length * 3) / 4 / 1024);
-                const cleanName = file.name.replace(/\.[^/.]+$/, '').toUpperCase().trim();
-                resolve({
-                    id: 'img_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
-                    name: cleanName,
-                    dataUrl,
-                    width: targetW,
-                    height: targetH,
-                    sizeKB
-                });
-            };
-            img.onerror = () => reject(new Error('Falha ao abrir imagem'));
-            img.src = ev.target.result;
-        };
-        reader.onerror = () => reject(new Error('Falha ao ler arquivo'));
-        reader.readAsDataURL(file);
-    });
-}
-
-function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
-    const cleanKey = String(wordKey || '').trim().toUpperCase();
-    const customMedia = (state && state.customWordMedia && state.customWordMedia[cleanKey]) ? state.customWordMedia[cleanKey] : null;
-
-    if (customMedia) {
-        if (customMedia.type === 'IDB' && customImagesCache[customMedia.val]) {
-            const src = customImagesCache[customMedia.val].dataUrl;
-            const px = Math.round(sizeRem * 22);
-            return `<img src="${src}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
-        }
-        if (customMedia.type === 'EMOJI' && customMedia.val) {
-            return `<span style="font-size:${sizeRem}rem; line-height:1;">${customMedia.val}</span>`;
-        }
-    }
-
-    // Procura também pelo nome da imagem no banco IndexedDB se coincidir com a palavra
-    const matchedByName = Object.values(customImagesCache).find(item => item.name === cleanKey);
-    if (matchedByName) {
-        const px = Math.round(sizeRem * 22);
-        return `<img src="${matchedByName.dataUrl}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
-    }
-
-    const wObj = (typeof WORD_BANK !== 'undefined') ? WORD_BANK[cleanKey] : null;
-    if (wObj && wObj.img) {
-        const px = Math.round(sizeRem * 22);
-        return `<img src="${wObj.img}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
-    }
-    if (wObj && wObj.icon) {
-        return `<span style="font-size:${sizeRem}rem; line-height:1;">${wObj.icon}</span>`;
-    }
-    return `<svg width="${Math.round(sizeRem * 16)}" height="${Math.round(sizeRem * 16)}" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
-}
-
-function hasValidVisualRepresentation(wordKey) {
-    const cleanKey = String(wordKey || '').trim().toUpperCase();
-    if (state && state.customWordMedia && state.customWordMedia[cleanKey]) return true;
-    if (Object.values(customImagesCache).some(item => item.name === cleanKey)) return true;
-    if (typeof WORD_BANK !== 'undefined' && WORD_BANK[cleanKey] && (WORD_BANK[cleanKey].icon || WORD_BANK[cleanKey].img)) return true;
-    return false;
-}
-
-/* ============================================================================
-   5. ESTADO GLOBAL MULTI-TENANT (POR ALUNO), PERFIS E DESBLOQUEIO
-   ============================================================================ */
-let activeRole = 'ANALYST'; // 'ANALYST' | 'APPLICATOR'
-
-function createFreshStudentState(firstName = 'ALUNO') {
-    const cleanFirst = String(firstName || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
-    const unlockedInit = ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'R_N1_VC'];
-    if (typeof EIDOS_MODULES !== 'undefined') {
-        EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
-            if (!unlockedInit.includes(m.id)) unlockedInit.push(m.id);
-        });
-    }
-    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
-        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-            if (!unlockedInit.includes(pm.id)) unlockedInit.push(pm.id);
-        });
-    }
-    return {
-        setupDone: true,
-        student: cleanFirst,
-        manualProgressionOverride: false,
-        unlocked: unlockedInit,
-        moduleProgress: {},
-        customCurriculum: {},
-        customWordMedia: {},
-        taskSettings: {},
-        minimalPairSwaps: { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 },
-        settings: {
-            crit: 90,
-            consecDays: 3,
-            strictDay: false,
-            errorless: true,
-            topoVar: false,
-            topoMode: 'AUTO',
-            opts: 3,
-            sylComplex: { ccv: false, cvcL: false, cvcS: false, cvcM: false },
-            theme: 'cyan',
-            latency: 400,
-            security: { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false },
-            timer: { enabled: false, min: 30 },
-            stages: { c1: true, c2: true, c3: true, c4: true },
-            useMic: true
-        },
-        customWords: 'BOLA, GATO, BOLO, SAPATO, FACA, VACA',
-        log: [],
-        session: { expired: false, endTime: null, configuredMin: 30 },
-        reviewHighlights: {}
-    };
-}
-
-let tenantsIndex = JSON.parse(localStorage.getItem('alfamts_tenants_index')) || null;
-
-function initTenantsAndActiveStudent() {
-    const legacyRaw = localStorage.getItem('eidos_mts_state');
-    if (!tenantsIndex || !Array.isArray(tenantsIndex.students) || tenantsIndex.students.length === 0) {
-        let initialState = null;
-        if (legacyRaw) {
-            try { initialState = JSON.parse(legacyRaw); } catch (e) {}
-        }
-        if (!initialState) initialState = createFreshStudentState('MIGUEL');
-        const firstName = String(initialState.student || 'MIGUEL').trim().split(/\s+/)[0].toUpperCase() || 'MIGUEL';
-        initialState.student = firstName;
-        const firstId = 'stu_' + Date.now();
-        tenantsIndex = {
-            activeStudentId: firstId,
-            analystPin: (initialState.settings && initialState.settings.security && initialState.settings.security.pin) ? initialState.settings.security.pin : '',
-            applicatorPin: '',
-            lockExit: !!(initialState.settings && initialState.settings.security && initialState.settings.security.lockExit),
-            students: [{ id: firstId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') }]
-        };
-        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
-        localStorage.setItem('alfamts_student_' + firstId, JSON.stringify(initialState));
-    }
-    const activeId = tenantsIndex.activeStudentId || tenantsIndex.students[0].id;
-    tenantsIndex.activeStudentId = activeId;
-    const stuRaw = localStorage.getItem('alfamts_student_' + activeId);
-    let loaded = null;
-    if (stuRaw) {
-        try { loaded = JSON.parse(stuRaw); } catch (e) {}
-    }
-    if (!loaded) {
-        const meta = tenantsIndex.students.find(s => s.id === activeId) || { firstName: 'ALUNO' };
-        loaded = createFreshStudentState(meta.firstName);
-    }
-    normalizeStudentState(loaded);
-    return loaded;
-}
-
-function normalizeStudentState(st) {
-    if (!st.moduleProgress) st.moduleProgress = {};
-    if (!st.customCurriculum) st.customCurriculum = {};
-    if (!st.customWordMedia) st.customWordMedia = {};
-    if (!st.taskSettings) st.taskSettings = {};
-    if (!st.minimalPairSwaps) st.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
-    if (!st.settings) st.settings = createFreshStudentState(st.student).settings;
-    if (!st.settings.consecDays) st.settings.consecDays = 3;
-    if (!st.settings.topoMode) st.settings.topoMode = 'AUTO';
-    if (!st.settings.sylComplex) st.settings.sylComplex = { ccv: false, cvcL: false, cvcS: false, cvcM: false };
-    if (!st.settings.security) st.settings.security = { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false };
-    if (!st.session) st.session = { expired: false, endTime: null, configuredMin: st.settings.timer ? st.settings.timer.min : 30 };
-    if (!st.unlocked) st.unlocked = ['VOGAIS', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'R_N1_VC'];
-    if (!st.unlocked.includes('VOGAIS')) st.unlocked.push('VOGAIS');
-    if (typeof EIDOS_MODULES !== 'undefined') {
-        EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
-            if (!st.unlocked.includes(m.id)) st.unlocked.push(m.id);
-        });
-    }
-    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
-        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-            if (!st.unlocked.includes(pm.id)) st.unlocked.push(pm.id);
-        });
-    }
-    st.student = String(st.student || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
-}
-
-let state = initTenantsAndActiveStudent();
-
-let currentLevelTab = 'N1';
-let isReviewMode = false;
-let isConfigMode = false;
-let blockClicks = false;
-let timerInterval = null;
-let trialStartTime = 0;
-let fluencyTimerInterval = null;
-let responseTimeoutTimer = null;
-let responseCountdownInterval = null;
-let dmtsDelayTimer = null;
-let undoSnapshot = null;
-
-function shuffleArray(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
-
-function saveState() {
-    if (tenantsIndex && tenantsIndex.activeStudentId) {
-        const activeMeta = tenantsIndex.students.find(s => s.id === tenantsIndex.activeStudentId);
-        if (activeMeta && state.student) {
-            activeMeta.firstName = String(state.student).trim().split(/\s+/)[0].toUpperCase();
-        }
-        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
-        localStorage.setItem('alfamts_student_' + tenantsIndex.activeStudentId, JSON.stringify(state));
-    }
-    localStorage.setItem('eidos_mts_state', JSON.stringify(state));
-}
-
-function switchActiveStudent(studentId) {
-    if (!tenantsIndex) return;
-    const targetMeta = tenantsIndex.students.find(s => s.id === studentId);
-    if (!targetMeta) return;
-    saveState();
-    tenantsIndex.activeStudentId = studentId;
-    localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
-
-    const raw = localStorage.getItem('alfamts_student_' + studentId);
-    let loaded = null;
-    if (raw) {
-        try { loaded = JSON.parse(raw); } catch (e) {}
-    }
-    if (!loaded) loaded = createFreshStudentState(targetMeta.firstName);
-    normalizeStudentState(loaded);
-    state = loaded;
-    saveState();
-    applyTheme();
-    if (document.getElementById('screen-home').classList.contains('active')) renderGrid();
-    if (document.getElementById('screen-dashboard').classList.contains('active')) renderDashboard();
-}
-
-function createNewStudentTenant(rawName) {
-    const firstName = String(rawName || '').trim().split(/\s+/)[0].toUpperCase();
-    if (!firstName) return false;
-    const newId = 'stu_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-    const fresh = createFreshStudentState(firstName);
-    fresh.settings.theme = state.settings.theme || 'cyan';
-    tenantsIndex.students.push({ id: newId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') });
-    localStorage.setItem('alfamts_student_' + newId, JSON.stringify(fresh));
-    switchActiveStudent(newId);
-    return true;
-}
-
-function deleteStudentTenant(studentId) {
-    if (!tenantsIndex || tenantsIndex.students.length <= 1) {
-        customAlert("Ação Bloqueada", "É necessário manter pelo menos um aluno cadastrado.");
-        return;
-    }
-    tenantsIndex.students = tenantsIndex.students.filter(s => s.id !== studentId);
-    localStorage.removeItem('alfamts_student_' + studentId);
-    if (tenantsIndex.activeStudentId === studentId) {
-        switchActiveStudent(tenantsIndex.students[0].id);
-    } else {
-        localStorage.setItem('alfamts_tenants_index', JSON.stringify(tenantsIndex));
-    }
-    renderStudentSwitcherModalList();
-}
-
-function getTaskConfig(modId) {
-    if (!state.taskSettings[modId]) {
-        state.taskSettings[modId] = { font: 'GLOBAL', dmtsDelay: 0, responseTimeout: 0, colorCV: false, sylBox: false };
-    }
-    return state.taskSettings[modId];
-}
-
-function getModuleVariationsMap(modId) {
-    if (state.customCurriculum && state.customCurriculum[modId]) {
-        return state.customCurriculum[modId];
-    }
-    if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId]) {
-        return JSON.parse(JSON.stringify(DEFAULT_MODULE_VARIATIONS[modId].variations));
-    }
-    return null;
-}
-
-function getAvailableVariationKeys(modId) {
-    const map = getModuleVariationsMap(modId);
-    if (!map) return [1, 2];
-    const keys = Object.keys(map).map(Number).filter(k => Array.isArray(map[k]) && map[k].length > 0).sort((a, b) => a - b);
-    return keys.length > 0 ? keys : [1];
-}
-
-function getModuleProgress(modId) {
-    if (!state.moduleProgress[modId]) {
-        state.moduleProgress[modId] = {
-            streak: 0,
-            lastDate: '',
-            status: 'in_progress',
-            bestAcc: 0,
-            avgLatency: 0,
-            activeVar: 1,
-            pendingVar: null,
-            pendingVarDate: ''
-        };
-    }
-    if (!state.moduleProgress[modId].activeVar) state.moduleProgress[modId].activeVar = 1;
-    return state.moduleProgress[modId];
-}
-
-function getActiveVariationForModule(modId) {
-    const prog = getModuleProgress(modId);
-    const availKeys = getAvailableVariationKeys(modId);
-
-    if (state.settings.topoMode !== 'AUTO') {
-        const fixed = parseInt(state.settings.topoMode) || 1;
-        return availKeys.includes(fixed) ? fixed : availKeys[0];
-    }
-
-    const todayStr = new Date().toLocaleDateString('pt-BR');
-    if (prog.pendingVar && prog.pendingVarDate && prog.pendingVarDate !== todayStr) {
-        prog.activeVar = prog.pendingVar;
-        prog.pendingVar = null;
-        prog.pendingVarDate = '';
-        saveState();
-    }
-
-    if (!availKeys.includes(prog.activeVar)) {
-        prog.activeVar = availKeys[0];
-    }
-    return prog.activeVar;
-}
-
-function registerMasteryAttempt(modId, accuracy, avgLatencySec) {
-    const prog = getModuleProgress(modId);
-    const todayStr = new Date().toLocaleDateString('pt-BR');
-    const targetDays = state.settings.consecDays || 3;
-    const crit = state.settings.crit || 90;
-    const availKeys = getAvailableVariationKeys(modId);
-
-    if (accuracy > prog.bestAcc) prog.bestAcc = Math.round(accuracy);
-    if (avgLatencySec > 0) prog.avgLatency = avgLatencySec;
-
-    if (accuracy >= crit) {
-        const curIdx = availKeys.indexOf(prog.activeVar);
-        const nextVar = availKeys[(curIdx + 1) % availKeys.length];
-
-        if (state.settings.strictDay) {
-            if (prog.lastDate !== todayStr) {
-                prog.streak = (prog.streak || 0) + 1;
-                prog.lastDate = todayStr;
-            }
-            if (availKeys.length > 1) {
-                prog.pendingVar = nextVar;
-                prog.pendingVarDate = todayStr;
-            }
-        } else {
-            prog.streak = (prog.streak || 0) + 1;
-            prog.lastDate = todayStr;
-            if (availKeys.length > 1) {
-                prog.activeVar = nextVar;
-                prog.pendingVar = null;
-            }
-        }
-
-        if (prog.streak >= targetDays) {
-            prog.status = 'mastered';
-            if (!state.manualProgressionOverride) {
-                unlockNextInSequence(modId);
-            }
-        }
-    } else {
-        if (prog.status !== 'mastered') {
-            prog.streak = 0;
-        }
-    }
-    saveState();
-    return prog;
-}
-
-function unlockNextInSequence(modId) {
-    const modObj = EIDOS_MODULES.find(m => m.id === modId);
-    if (modObj && Array.isArray(modObj.unlockSyl)) {
-        modObj.unlockSyl.forEach(s => {
-            if (!state.unlocked.includes(s)) state.unlocked.push(s);
-        });
-    }
-    if (modObj && Array.isArray(modObj.alsoUnlock)) {
-        modObj.alsoUnlock.forEach(id => {
-            if (!state.unlocked.includes(id)) state.unlocked.push(id);
-        });
-    }
-
-    const eIdx = EIDOS_MODULES.findIndex(m => m.id === modId);
-    if (eIdx >= 0) {
-        let cursor = eIdx + 1;
-        while (cursor < EIDOS_MODULES.length) {
-            const candidate = EIDOS_MODULES[cursor];
-            if (!state.unlocked.includes(candidate.id)) state.unlocked.push(candidate.id);
-            if (candidate.alsoUnlock && Array.isArray(candidate.alsoUnlock)) {
-                candidate.alsoUnlock.forEach(sibId => {
-                    if (!state.unlocked.includes(sibId)) state.unlocked.push(sibId);
-                });
-            }
-            // Se o próximo item for um Card de Recompensa opcional (REWARD_PORTAL), desbloqueia ele E também o próximo jogo real da trilha!
-            if (candidate.engine === 'REWARD_PORTAL') {
-                if (Array.isArray(candidate.unlockTargets)) {
-                    candidate.unlockTargets.forEach(t => {
-                        if (!state.unlocked.includes(t)) state.unlocked.push(t);
-                    });
-                }
-                cursor++;
-            } else {
-                break;
-            }
-        }
-    }
-
-    const cIdx = curriculumOrder.indexOf(modId);
-    if (cIdx >= 0 && cIdx < curriculumOrder.length - 1) {
-        const nextClassic = curriculumOrder[cIdx + 1];
-        if (!state.unlocked.includes(nextClassic)) state.unlocked.push(nextClassic);
-    }
-}
-
-let session = {
-    phase: '',
-    eidosMod: null,
-    activeVar: 1,
-    pool: [],
-    trials: [],
-    activeCycles: [],
-    currentCycleIdx: 0,
-    currentCycle: 1,
-    isOnlyCycle3: false,
-    isPreReq: false,
-    currentTrialIdx: 0,
-    attemptsOnCurrent: 0,
-    currentRenderedOptions: null,
-    isRepeating: false,
-    latencies: [],
-    stats: {
-        c1: { indep: 0, dica: 0, erro: 0, total: 0 },
-        c2: { indep: 0, dica: 0, erro: 0, total: 0 },
-        c3: { indep: 0, dica: 0, erro: 0, total: 0 },
-        c4: { indep: 0, dica: 0, erro: 0, total: 0 },
-        c5: { indep: 0, dica: 0, erro: 0, total: 0 }
-    }
-};
-
-/* ============================================================================
-   6. ÁUDIO SINTÉTICO, TTS, TEMA E ATUALIZAÇÃO DOS SWITCHERS DE ALUNO
-   ============================================================================ */
-let audioCtx = null;
-
-function playSound(type) {
-    try {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        if (type === 'win') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.09);
-            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.28);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.28);
-        } else if (type === 'click') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(320, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.08);
-        }
-    } catch (e) {}
-}
-
-function speakTTS(text) {
-    if (window.AppInventor) {
-        window.AppInventor.setWebViewString("FALAR:" + text);
-    } else {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(String(text).toLowerCase());
-        utter.lang = 'pt-BR';
-        utter.rate = 0.85;
-        window.speechSynthesis.speak(utter);
-    }
-}
-
-function getActiveFirstName() {
-    const raw = state.student || 'ALUNO';
-    return String(raw).trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
-}
-
-function applyTheme() {
-    document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan');
-    const first = getActiveFirstName();
-    document.querySelectorAll('.student-first-name-label').forEach(el => {
-        el.innerText = first;
-    });
-    const legacyNameEl = document.getElementById('splash-student-name');
-    if (legacyNameEl) legacyNameEl.innerText = first;
-}
-
-/* ============================================================================
-   7. SPLASH SCREEN OFICIAL, GATEKEEPER, NAVEGAÇÃO, TECLADO E TIMER DE SESSÃO
-   ============================================================================ */
-let authCallback = null;
-let expectedAuthPin = '';
-let alertCallback = null;
-let backdropMouseDownTarget = null;
-
-function dismissSplashScreen() {
-    const splash = document.getElementById('splash-screen');
-    if (splash && !splash.classList.contains('fade-out')) {
-        splash.classList.add('fade-out');
-        setTimeout(() => splash.remove(), 480);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(dismissSplashScreen, 900);
-});
-setTimeout(dismissSplashScreen, 3000);
-
-// Navegação na trilha via setas do teclado (PC ou teclado físico conectado)
-document.addEventListener('keydown', (e) => {
-    const homeActive = document.getElementById('screen-home') && document.getElementById('screen-home').classList.contains('active');
-    if (!homeActive) return;
-    let modalOpen = false;
-    document.querySelectorAll('.modal-overlay').forEach(m => { if (m.style.display === 'flex') modalOpen = true; });
-    if (modalOpen) return;
-    if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-
-    if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        stepCarouselLevel(1);
-    } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        stepCarouselLevel(-1);
-    }
-});
-
-function clearAllTrialTimers() {
-    if (fluencyTimerInterval) { clearInterval(fluencyTimerInterval); fluencyTimerInterval = null; }
-    if (responseTimeoutTimer) { clearTimeout(responseTimeoutTimer); responseTimeoutTimer = null; }
-    if (responseCountdownInterval) { clearInterval(responseCountdownInterval); responseCountdownInterval = null; }
-    if (dmtsDelayTimer) { clearTimeout(dmtsDelayTimer); dmtsDelayTimer = null; }
-    if (phonemeDoublePlayTimer) { clearTimeout(phonemeDoublePlayTimer); phonemeDoublePlayTimer = null; }
-    if (activePhonemeAudioObj) {
-        try { activePhonemeAudioObj.pause(); activePhonemeAudioObj.currentTime = 0; } catch (e) {}
-        activePhonemeAudioObj = null;
-    }
-    const latPill = document.getElementById('latency-countdown-pill');
-    if (latPill) latPill.style.display = 'none';
-}
-
-function setupBackdropClosing() {
-    document.querySelectorAll('.modal-overlay[data-backdrop-close="true"]').forEach(overlay => {
-        overlay.addEventListener('mousedown', (e) => {
-            backdropMouseDownTarget = e.target;
-        });
-        overlay.addEventListener('mouseup', (e) => {
-            if (e.target === overlay && backdropMouseDownTarget === overlay) {
-                closeModals();
-            }
-            backdropMouseDownTarget = null;
-        });
-    });
-}
-
-function hideAllScreens() {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-}
-
-function closeModals() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-    closeAuth();
-}
-
-function openGatekeeper() {
-    clearAllTrialTimers();
-    hideAllScreens();
-    applyTheme();
-    const gk = document.getElementById('screen-gatekeeper');
-    if (gk) {
-        gk.classList.add('active');
-    } else {
-        goSplash();
-    }
-}
-
-function selectRoleProfile(role) {
-    playSound('click');
-    const analystPin = (tenantsIndex && tenantsIndex.analystPin) ? String(tenantsIndex.analystPin).trim() : '';
-    const applicatorPin = (tenantsIndex && tenantsIndex.applicatorPin) ? String(tenantsIndex.applicatorPin).trim() : '';
-
-    if (role === 'ANALYST') {
-        const proceedAnalyst = () => {
-            activeRole = 'ANALYST';
-            syncRoleUIElements();
-            goSplash();
-        };
-        if (analystPin.length > 0) {
-            promptPinWithExpected(analystPin, proceedAnalyst);
-        } else {
-            proceedAnalyst();
-        }
-    } else {
-        const proceedApplicator = () => {
-            activeRole = 'APPLICATOR';
-            isConfigMode = false;
-            syncRoleUIElements();
-            openGrid();
-        };
-        if (applicatorPin.length > 0) {
-            promptPinWithExpected(applicatorPin, proceedApplicator);
-        } else {
-            proceedApplicator();
-        }
-    }
-}
-
-function syncRoleUIElements() {
-    const isAnalyst = (activeRole === 'ANALYST');
-    const cfgBtn = document.getElementById('btn-config-mode');
-    const mgrBtn = document.getElementById('btn-modules-mgr');
-    const homeSwitcher = document.getElementById('analyst-home-switcher');
-    const gridSwitcher = document.getElementById('applicator-grid-switcher');
-
-    if (cfgBtn) cfgBtn.style.display = isAnalyst ? 'inline-flex' : 'none';
-    if (mgrBtn) mgrBtn.style.display = isAnalyst ? 'inline-flex' : 'none';
-    if (homeSwitcher) homeSwitcher.style.display = isAnalyst ? 'inline-flex' : 'none';
-    if (gridSwitcher) gridSwitcher.style.display = isAnalyst ? 'none' : 'inline-flex';
-}
-
-function handleGridBackNavigation() {
-    playSound('click');
-    if (activeRole === 'APPLICATOR') {
-        openGatekeeper();
-    } else {
-        goSplash();
-    }
-}
-
-function goSplash() {
-    clearAllTrialTimers();
-    if (activeRole === 'APPLICATOR') {
-        openGrid();
-        return;
-    }
-    hideAllScreens();
-    applyTheme();
-    syncRoleUIElements();
-    updateLobbyButton();
-    document.getElementById('screen-splash').classList.add('active');
-}
-
-function openGrid() {
-    if (state.settings.timer.enabled && state.session.expired) {
-        updateLobbyButton();
-        customAlert("Tempo de Sessão Esgotado", "Desbloqueie a sessão na tela inicial informando o PIN do Analista.");
-        return;
-    }
-    hideAllScreens();
-    applyTheme();
-    syncRoleUIElements();
-    document.getElementById('screen-home').classList.add('active');
-    renderGrid();
-}
-
-function openDashboard() {
-    hideAllScreens();
-    document.getElementById('screen-dashboard').classList.add('active');
-    renderDashboard();
-}
-
-function openGame() {
-    hideAllScreens();
-    document.getElementById('screen-game').classList.add('active');
-}
-
-function getEffectiveMasterPin() {
-    if (tenantsIndex && tenantsIndex.analystPin && String(tenantsIndex.analystPin).trim().length > 0) {
-        return String(tenantsIndex.analystPin).trim();
-    }
-    if (state.settings.security && state.settings.security.pin && String(state.settings.security.pin).trim().length > 0) {
-        return String(state.settings.security.pin).trim();
-    }
-    return '';
-}
-
-function promptPinWithExpected(pinStr, callback) {
-    expectedAuthPin = pinStr;
-    authCallback = callback;
-    const input = document.getElementById('auth-pin-input');
-    input.value = '';
-    document.getElementById('auth-error').innerText = '';
-    document.getElementById('modal-auth').style.display = 'flex';
-    setTimeout(() => input.focus(), 100);
-}
-
-function requireAuth(callback) {
-    const analystPin = getEffectiveMasterPin();
-    if (!analystPin) {
-        callback();
-    } else {
-        promptPinWithExpected(analystPin, callback);
-    }
-}
-
-function closeAuth() {
-    document.getElementById('modal-auth').style.display = 'none';
-    authCallback = null;
-    expectedAuthPin = '';
-}
-
-function confirmAuth() {
-    const input = document.getElementById('auth-pin-input');
-    const pinToMatch = expectedAuthPin || getEffectiveMasterPin();
-    if (input.value === pinToMatch) {
-        playSound('win');
-        const fn = authCallback;
-        closeAuth();
-        if (typeof fn === 'function') fn();
-    } else {
-        document.getElementById('auth-error').innerText = 'PIN Incorreto.';
-        input.value = '';
-        playSound('click');
-        const box = document.getElementById('auth-content');
-        box.classList.add('shake');
-        setTimeout(() => box.classList.remove('shake'), 400);
-    }
-}
-
-function requestAbortGame() {
-    const lockExit = (tenantsIndex && tenantsIndex.lockExit) || (state.settings.security.enabled && state.settings.security.lockExit);
-    const activePin = getEffectiveMasterPin() || (tenantsIndex && tenantsIndex.applicatorPin);
-    if (lockExit && activePin) {
-        promptPinWithExpected(activePin, abortGame);
-    } else {
-        abortGame();
-    }
-}
-
-function abortGame() {
-    if (isListening) stopMicrophone();
-    clearAllTrialTimers();
-    openGrid();
-}
-
-function checkTimer() {
-    const clock = document.getElementById('header-timer-icon');
-    if (!state.settings.timer.enabled) {
-        if (clock) clock.style.display = 'none';
-        return;
-    }
-    if (state.session.expired) {
-        if (clock) clock.style.display = 'none';
-        return;
-    }
-    if (state.session.endTime) {
-        const remaining = state.session.endTime - Date.now();
-        if (remaining <= 0) {
-            state.session.expired = true;
-            state.session.endTime = null;
-            saveState();
-            if (clock) clock.style.display = 'none';
-            triggerTimeUp();
-        } else {
-            if (clock) clock.style.display = 'flex';
-            const mins = Math.floor(remaining / 60000);
-            const secs = Math.floor((remaining % 60000) / 1000);
-            const txt = document.getElementById('header-timer-text');
-            if (txt) txt.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        }
-    }
-}
-
-function triggerTimeUp() {
-    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-    clearAllTrialTimers();
-    updateLobbyButton();
-    document.getElementById('modal-timesup').style.display = 'flex';
-}
-
-function updateLobbyButton() {
-    const btn = document.getElementById('btn-start-game');
-    const clock = document.getElementById('header-timer-icon');
-    if (!btn) return;
-    if (state.settings.timer.enabled && state.session.expired) {
-        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Sessão Finalizada (PIN)`;
-        btn.onclick = () => {
-            requireAuth(() => {
-                state.session.expired = false;
-                state.session.endTime = Date.now() + ((state.settings.timer.min || 30) * 60000);
-                state.session.configuredMin = state.settings.timer.min || 30;
-                saveState();
-                if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
-                checkTimer();
-                updateLobbyButton();
-                customAlert("Sessão Liberada", `O cronômetro de ${state.settings.timer.min} minutos foi reiniciado.`);
-            });
-        };
-        if (clock) clock.style.display = 'none';
-    } else {
-        btn.innerHTML = `<div class="icon-wrapper"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>Iniciar Sessão`;
-        btn.onclick = openGrid;
-        if (clock) {
-            clock.style.display = (state.settings.timer.enabled && state.session.endTime && !state.session.expired) ? 'flex' : 'none';
-        }
-    }
-}
-
-/* MODAL SWITCHER MULTI-TENANT DE ALUNOS */
-function openStudentSwitcherModal() {
-    playSound('click');
-    renderStudentSwitcherModalList();
-    const inp = document.getElementById('new-tenant-name-input');
-    if (inp) inp.value = '';
-    const modal = document.getElementById('modal-student-switcher');
-    if (modal) modal.style.display = 'flex';
-}
-
-function renderStudentSwitcherModalList() {
-    const listEl = document.getElementById('tenant-students-list');
-    if (!listEl || !tenantsIndex) return;
-    listEl.innerHTML = '';
-
-    tenantsIndex.students.forEach(stu => {
-        const isCurrent = (stu.id === tenantsIndex.activeStudentId);
-        const row = document.createElement('div');
-        row.className = `tenant-list-item ${isCurrent ? 'active' : ''}`;
-        row.onclick = () => {
-            playSound('click');
-            switchActiveStudent(stu.id);
-            closeModals();
-        };
-
-        const left = document.createElement('div');
-        left.style.display = 'flex';
-        left.style.alignItems = 'center';
-        left.style.gap = '10px';
-        left.innerHTML = `
-            <div style="width:32px; height:32px; border-radius:50%; background:#FFFFFF; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.85rem; color:var(--text);">
-                ${stu.firstName.charAt(0)}
-            </div>
-            <div style="text-align:left;">
-                <strong style="display:block; font-size:0.98rem; color:var(--text);">${stu.firstName}</strong>
-                <span style="font-size:0.74rem; color:var(--text-light); font-weight:600;">Instância Isolada</span>
-            </div>
-        `;
-
-        const right = document.createElement('div');
-        right.style.display = 'flex';
-        right.style.alignItems = 'center';
-        right.style.gap = '8px';
-
-        if (isCurrent) {
-            right.innerHTML += `<span class="meta-chip" style="background:var(--primary); color:#fff;">Ativo</span>`;
-        }
-        if (activeRole === 'ANALYST' && tenantsIndex.students.length > 1) {
-            const delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.className = 'btn-icon-del';
-            delBtn.title = 'Remover Aluno';
-            delBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
-            delBtn.onclick = (e) => {
-                e.stopPropagation();
-                playSound('click');
-                deleteStudentTenant(stu.id);
-            };
-            right.appendChild(delBtn);
-        }
-
-        row.appendChild(left);
-        row.appendChild(right);
-        listEl.appendChild(row);
-    });
-}
-
-function handleAddStudentFromModal() {
-    const inp = document.getElementById('new-tenant-name-input');
-    if (!inp || !inp.value.trim()) return;
-    if (createNewStudentTenant(inp.value.trim())) {
-        playSound('win');
-        inp.value = '';
-        closeModals();
-    }
-}
-
-function openTelemetryOptionsModal() {
-    playSound('click');
-    const modal = document.getElementById('modal-telemetry-options');
-    if (modal) modal.style.display = 'flex';
-}
-
-/* ============================================================================
-   8. CARROSSEL HORIZONTAL, CARDS DE RECOMPENSA (PORTAIS) E LONG-PRESS 700ms
-   ============================================================================ */
-const CAROUSEL_LEVELS = [
-    { key: 'N1', title: 'Nível 1' },
-    { key: 'N2', title: 'Nível 2' },
-    { key: 'N3', title: 'Nível 3' },
-    { key: 'N4', title: 'Nível 4' },
-    { key: 'N5', title: 'Nível 5' },
-    { key: 'FONOLOGICO', title: 'Alfabeto Fonológico' },
-    { key: 'SILABARIO', title: 'Silabário' },
-    { key: 'EXTRAS', title: 'Extras' }
-];
-
-let pushHoldTimer = null;
-let isPushModalOpen = false;
-let pointerDownCoords = { x: 0, y: 0 };
-
-function selectLevelTab(lvl, btnEl) {
-    playSound('click');
-    currentLevelTab = lvl;
-    const idx = CAROUSEL_LEVELS.findIndex(l => l.key === lvl);
-    if (idx >= 0) scrollToLevelIndex(idx);
-}
-
-function stepCarouselLevel(delta) {
-    playSound('click');
-    const curIdx = Math.max(0, CAROUSEL_LEVELS.findIndex(l => l.key === currentLevelTab));
-    const nextIdx = Math.min(CAROUSEL_LEVELS.length - 1, Math.max(0, curIdx + delta));
-    scrollToLevelIndex(nextIdx);
-}
-
-function toggleReviewMode() {
-    playSound('click');
-    isReviewMode = !isReviewMode;
-    if (isReviewMode && isConfigMode) {
-        isConfigMode = false;
-        const cfgBtn = document.getElementById('btn-config-mode');
-        if (cfgBtn) cfgBtn.classList.remove('review-active');
-    }
-    const btn = document.getElementById('btn-review-mode');
-    if (btn) btn.classList.toggle('review-active', isReviewMode);
-}
-
-function toggleConfigMode() {
-    if (activeRole !== 'ANALYST') return;
-    playSound('click');
-    isConfigMode = !isConfigMode;
-    if (isConfigMode && isReviewMode) {
-        isReviewMode = false;
-        const revBtn = document.getElementById('btn-review-mode');
-        if (revBtn) revBtn.classList.remove('review-active');
-    }
-    const btn = document.getElementById('btn-config-mode');
-    if (btn) btn.classList.toggle('review-active', isConfigMode);
-}
-
-function ensureHeaderConfigModeBtn() {
-    const rightActions = document.querySelector('.header-right-actions');
-    if (!rightActions || document.getElementById('btn-config-mode')) return;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'icon-circle-btn';
-    btn.id = 'btn-config-mode';
-    btn.title = 'Modo Configurar Tarefa';
-    btn.onclick = () => toggleConfigMode();
-    btn.innerHTML = `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
-    const revBtn = document.getElementById('btn-review-mode');
-    if (revBtn && revBtn.nextSibling) {
-        rightActions.insertBefore(btn, revBtn.nextSibling);
-    } else {
-        rightActions.appendChild(btn);
-    }
-}
-
-function renderDotsHTML(modId, hasVariations = false) {
-    if (String(modId).startsWith('FA_') || String(modId).startsWith('R_')) {
-        return '';
-    }
-    const prog = getModuleProgress(modId);
-    const target = state.settings.consecDays || 3;
-    const activeV = getActiveVariationForModule(modId);
-    const tCfg = getTaskConfig(modId);
-    let dots = '';
-    for (let i = 0; i < target; i++) {
-        const filled = (prog.status === 'mastered' || i < prog.streak) ? 'filled' : '';
-        dots += `<span class="day-dot ${filled}"></span>`;
-    }
-    const dmtsBadge = (tCfg.dmtsDelay > 0) ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">DMTS ${tCfg.dmtsDelay}s</span>` : '';
-    const varBadge = hasVariations ? `<span class="var-pill-tag">Var ${activeV}</span>` : '';
-    const statusText = prog.status === 'mastered'
-        ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
-        : `${Math.min(prog.streak, target)}/${target}`;
-
-    return `<div class="card-footer-mastery"><div class="days-dots">${dots}</div><span class="day-label">${dmtsBadge}${varBadge} ${statusText}</span></div>`;
-}
-
-function scrollToLevelIndex(idx) {
-    const viewport = document.getElementById('levels-carousel');
-    if (!viewport) return;
-    viewport.scrollTo({ left: idx * viewport.clientWidth, behavior: 'smooth' });
-}
-
-function onCarouselScroll() {
-    const viewport = document.getElementById('levels-carousel');
-    if (!viewport || viewport.clientWidth === 0) return;
-    if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
-
-    const pageIdx = Math.round(viewport.scrollLeft / viewport.clientWidth);
-    const lvlObj = CAROUSEL_LEVELS[pageIdx] || CAROUSEL_LEVELS[0];
-    currentLevelTab = lvlObj.key;
-
-    const titleEl = document.getElementById('carousel-level-title');
-    if (titleEl) titleEl.innerText = lvlObj.title;
-
-    document.querySelectorAll('#carousel-dots .page-dot').forEach((d, i) => {
-        d.classList.toggle('active', i === pageIdx);
-    });
-
-    const leftArrow = document.getElementById('carousel-arrow-left');
-    const rightArrow = document.getElementById('carousel-arrow-right');
-    if (leftArrow) leftArrow.style.opacity = pageIdx <= 0 ? '0.25' : '1';
-    if (rightArrow) rightArrow.style.opacity = pageIdx >= CAROUSEL_LEVELS.length - 1 ? '0.25' : '1';
-}
-
-function attachPushToViewEvents(cardEl, metaInfo) {
-    const clearHold = () => {
-        if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
-        if (isPushModalOpen) {
-            isPushModalOpen = false;
-            const modal = document.getElementById('modal-push-details');
-            if (modal) modal.style.display = 'none';
-        }
-    };
-
-    cardEl.addEventListener('pointerdown', (e) => {
-        if (isConfigMode || isReviewMode) return;
-        if (e.target.closest('button')) return;
-        pointerDownCoords = { x: e.clientX, y: e.clientY };
-        pushHoldTimer = setTimeout(() => {
-            isPushModalOpen = true;
-            playSound('click');
-            document.getElementById('push-det-code').innerText = metaInfo.codeBadge;
-            document.getElementById('push-det-title').innerText = metaInfo.title;
-            document.getElementById('push-det-desc').innerText = metaInfo.desc;
-            document.getElementById('push-det-method').innerText = metaInfo.methodText;
-            document.getElementById('modal-push-details').style.display = 'flex';
-        }, 700);
-    });
-
-    cardEl.addEventListener('pointermove', (e) => {
-        if (!pushHoldTimer) return;
-        const dist = Math.hypot(e.clientX - pointerDownCoords.x, e.clientY - pointerDownCoords.y);
-        if (dist > 6) {
-            clearTimeout(pushHoldTimer);
-            pushHoldTimer = null;
-        }
-    });
-
-    cardEl.addEventListener('touchmove', () => {
-        if (pushHoldTimer) {
-            clearTimeout(pushHoldTimer);
-            pushHoldTimer = null;
-        }
-    }, { passive: true });
-
-    cardEl.addEventListener('wheel', clearHold, { passive: true });
-    cardEl.addEventListener('pointerup', clearHold);
-    cardEl.addEventListener('pointercancel', clearHold);
-    cardEl.addEventListener('pointerleave', clearHold);
-}
-
-function getMethodExplanation(engine) {
-    if (engine === 'REWARD_PORTAL') return 'Card de Recompensa / Portal: desbloqueia atividades complementares ou guias especiais e leva diretamente para lá ao tocar.';
-    if (engine === 'PHON_MODEL') return 'Modelagem Fonológica em 2 Fases: Fase A (Exposição com imagem articulatória da boca + repetição dupla do fonema com 600ms) e Fase B (Sustentação motora livre via slider horizontal).';
-    if (engine === 'SYL_SLIDER') return 'Formação Silábica por Triplo Slider: deslize a Consoante, a Vogal e a Sílaba resultante no Ciclo 1, seguido de seleção auditiva (Ciclo 2) e leitura (Ciclo 3).';
-    if (engine === 'MULTIMTS') return 'Emparelhamento Multimodelo: exige parear simultaneamente múltiplos estímulos modelo e comparações, fortalecendo varredura visual e equivalência.';
-    if (engine === 'CRMTS') return 'Resposta Construída (CRMTS): montagem ativa de unidades menores com sondagem de leitura pura sem dicas visuais ou auditivas.';
-    if (engine === 'FLUENCY') return 'Treino de Fluência sob Velocidade: leitura oral ágil sob controle de tempo (< 3s) para automatização lexical.';
-    if (engine === 'DTT') return 'Tentativa Discreta (DTT): apresentação direta do estímulo com mediação imediata do aplicador.';
-    return 'Emparelhamento ao Modelo (MTS): discriminação condicional entre modelo e comparações com suporte a aprendizagem sem erro e Time Delay.';
-}
-
-function executeRewardPortalAction(modId) {
-    const mod = EIDOS_MODULES.find(m => m.id === modId);
-    if (!mod) return;
-    playSound('win');
-
-    if (Array.isArray(mod.unlockTargets)) {
-        mod.unlockTargets.forEach(t => {
-            if (!state.unlocked.includes(t)) state.unlocked.push(t);
-        });
-    }
-    if (mod.targetTab === 'SILABARIO') {
-        syllabaryOrder.slice(0, 6).forEach(s => {
-            if (!state.unlocked.includes(s)) state.unlocked.push(s);
-        });
-    }
-    if (mod.targetTab === 'FONOLOGICO' && typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
-        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-            if (!state.unlocked.includes(pm.id)) state.unlocked.push(pm.id);
-        });
-    }
-    const prog = getModuleProgress(mod.id);
-    prog.status = 'mastered';
-    saveState();
-
-    if (mod.targetTab) {
-        selectLevelTab(mod.targetTab);
-        setTimeout(() => {
-            if (mod.openModuleId) {
-                startEidosModule(mod.openModuleId);
-            }
-        }, 380);
-    }
-}
-
-function buildCleanCardElement(itemData) {
-    const isPhon = String(itemData.id).startsWith('FA_');
-    const isPortal = (itemData.engine === 'REWARD_PORTAL');
-    const card = document.createElement('div');
-    card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${(!isPhon && itemData.isMastered) ? 'mastered' : ''} ${isPortal ? 'reward-portal-card' : ''}`;
-
-    if (isPhon) {
-        card.style.minHeight = '92px';
-        card.style.justifyContent = 'center';
-    }
-
-    if (isPortal) {
-        const portalBtn = itemData.isUnlocked
-            ? `<button type="button" class="card-play-btn" style="background:var(--warning); color:#1E293B;" title="Abrir Portal" onclick="event.stopPropagation(); executeRewardPortalAction('${itemData.id}')">
-                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-               </button>`
-            : '';
-        card.innerHTML = `
-            <span class="code-tag" style="background:var(--warning-light); color:#92400E; width:fit-content;">RECOMPENSA • OPCIONAL</span>
-            <div class="clean-card-body">
-                <h3 class="clean-card-title">${itemData.title}</h3>
-                ${portalBtn}
-            </div>
-        `;
-        if (itemData.isUnlocked) {
-            card.onclick = () => executeRewardPortalAction(itemData.id);
-        }
-        attachPushToViewEvents(card, {
-            codeBadge: itemData.codeBadge,
-            title: itemData.title,
-            desc: itemData.desc,
-            methodText: itemData.methodText
-        });
-        return card;
-    }
-
-    const playBtnHTML = itemData.isUnlocked
-        ? `<button type="button" class="card-play-btn" title="Iniciar Atividade" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos})">
-               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-           </button>`
-        : '';
-
-    card.innerHTML = `
-        <div class="clean-card-body">
-            <h3 class="clean-card-title">${itemData.title}</h3>
-            ${playBtnHTML}
-        </div>
-        ${renderDotsHTML(itemData.id, itemData.hasVar)}
-    `;
-
-    if (itemData.isUnlocked) {
-        card.onclick = () => {
-            if (isConfigMode || isReviewMode) {
-                triggerCardPlay(itemData.id, itemData.isEidos);
-            }
-        };
-    }
-
-    attachPushToViewEvents(card, {
-        codeBadge: itemData.codeBadge,
-        title: itemData.title,
-        desc: itemData.desc,
-        methodText: itemData.methodText
-    });
-
-    return card;
-}
-
-function triggerCardPlay(id, isEidos) {
-    playSound('click');
-    if (isConfigMode && activeRole === 'ANALYST') {
-        requireAuth(() => openStimuliEditor(id));
-        return;
-    }
-    if (isReviewMode) {
-        openReview(id);
-        return;
-    }
-    if (String(id).startsWith('FA_')) {
-        startPhonologicalModelingModule(id);
-    } else if (isEidos || EIDOS_MODULES.some(m => m.id === id)) {
-        startEidosModule(id);
-    } else {
-        startLegacyGame(id);
-    }
-}
-
-function renderGrid() {
-    ensureHeaderConfigModeBtn();
-    syncRoleUIElements();
-    const track = document.getElementById('carousel-track');
-    const dotsBox = document.getElementById('carousel-dots');
-    if (!track || !dotsBox) return;
-
-    track.innerHTML = '';
-    dotsBox.innerHTML = '';
-
-    CAROUSEL_LEVELS.forEach((lvl, idx) => {
-        const page = document.createElement('div');
-        page.className = 'carousel-page';
-        page.addEventListener('scroll', () => {
-            if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
-        }, { passive: true });
-
-        if (['N1', 'N2', 'N3', 'N4', 'N5'].includes(lvl.key)) {
-            const modules = EIDOS_MODULES.filter(m => m.level === lvl.key);
-            modules.forEach(mod => {
-                const isUnlocked = state.unlocked.includes(mod.id);
-                const prog = getModuleProgress(mod.id);
-                const isEditable = !!(typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[mod.id] && DEFAULT_MODULE_VARIATIONS[mod.id].editable);
-                const hasVar = isEditable || ['E2_1', 'E2_2', 'E4_1'].includes(mod.id);
-
-                page.appendChild(buildCleanCardElement({
-                    id: mod.id,
-                    title: mod.title,
-                    desc: mod.desc,
-                    engine: mod.engine,
-                    codeBadge: `${mod.code} • ${mod.engine}`,
-                    methodText: getMethodExplanation(mod.engine),
-                    isUnlocked,
-                    isMastered: prog.status === 'mastered',
-                    canConfigure: mod.engine !== 'REWARD_PORTAL',
-                    hasVar,
-                    isEidos: true
-                }));
-            });
-        } else if (lvl.key === 'FONOLOGICO') {
-            PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-                const isUnlocked = state.unlocked.includes(pm.id);
-                page.appendChild(buildCleanCardElement({
-                    id: pm.id,
-                    title: pm.title,
-                    desc: pm.desc,
-                    engine: 'PHON_MODEL',
-                    codeBadge: `FONEMA • MODELAGEM A/B`,
-                    methodText: getMethodExplanation('PHON_MODEL'),
-                    isUnlocked,
-                    isMastered: false,
-                    canConfigure: true,
-                    hasVar: false,
-                    isEidos: false
-                }));
-            });
-        } else if (lvl.key === 'SILABARIO') {
-            syllabaryOrder.forEach(p => {
-                const isUnlocked = state.unlocked.includes(p);
-                const prog = getModuleProgress(p);
-                let displayDesc = `Família Silábica ${p}`;
-                if (p === 'VOGAIS') displayDesc = "Identificação e leitura das vogais A, E, I, O, U.";
-                else if (p === 'ENCONTROS') displayDesc = "Encontros vocálicos AI, EI, OI, UI, AU, OU, ÃO.";
-
-                page.appendChild(buildCleanCardElement({
-                    id: p,
-                    title: p,
-                    desc: displayDesc,
-                    engine: 'MTS',
-                    codeBadge: `SILABÁRIO • MTS`,
-                    methodText: getMethodExplanation('MTS'),
-                    isUnlocked,
-                    isMastered: prog.status === 'mastered',
-                    canConfigure: true,
-                    hasVar: false,
-                    isEidos: false
-                }));
-            });
-        } else if (lvl.key === 'EXTRAS') {
-            // 1. Módulos de Classificação e Categorização movidos para os Extras
-            const extraEidosMods = EIDOS_MODULES.filter(m => m.level === 'EXTRAS');
-            extraEidosMods.forEach(mod => {
-                const isUnlocked = state.unlocked.includes(mod.id);
-                const prog = getModuleProgress(mod.id);
-                const isEditable = !!(typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[mod.id] && DEFAULT_MODULE_VARIATIONS[mod.id].editable);
-
-                page.appendChild(buildCleanCardElement({
-                    id: mod.id,
-                    title: mod.title,
-                    desc: mod.desc,
-                    engine: mod.engine,
-                    codeBadge: `${mod.code} • ${mod.engine}`,
-                    methodText: getMethodExplanation(mod.engine),
-                    isUnlocked,
-                    isMastered: prog.status === 'mastered',
-                    canConfigure: true,
-                    hasVar: isEditable,
-                    isEidos: true
-                }));
-            });
-
-            // 2. Pseudopalavras e Palavras Livres
-            extraModules.forEach(p => {
-                const isUnlocked = state.unlocked.includes(p);
-                const prog = getModuleProgress(p);
-                const title = (p === 'PALAVRAS') ? 'PALAVRAS LIVRES' : p;
-                const desc = (p === 'PSEUDOPALAVRAS')
-                    ? 'Decodificação fonológica pura de palavras inventadas.'
-                    : 'Treino customizado com lista aberta de palavras.';
-
-                page.appendChild(buildCleanCardElement({
-                    id: p,
-                    title,
-                    desc,
-                    engine: 'MTS',
-                    codeBadge: `EXTRA • MTS`,
-                    methodText: getMethodExplanation('MTS'),
-                    isUnlocked,
-                    isMastered: prog.status === 'mastered',
-                    canConfigure: true,
-                    hasVar: false,
-                    isEidos: false
-                }));
-            });
-        }
-
-        track.appendChild(page);
-
-        const dot = document.createElement('span');
-        dot.className = `page-dot ${lvl.key === currentLevelTab ? 'active' : ''}`;
-        dot.onclick = () => scrollToLevelIndex(idx);
-        dotsBox.appendChild(dot);
-    });
-
-    const activeIdx = Math.max(0, CAROUSEL_LEVELS.findIndex(l => l.key === currentLevelTab));
-    setTimeout(() => {
-        const viewport = document.getElementById('levels-carousel');
-        if (viewport) viewport.scrollLeft = activeIdx * viewport.clientWidth;
-        onCarouselScroll();
-    }, 30);
-}
-
-/* ============================================================================
-   9. PAINEL DA TAREFA (4 ABAS + UPLOAD INDEXEDDB + SELETOR DE MÍDIA POR ITEM)
-   ============================================================================ */
-let editorSession = {
-    modId: null,
-    activeVarKey: 1,
-    hasEditableStimuli: false,
-    tempMap: {}
-};
-
-let activeMediaTargetWord = null;
-
-function switchTaskEditorTab(tabName) {
-    playSound('click');
-    ['STIM', 'TOPO', 'ABA', 'IMG'].forEach(t => {
-        const btn = document.getElementById('tab-btn-' + t.toLowerCase());
-        const pane = document.getElementById('task-tab-content-' + t.toLowerCase());
-        if (btn) btn.classList.toggle('active', tabName === t);
-        if (pane) pane.style.display = (tabName === t) ? 'block' : 'none';
-    });
-    if (tabName === 'IMG') {
-        renderCustomImagesBankGallery();
-    }
-}
-
-function toggleTooltip(e, tipId) {
-    e.stopPropagation();
-    const target = document.getElementById(tipId);
-    const wasOpen = target && target.classList.contains('show');
-    document.querySelectorAll('.floating-popover').forEach(p => p.classList.remove('show'));
-    if (target && !wasOpen) target.classList.add('show');
-}
-
-function closeAllTooltips(e) {
-    if (!e.target.closest('.help-tip-btn')) {
-        document.querySelectorAll('.floating-popover').forEach(p => p.classList.remove('show'));
-    }
-}
-
-function openStimuliEditor(modId) {
-    const mod = EIDOS_MODULES.find(m => m.id === modId)
-        || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId)
-        || { id: modId, title: String(modId), isAudioModel: false };
-
-    const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined') ? DEFAULT_MODULE_VARIATIONS[modId] : null;
-    editorSession.modId = modId;
-    editorSession.hasEditableStimuli = !!(meta && meta.editable);
-
-    const tCfg = getTaskConfig(modId);
-    document.getElementById('task-cfg-font').value = tCfg.font || 'GLOBAL';
-    const chkCV = document.getElementById('task-cfg-color-cv');
-    const chkBox = document.getElementById('task-cfg-syl-box');
-    if (chkCV) chkCV.checked = !!tCfg.colorCV;
-    if (chkBox) chkBox.checked = !!tCfg.sylBox;
-    document.getElementById('task-cfg-dmts').value = tCfg.dmtsDelay || 0;
-    document.getElementById('dmts-val-label').innerText = (tCfg.dmtsDelay > 0) ? `${tCfg.dmtsDelay}s` : '0s (Off)';
-    document.getElementById('task-cfg-timeout').value = tCfg.responseTimeout || 0;
-
-    const dmtsBox = document.getElementById('dmts-config-box');
-    if (mod.isAudioModel) {
-        dmtsBox.style.opacity = '0.45';
-        dmtsBox.style.pointerEvents = 'none';
-        document.getElementById('dmts-val-label').innerText = 'N/A (Áudio)';
-    } else {
-        dmtsBox.style.opacity = '1';
-        dmtsBox.style.pointerEvents = 'auto';
-    }
-
-    document.getElementById('stim-editor-title').innerText = mod.title;
-
-    if (editorSession.hasEditableStimuli) {
-        editorSession.tempMap = JSON.parse(JSON.stringify(getModuleVariationsMap(modId)));
-        const keys = Object.keys(editorSession.tempMap).map(Number).sort((a, b) => a - b);
-        editorSession.activeVarKey = keys[0] || 1;
-        document.getElementById('stim-editor-rules').innerHTML = `
-            <span class="meta-chip">Mín: ${meta.min}</span>
-            <span class="meta-chip">Máx: ${meta.max}</span>
-        `;
-        document.getElementById('stim-new-input').value = '';
-        document.getElementById('tab-btn-stim').style.display = 'inline-flex';
-        renderStimuliEditorUI();
-        switchTaskEditorTab('STIM');
-    } else {
-        document.getElementById('stim-editor-rules').innerHTML = '';
-        document.getElementById('tab-btn-stim').style.display = 'none';
-        switchTaskEditorTab('TOPO');
-    }
-
-    document.getElementById('modal-stimuli-editor').style.display = 'flex';
-}
-
-function renderStimuliEditorUI() {
-    if (!editorSession.hasEditableStimuli) return;
-    const meta = DEFAULT_MODULE_VARIATIONS[editorSession.modId];
-    const tabsContainer = document.getElementById('stim-var-tabs');
-    const listContainer = document.getElementById('stim-items-list');
-    tabsContainer.innerHTML = '';
-    listContainer.innerHTML = '';
-
-    const keys = Object.keys(editorSession.tempMap).map(Number).sort((a, b) => a - b);
-    keys.forEach(k => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `var-tab-btn ${k === editorSession.activeVarKey ? 'active' : ''}`;
-        btn.innerText = `Var ${k} (${editorSession.tempMap[k].length})`;
-        btn.onclick = () => {
-            playSound('click');
-            editorSession.activeVarKey = k;
-            renderStimuliEditorUI();
-        };
-        tabsContainer.appendChild(btn);
-    });
-
-    if (keys.length < 5) {
-        const addVarBtn = document.createElement('button');
-        addVarBtn.type = 'button';
-        addVarBtn.className = 'var-tab-btn';
-        addVarBtn.style.borderStyle = 'dashed';
-        addVarBtn.style.color = 'var(--primary-dark)';
-        addVarBtn.innerText = `+ Variação`;
-        addVarBtn.onclick = () => {
-            playSound('click');
-            const nextKey = (keys[keys.length - 1] || 1) + 1;
-            const baseClone = [...(editorSession.tempMap[keys[0]] || []).slice(0, meta.min)];
-            editorSession.tempMap[nextKey] = baseClone;
-            editorSession.activeVarKey = nextKey;
-            renderStimuliEditorUI();
-        };
-        tabsContainer.appendChild(addVarBtn);
-    }
-
-    const items = editorSession.tempMap[editorSession.activeVarKey] || [];
-    const canDelete = items.length > meta.min;
-
-    items.forEach((itemVal, idx) => {
-        const row = document.createElement('div');
-        row.className = 'stim-editor-row';
-
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.value = itemVal;
-        inp.oninput = (e) => {
-            editorSession.tempMap[editorSession.activeVarKey][idx] = e.target.value;
-        };
-
-        const cleanKey = String(itemVal || '').trim().toUpperCase();
-        const mediaBtn = document.createElement('button');
-        mediaBtn.type = 'button';
-        mediaBtn.className = 'icon-circle-btn';
-        mediaBtn.style.width = '34px';
-        mediaBtn.style.height = '34px';
-        mediaBtn.title = 'Associar Imagem do Banco ou Emoji';
-        const hasCustom = state.customWordMedia && state.customWordMedia[cleanKey];
-        if (hasCustom) {
-            mediaBtn.style.borderColor = 'var(--primary)';
-            mediaBtn.style.background = 'var(--primary-light)';
-        }
-        mediaBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
-        mediaBtn.onclick = () => {
-            playSound('click');
-            const currentWord = String(editorSession.tempMap[editorSession.activeVarKey][idx] || '').trim().toUpperCase();
-            if (!currentWord) return;
-            openStimulusMediaAssignPicker(currentWord);
-        };
-
-        const delBtn = document.createElement('button');
-        delBtn.type = 'button';
-        delBtn.className = 'btn-icon-del';
-        delBtn.disabled = !canDelete;
-        delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
-        delBtn.onclick = () => {
-            if (editorSession.tempMap[editorSession.activeVarKey].length <= meta.min) return;
-            playSound('click');
-            editorSession.tempMap[editorSession.activeVarKey].splice(idx, 1);
-            renderStimuliEditorUI();
-        };
-
-        row.appendChild(inp);
-        row.appendChild(mediaBtn);
-        row.appendChild(delBtn);
-        listContainer.appendChild(row);
-    });
-
-    const addBtn = document.getElementById('stim-btn-add');
-    if (addBtn) addBtn.disabled = items.length >= meta.max;
-}
-
-/* UPLOAD EM LOTE E SELETOR DE IMAGEM/EMOJI PARA ESTÍMULOS */
-async function handleBatchImageUpload(fileList) {
-    if (!fileList || fileList.length === 0) return;
-    const scaleSelect = document.getElementById('img-upload-scale');
-    const scaleVal = scaleSelect ? parseFloat(scaleSelect.value) : 0.5;
-    const statusEl = document.getElementById('img-upload-status');
-    if (statusEl) statusEl.innerText = `Convertendo ${fileList.length} imagem(ns) para WebP...`;
-
-    let count = 0;
-    for (let i = 0; i < fileList.length; i++) {
-        const f = fileList[i];
-        if (!f.type.startsWith('image/')) continue;
-        try {
-            const rec = await compressAndConvertImageToWebP(f, scaleVal, 0.82);
-            await saveCustomImageToIndexedDB(rec);
-            count++;
-        } catch (e) {}
-    }
-
-    playSound('win');
-    if (statusEl) statusEl.innerText = `${count} imagem(ns) salva(s) em WebP no banco local!`;
-    const fileInp = document.getElementById('img-upload-input');
-    if (fileInp) fileInp.value = '';
-    renderCustomImagesBankGallery();
-}
-
-function renderCustomImagesBankGallery() {
-    const grid = document.getElementById('custom-images-gallery-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    const list = Object.values(customImagesCache);
-    if (list.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-light); font-size:0.88rem; font-weight:700;">Nenhuma imagem no banco local. Envie arquivos acima para converter automaticamente em WebP.</div>`;
-        return;
-    }
-
-    list.forEach(item => {
-        const card = document.createElement('div');
-        card.style.cssText = 'border:1.5px solid var(--border); border-radius:12px; padding:8px; background:#fff; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;';
-        card.innerHTML = `
-            <img src="${item.dataUrl}" alt="${item.name}" style="width:68px; height:68px; object-fit:contain; border-radius:8px;">
-            <strong style="font-size:0.74rem; color:var(--text); max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.name}</strong>
-            <span style="font-size:0.65rem; color:var(--text-light); font-weight:700;">${item.width}x${item.height} • ${item.sizeKB}KB</span>
-        `;
-        const del = document.createElement('button');
-        del.type = 'button';
-        del.className = 'btn-icon-del';
-        del.style.cssText = 'position:absolute; top:4px; right:4px; width:24px; height:24px; border-radius:6px;';
-        del.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-        del.onclick = async () => {
-            playSound('click');
-            await deleteCustomImageFromIndexedDB(item.id);
-            renderCustomImagesBankGallery();
-        };
-        card.appendChild(del);
-        grid.appendChild(card);
-    });
-}
-
-function openStimulusMediaAssignPicker(wordStr) {
-    activeMediaTargetWord = String(wordStr || '').trim().toUpperCase();
-    const titleEl = document.getElementById('media-picker-word-title');
-    if (titleEl) titleEl.innerText = `Associar Mídia: "${activeMediaTargetWord}"`;
-
-    const curMedia = state.customWordMedia && state.customWordMedia[activeMediaTargetWord];
-    const emojiInp = document.getElementById('media-picker-emoji-input');
-    if (emojiInp) emojiInp.value = (curMedia && curMedia.type === 'EMOJI') ? curMedia.val : ((WORD_BANK[activeMediaTargetWord] && WORD_BANK[activeMediaTargetWord].icon) || '');
-
-    const gal = document.getElementById('media-picker-idb-grid');
-    if (gal) {
-        gal.innerHTML = '';
-        const list = Object.values(customImagesCache);
-        if (list.length === 0) {
-            gal.innerHTML = `<p style="grid-column:1/-1; color:var(--text-light); font-size:0.85rem; font-weight:700; text-align:center; padding:16px;">Nenhuma imagem no Banco Local. Adicione imagens na aba "Banco de Imagens".</p>`;
-        } else {
-            list.forEach(imgItem => {
-                const isSel = curMedia && curMedia.type === 'IDB' && curMedia.val === imgItem.id;
-                const box = document.createElement('div');
-                box.style.cssText = `border:2px solid ${isSel ? 'var(--primary)' : 'var(--border)'}; background:${isSel ? 'var(--primary-light)' : '#fff'}; border-radius:12px; padding:8px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;`;
-                box.innerHTML = `
-                    <img src="${imgItem.dataUrl}" style="width:60px; height:60px; object-fit:contain; border-radius:8px;">
-                    <span style="font-size:0.72rem; font-weight:800; color:var(--text); max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${imgItem.name}</span>
-                `;
-                box.onclick = () => {
-                    playSound('win');
-                    state.customWordMedia[activeMediaTargetWord] = { type: 'IDB', val: imgItem.id };
-                    saveState();
-                    closeMediaAssignPicker();
-                    renderStimuliEditorUI();
-                };
-                gal.appendChild(box);
-            });
-        }
-    }
-
-    const modal = document.getElementById('modal-media-picker');
-    if (modal) modal.style.display = 'flex';
-}
-
-function saveEmojiForActiveWord() {
-    if (!activeMediaTargetWord) return;
-    const emojiInp = document.getElementById('media-picker-emoji-input');
-    const val = emojiInp ? emojiInp.value.trim() : '';
-    if (val) {
-        state.customWordMedia[activeMediaTargetWord] = { type: 'EMOJI', val };
-    } else {
-        delete state.customWordMedia[activeMediaTargetWord];
-    }
-    saveState();
-    playSound('win');
-    closeMediaAssignPicker();
-    renderStimuliEditorUI();
-}
-
-function clearCustomMediaForActiveWord() {
-    if (!activeMediaTargetWord) return;
-    delete state.customWordMedia[activeMediaTargetWord];
-    saveState();
-    playSound('click');
-    closeMediaAssignPicker();
-    renderStimuliEditorUI();
-}
-
-function closeMediaAssignPicker() {
-    const modal = document.getElementById('modal-media-picker');
-    if (modal) modal.style.display = 'none';
-    activeMediaTargetWord = null;
-}
-
-function addStimulusItemToEditor() {
-    if (!editorSession.hasEditableStimuli) return;
-    const meta = DEFAULT_MODULE_VARIATIONS[editorSession.modId];
-    const inp = document.getElementById('stim-new-input');
-    const raw = inp.value.trim();
-    if (!raw) return;
-
-    const currentList = editorSession.tempMap[editorSession.activeVarKey];
-    if (currentList.length >= meta.max) {
-        customAlert("Limite Atingido", `Cada variação deste módulo comporta no máximo ${meta.max} itens.`);
-        return;
-    }
-
-    const needsUpper = !['E5_1'].includes(editorSession.modId);
-    const formatted = needsUpper ? raw.toUpperCase() : raw;
-
-    currentList.push(formatted);
-    inp.value = '';
-    playSound('click');
-    renderStimuliEditorUI();
-}
-
-function saveStimuliEditorChanges() {
-    const modId = editorSession.modId;
-    if (!modId) return;
-
-    if (editorSession.hasEditableStimuli) {
-        const meta = DEFAULT_MODULE_VARIATIONS[modId];
-        for (const k of Object.keys(editorSession.tempMap)) {
-            const cleaned = editorSession.tempMap[k].map(s => s.trim()).filter(s => s.length > 0);
-            if (cleaned.length < meta.min) {
-                customAlert("Quantidade Insuficiente", `A Variação ${k} precisa ter pelo menos ${meta.min} estímulos válidos.`);
-                return;
-            }
-            editorSession.tempMap[k] = cleaned;
-        }
-        state.customCurriculum[modId] = JSON.parse(JSON.stringify(editorSession.tempMap));
-    }
-
-    const mod = EIDOS_MODULES.find(m => m.id === modId);
-    const chkCV = document.getElementById('task-cfg-color-cv');
-    const chkBox = document.getElementById('task-cfg-syl-box');
-
-    state.taskSettings[modId] = {
-        font: document.getElementById('task-cfg-font').value || 'GLOBAL',
-        colorCV: chkCV ? chkCV.checked : false,
-        sylBox: chkBox ? chkBox.checked : false,
-        dmtsDelay: (mod && mod.isAudioModel) ? 0 : (parseInt(document.getElementById('task-cfg-dmts').value) || 0),
-        responseTimeout: parseInt(document.getElementById('task-cfg-timeout').value) || 0
-    };
-
-    saveState();
-    playSound('win');
-    closeModals();
-    renderGrid();
-}
-
-function restoreDefaultModuleStimuli() {
-    if (!editorSession.modId) return;
-    delete state.customCurriculum[editorSession.modId];
-    delete state.taskSettings[editorSession.modId];
-    const prog = getModuleProgress(editorSession.modId);
-    prog.activeVar = 1;
-    prog.pendingVar = null;
-    saveState();
-    playSound('click');
-    closeModals();
-    renderGrid();
-}
-
-function openQuickPeekModal() {
-    playSound('click');
-    const t = session.trials[session.currentTrialIdx];
-    let stimText = '';
-    let ansText = '';
-
-    if (t === undefined || t === null) {
-        stimText = '-';
-        ansText = '-';
-    } else if (Array.isArray(t)) {
-        stimText = t.join(' | ');
-        ansText = t.join(' ');
-    } else if (typeof t === 'object') {
-        if (t.letter && t.varIdx) {
-            stimText = `Fonema ${t.title || t.letter} (Boca: b-${t.letter.toLowerCase()}-${t.varIdx}.webp | Áudio: ${getPhonemeAudioPath(t.letter, t.varIdx)})`;
-            ansText = session.currentCycle === 1 ? 'Fase A: Observar boca, ouvir 2x e imitar' : 'Fase B: Arrastar o bloco até o final';
-        } else if (t.target && t.match) {
-            stimText = `Alvo: ${t.target}`;
-            ansText = `Par Correto: ${t.match}`;
-        } else if (t.target && t.distractor) {
-            stimText = `Áudio / Par Mínimo (${t.contrast || ''}): ${t.target}`;
-            ansText = t.target;
-        } else if (t.sentence && t.question) {
-            stimText = `${t.sentence} — ${t.question}`;
-            ansText = t.correct;
-        } else if (t.shortSpoken || t.wordsArray) {
-            stimText = t.shortSpoken || t.wordsArray.join(' ');
-            ansText = (t.wordsArray || []).join(' ');
-        } else if (t.intruder && t.fix) {
-            stimText = (t.words || []).join(' ');
-            ansText = `Intrusa: ${t.intruder} → Correta: ${t.fix}`;
-        } else if (t.steps) {
-            stimText = 'Sequência de 3 frases';
-            ansText = t.steps.join(' / ');
-        } else {
-            stimText = JSON.stringify(t);
-            ansText = stimText;
-        }
-    } else {
-        stimText = String(t);
-        const wObj = WORD_BANK[stimText];
-        if (session.eidosMod && session.eidosMod.subType === 'SYL_COUNT') {
-            const cnt = wObj ? wObj.count : Math.max(1, Math.ceil(stimText.length / 2));
-            ansText = `${stimText} (${cnt} sílabas)`;
-        } else if (session.isPreReq) {
-            ansText = `${stimText} → ${getCategory(stimText)}`;
-        } else {
-            ansText = wObj && wObj.syllables ? `${stimText} (${wObj.syllables.join('-')})` : stimText;
-        }
-    }
-
-    document.getElementById('peek-stimulus-text').innerText = stimText;
-    document.getElementById('peek-answer-text').innerText = ansText;
-    document.getElementById('modal-quick-peek').style.display = 'flex';
-}
-
-function hardResetAppCache() {
-    closeModals();
-    customAlert(
-        "Limpar Todo o Cache e Dados?",
-        "Isso apagará todo o histórico local, configurações e removerá o cache offline do Service Worker para recarregar o aplicativo limpo.",
-        async () => {
-            localStorage.clear();
-            sessionStorage.clear();
-            try {
-                if ('caches' in window) {
-                    const keys = await caches.keys();
-                    await Promise.all(keys.map(k => caches.delete(k)));
-                }
-                if ('serviceWorker' in navigator) {
-                    const regs = await navigator.serviceWorker.getRegistrations();
-                    await Promise.all(regs.map(r => r.unregister()));
-                }
-            } catch (e) {}
-            location.reload(true);
-        },
-        true
-    );
-}
-
-/* ============================================================================
-   10. GERADORES DE POOLS E REVISÃO ESPECÍFICA POR TAREFA
-   ============================================================================ */
-function generateSyllables(cons) {
-    let pool = vowels.map(v => cons + v);
-    if (cons === 'Q') pool = ['QUA','QUE','QUI','QUO'];
-    if (cons === 'G') pool = ['GA','GO','GU','GUE','GUI'];
-    if (cons !== 'Q') pool = pool.concat(['AI','ÃO'].map(v => cons + v));
-
-    const sc = state.settings.sylComplex || {};
-    const baseCV = (cons === 'Q') ? ['QUA','QUE','QUI'] : (cons === 'G' ? ['GA','GO','GU'] : vowels.map(v => cons + v));
-
-    if (sc.ccv) {
-        if (['C','P','B','F','G'].includes(cons)) {
-            pool = pool.concat(vowels.map(v => cons + 'R' + v)).concat(vowels.map(v => cons + 'L' + v));
-        }
-        if (['T','D','V'].includes(cons)) {
-            pool = pool.concat(vowels.map(v => cons + 'R' + v));
-        }
-    }
-    if (sc.cvcL) pool = pool.concat(baseCV.map(cv => cv + 'L'));
-    if (sc.cvcS) pool = pool.concat(baseCV.map(cv => cv + 'S'));
-    if (sc.cvcM) pool = pool.concat(baseCV.map(cv => cv + 'M'));
-    return [...new Set(pool)];
-}
-
-function generatePseudoWords() {
-    const syls = ['BA','CA','DA','FA','GA','LA','MA','PA','SA','TA','VA','BO','CO','DO','FO','GO','LO','MO','PO','SO','TO','TI','PI','LI','MI'];
-    let pseudos = [];
-    for (let i = 0; i < 12; i++) {
-        let s1 = syls[Math.floor(Math.random() * syls.length)];
-        let s2 = syls[Math.floor(Math.random() * syls.length)];
-        pseudos.push(s1 + s2);
-    }
-    return pseudos;
-}
-
-function getModuleVariationItems(modId) {
-    const activeV = getActiveVariationForModule(modId);
-    const map = getModuleVariationsMap(modId);
-    if (map && map[activeV] && map[activeV].length > 0) {
-        return [...map[activeV]];
-    }
-    if (map) {
-        const firstKey = Object.keys(map)[0];
-        return [...(map[firstKey] || [])];
-    }
-    return [];
-}
-
-function getPhasePool(phaseId) {
-    const pMod = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
-    if (pMod) return [pMod.letter];
-    const eMod = EIDOS_MODULES.find(m => m.id === phaseId);
-    if (eMod) {
-        const activeV = getActiveVariationForModule(phaseId);
-        if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[phaseId]) {
-            return getModuleVariationItems(phaseId);
-        }
-        if (eMod.subType === 'SYM_DISC') return ['A', 'B', 'E', 'M', 'P', 'S'];
-        if (eMod.subType === 'MIRROR_GRAPH') return ['b', 'd', 'p', 'q', 'E', 'S'];
-        if (eMod.subType === 'VOWELS_PURE') return ['A', 'E', 'I', 'O', 'U'];
-        if (eMod.subType === 'CLASS_VC') return ['F','V','M','N','S','L','P','B','T','D', ...vowels];
-        if (eMod.subType === 'RHYME') {
-            const rList = RHYME_VARIATIONS[activeV] || RHYME_VARIATIONS[1];
-            return rList.map(r => `${r.target} ↔ ${r.match}`);
-        }
-        if (eMod.subType === 'ALLITERATION') {
-            const aList = ALLIT_VARIATIONS[activeV] || ALLIT_VARIATIONS[1];
-            return aList.map(a => `${a.target} ↔ ${a.match}`);
-        }
-        if (eMod.subType === 'CONT_PHON') return ['F','V','S','Z','X','J','M','N','L','R'];
-        if (eMod.subType === 'OCCL_PHON') return ['P','B','T','D','C','K','G'];
-        if (eMod.subType === 'CLASS_SP') return ['FA','MA','LA','SA','BO','TA', 'BOLA','MALA','FACA','SAPO','BOLO','GATO'];
-        if (eMod.subType === 'CLASS_TOTAL_MM') return ['A','E','I','O','U','F','M','L','P','B','FA','MA','LA','BO','BOLA','GATO','MALA','FACA'];
-        if (eMod.subType === 'MIN_PAIRS') {
-            return MINIMAL_PAIRS_DB.filter(p => !p.var || p.var === activeV).map(p => `${p.target} / ${p.distractor}`);
-        }
-        if (eMod.subType === 'SYNTACTIC_WH') return ['Quem realizou a ação?', 'O que fez?', 'Onde aconteceu?'];
-        if (eMod.subType === 'INTRUDER_WORD') return NARRATIVES_DB.map(n => n.intruderSentence.join(' '));
-        if (eMod.subType === 'CHRONO_SEQ') return NARRATIVES_DB.map((_, i) => `Sequência 3 Passos #${i + 1}`);
-    }
-    if (phaseId === 'VOGAIS') return [...vowels];
-    if (phaseId === 'ENCONTROS') return [...encounters];
-    if (phaseId === 'PSEUDOPALAVRAS') return generatePseudoWords();
-    if (phaseId === 'PALAVRAS') {
-        let pw = (state.customWords || '').split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
-        return [...new Set(pw)];
-    }
-    return generateSyllables(phaseId);
-}
-
-function getCategory(item) {
-    if (vowels.includes(item)) return 'VOGAL';
-    if (item.length === 1 && !vowels.includes(item)) return 'CONSOANTE';
-    if (WORD_BANK[item] || item.length >= 4) return 'PALAVRA';
-    return 'SÍLABA';
-}
-
-/* ============================================================================
-   11. INICIALIZADOR UNIFICADO DE JOGOS (COM NOVOS JOGOS 1.3, 2.6, 3.1 E 3.2)
-   ============================================================================ */
-function ensureSessionTimerStarted() {
-    if (state.settings.timer.enabled) {
-        if (state.session.expired) {
-            triggerTimeUp();
-            return false;
-        }
-        const cfgMin = state.settings.timer.min || 30;
-        if (!state.session.endTime || state.session.configuredMin !== cfgMin) {
-            state.session.endTime = Date.now() + (cfgMin * 60000);
-            state.session.configuredMin = cfgMin;
-            saveState();
-        }
-        if (!timerInterval) timerInterval = setInterval(checkTimer, 1000);
-        checkTimer();
-    } else {
-        const clock = document.getElementById('header-timer-icon');
-        if (clock) clock.style.display = 'none';
-    }
-    return true;
-}
-
-function resetSessionStats(activeCycles, trialCount) {
-    return {
-        c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? trialCount : 0 },
-        c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? trialCount : 0 },
-        c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? trialCount : 0 },
-        c4: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(4) ? trialCount : 0 },
-        c5: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(5) ? trialCount : 0 }
-    };
-}
-
-function startLegacyGame(phaseId) {
-    if (phaseId === 'PALAVRAS') {
-        document.getElementById('custom-words-input').value = state.customWords || '';
-        checkWordsInput();
-        document.getElementById('modal-words').style.display = 'flex';
-        return;
-    }
-    if (!ensureSessionTimerStarted()) return;
-
-    const pool = getPhasePool(phaseId);
-    const isOnlyCycle3 = (phaseId === 'PSEUDOPALAVRAS');
-    const targetCount = isOnlyCycle3 ? 10 : 5;
-    const targets = shuffleArray(pool).slice(0, targetCount);
-
-    let activeCycles = [];
-    if (isOnlyCycle3) {
-        activeCycles = [3];
-    } else {
-        if (state.settings.stages.c1) activeCycles.push(1);
-        if (state.settings.stages.c2) activeCycles.push(2);
-        if (state.settings.stages.c3) activeCycles.push(3);
-        if (activeCycles.length === 0) activeCycles = [1];
-    }
-
-    undoSnapshot = null;
-    session = {
-        phase: phaseId,
-        eidosMod: null,
-        activeVar: 1,
-        pool,
-        trials: targets,
-        activeCycles,
-        currentCycleIdx: 0,
-        currentCycle: activeCycles[0],
-        isOnlyCycle3,
-        isPreReq: false,
-        currentTrialIdx: 0,
-        attemptsOnCurrent: 0,
-        currentRenderedOptions: null,
-        isRepeating: false,
-        latencies: [],
-        stats: resetSessionStats(activeCycles, targets.length)
-    };
-    openGame();
-    renderTrial();
-}
-
-function startPhonologicalModelingModule(modId) {
-    if (!ensureSessionTimerStarted()) return;
-    const pm = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId);
-    if (!pm) return;
-
-    const modDescriptor = {
-        id: pm.id,
-        code: 'FON',
-        level: 'FONOLOGICO',
-        title: pm.title,
-        desc: pm.desc,
-        engine: 'PHON_MODEL',
-        subType: 'PHON_MODELING',
-        letter: pm.letter,
-        varIdx: pm.varIdx,
-        isAudioModel: true
-    };
-
-    const trials = [{ letter: pm.letter, varIdx: pm.varIdx, title: pm.title }];
-    const activeCycles = [1, 2]; // Ciclo 1 = Fase A (Exposição), Ciclo 2 = Fase B (Slider)
-
-    undoSnapshot = null;
-    session = {
-        phase: pm.id,
-        eidosMod: modDescriptor,
-        activeVar: 1,
-        pool: [pm.letter],
-        trials,
-        activeCycles,
-        currentCycleIdx: 0,
-        currentCycle: 1,
-        isOnlyCycle3: false,
-        isPreReq: false,
-        currentTrialIdx: 0,
-        attemptsOnCurrent: 0,
-        currentRenderedOptions: null,
-        isRepeating: false,
-        latencies: [],
-        stats: resetSessionStats(activeCycles, trials.length)
-    };
-    openGame();
-    renderTrial();
-}
-
-function startEidosModule(modId) {
-    const mod = EIDOS_MODULES.find(m => m.id === modId);
-    if (!mod) return;
-    if (mod.engine === 'REWARD_PORTAL') {
-        executeRewardPortalAction(modId);
-        return;
-    }
-    if (!ensureSessionTimerStarted()) return;
-
-    const activeVar = getActiveVariationForModule(modId);
-    let pool = getPhasePool(modId);
-    let trials = [];
-    let activeCycles = [1];
-    let isPreReq = false;
-
-    switch (mod.subType) {
-        case 'TRACKING':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
-            break;
-        case 'SYM_DISC':
-            trials = ['A', 'B', 'E', 'M', 'P', 'S'];
-            break;
-        case 'WORD_IDENT_MM': {
-            // 1.3 Identidade de Palavras: Ciclo 1 (MTS Comum 1x3) + Ciclo 2 (Multi-MTS 3x3)
-            const wList = shuffleArray(getModuleVariationItems(modId));
-            trials = [
-                wList.slice(0, 3),
-                shuffleArray(wList).slice(0, 3),
-                shuffleArray(wList).slice(0, 3),
-                shuffleArray(wList).slice(0, 3)
-            ];
-            activeCycles = [1, 2];
-            break;
-        }
-        case 'MIRROR_GRAPH':
-            trials = ['b', 'd', 'p', 'q', 'E', 'S'];
-            break;
-        case 'VOWELS_PURE':
-        case 'CONT_PHON':
-        case 'OCCL_PHON':
-        case 'CV_FUSION':
-        case 'CG_ALL_SOUNDS':
-        case 'QU_GU_SOUNDS':
-            trials = shuffleArray(pool).slice(0, 6);
-            activeCycles = [];
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (state.settings.stages.c3) activeCycles.push(3);
-            if (activeCycles.length === 0) activeCycles = [1];
-            break;
-        case 'SYL_BUILD_SLIDER':
-            // 2.6 Formação de Sílabas (Ciclo 1: Triplo Slider | Ciclo 2: Ouvir e Selecionar | Ciclo 3: Ler)
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
-            activeCycles = [1, 2, 3];
-            break;
-        case 'CLASS_VC':
-        case 'CLASS_SP':
-            isPreReq = true;
-            trials = shuffleArray(pool).slice(0, 8);
-            activeCycles = [];
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (activeCycles.length === 0) activeCycles = [1];
-            break;
-        case 'CLASS_TOTAL_MM':
-            trials = [1, 2, 3, 4];
-            break;
-        case 'RHYME':
-            trials = shuffleArray(RHYME_VARIATIONS[activeVar] || RHYME_VARIATIONS[1]);
-            break;
-        case 'ALLITERATION':
-            trials = shuffleArray(ALLIT_VARIATIONS[activeVar] || ALLIT_VARIATIONS[1]);
-            break;
-        case 'SYL_COUNT':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 6);
-            break;
-        case 'SYL_WORD_BUILD':
-            // 3.1 Construção de Palavras: Ciclo 1 (Montagem CRMTS com figura/som) + Ciclo 2 (Leitura/Sondagem limpa SEM figura e SEM TTS)
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
-            activeCycles = [1, 2];
-            break;
-        case 'EQUIV_4STEPS_MM': {
-            // 3.2 Equivalência Figura-Palavra em 4 Ciclos: C1 (B-B + Nomear), C2 (BC-C com dica), C3 (B-C sem dica), C4 (Leitura C)
-            const eqList = shuffleArray(getModuleVariationItems(modId));
-            trials = [
-                eqList.slice(0, 3),
-                shuffleArray(eqList).slice(0, 3),
-                shuffleArray(eqList).slice(0, 3)
-            ];
-            activeCycles = [1, 2, 3, 4];
-            break;
-        }
-        case 'FIG_WORD_MM': {
-            const fwList = shuffleArray(getModuleVariationItems(modId));
-            trials = [
-                fwList.slice(0, 3),
-                shuffleArray(fwList).slice(0, 3),
-                shuffleArray(fwList).slice(0, 3),
-                shuffleArray(fwList).slice(0, 3)
-            ];
-            break;
-        }
-        case 'SEMANTIC_CAT_MM': {
-            const scList = shuffleArray(getModuleVariationItems(modId));
-            trials = [
-                scList.slice(0, 3),
-                shuffleArray(scList).slice(0, 3),
-                shuffleArray(scList).slice(0, 3),
-                shuffleArray(scList).slice(0, 3)
-            ];
-            break;
-        }
-        case 'COPY_CRMTS':
-        case 'DICT_CRMTS':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
-            break;
-        case 'WORD_SPACE':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 4).map(s =>
-                Array.isArray(s) ? s : String(s).trim().toUpperCase().split(/\s+/)
-            );
-            break;
-        case 'MIN_PAIRS': {
-            const varPairs = MINIMAL_PAIRS_DB.filter(p => !p.var || p.var === activeVar);
-            trials = shuffleArray(varPairs.length >= 4 ? varPairs : MINIMAL_PAIRS_DB).slice(0, 6);
-            break;
-        }
-        case 'WORDS_EQ': {
-            trials = shuffleArray(pool).slice(0, 5);
-            activeCycles = [];
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (state.settings.stages.c3) activeCycles.push(3);
-            const allHaveIcons = trials.every(w => hasValidVisualRepresentation(w));
-            if (state.settings.stages.c4 && allHaveIcons) {
-                activeCycles.push(4);
-                activeCycles.push(5);
-            }
-            if (activeCycles.length === 0) activeCycles = [1];
-            break;
-        }
-        case 'SPRINT_3S':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 8);
-            break;
-        case 'RECOMB_STT':
-            trials = shuffleArray(getModuleVariationItems(modId).map(s => s.trim())).slice(0, 6);
-            activeCycles = [3];
-            break;
-        case 'SYNTACTIC_GROUP':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 4);
-            break;
-        case 'SENTENCE_BUILD':
-            trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5).map(s => {
-                const clean = String(s).replace(/[.!?]/g, '').trim().toUpperCase();
-                return {
-                    shortSpoken: clean,
-                    wordsArray: clean.split(/\s+/)
-                };
-            });
-            break;
-        case 'SYNTACTIC_WH':
-            trials = [
-                generateLogicalSentenceTrial(),
-                generateLogicalSentenceTrial(),
-                generateLogicalSentenceTrial(),
-                generateLogicalSentenceTrial(),
-                generateLogicalSentenceTrial()
-            ];
-            break;
-        case 'INTRUDER_WORD':
-            trials = NARRATIVES_DB.map(n => ({
-                words: n.intruderSentence,
-                intruder: n.intruderWord,
-                fix: n.correctReplacement,
-                distractors: n.distractorReplacements || ['PEDRA', 'JANELA']
-            }));
-            break;
-        case 'CHRONO_SEQ':
-            trials = NARRATIVES_DB.map(n => ({
-                steps: n.steps
-            }));
-            break;
-    }
-
-    undoSnapshot = null;
-    session = {
-        phase: mod.id,
-        eidosMod: mod,
-        activeVar,
-        pool,
-        trials,
-        activeCycles,
-        currentCycleIdx: 0,
-        currentCycle: activeCycles[0],
-        isOnlyCycle3: (mod.subType === 'RECOMB_STT'),
-        isPreReq,
-        currentTrialIdx: 0,
-        attemptsOnCurrent: 0,
-        currentRenderedOptions: null,
-        isRepeating: false,
-        latencies: [],
-        stats: resetSessionStats(activeCycles, trials.length)
-    };
-    openGame();
-    renderTrial();
-}
-
-function getTopographicClasses() {
-    const tCfg = getTaskConfig(session.phase);
-    if (tCfg && tCfg.font && tCfg.font !== 'GLOBAL') {
-        if (tCfg.font === 'LOWER') return 'topo-lower';
-        if (tCfg.font === 'SERIF') return 'topo-serif';
-        if (tCfg.font === 'SCHOOL') return 'topo-school';
-        return '';
-    }
-    if (!state.settings.topoVar) return '';
-    const classes = ['', 'topo-serif', 'topo-school', 'topo-lower'];
-    return classes[Math.floor(Math.random() * classes.length)];
-}
