@@ -2,47 +2,39 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
     <title>AlfaMTS</title>
     
+    <!-- PWA & Tema -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6BAEF5">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Bibliotecas para Geração de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-<!-- PWA, Cores e Ícones (Android e iOS) -->
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#6BAEF5">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="AlfaMTS">
-  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
-
-  <!-- Fontes -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
-
-  <!-- Bibliotecas PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
-  <!-- Registro do Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('Service Worker registrado (v2).'))
-          .catch(err => console.log('SW aviso:', err));
-      });
-    }
-  </script>
+    <!-- Registro do Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('Service Worker registrado (v2).'))
+            .catch(err => console.log('SW aviso:', err));
+        });
+      }
+    </script>
 
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ECRÃ DE ABERTURA / SPLASH (Com descarte nativo) -->
+<!-- ECRÃ DE ABERTURA / SPLASH OFICIAL -->
 <div id="splash-screen">
     <div class="splash-content">
         <div class="logo-box">
-            <!-- Logótipo Vetorial Simétrico Oficial -->
             <svg viewBox="0 0 2423 1691" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" overflow="hidden">
                 <g transform="translate(-1139, 2344)">
                     <path d="M1908.56-2343.89C1924.54-2343.63 1940.51-2342.91 1956.45-2341.82 2028.4-2336.93 2097.62-2318.69 2163.84-2291.57 2201.99-2275.95 2239.34-2259.09 2274.93-2239.04 2291.97-2229.44 2292.1-2225.99 2275.33-2214.89 2232.26-2186.41 2191.45-2155.38 2151.11-2123.8 2106.2-2090.44 2065.95-2055.69 2025.37-2021.28 2003.99-2003.15 1982.54-1985.05 1961.95-1966.18 1951.2-1956.34 1940.58-1959.48 1928.77-1962.75 1850.77-1984.4 1774.31-1980.06 1703.21-1943.63 1615.78-1898.82 1560.06-1830.49 1543.22-1739.35 1529.99-1667.68 1540.73-1597.97 1575.74-1532.03 1579.49-1524.98 1582.92-1517.75 1587.25-1511.01 1592.71-1502.54 1592.69-1495.18 1587.03-1486.35 1545.97-1422.37 1532.32-1352.35 1539.98-1279.67 1545.81-1224.3 1569.27-1173.98 1607.34-1129.61 1646.61-1083.85 1695.77-1051.76 1756.34-1033.87 1812.05-1017.42 1868.39-1017.85 1923.11-1034.08 1944.89-1040.54 1955.38-1032.44 1967.65-1021.86 2006.29-988.565 2043.79-954.136 2083.12-921.544 2117.34-893.186 2153.9-867.191 2188.59-839.291 2220.34-813.752 2255.92-792.813 2289-767.775 2286.28-756.247 2273.8-754.343 2265.22-749.911 2191.26-711.706 2113.35-682.508 2030.12-665.679 1960.14-651.529 1889.55-652.051 1818.78-657.733 1742.38-663.868 1670.11-684.005 1601.09-714.062 1536.79-742.067 1478.39-777.831 1425.53-821.896 1388.18-853.035 1354.14-886.516 1324.86-923.857 1265.6-999.455 1219.76-1081.01 1189.63-1170.46 1169.89-1229.07 1157.28-1288.72 1147.21-1348.85 1137.87-1404.65 1139.89-1461.3 1139.08-1517.73 1137.94-1598.04 1148.76-1677.08 1168.03-1754.96 1193.15-1856.43 1234.5-1952.51 1298.52-2039.09 1369.96-2135.71 1459.65-2214.33 1574.28-2268.48 1635.21-2297.26 1698.81-2317.55 1765.28-2331.45 1812.6-2341.35 1860.62-2344.67 1908.56-2343.89Z" fill="currentColor" fill-rule="evenodd" />
@@ -54,20 +46,25 @@
     </div>
 </div>
 
-<!-- INDICADOR DE TIMER FLUTUANTE -->
-<div id="header-timer-icon" title="Timer de Sessão Ativo">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/></svg>
+<!-- INDICADOR DE TIMER DE SESSÃO (CANTO INFERIOR ESQUERDO - SEM SOBREPOR TÍTULOS) -->
+<div id="header-timer-icon" title="Timer de Sessão Ativo" style="top:auto !important; bottom:16px !important; left:20px !important; right:auto !important; transform:none !important;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg>
     <span id="header-timer-text">30:00</span>
 </div>
 
 <!-- ================= TELA DE SELEÇÃO DE PERFIS (GATEKEEPER) ================= -->
 <div id="screen-gatekeeper" class="screen">
     <div class="gatekeeper-box">
-        <div style="color:var(--primary); margin-bottom:12px;">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
+        <div class="home-logo-box" style="width:130px; margin-bottom:14px;">
+            <svg viewBox="0 0 2423 1691" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" overflow="hidden">
+                <g transform="translate(-1139, 2344)">
+                    <path d="M1908.56-2343.89C1924.54-2343.63 1940.51-2342.91 1956.45-2341.82 2028.4-2336.93 2097.62-2318.69 2163.84-2291.57 2201.99-2275.95 2239.34-2259.09 2274.93-2239.04 2291.97-2229.44 2292.1-2225.99 2275.33-2214.89 2232.26-2186.41 2191.45-2155.38 2151.11-2123.8 2106.2-2090.44 2065.95-2055.69 2025.37-2021.28 2003.99-2003.15 1982.54-1985.05 1961.95-1966.18 1951.2-1956.34 1940.58-1959.48 1928.77-1962.75 1850.77-1984.4 1774.31-1980.06 1703.21-1943.63 1615.78-1898.82 1560.06-1830.49 1543.22-1739.35 1529.99-1667.68 1540.73-1597.97 1575.74-1532.03 1579.49-1524.98 1582.92-1517.75 1587.25-1511.01 1592.71-1502.54 1592.69-1495.18 1587.03-1486.35 1545.97-1422.37 1532.32-1352.35 1539.98-1279.67 1545.81-1224.3 1569.27-1173.98 1607.34-1129.61 1646.61-1083.85 1695.77-1051.76 1756.34-1033.87 1812.05-1017.42 1868.39-1017.85 1923.11-1034.08 1944.89-1040.54 1955.38-1032.44 1967.65-1021.86 2006.29-988.565 2043.79-954.136 2083.12-921.544 2117.34-893.186 2153.9-867.191 2188.59-839.291 2220.34-813.752 2255.92-792.813 2289-767.775 2286.28-756.247 2273.8-754.343 2265.22-749.911 2191.26-711.706 2113.35-682.508 2030.12-665.679 1960.14-651.529 1889.55-652.051 1818.78-657.733 1742.38-663.868 1670.11-684.005 1601.09-714.062 1536.79-742.067 1478.39-777.831 1425.53-821.896 1388.18-853.035 1354.14-886.516 1324.86-923.857 1265.6-999.455 1219.76-1081.01 1189.63-1170.46 1169.89-1229.07 1157.28-1288.72 1147.21-1348.85 1137.87-1404.65 1139.89-1461.3 1139.08-1517.73 1137.94-1598.04 1148.76-1677.08 1168.03-1754.96 1193.15-1856.43 1234.5-1952.51 1298.52-2039.09 1369.96-2135.71 1459.65-2214.33 1574.28-2268.48 1635.21-2297.26 1698.81-2317.55 1765.28-2331.45 1812.6-2341.35 1860.62-2344.67 1908.56-2343.89Z" fill="currentColor" fill-rule="evenodd" />
+                    <path d="M2784.33-2342.71C2835.11-2344.18 2885.65-2340.07 2936.2-2331.34 3052.28-2311.29 3154.56-2264.93 3245.7-2197.9 3322.14-2141.69 3382.31-2072.36 3431.59-1994.91 3486.78-1908.17 3518.69-1814.11 3540.44-1716.41 3562.26-1618.41 3564.61-1519.27 3560.09-1420.22 3555.2-1312.9 3530.18-1208.61 3487.32-1108.25 3453.22-1028.41 3406.55-954.906 3347.17-888.843 3303.23-839.954 3251.69-798.309 3193.58-762.675 3118.38-716.561 3036.52-686.087 2949.42-667.039 2917.63-660.086 2884.72-656.154 2851.51-654.054 2818.22-651.95 2785.47-653.387 2752.49-654.963 2680.53-660.005 2614.66-675.51 2550.45-698.255 2447.83-734.602 2360.91-793.869 2274.7-854.167 2219.84-892.541 2167.88-934.091 2116.26-976.11 2047.81-1031.83 1983.12-1091 1919.24-1150.87 1867.87-1199.01 1818.22-1248.81 1770.23-1299.78 1714.42-1359.05 1661.16-1420.33 1612.48-1484.78 1607.09-1491.92 1602.81-1498.63 1609.2-1507.58 1648.03-1561.97 1692.24-1611.3 1758.89-1639.04 1843.11-1674.08 1924.98-1668.01 2004.9-1626.65 2044.45-1606.18 2073.8-1575.79 2104.12-1545.94 2150.41-1500.38 2197.31-1455.31 2244.77-1410.76 2288.94-1369.29 2332.91-1327.54 2379.25-1288.15 2442.33-1234.52 2506.75-1182.18 2575.98-1134.97 2613.99-1109.05 2652.88-1084.51 2694.22-1063.35 2760.54-1029.42 2831.29-1015.01 2907.06-1025.8 3001.13-1039.19 3068.42-1087.81 3115.97-1160.99 3152.02-1216.48 3167.15-1277.39 3160.34-1341.19 3154.97-1391.56 3141.49-1440.79 3112.48-1485.2 3103.59-1498.81 3099.55-1499.55 3089.73-1486.75 3063.19-1452.17 3035.49-1418.4 3007.19-1385 2975.05-1347.07 2940.99-1310.64 2906.7-1274.34 2858.48-1223.3 2807.72-1174.5 2755.75-1126.67 2746.02-1117.72 2738.33-1116.55 2725.9-1122.11 2669.45-1147.34 2620.41-1182.47 2571.68-1217.8 2515.32-1258.66 2462.16-1303.02 2409.15-1347.46 2403.8-1351.95 2401.64-1356.59 2406.54-1362.45 2410.34-1367 2413.6-1372.01 2417.91-1376.11 2453.53-1410.04 2489.28-1443.84 2525.1-1477.6 2544.41-1495.8 2545.49-1496.5 2527.21-1515.72 2492.72-1552 2456.42-1586.8 2419.13-1620.72 2399.88-1638.23 2401.23-1638.24 2420.54-1655.51 2463.85-1694.26 2510.57-1729.33 2557.35-1764.34 2609.94-1803.69 2664.76-1840.29 2722.44-1873.24 2732.65-1879.08 2741.2-1880.59 2751.25-1871.42 2815.97-1812.36 2877.35-1750.61 2936.99-1687.19 2985.03-1636.11 3030.5-1583.37 3074.36-1529.36 3079.8-1522.66 3084.3-1515.3 3090.07-1508.87 3099.21-1498.7 3107.46-1498.85 3114.01-1510.54 3139.63-1556.31 3159.06-1603.86 3161.2-1656.1 3163.52-1712.69 3156.26-1767.68 3127.53-1818.7 3092.96-1880.09 3043.34-1927.93 2972.59-1954.81 2895.25-1984.2 2818.02-1981.7 2741.89-1950.43 2659.26-1916.48 2587.72-1867.29 2517.98-1815.27 2454.63-1768.02 2393.53-1718.71 2334.62-1666.83 2293.04-1630.22 2255.04-1590.51 2213.01-1554.35 2202.12-1544.98 2195.56-1544.07 2185.22-1554.25 2157.6-1581.44 2129.68-1608.42 2100.78-1634.47 2056.39-1674.48 2004.08-1702.63 1942.97-1715.3 1896.81-1724.88 1850.32-1724.39 1804.19-1713.64 1801.6-1713.04 1798.83-1711.36 1794.96-1714.19 1806.96-1735.64 1827.3-1751.22 1844.21-1769.06 1870.37-1796.67 1897.09-1823.97 1925.58-1849.54 1976.02-1894.8 2024.46-1941.95 2078.45-1983.9 2106.28-2005.52 2132.6-2028.76 2159.63-2051.24 2215.77-2097.94 2274.34-2141.93 2336.05-2182.34 2388.06-2216.39 2440.02-2250.41 2498.24-2275.69 2573.11-2308.2 2651.02-2330.79 2733.46-2339.35 2750.45-2341.11 2767.4-2342.22 2784.33-2342.71Z" fill="currentColor" fill-rule="evenodd" />
+                </g>
+            </svg>
         </div>
-        <h1 style="font-size:2.2rem; font-weight:900; color:var(--text); letter-spacing:-0.5px;">Quem está a usar?</h1>
-        <p class="gatekeeper-subtitle">Selecione o seu perfil de acesso clínico</p>
+        <h1 style="font-size:2rem; font-weight:900; color:var(--text); letter-spacing:-0.5px;">Selecionar Perfil</h1>
+        <p class="gatekeeper-subtitle">Escolha o modo de operação clínica</p>
         <div class="profile-cards-grid">
             <div class="profile-select-card" onclick="selectRoleProfile('ANALYST')">
                 <div class="profile-icon-circle">
@@ -75,7 +72,7 @@
                 </div>
                 <div>
                     <h3>Analista</h3>
-                    <span>Configuração e Telemetria</span>
+                    <span>Gestão, Currículo e Telemetria</span>
                 </div>
             </div>
             <div class="profile-select-card" onclick="selectRoleProfile('APPLICATOR')">
@@ -84,17 +81,19 @@
                 </div>
                 <div>
                     <h3>Aplicador</h3>
-                    <span>Apenas aplicação de tarefas</span>
+                    <span>Acesso direto às atividades</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ================= TELA HOME DO ANALISTA (CLEAN / SAAS) ================= -->
+<!-- ================= TELA HOME DO ANALISTA (BOTÃO VOLTAR + LOGO 185PX ALINHADA AO NOME) ================= -->
 <div id="screen-splash" class="screen">
     <div class="analyst-top-bar">
-        <div></div>
+        <button type="button" class="icon-circle-btn" onclick="openGatekeeper()" title="Trocar Perfil (Analista / Aplicador)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        </button>
         <button type="button" class="student-switcher-pill" id="analyst-home-switcher" onclick="openStudentSwitcherModal()">
             <span class="avatar-mini">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -104,8 +103,8 @@
     </div>
 
     <div class="splash-logo">
-        <div class="home-logo-box">
-            <!-- Logótipo Vetorial Simétrico Oficial -->
+        <!-- Logo ampliada para 185px coincidindo início e fim com o título AlfaMTS abaixo -->
+        <div class="home-logo-box" style="width:185px !important; margin:0 auto 10px auto;">
             <svg viewBox="0 0 2423 1691" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" overflow="hidden">
                 <g transform="translate(-1139, 2344)">
                     <path d="M1908.56-2343.89C1924.54-2343.63 1940.51-2342.91 1956.45-2341.82 2028.4-2336.93 2097.62-2318.69 2163.84-2291.57 2201.99-2275.95 2239.34-2259.09 2274.93-2239.04 2291.97-2229.44 2292.1-2225.99 2275.33-2214.89 2232.26-2186.41 2191.45-2155.38 2151.11-2123.8 2106.2-2090.44 2065.95-2055.69 2025.37-2021.28 2003.99-2003.15 1982.54-1985.05 1961.95-1966.18 1951.2-1956.34 1940.58-1959.48 1928.77-1962.75 1850.77-1984.4 1774.31-1980.06 1703.21-1943.63 1615.78-1898.82 1560.06-1830.49 1543.22-1739.35 1529.99-1667.68 1540.73-1597.97 1575.74-1532.03 1579.49-1524.98 1582.92-1517.75 1587.25-1511.01 1592.71-1502.54 1592.69-1495.18 1587.03-1486.35 1545.97-1422.37 1532.32-1352.35 1539.98-1279.67 1545.81-1224.3 1569.27-1173.98 1607.34-1129.61 1646.61-1083.85 1695.77-1051.76 1756.34-1033.87 1812.05-1017.42 1868.39-1017.85 1923.11-1034.08 1944.89-1040.54 1955.38-1032.44 1967.65-1021.86 2006.29-988.565 2043.79-954.136 2083.12-921.544 2117.34-893.186 2153.9-867.191 2188.59-839.291 2220.34-813.752 2255.92-792.813 2289-767.775 2286.28-756.247 2273.8-754.343 2265.22-749.911 2191.26-711.706 2113.35-682.508 2030.12-665.679 1960.14-651.529 1889.55-652.051 1818.78-657.733 1742.38-663.868 1670.11-684.005 1601.09-714.062 1536.79-742.067 1478.39-777.831 1425.53-821.896 1388.18-853.035 1354.14-886.516 1324.86-923.857 1265.6-999.455 1219.76-1081.01 1189.63-1170.46 1169.89-1229.07 1157.28-1288.72 1147.21-1348.85 1137.87-1404.65 1139.89-1461.3 1139.08-1517.73 1137.94-1598.04 1148.76-1677.08 1168.03-1754.96 1193.15-1856.43 1234.5-1952.51 1298.52-2039.09 1369.96-2135.71 1459.65-2214.33 1574.28-2268.48 1635.21-2297.26 1698.81-2317.55 1765.28-2331.45 1812.6-2341.35 1860.62-2344.67 1908.56-2343.89Z" fill="currentColor" fill-rule="evenodd" />
@@ -113,32 +112,32 @@
                 </g>
             </svg>
         </div>
-        <h1 class="home-brand-title">AlfaMTS</h1>
+        <h1 class="home-brand-title" style="font-size:2.75rem; letter-spacing:-1.5px;">AlfaMTS</h1>
     </div>
     
     <div class="splash-buttons">
-        <div class="splash-btn primary-minimal" id="btn-start-game" onclick="openGrid()">
+        <div class="splash-btn" id="btn-start-game" onclick="openGrid()">
             <div class="icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
             </div>
             Iniciar Sessão
         </div>
         <div class="splash-btn" onclick="openDashboard()">
             <div class="icon-wrapper">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
             </div>
             Telemetria
         </div>
         <div class="splash-btn" onclick="openSettings()">
             <div class="icon-wrapper">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
             </div>
             Configurações
         </div>
     </div>
 </div>
 
-<!-- ================= TELA DE JOGOS E ATIVIDADES (HEADER FINO + SWIPE + TOGGLE CONFIG) ================= -->
+<!-- ================= TELA DE JOGOS E ATIVIDADES (HEADER FINO + SWIPE + SETAS TECLADO/MOUSE) ================= -->
 <div id="screen-home" class="screen">
     <div class="home-header-slim">
         <button type="button" class="icon-circle-btn" onclick="handleGridBackNavigation()" title="Voltar">
@@ -148,7 +147,7 @@
         <h2 id="carousel-level-title" class="dynamic-level-title">Nível 1</h2>
         
         <div class="header-right-actions">
-            <!-- Pílula de Troca de Aluno restrita ao perfil Aplicador -->
+            <!-- Pílula de Troca de Aluno visível apenas no perfil Aplicador -->
             <button type="button" class="student-switcher-pill" id="applicator-grid-switcher" onclick="openStudentSwitcherModal()" style="display:none; margin-right:4px;">
                 <span class="avatar-mini"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                 <span class="student-first-name-label">ALUNO</span>
@@ -156,24 +155,27 @@
             <button type="button" class="icon-circle-btn" id="btn-review-mode" onclick="toggleReviewMode()" title="Modo Revisão (Toque em um card para revisar)">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
+            <button type="button" class="icon-circle-btn" id="btn-config-mode" onclick="toggleConfigMode()" title="Modo Configurar Tarefa (Toque em um card para configurar)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
             <button type="button" class="icon-circle-btn" onclick="requireAuth(openModulesManager)" id="btn-modules-mgr" title="Gerenciar Módulos">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
             </button>
         </div>
     </div>
 
-    <!-- CARROSSEL HORIZONTAL (SWIPE COM SETAS LATERAIS EM VIDRO) -->
+    <!-- CARROSSEL HORIZONTAL (SWIPE COM SETAS LATERAIS EM VIDRO FOSCO) -->
     <div class="carousel-stage-wrapper">
-        <button type="button" class="carousel-nav-arrow left" id="carousel-arrow-left" onclick="stepCarouselLevel(-1)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <button type="button" class="carousel-nav-arrow left" id="carousel-arrow-left" onclick="stepCarouselLevel(-1)" title="Nível Anterior (Seta Esquerda)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         
         <div class="carousel-viewport" id="levels-carousel" onscroll="onCarouselScroll()">
             <div class="carousel-track" id="carousel-track"></div>
         </div>
 
-        <button type="button" class="carousel-nav-arrow right" id="carousel-arrow-right" onclick="stepCarouselLevel(1)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        <button type="button" class="carousel-nav-arrow right" id="carousel-arrow-right" onclick="stepCarouselLevel(1)" title="Próximo Nível (Seta Direita)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
     </div>
 
@@ -181,27 +183,25 @@
     <div class="carousel-dots" id="carousel-dots"></div>
 </div>
 
-<!-- ================= TELA DE CONFIGURAÇÕES GLOBAIS E DE ACESSO ================= -->
+<!-- ================= TELA DE CONFIGURAÇÕES GLOBAIS ================= -->
 <div id="screen-settings" class="screen">
     <div class="settings-header">
-        <h2 style="display:flex; align-items:center; gap:10px;">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-            Configurações Globais
-        </h2>
-        <div style="display:flex; gap: 12px;">
-            <button type="button" class="btn-action btn-cancel" onclick="goSplash()">Cancelar</button>
-            <button type="button" class="btn-action" onclick="saveSettings()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Salvar
-            </button>
-        </div>
+        <button type="button" class="btn-action btn-cancel" onclick="goSplash()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Voltar / Cancelar
+        </button>
+        <h2 style="font-size:1.35rem; font-weight:900;">Configurações</h2>
+        <button type="button" class="btn-action" onclick="saveSettings()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Salvar
+        </button>
     </div>
     
     <div class="settings-single-col">
         <div class="settings-card">
             <div class="settings-card-title">Parâmetros de Ensino</div>
             <div class="input-group">
-                <label>Nome do Aluno:</label>
+                <label>Primeiro Nome do Aluno Ativo:</label>
                 <input type="text" id="set-name" placeholder="Ex: MIGUEL">
             </div>
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
@@ -229,16 +229,16 @@
                 </div>
                 <div class="input-group">
                     <label>Latência de Bloqueio (ms):</label>
-                    <input type="number" id="set-latency" min="0" step="100" value="500">
+                    <input type="number" id="set-latency" min="0" step="100" value="400">
                 </div>
             </div>
 
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: #F8FAFC; padding: 14px; border-radius: 14px; border: 1px solid var(--border);">
-                <input type="checkbox" id="set-strict-day" style="width:24px; height:24px;">
+                <input type="checkbox" id="set-strict-day" style="width:22px; height:22px;">
                 <label style="margin:0;">Avançar dia e rodar variação de estímulos apenas na data seguinte do calendário</label>
             </div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: var(--warning-light); padding: 14px; border-radius: 14px; margin-bottom:0;">
-                <input type="checkbox" id="set-errorless" style="width:24px; height:24px;">
+                <input type="checkbox" id="set-errorless" style="width:22px; height:22px;">
                 <label style="margin:0; color: #92400E;">Aprendizagem Sem Erro (Destacar alternativa correta após 1º erro)</label>
             </div>
         </div>
@@ -290,7 +290,7 @@
                 <div class="input-group">
                     <label>Tema Visual:</label>
                     <select id="set-theme">
-                        <option value="cyan">Ciano</option>
+                        <option value="cyan">Azul Clínico</option>
                         <option value="green">Verde</option>
                         <option value="indigo">Índigo</option>
                         <option value="pink">Rosa</option>
@@ -304,40 +304,40 @@
             </div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; margin-bottom:0;">
                 <input type="checkbox" id="set-use-mic" style="width:22px; height:22px;">
-                <label style="margin:0;">Ativar Microfone (Reconhecimento de Voz no Ciclo 3 e CRMTS)</label>
+                <label style="margin:0;">Ativar Microfone (Reconhecimento de Voz no Ciclo 3)</label>
             </div>
         </div>
 
         <div class="settings-card">
-            <div class="settings-card-title">Segurança, Perfis e Tempo</div>
+            <div class="settings-card-title">Segurança de Perfis e Timer de Sessão</div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px;">
-                <input type="checkbox" id="set-sec-enable" style="width:24px; height:24px;" onchange="togglePasswordField()">
-                <label style="margin:0;">Exigir Senhas de Acesso (PIN Clínico)</label>
+                <input type="checkbox" id="set-sec-enable" style="width:22px; height:22px;" onchange="togglePasswordField()">
+                <label style="margin:0;">Ativar Senha Numérica (Obrigatória para usar o Timer)</label>
             </div>
             
             <div id="pin-group" style="display:none; background:#F8FAFC; border:1px solid var(--border); padding:16px; border-radius:14px; margin-top:10px;">
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>PIN Analista:</label>
+                        <label>PIN do Analista (Obrigatório p/ Timer):</label>
                         <input type="password" id="set-analyst-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Ex: 1234">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>PIN Aplicador:</label>
-                        <input type="password" id="set-applicator-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Deixar em branco = Livre">
+                        <label>PIN do Aplicador (Opcional):</label>
+                        <input type="password" id="set-applicator-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Vazio = Acesso Livre">
                     </div>
                 </div>
                 <div style="margin-top:16px; display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="set-kiosk-exit" style="width:22px; height:22px;">
-                    <label style="margin:0; font-size:0.95rem; color:var(--danger);">Bloquear botão "Sair" da atividade em andamento</label>
+                    <label style="margin:0; font-size:0.92rem; color:var(--danger);">Bloquear botão "Sair" da atividade em andamento com PIN</label>
                 </div>
             </div>
 
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; margin-top:18px; margin-bottom:0;">
-                <input type="checkbox" id="set-timer-enable" style="width:24px; height:24px;" onchange="toggleTimerField()">
-                <label style="margin:0;">Ativar Timer de Sessão</label>
+                <input type="checkbox" id="set-timer-enable" style="width:22px; height:22px;" onchange="toggleTimerField()">
+                <label style="margin:0;">Ativar Timer Global de Sessão (Exige PIN do Analista)</label>
             </div>
             <div class="input-group" id="timer-group" style="display:none; margin-top:12px; margin-bottom:0;">
-                <label>Minutos da Sessão:</label>
+                <label>Duração da Sessão (Minutos):</label>
                 <input type="number" id="set-timer-min" min="1" value="30">
             </div>
         </div>
@@ -354,16 +354,16 @@
     </div>
 </div>
 
-<!-- ================= TELA DE DASHBOARD E TELEMETRIA (LIMPA) ================= -->
+<!-- ================= TELA DE DASHBOARD E TELEMETRIA ================= -->
 <div id="screen-dashboard" class="screen">
     <div class="dash-header">
         <button type="button" class="icon-circle-btn" onclick="goSplash()" title="Voltar">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         </button>
         
-        <h2 style="font-size:1.45rem; font-weight:900; margin:0; color:var(--text);">Desempenho Geral</h2>
+        <h2 style="font-size:1.4rem; font-weight:900; margin:0; color:var(--text);">Telemetria Clínica</h2>
         
-        <button type="button" class="icon-circle-btn" onclick="openTelemetryOptionsModal()" title="Exportar Dados">
+        <button type="button" class="icon-circle-btn" onclick="openTelemetryOptionsModal()" title="Opções de Exportação">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
         </button>
     </div>
@@ -389,7 +389,7 @@
 
     <div class="chart-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <strong style="font-size:1rem; color:var(--text);">Curva de Evolução (% Acertos Independentes)</strong>
+            <strong style="font-size:0.95rem; color:var(--text);">Curva de Evolução (% Acertos Independentes)</strong>
             <span id="chart-crit-label" style="font-size:0.82rem; font-weight:800; color:var(--danger);">--- Meta: 90%</span>
         </div>
         <canvas id="aba-progress-chart" height="170" style="width:100%; display:block;"></canvas>
@@ -398,20 +398,21 @@
     <div class="dash-list" id="dashboard-content"></div>
 </div>
 
-<!-- ================= TELA DA ARENA DE JOGO ================= -->
+<!-- ================= TELA DA ARENA DE INTERVENÇÃO (COM CONTADOR DE LATÊNCIA NO TOPO DIREITO) ================= -->
 <div id="screen-game" class="screen">
     <div class="game-top-bar">
         <button type="button" class="btn-exit-game" onclick="requestAbortGame()" title="Sair">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <div id="cycle-indicator" class="cycle-badge">Identidade Visual</div>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button type="button" class="icon-circle-btn" onclick="openQuickPeekModal()" title="Ver Estímulo e Resposta em Texto">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div id="latency-countdown-pill" class="trial-progress-pill" style="display:none; border-color:var(--danger); color:var(--danger); background:var(--danger-light); font-weight:900;"></div>
             <div id="fluency-timer-pill" class="trial-progress-pill" style="display:none; border-color:var(--warning); color:#B45309;">
                 <span id="fluency-ms-text">0.0s</span>
             </div>
+            <button type="button" class="icon-circle-btn" onclick="openQuickPeekModal()" title="Ver Estímulo e Resposta em Texto">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
             <div id="trial-counter-pill" class="trial-progress-pill">1 / 5</div>
         </div>
     </div>
@@ -442,9 +443,9 @@
 
 <!-- ================= MODAIS DO SISTEMA ================= -->
 
-<!-- PAINEL DE CONFIGURAÇÃO DA TAREFA REPAGINADO -->
+<!-- PAINEL DE CONFIGURAÇÃO DA TAREFA (4 ABAS INCLUINDO BANCO DE IMAGENS INDEXEDDB) -->
 <div id="modal-stimuli-editor" class="modal-overlay" data-backdrop-close="true" style="z-index: 280;">
-    <div class="modal-content" style="text-align: left; max-width: 640px; padding: 24px;" onclick="closeAllTooltips(event)">
+    <div class="modal-content" style="text-align: left; max-width: 680px; padding: 24px;" onclick="closeAllTooltips(event)">
         <div class="modal-clean-header">
             <h2 class="modal-title" id="stim-editor-title" style="margin:0;">Configurar Tarefa</h2>
             <button type="button" class="icon-circle-btn" onclick="closeModals()" title="Fechar">
@@ -456,8 +457,10 @@
             <button type="button" class="seg-btn active" id="tab-btn-stim" onclick="switchTaskEditorTab('STIM')">Estímulos</button>
             <button type="button" class="seg-btn" id="tab-btn-topo" onclick="switchTaskEditorTab('TOPO')">Apresentação</button>
             <button type="button" class="seg-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">Parâmetros ABA</button>
+            <button type="button" class="seg-btn" id="tab-btn-img" onclick="switchTaskEditorTab('IMG')">Banco de Imagens</button>
         </div>
 
+        <!-- ABA 1: ESTÍMULOS (COM BOTÃO DE ASSOCIAR IMAGEM/EMOJI EM CADA LINHA) -->
         <div id="task-tab-content-stim">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
                 <div class="var-tabs-bar" id="stim-var-tabs" style="margin:0; border:none; padding:0;"></div>
@@ -465,7 +468,7 @@
             </div>
             <div class="stim-editor-list" id="stim-items-list"></div>
             <div id="stim-add-bar" style="display:flex; gap:8px; margin-bottom:14px;">
-                <input type="text" id="stim-new-input" placeholder="Adicionar estímulo..." style="flex:1; padding:10px 14px; border:2px solid var(--border); border-radius:12px; font-weight:700; outline:none;">
+                <input type="text" id="stim-new-input" placeholder="Adicionar estímulo..." style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:700; outline:none;">
                 <button type="button" class="btn-action" id="stim-btn-add" style="padding:10px 18px;" onclick="addStimulusItemToEditor()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Adicionar
@@ -473,6 +476,7 @@
             </div>
         </div>
 
+        <!-- ABA 2: APRESENTAÇÃO -->
         <div id="task-tab-content-topo" style="display:none; padding: 4px 0 14px 0;">
             <div class="compact-param-row">
                 <div class="param-label-group">
@@ -488,14 +492,39 @@
                     <option value="SCHOOL">Escolar Cursiva</option>
                 </select>
             </div>
+
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Colorizar Consoante / Vogal</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-cv')">?</button>
+                    <div id="tip-cv" class="floating-popover">Exibe consoantes em preto e vogais em vermelho para destacar a estrutura intrassilábica.</div>
+                </div>
+                <label class="pill-switch">
+                    <input type="checkbox" id="task-cfg-color-cv">
+                    <span class="pill-slider"></span>
+                </label>
+            </div>
+
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Moldura Silábica Azul</span>
+                    <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-box')">?</button>
+                    <div id="tip-box" class="floating-popover">Enquadra visualmente cada sílaba da palavra com uma borda azul para apoiar a fusão silábica.</div>
+                </div>
+                <label class="pill-switch">
+                    <input type="checkbox" id="task-cfg-syl-box">
+                    <span class="pill-slider"></span>
+                </label>
+            </div>
         </div>
 
+        <!-- ABA 3: PARÂMETROS ABA -->
         <div id="task-tab-content-aba" style="display:none; padding: 4px 0 14px 0;">
             <div class="compact-param-row" id="dmts-config-box">
                 <div class="param-label-group">
                     <span>Time Delay Visual (DMTS)</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-dmts')">?</button>
-                    <div id="tip-dmts" class="floating-popover">Exige toque de observação no modelo visual; o modelo apaga e as escolhas surgem após o atraso. Fortalece retenção e controle condicional.</div>
+                    <div id="tip-dmts" class="floating-popover">Exige toque de observação no modelo visual; o modelo apaga e as escolhas surgem após o atraso.</div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px; width: 220px;">
                     <input type="range" id="task-cfg-dmts" min="0" max="5" step="1" value="0" style="flex:1;" oninput="document.getElementById('dmts-val-label').innerText = this.value == 0 ? '0s (Off)' : this.value + 's'">
@@ -507,10 +536,37 @@
                 <div class="param-label-group">
                     <span>Timeout de Latência (s)</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-lat')">?</button>
-                    <div id="tip-lat" class="floating-popover">Tempo máximo em segundos para emissão da resposta antes de registrar não-emissão [N] e avançar. (0 = sem limite).</div>
+                    <div id="tip-lat" class="floating-popover">Exibe um contador regressivo no topo direito da tarefa e avança automaticamente se esgotar (0 = sem limite).</div>
                 </div>
                 <input type="number" id="task-cfg-timeout" class="compact-input-num" min="0" max="60" value="0" placeholder="0">
             </div>
+        </div>
+
+        <!-- ABA 4: BANCO PARTICULAR DE IMAGENS (UPLOAD MULTIPLO -> WEBP -> INDEXEDDB) -->
+        <div id="task-tab-content-img" style="display:none; padding: 4px 0 14px 0;">
+            <div style="background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:14px; padding:14px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                    <div>
+                        <strong style="font-size:0.92rem; color:var(--text); display:block;">Enviar Imagens para o Banco Local (IndexedDB)</strong>
+                        <span style="font-size:0.76rem; color:var(--text-light); font-weight:600;">Converte automaticamente para WebP leve.</span>
+                    </div>
+                    <select id="img-upload-scale" class="compact-select" title="Escala de Redimensionamento">
+                        <option value="0.5" selected>Reduzir 50% (Recomendado)</option>
+                        <option value="0.25">Reduzir 25% (Ultra Leve)</option>
+                        <option value="1">100% (Máx 640px)</option>
+                    </select>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="file" id="img-upload-input" accept="image/*" multiple style="display:none;" onchange="handleBatchImageUpload(this.files)">
+                    <button type="button" class="btn-action" style="width:100%; padding:10px;" onclick="document.getElementById('img-upload-input').click()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Selecionar Imagens (Múltiplas)
+                    </button>
+                </div>
+                <div id="img-upload-status" style="font-size:0.78rem; font-weight:800; color:var(--primary-dark); margin-top:8px;"></div>
+            </div>
+
+            <div id="custom-images-gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(105px, 1fr)); gap:10px; max-height:190px; overflow-y:auto; padding:4px;"></div>
         </div>
 
         <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:16px;">
@@ -529,19 +585,45 @@
     </div>
 </div>
 
+<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (BANCO INDEXEDDB OU EMOJI) -->
+<div id="modal-media-picker" class="modal-overlay" style="z-index: 340;">
+    <div class="modal-content" style="max-width: 520px; text-align: left; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" id="media-picker-word-title" style="margin:0; font-size:1.25rem;">Associar Figura</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeMediaAssignPicker()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:8px;">1. Toque em uma imagem do seu Banco Particular (IndexedDB):</p>
+        <div id="media-picker-idb-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(95px, 1fr)); gap:8px; max-height:180px; overflow-y:auto; background:#F8FAFC; border:1.5px solid var(--border); border-radius:12px; padding:10px; margin-bottom:14px;"></div>
+
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:6px;">2. Ou associe um Emoji / Símbolo direto:</p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <input type="text" id="media-picker-emoji-input" placeholder="Ex: 🐶" style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:1.2rem; text-align:center; outline:none;">
+            <button type="button" class="btn-action" onclick="saveEmojiForActiveWord()">Aplicar Emoji</button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border); padding-top:12px;">
+            <button type="button" class="btn-action btn-cancel" onclick="clearCustomMediaForActiveWord()">Restaurar Padrão</button>
+            <button type="button" class="btn-action btn-cancel" onclick="closeMediaAssignPicker()">Fechar</button>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL SWITCHER MULTI-TENANT DE ALUNOS -->
 <div id="modal-student-switcher" class="modal-overlay" data-backdrop-close="true" style="z-index: 380;">
-    <div class="modal-content" style="max-width: 480px; text-align: left; padding: 26px;">
+    <div class="modal-content" style="max-width: 460px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
-            <h2 class="modal-title" style="margin:0;">Selecionar Aluno</h2>
+            <h2 class="modal-title" style="margin:0;">Alunos</h2>
             <button type="button" class="icon-circle-btn" onclick="closeModals()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div id="tenant-students-list" style="display:flex; flex-direction:column; gap:10px; max-height:40vh; overflow-y:auto; margin-bottom:20px; padding-right:6px;"></div>
-        <div style="display:flex; gap:10px; align-items:center; border-top:1.5px solid var(--border); padding-top:16px;">
-            <input type="text" id="new-tenant-name-input" placeholder="Novo Aluno..." style="flex:1; padding:12px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:800; font-size:0.95rem; outline:none;">
-            <button type="button" class="btn-action" onclick="handleAddStudentFromModal()">Adicionar</button>
+        <div id="tenant-students-list" style="display:flex; flex-direction:column; gap:10px; max-height:40vh; overflow-y:auto; margin-bottom:18px; padding-right:4px;"></div>
+        <div style="display:flex; gap:8px; align-items:center; border-top:1.5px solid var(--border); padding-top:14px;">
+            <input type="text" id="new-tenant-name-input" placeholder="Primeiro nome..." style="flex:1; padding:11px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:800; font-size:0.95rem; outline:none;" onkeypress="if(event.key==='Enter') handleAddStudentFromModal()">
+            <button type="button" class="btn-action" onclick="handleAddStudentFromModal()">Novo</button>
         </div>
     </div>
 </div>
@@ -549,30 +631,34 @@
 <!-- MODAL OPÇÕES DE TELEMETRIA -->
 <div id="modal-telemetry-options" class="modal-overlay" data-backdrop-close="true" style="z-index: 380;">
     <div class="modal-content" style="max-width: 400px; padding: 24px;">
-        <div class="modal-clean-header" style="justify-content:center; position:relative; margin-bottom:20px;">
-            <h2 class="modal-title" style="margin:0; font-size:1.35rem;">Exportar Dados</h2>
-            <button type="button" class="icon-circle-btn" onclick="closeModals()" style="position:absolute; right:0;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" style="margin:0; font-size:1.3rem;">Exportar Telemetria</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
             <button type="button" class="menu-option-row" onclick="copyWhatsAppSummary()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Copiar Resumo Padrão
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Resumo em Texto
             </button>
             <button type="button" class="menu-option-row" onclick="exportEidosChecklistPDF()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Protocolo / Laudo PDF
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Protocolo / Laudo PDF
             </button>
             <button type="button" class="menu-option-row" onclick="exportSessionLogPDF()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Histórico Completo PDF
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Histórico de Sessões PDF
             </button>
             <button type="button" class="menu-option-row" onclick="openReport()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Dados Estruturados (JSON)
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Dados Brutos (JSON)
             </button>
         </div>
     </div>
 </div>
 
-<!-- MODAL FLUTUANTE "PUSH TO VIEW" (FICHA CLÍNICA AO SEGURAR O CARD) -->
+<!-- MODAL FLUTUANTE "PUSH TO VIEW" -->
 <div id="modal-push-details" class="modal-overlay" style="z-index: 450; pointer-events: none;">
     <div class="modal-content" style="max-width: 480px; text-align: left; padding: 26px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -588,7 +674,7 @@
     </div>
 </div>
 
-<!-- MODAL DE VISUALIZAÇÃO RÁPIDA EM TEXTO (ESTÍMULO + RESPOSTA NA TELA DE JOGO) -->
+<!-- MODAL DE VISUALIZAÇÃO RÁPIDA EM TEXTO -->
 <div id="modal-quick-peek" class="modal-overlay" data-backdrop-close="true" style="z-index: 420;">
     <div class="modal-content" style="max-width: 440px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
@@ -610,7 +696,7 @@
     </div>
 </div>
 
-<!-- MODAL GERENCIADOR DE MÓDULOS COM SELECIONAR TODOS E ALERTA DE LINHA DE BASE -->
+<!-- MODAL GERENCIADOR DE MÓDULOS -->
 <div id="modal-modules" class="modal-overlay" data-backdrop-close="true">
     <div class="modal-content" style="text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
         <h2 class="modal-title">Liberar ou Bloquear Módulos</h2>
@@ -632,7 +718,7 @@
     </div>
 </div>
 
-<!-- MODAL PIN AUTH (CRÍTICO - NÃO FECHA NO BACKDROP) -->
+<!-- MODAL PIN AUTH -->
 <div id="modal-auth" class="modal-overlay" style="z-index: 350;">
     <div class="modal-content" style="max-width: 420px;" id="auth-content">
         <div style="display:flex; justify-content:center; margin-bottom:14px;">
@@ -681,11 +767,11 @@
     </div>
 </div>
 
-<!-- MODAL RELATÓRIO DADOS / TEXTO (Para exportar JSON se chamado via console/código no futuro) -->
+<!-- MODAL RELATÓRIO DADOS / TEXTO -->
 <div id="modal-report" class="modal-overlay" data-backdrop-close="true" style="z-index: 400;">
     <div class="modal-content">
         <h2 class="modal-title" id="report-modal-title">Dados</h2>
-        <p class="modal-desc" id="report-modal-desc">Dados estruturados da última sessão.</p>
+        <p class="modal-desc" id="report-modal-desc">Dados estruturados da sessão.</p>
         <textarea id="json-output" readonly style="font-family:monospace; font-size:0.9rem; height:220px;"></textarea>
         <div style="display:flex; gap: 12px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1;" onclick="closeModals()">Fechar</button>
@@ -697,7 +783,7 @@
     </div>
 </div>
 
-<!-- MODAL ALERTA GENÉRICO (CRÍTICO - NÃO FECHA NO BACKDROP) -->
+<!-- MODAL ALERTA GENÉRICO -->
 <div id="modal-alert" class="modal-overlay" style="z-index: 400;">
     <div class="modal-content" style="max-width: 480px;">
         <h2 class="modal-title" id="alert-title">Aviso</h2>
@@ -708,7 +794,7 @@
     </div>
 </div>
 
-<!-- MODAL RESULTADO FINAL DO BLOCO (CRÍTICO) -->
+<!-- MODAL RESULTADO FINAL DO BLOCO -->
 <div id="modal-result" class="modal-overlay" style="z-index: 300;">
     <div class="modal-content" style="max-width: 560px;">
         <div id="result-icon-box" style="margin-bottom:14px;"></div>
