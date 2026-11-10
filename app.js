@@ -22,7 +22,8 @@ const UI_SVGS = {
     target: `<svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
     grid: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
     replay: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`,
-    coin: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>`
+    coin: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>`,
+    imageMini: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
 };
 
 function getPhonemeAudioPath(letter, varIdx = '1') {
@@ -207,9 +208,21 @@ function compressAndConvertImageToWebP(file, scaleFactor = 0.5, quality = 0.82) 
     });
 }
 
+// Extrai a chave limpa do estímulo mesmo se estiver fragmentado para CRMTS (ex: "BO-LA" -> "BOLA")
+function getNormalizedWordKey(rawKey) {
+    const str = String(rawKey || '').trim().toUpperCase();
+    if (str.includes(';') || str.includes('/') || str.includes('-')) {
+        return str.replace(/[;\/\-]\s*/g, '').trim();
+    }
+    return str;
+}
+
 function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
-    const cleanKey = String(wordKey || '').trim().toUpperCase();
-    const customMedia = (state && state.customWordMedia && state.customWordMedia[cleanKey]) ? state.customWordMedia[cleanKey] : null;
+    const rawUpper = String(wordKey || '').trim().toUpperCase();
+    const cleanKey = getNormalizedWordKey(rawUpper);
+    const customMedia = (state && state.customWordMedia)
+        ? (state.customWordMedia[rawUpper] || state.customWordMedia[cleanKey])
+        : null;
 
     if (customMedia) {
         if (customMedia.type === 'IDB' && customImagesCache[customMedia.val]) {
@@ -222,13 +235,13 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
         }
     }
 
-    const matchedByName = Object.values(customImagesCache).find(item => item.name === cleanKey);
+    const matchedByName = Object.values(customImagesCache).find(item => item.name === cleanKey || item.name === rawUpper);
     if (matchedByName) {
         const px = Math.round(sizeRem * 22);
         return `<img src="${matchedByName.dataUrl}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
     }
 
-    const wObj = (typeof WORD_BANK !== 'undefined') ? WORD_BANK[cleanKey] : null;
+    const wObj = (typeof WORD_BANK !== 'undefined') ? (WORD_BANK[cleanKey] || WORD_BANK[rawUpper]) : null;
     if (wObj && wObj.img) {
         const px = Math.round(sizeRem * 22);
         return `<img src="${wObj.img}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
@@ -240,10 +253,11 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
 }
 
 function hasValidVisualRepresentation(wordKey) {
-    const cleanKey = String(wordKey || '').trim().toUpperCase();
-    if (state && state.customWordMedia && state.customWordMedia[cleanKey]) return true;
-    if (Object.values(customImagesCache).some(item => item.name === cleanKey)) return true;
-    if (typeof WORD_BANK !== 'undefined' && WORD_BANK[cleanKey] && (WORD_BANK[cleanKey].icon || WORD_BANK[cleanKey].img)) return true;
+    const rawUpper = String(wordKey || '').trim().toUpperCase();
+    const cleanKey = getNormalizedWordKey(rawUpper);
+    if (state && state.customWordMedia && (state.customWordMedia[rawUpper] || state.customWordMedia[cleanKey])) return true;
+    if (Object.values(customImagesCache).some(item => item.name === cleanKey || item.name === rawUpper)) return true;
+    if (typeof WORD_BANK !== 'undefined' && (WORD_BANK[cleanKey] || WORD_BANK[rawUpper])) return true;
     return false;
 }
 
@@ -303,13 +317,13 @@ function createFreshStudentState(firstName = 'ALUNO') {
         settings: {
             crit: 90,
             consecDays: 3,
-            strictDay: false,
+            strictDay: true,
             errorless: true,
             topoVar: false,
             topoMode: 'AUTO',
             opts: 3,
             sylComplex: { ccv: false, cvcL: false, cvcS: false, cvcM: false },
-            theme: 'cyan',
+            themeColor: '#3B82F6',
             latency: 400,
             security: { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false },
             timer: { enabled: false, min: 30 },
@@ -380,7 +394,11 @@ function normalizeStudentState(st) {
     if (!st.minimalPairSwaps) st.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
     if (!st.settings) st.settings = createFreshStudentState(st.student).settings;
     if (!st.settings.consecDays) st.settings.consecDays = 3;
+    if (typeof st.settings.strictDay !== 'boolean') st.settings.strictDay = true;
     if (!st.settings.topoMode) st.settings.topoMode = 'AUTO';
+    if (!st.settings.themeColor || !String(st.settings.themeColor).startsWith('#')) {
+        st.settings.themeColor = '#3B82F6';
+    }
     if (!st.settings.sylComplex) st.settings.sylComplex = { ccv: false, cvcL: false, cvcS: false, cvcM: false };
     if (!st.settings.security) st.settings.security = { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false };
     if (!st.session) st.session = { expired: false, endTime: null, configuredMin: st.settings.timer ? st.settings.timer.min : 30 };
@@ -468,7 +486,7 @@ function createNewStudentTenant(rawName) {
     if (!firstName) return false;
     const newId = 'stu_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
     const fresh = createFreshStudentState(firstName);
-    fresh.settings.theme = state.settings.theme || 'cyan';
+    fresh.settings.themeColor = state.settings.themeColor || '#3B82F6';
     tenantsIndex.students.push({ id: newId, firstName, createdAt: new Date().toLocaleDateString('pt-BR') });
     localStorage.setItem('alfamts_student_' + newId, JSON.stringify(fresh));
     switchActiveStudent(newId);
@@ -492,12 +510,42 @@ function deleteStudentTenant(studentId) {
 
 function getTaskConfig(modId) {
     if (!state.taskSettings[modId]) {
-        state.taskSettings[modId] = { font: 'GLOBAL', dmtsDelay: 0, responseTimeout: 0, colorCV: false, sylBox: false, rewardTokens: -1 };
+        state.taskSettings[modId] = {
+            font: 'GLOBAL',
+            dmtsDelay: 0,
+            responseTimeout: 0,
+            colorCV: false,
+            sylBox: false,
+            rewardTokens: -1,
+            opts: 0,
+            stages: { c1: true, c2: true, c3: true, c4: true }
+        };
     }
-    if (typeof state.taskSettings[modId].rewardTokens !== 'number') {
-        state.taskSettings[modId].rewardTokens = -1;
+    const cfg = state.taskSettings[modId];
+    if (typeof cfg.rewardTokens !== 'number') cfg.rewardTokens = -1;
+    if (typeof cfg.opts !== 'number') cfg.opts = 0;
+    if (!cfg.stages || typeof cfg.stages !== 'object') {
+        cfg.stages = { c1: true, c2: true, c3: true, c4: true };
     }
-    return state.taskSettings[modId];
+    return cfg;
+}
+
+function getEffectiveOptsForCurrentSession() {
+    if (!session || !session.phase) return 3;
+    if (syllabaryOrder.includes(session.phase)) {
+        return parseInt(state.settings.opts) || 3;
+    }
+    const tCfg = getTaskConfig(session.phase);
+    if (tCfg && tCfg.opts >= 2) return parseInt(tCfg.opts);
+    return 3;
+}
+
+function getEffectiveStagesForModule(modId, isSyllabary = false) {
+    if (isSyllabary || syllabaryOrder.includes(modId)) {
+        return state.settings.stages || { c1: true, c2: true, c3: true, c4: true };
+    }
+    const tCfg = getTaskConfig(modId);
+    return tCfg.stages || { c1: true, c2: true, c3: true, c4: true };
 }
 
 function getModuleVariationsMap(modId) {
@@ -596,7 +644,6 @@ function registerMasteryAttempt(modId, accuracy, avgLatencySec) {
             }
         }
 
-        // Concessão de fichas por bloco com meta atingida (respeitando remuneração individual da tarefa ou global)
         if (state.tokens && state.tokens.rules && state.tokens.rules.enabled) {
             const tCfg = getTaskConfig(modId);
             const customMod = (state.customModules || []).find(m => m.id === modId);
@@ -702,7 +749,7 @@ let session = {
 };
 
 /* ============================================================================
-   6. ÁUDIO SINTÉTICO, TTS, TEMA, SALDO DE FICHAS E ECONOMIA COMPORTAMENTAL
+   6. ÁUDIO SINTÉTICO, TTS, TEMA EM RGB LIVRE E ECONOMIA COMPORTAMENTAL
    ============================================================================ */
 let audioCtx = null;
 
@@ -766,8 +813,24 @@ function updateTokenBalanceUI() {
     if (totLbl) totLbl.innerText = tot;
 }
 
+function applyDynamicThemeColor(hexColor) {
+    const cleanHex = /^#[0-9A-Fa-f]{6}$/.test(hexColor) ? hexColor : '#3B82F6';
+    const r = parseInt(cleanHex.slice(1, 3), 16);
+    const g = parseInt(cleanHex.slice(3, 5), 16);
+    const b = parseInt(cleanHex.slice(5, 7), 16);
+
+    const darkR = Math.max(0, Math.round(r * 0.78));
+    const darkG = Math.max(0, Math.round(g * 0.78));
+    const darkB = Math.max(0, Math.round(b * 0.78));
+
+    const root = document.documentElement;
+    root.style.setProperty('--primary', cleanHex);
+    root.style.setProperty('--primary-dark', `rgb(${darkR}, ${darkG}, ${darkB})`);
+    root.style.setProperty('--primary-light', `rgba(${r}, ${g}, ${b}, 0.13)`);
+}
+
 function applyTheme() {
-    document.documentElement.setAttribute('data-theme', state.settings.theme || 'cyan');
+    applyDynamicThemeColor(state.settings.themeColor || '#3B82F6');
     const first = getActiveFirstName();
     document.querySelectorAll('.student-first-name-label').forEach(el => {
         el.innerText = first;
@@ -803,6 +866,7 @@ let expectedAuthPin = '';
 let alertCallback = null;
 let backdropMouseDownTarget = null;
 let arcadeCountdownInterval = null;
+let currentComplementsView = 'HUB';
 let arcadeCatalogList = (typeof DEFAULT_ARCADE_MANIFEST !== 'undefined') ? [...DEFAULT_ARCADE_MANIFEST] : [];
 
 function dismissSplashScreen() {
@@ -835,7 +899,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Listener Bidirecional do Sandbox Arcade (postMessage ARCADE_EXIT)
 window.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'ARCADE_EXIT') {
         closeArcadeSandbox();
@@ -994,10 +1057,10 @@ function openGame() {
     document.getElementById('screen-game').classList.add('active');
 }
 
-/* TELA DE COMPLEMENTOS: OFICINA DE TAREFAS (STUDIO) & ECONOMIA DE FICHAS */
+/* TELA DE COMPLEMENTOS (HUB DE 3 CARDS: STUDIO, TOKENS, ARCADE TESTE LIVRE) */
 let studioCyclesDraft = [];
 
-function openComplements(initialTab = 'STUDIO') {
+function openComplements(initialSection = 'HUB') {
     playSound('click');
     hideAllScreens();
     applyTheme();
@@ -1006,19 +1069,111 @@ function openComplements(initialTab = 'STUDIO') {
     if (studioCyclesDraft.length === 0) resetStudioForm();
     renderStudioSavedModulesList();
     renderTokensManagementUI();
-    switchComplementsSection(initialTab);
+    renderAnalystArcadeFreeTestGrid();
+    switchComplementsSection(initialSection);
+}
+
+function handleComplementsBack() {
+    playSound('click');
+    if (currentComplementsView !== 'HUB') {
+        switchComplementsSection('HUB');
+    } else {
+        goSplash();
+    }
 }
 
 function switchComplementsSection(sec) {
     playSound('click');
-    const btnS = document.getElementById('comp-tab-btn-studio');
-    const btnT = document.getElementById('comp-tab-btn-tokens');
-    const paneS = document.getElementById('comp-section-studio');
-    const paneT = document.getElementById('comp-section-tokens');
-    if (btnS) btnS.classList.toggle('active', sec === 'STUDIO');
-    if (btnT) btnT.classList.toggle('active', sec === 'TOKENS');
-    if (paneS) paneS.style.display = (sec === 'STUDIO') ? 'block' : 'none';
-    if (paneT) paneT.style.display = (sec === 'TOKENS') ? 'block' : 'none';
+    currentComplementsView = sec;
+    const hub = document.getElementById('comp-section-hub');
+    const studio = document.getElementById('comp-section-studio');
+    const tokens = document.getElementById('comp-section-tokens');
+    const arcade = document.getElementById('comp-section-arcade');
+    const headerTitle = document.getElementById('complements-header-title');
+
+    if (hub) hub.style.display = (sec === 'HUB') ? 'grid' : 'none';
+    if (studio) studio.style.display = (sec === 'STUDIO') ? 'block' : 'none';
+    if (tokens) tokens.style.display = (sec === 'TOKENS') ? 'block' : 'none';
+    if (arcade) arcade.style.display = (sec === 'ARCADE') ? 'block' : 'none';
+
+    if (headerTitle) {
+        if (sec === 'STUDIO') headerTitle.innerText = 'Oficina de Tarefas (Studio)';
+        else if (sec === 'TOKENS') headerTitle.innerText = 'Economia de Fichas & Loja';
+        else if (sec === 'ARCADE') headerTitle.innerText = 'Arcade (Teste do Analista)';
+        else headerTitle.innerText = 'Complementos Clínicos';
+    }
+    if (sec === 'STUDIO') renderStudioTargetsMediaChips();
+    if (sec === 'ARCADE') renderAnalystArcadeFreeTestGrid();
+}
+
+function renderAnalystArcadeFreeTestGrid() {
+    const grid = document.getElementById('analyst-arcade-test-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    arcadeCatalogList.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'store-item-card';
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="meta-chip" style="background:var(--primary-light); color:var(--primary-dark);">${game.durationSec || 60}s</span>
+                <span class="meta-chip" style="background:var(--success-light); color:#065F46;">TESTE GRATUITO</span>
+            </div>
+            <div style="text-align:left;">
+                <strong style="font-size:1.05rem; color:var(--text); display:block;">${game.title}</strong>
+                <span style="font-size:0.78rem; color:var(--text-light); font-weight:600;">${game.desc || ''}</span>
+            </div>
+            <button type="button" class="btn-action" style="width:100%; padding:10px;" onclick="redeemArcadeGame('${game.id}', true)">
+                Testar Jogo Agora
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function openComplementsMediaBankModal() {
+    playSound('click');
+    editorSession.modId = null;
+    editorSession.hasEditableStimuli = false;
+    document.getElementById('stim-editor-title').innerText = 'Banco Particular de Imagens (WebP)';
+    document.getElementById('tab-btn-stim').style.display = 'none';
+    document.getElementById('tab-btn-topo').style.display = 'none';
+    document.getElementById('tab-btn-aba').style.display = 'none';
+    switchTaskEditorTab('IMG');
+    document.getElementById('modal-stimuli-editor').style.display = 'flex';
+}
+
+function renderStudioTargetsMediaChips() {
+    const bar = document.getElementById('studio-targets-media-bar');
+    const inp = document.getElementById('studio-targets-input');
+    if (!bar || !inp) return;
+    bar.innerHTML = '';
+
+    const items = inp.value.split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
+    if (items.length === 0) {
+        bar.innerHTML = `<span style="font-size:0.8rem; color:var(--text-light); font-weight:600;">Digite os estímulos acima separados por vírgula para atribuir imagens ou emojis.</span>`;
+        return;
+    }
+
+    [...new Set(items)].forEach(rawItem => {
+        const cleanKey = getNormalizedWordKey(rawItem);
+        const hasMedia = hasValidVisualRepresentation(rawItem);
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'studio-stim-chip';
+        if (hasMedia) {
+            chip.style.borderColor = 'var(--primary)';
+        }
+        chip.innerHTML = `
+            ${UI_SVGS.imageMini}
+            <span>${rawItem}</span>
+            ${hasMedia ? `<span style="color:var(--success); display:inline-flex;">${UI_SVGS.check}</span>` : ''}
+        `;
+        chip.onclick = () => {
+            playSound('click');
+            openStimulusMediaAssignPicker(cleanKey);
+        };
+        bar.appendChild(chip);
+    });
 }
 
 function resetStudioForm() {
@@ -1040,11 +1195,15 @@ function resetStudioForm() {
             sdChannel1: 'IMAGE',
             sdChannel2: 'TEXT',
             compChannel: 'TEXT',
+            crmtsAutoLetters: true,
+            crmtsSplitMode: 'LETTERS',
+            commandText: '',
             dmtsDelay: 0,
             timeoutSec: 0,
             errorless: true
         }
     ];
+    renderStudioTargetsMediaChips();
     renderStudioCyclesDraftUI();
 }
 
@@ -1060,6 +1219,9 @@ function addStudioCycleRow() {
         sdChannel1: 'AUDIO',
         sdChannel2: 'TEXT',
         compChannel: 'TEXT',
+        crmtsAutoLetters: true,
+        crmtsSplitMode: 'LETTERS',
+        commandText: '',
         dmtsDelay: 0,
         timeoutSec: 0,
         errorless: true
@@ -1080,10 +1242,16 @@ function renderStudioCyclesDraftUI() {
     container.innerHTML = '';
 
     studioCyclesDraft.forEach((cyc, idx) => {
+        if (typeof cyc.crmtsAutoLetters !== 'boolean') cyc.crmtsAutoLetters = true;
+        if (!cyc.crmtsSplitMode) cyc.crmtsSplitMode = 'LETTERS';
+        if (typeof cyc.commandText !== 'string') cyc.commandText = '';
+
         const card = document.createElement('div');
         card.className = 'studio-cycle-card';
         const showChannel2 = (cyc.sdMode === 'COMPOUND');
-        const showCompChannel = (cyc.mechanic !== 'EXPRESSIVE');
+        const showCompChannel = (cyc.mechanic === 'MTS' || cyc.mechanic === 'MULTIMTS');
+        const isCRMTS = (cyc.mechanic === 'CRMTS');
+        const isExpressive = (cyc.mechanic === 'EXPRESSIVE');
 
         card.innerHTML = `
             <div class="studio-cycle-header">
@@ -1096,8 +1264,8 @@ function renderStudioCyclesDraftUI() {
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].mechanic = this.value; renderStudioCyclesDraftUI();">
                         <option value="MTS" ${cyc.mechanic === 'MTS' ? 'selected' : ''}>MTS Comum (1 Modelo x Alternativas)</option>
                         <option value="MULTIMTS" ${cyc.mechanic === 'MULTIMTS' ? 'selected' : ''}>Multi-MTS (Pareamento 3x3 em Colunas)</option>
-                        <option value="CRMTS" ${cyc.mechanic === 'CRMTS' ? 'selected' : ''}>CRMTS (Construção por Letras/Sílabas)</option>
-                        <option value="EXPRESSIVE" ${cyc.mechanic === 'EXPRESSIVE' ? 'selected' : ''}>Expressivo / Sondagem Oral (Registro Dock)</option>
+                        <option value="CRMTS" ${cyc.mechanic === 'CRMTS' ? 'selected' : ''}>CRMTS (Construção por Fragmentos)</option>
+                        <option value="EXPRESSIVE" ${cyc.mechanic === 'EXPRESSIVE' ? 'selected' : ''}>Expressivo / Sondagem / Comando ao Aplicador</option>
                     </select>
                 </div>
                 <div class="input-group" style="margin-bottom:0;">
@@ -1112,9 +1280,9 @@ function renderStudioCyclesDraftUI() {
                 <div class="input-group" style="margin-bottom:0;">
                     <label>Canal Principal do Modelo (SD 1):</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdChannel1 = this.value;">
-                        <option value="TEXT" ${cyc.sdChannel1 === 'TEXT' ? 'selected' : ''}>Texto Impresso (Palavra / Sílaba / Letra)</option>
+                        <option value="TEXT" ${cyc.sdChannel1 === 'TEXT' ? 'selected' : ''}>Texto Impresso (Palavra / Sílaba / Frase)</option>
                         <option value="IMAGE" ${cyc.sdChannel1 === 'IMAGE' ? 'selected' : ''}>Figura (Banco IndexedDB / Emoji)</option>
-                        <option value="AUDIO" ${cyc.sdChannel1 === 'AUDIO' ? 'selected' : ''}>Áudio ( Voz Sintetizada TTS / Fonema)</option>
+                        <option value="AUDIO" ${cyc.sdChannel1 === 'AUDIO' ? 'selected' : ''}>Áudio (Voz Sintetizada TTS)</option>
                     </select>
                 </div>
                 ${showChannel2 ? `
@@ -1135,6 +1303,29 @@ function renderStudioCyclesDraftUI() {
                     </select>
                 </div>` : ''}
             </div>
+
+            ${isCRMTS ? `
+            <div style="background:#FFFFFF; border:1.5px solid var(--border); border-radius:12px; padding:12px 14px;">
+                <label style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:0.9rem; cursor:pointer;">
+                    <input type="checkbox" ${cyc.crmtsAutoLetters ? 'checked' : ''} style="width:20px; height:20px;" onchange="studioCyclesDraft[${idx}].crmtsAutoLetters = this.checked; studioCyclesDraft[${idx}].crmtsSplitMode = this.checked ? 'LETTERS' : 'CUSTOM'; renderStudioCyclesDraftUI();">
+                    <span>Quebrar estímulo em letras automaticamente</span>
+                </label>
+                ${!cyc.crmtsAutoLetters ? `
+                <div style="margin-top:10px;">
+                    <label style="font-size:0.82rem; font-weight:800; color:var(--text-light); display:block; margin-bottom:6px;">Modo de Fragmentação Manual:</label>
+                    <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].crmtsSplitMode = this.value;">
+                        <option value="CUSTOM" ${cyc.crmtsSplitMode === 'CUSTOM' ? 'selected' : ''}>Por Hífen / Barra / Ponto-e-vírgula no estímulo (Ex: BO-LA ou O-GATO)</option>
+                        <option value="WORDS" ${cyc.crmtsSplitMode === 'WORDS' ? 'selected' : ''}>Por Espaços (Montar Frases por Palavras, ex: O GATO PULOU)</option>
+                    </select>
+                </div>` : ''}
+            </div>` : ''}
+
+            ${isExpressive ? `
+            <div class="input-group" style="margin-bottom:0;">
+                <label>Comando / Instrução para o Aplicador (Exibido na tela do jogo):</label>
+                <input type="text" placeholder="Ex: Peça ao aluno para ler em voz alta ou copiar no caderno" value="${cyc.commandText || ''}" oninput="studioCyclesDraft[${idx}].commandText = this.value;">
+            </div>` : ''}
+
             <div class="studio-grid-2col" style="padding-top:6px; border-top:1px dashed var(--border);">
                 <div class="input-group" style="margin-bottom:0;">
                     <label>Time Delay DMTS (0 a 5s):</label>
@@ -1161,8 +1352,8 @@ function saveStudioCustomModule() {
         customAlert("Título Obrigatório", "Informe um nome para identificar a tarefa personalizada.");
         return;
     }
-    if (rawTargets.length < 2) {
-        customAlert("Estímulos Insuficientes", "Insira pelo menos 2 estímulos separados por vírgula.");
+    if (rawTargets.length < 1) {
+        customAlert("Estímulos Insuficientes", "Insira pelo menos 1 estímulo alvo.");
         return;
     }
 
@@ -1207,6 +1398,7 @@ function editStudioCustomModule(modId) {
     document.getElementById('studio-reward-tokens').value = (typeof mod.rewardTokens === 'number') ? mod.rewardTokens : 2;
     document.getElementById('studio-targets-input').value = (mod.targets || []).join(', ');
     studioCyclesDraft = JSON.parse(JSON.stringify(mod.cyclesConfig || []));
+    renderStudioTargetsMediaChips();
     renderStudioCyclesDraftUI();
 }
 
@@ -1237,6 +1429,7 @@ function renderStudioSavedModulesList() {
                 <span style="font-size:0.76rem; color:var(--text-light); font-weight:700;">${(m.cyclesConfig || []).length} Ciclo(s) • Estímulos: ${(m.targets || []).join(', ')} • +${m.rewardTokens} Fichas</span>
             </div>
             <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-action" style="padding:7px 12px; font-size:0.8rem;" onclick="startCustomStudioModule('${m.id}')">Testar</button>
                 <button type="button" class="btn-action btn-cancel" style="padding:7px 12px; font-size:0.8rem;" onclick="editStudioCustomModule('${m.id}')">Editar</button>
                 <button type="button" class="btn-icon-del" onclick="deleteStudioCustomModule('${m.id}')" title="Excluir"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
             </div>
@@ -1425,11 +1618,11 @@ function redeemPhysicalVoucher(vouchId) {
     );
 }
 
-function redeemArcadeGame(gameId, isFreeImmediateReward = false, customDurationSec = null) {
+function redeemArcadeGame(gameId, isFreeTestOrImmediate = false, customDurationSec = null) {
     const game = arcadeCatalogList.find(g => g.id === gameId) || arcadeCatalogList[0];
     if (!game) return;
 
-    if (!isFreeImmediateReward) {
+    if (!isFreeTestOrImmediate) {
         if ((state.tokens.balance || 0) < game.cost) return;
         awardTokensToActiveStudent(-game.cost, `Jogo Arcade: ${game.title}`);
     }
@@ -1461,7 +1654,12 @@ function launchArcadeSandboxIframe(title, entryUrl, durationSec) {
         if (remaining <= 0) {
             clearInterval(arcadeCountdownInterval);
             arcadeCountdownInterval = null;
-            setTimeout(() => closeArcadeSandbox(), 1200);
+            try {
+                if (frame.contentWindow) {
+                    frame.contentWindow.postMessage({ type: 'ARCADE_TIME_UP' }, '*');
+                }
+            } catch (e) {}
+            setTimeout(() => closeArcadeSandbox(), 1500);
         }
     }, 1000);
 }
@@ -1895,7 +2093,6 @@ function executeRewardPortalAction(modId) {
     }
 }
 
-// ESCOPO 1.3: Clique no botão Play (.card-play-btn) passa forceDirectPlay = true, ignorando isConfigMode!
 function buildCleanCardElement(itemData) {
     const isPhon = String(itemData.id).startsWith('FA_');
     const isPortal = (itemData.engine === 'REWARD_PORTAL');
@@ -2152,7 +2349,7 @@ function renderGrid() {
 }
 
 /* ============================================================================
-   9. PAINEL DA TAREFA (4 ABAS + REMUNERAÇÃO INDIVIDUAL + UPLOAD INDEXEDDB)
+   9. PAINEL DA TAREFA (DESCENTRALIZADO: CICLOS, OPTS, FONTE E INDEXEDDB)
    ============================================================================ */
 let editorSession = {
     modId: null,
@@ -2199,10 +2396,13 @@ function openStimuliEditor(modId) {
 
     const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId])
         ? DEFAULT_MODULE_VARIATIONS[modId]
-        : (customMod ? { editable: true, min: 2, max: 20 } : null);
+        : (customMod ? { editable: true, min: 1, max: 20 } : null);
 
     editorSession.modId = modId;
     editorSession.hasEditableStimuli = !!(meta && meta.editable);
+
+    document.getElementById('tab-btn-topo').style.display = 'inline-flex';
+    document.getElementById('tab-btn-aba').style.display = 'inline-flex';
 
     const tCfg = getTaskConfig(modId);
     document.getElementById('task-cfg-font').value = tCfg.font || 'GLOBAL';
@@ -2210,6 +2410,20 @@ function openStimuliEditor(modId) {
     const chkBox = document.getElementById('task-cfg-syl-box');
     if (chkCV) chkCV.checked = !!tCfg.colorCV;
     if (chkBox) chkBox.checked = !!tCfg.sylBox;
+
+    const optsSel = document.getElementById('task-cfg-opts');
+    if (optsSel) optsSel.value = String(tCfg.opts || 0);
+
+    const stg = tCfg.stages || { c1: true, c2: true, c3: true, c4: true };
+    const c1El = document.getElementById('task-cfg-c1');
+    const c2El = document.getElementById('task-cfg-c2');
+    const c3El = document.getElementById('task-cfg-c3');
+    const c4El = document.getElementById('task-cfg-c4');
+    if (c1El) c1El.checked = stg.c1 !== false;
+    if (c2El) c2El.checked = stg.c2 !== false;
+    if (c3El) c3El.checked = stg.c3 !== false;
+    if (c4El) c4El.checked = stg.c4 !== false;
+
     document.getElementById('task-cfg-dmts').value = tCfg.dmtsDelay || 0;
     document.getElementById('dmts-val-label').innerText = (tCfg.dmtsDelay > 0) ? `${tCfg.dmtsDelay}s` : '0s (Off)';
     document.getElementById('task-cfg-timeout').value = tCfg.responseTimeout || 0;
@@ -2253,7 +2467,7 @@ function renderStimuliEditorUI() {
     if (!editorSession.hasEditableStimuli) return;
     const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[editorSession.modId])
         ? DEFAULT_MODULE_VARIATIONS[editorSession.modId]
-        : { min: 2, max: 20 };
+        : { min: 1, max: 20 };
 
     const tabsContainer = document.getElementById('stim-var-tabs');
     const listContainer = document.getElementById('stim-items-list');
@@ -2306,7 +2520,7 @@ function renderStimuliEditorUI() {
             editorSession.tempMap[editorSession.activeVarKey][idx] = e.target.value;
         };
 
-        const cleanKey = String(itemVal || '').trim().toUpperCase();
+        const cleanKey = getNormalizedWordKey(itemVal);
         const mediaBtn = document.createElement('button');
         mediaBtn.type = 'button';
         mediaBtn.className = 'icon-circle-btn';
@@ -2321,7 +2535,7 @@ function renderStimuliEditorUI() {
         mediaBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
         mediaBtn.onclick = () => {
             playSound('click');
-            const currentWord = String(editorSession.tempMap[editorSession.activeVarKey][idx] || '').trim().toUpperCase();
+            const currentWord = getNormalizedWordKey(editorSession.tempMap[editorSession.activeVarKey][idx]);
             if (!currentWord) return;
             openStimulusMediaAssignPicker(currentWord);
         };
@@ -2371,6 +2585,7 @@ async function handleBatchImageUpload(fileList) {
     const fileInp = document.getElementById('img-upload-input');
     if (fileInp) fileInp.value = '';
     renderCustomImagesBankGallery();
+    renderStudioTargetsMediaChips();
 }
 
 function renderCustomImagesBankGallery() {
@@ -2401,6 +2616,7 @@ function renderCustomImagesBankGallery() {
             playSound('click');
             await deleteCustomImageFromIndexedDB(item.id);
             renderCustomImagesBankGallery();
+            renderStudioTargetsMediaChips();
         };
         card.appendChild(del);
         grid.appendChild(card);
@@ -2408,7 +2624,7 @@ function renderCustomImagesBankGallery() {
 }
 
 function openStimulusMediaAssignPicker(wordStr) {
-    activeMediaTargetWord = String(wordStr || '').trim().toUpperCase();
+    activeMediaTargetWord = getNormalizedWordKey(wordStr);
     const titleEl = document.getElementById('media-picker-word-title');
     if (titleEl) titleEl.innerText = `Associar Mídia: "${activeMediaTargetWord}"`;
 
@@ -2421,7 +2637,7 @@ function openStimulusMediaAssignPicker(wordStr) {
         gal.innerHTML = '';
         const list = Object.values(customImagesCache);
         if (list.length === 0) {
-            gal.innerHTML = `<p style="grid-column:1/-1; color:var(--text-light); font-size:0.85rem; font-weight:700; text-align:center; padding:16px;">Nenhuma imagem no Banco Local. Adicione imagens na aba "Banco de Imagens".</p>`;
+            gal.innerHTML = `<p style="grid-column:1/-1; color:var(--text-light); font-size:0.85rem; font-weight:700; text-align:center; padding:16px;">Nenhuma imagem no Banco Local. Adicione imagens no botão "Subir Imagens (WebP)".</p>`;
         } else {
             list.forEach(imgItem => {
                 const isSel = curMedia && curMedia.type === 'IDB' && curMedia.val === imgItem.id;
@@ -2437,6 +2653,7 @@ function openStimulusMediaAssignPicker(wordStr) {
                     saveState();
                     closeMediaAssignPicker();
                     renderStimuliEditorUI();
+                    renderStudioTargetsMediaChips();
                 };
                 gal.appendChild(box);
             });
@@ -2460,6 +2677,7 @@ function saveEmojiForActiveWord() {
     playSound('win');
     closeMediaAssignPicker();
     renderStimuliEditorUI();
+    renderStudioTargetsMediaChips();
 }
 
 function clearCustomMediaForActiveWord() {
@@ -2469,6 +2687,7 @@ function clearCustomMediaForActiveWord() {
     playSound('click');
     closeMediaAssignPicker();
     renderStimuliEditorUI();
+    renderStudioTargetsMediaChips();
 }
 
 function closeMediaAssignPicker() {
@@ -2481,7 +2700,7 @@ function addStimulusItemToEditor() {
     if (!editorSession.hasEditableStimuli) return;
     const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[editorSession.modId])
         ? DEFAULT_MODULE_VARIATIONS[editorSession.modId]
-        : { min: 2, max: 20 };
+        : { min: 1, max: 20 };
     const inp = document.getElementById('stim-new-input');
     const raw = inp.value.trim();
     if (!raw) return;
@@ -2503,16 +2722,19 @@ function addStimulusItemToEditor() {
 
 function saveStimuliEditorChanges() {
     const modId = editorSession.modId;
-    if (!modId) return;
+    if (!modId) {
+        closeModals();
+        return;
+    }
 
     if (editorSession.hasEditableStimuli) {
         const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId])
             ? DEFAULT_MODULE_VARIATIONS[modId]
-            : { min: 2, max: 20 };
+            : { min: 1, max: 20 };
         for (const k of Object.keys(editorSession.tempMap)) {
             const cleaned = editorSession.tempMap[k].map(s => s.trim()).filter(s => s.length > 0);
             if (cleaned.length < meta.min) {
-                customAlert("Quantidade Insuficiente", `A Variação ${k} precisa ter pelo menos ${meta.min} estímulos válidos.`);
+                customAlert("Quantidade Insuficiente", `A Variação ${k} precisa ter pelo menos ${meta.min} estímulo(s) válido(s).`);
                 return;
             }
             editorSession.tempMap[k] = cleaned;
@@ -2525,11 +2747,21 @@ function saveStimuliEditorChanges() {
     const chkBox = document.getElementById('task-cfg-syl-box');
     const tokInp = document.getElementById('task-cfg-tokens');
     const tokVal = tokInp ? parseInt(tokInp.value) : -1;
+    const optsSel = document.getElementById('task-cfg-opts');
+    const optsVal = optsSel ? parseInt(optsSel.value) || 0 : 0;
+
+    let c1 = document.getElementById('task-cfg-c1') ? document.getElementById('task-cfg-c1').checked : true;
+    let c2 = document.getElementById('task-cfg-c2') ? document.getElementById('task-cfg-c2').checked : true;
+    let c3 = document.getElementById('task-cfg-c3') ? document.getElementById('task-cfg-c3').checked : true;
+    let c4 = document.getElementById('task-cfg-c4') ? document.getElementById('task-cfg-c4').checked : true;
+    if (!c1 && !c2 && !c3 && !c4) c1 = true;
 
     state.taskSettings[modId] = {
         font: document.getElementById('task-cfg-font').value || 'GLOBAL',
         colorCV: chkCV ? chkCV.checked : false,
         sylBox: chkBox ? chkBox.checked : false,
+        opts: optsVal,
+        stages: { c1, c2, c3, c4 },
         dmtsDelay: (mod && mod.isAudioModel) ? 0 : (parseInt(document.getElementById('task-cfg-dmts').value) || 0),
         responseTimeout: parseInt(document.getElementById('task-cfg-timeout').value) || 0,
         rewardTokens: isNaN(tokVal) ? -1 : tokVal
@@ -2742,7 +2974,7 @@ function getCategory(item) {
 }
 
 /* ============================================================================
-   11. INICIALIZADOR UNIFICADO DE JOGOS (INCLUINDO STUDIO CUSTOMIZADO)
+   11. INICIALIZADOR UNIFICADO DE JOGOS (CICLOS DESCENTRALIZADOS POR TAREFA)
    ============================================================================ */
 function ensureSessionTimerStarted() {
     if (state.settings.timer.enabled) {
@@ -2775,6 +3007,18 @@ function resetSessionStats(activeCycles, trialCount) {
     };
 }
 
+function filterCyclesByTaskConfig(modId, candidateCycles, isSyllabary = false) {
+    const stg = getEffectiveStagesForModule(modId, isSyllabary);
+    const filtered = candidateCycles.filter(c => {
+        if (c === 1) return stg.c1 !== false;
+        if (c === 2) return stg.c2 !== false;
+        if (c === 3) return stg.c3 !== false;
+        if (c >= 4) return stg.c4 !== false;
+        return true;
+    });
+    return filtered.length > 0 ? filtered : [candidateCycles[0] || 1];
+}
+
 function startCustomStudioModule(modId) {
     const customMod = (state.customModules || []).find(m => m.id === modId);
     if (!customMod) return;
@@ -2786,7 +3030,8 @@ function startCustomStudioModule(modId) {
         ? customMod.cyclesConfig
         : [{ mechanic: 'MTS', sdMode: 'SIMPLE', sdChannel1: 'TEXT', compChannel: 'TEXT', dmtsDelay: 0, timeoutSec: 0 }];
 
-    const activeCycles = cyclesCfg.map((_, idx) => idx + 1);
+    const baseCycles = cyclesCfg.map((_, idx) => idx + 1);
+    const activeCycles = filterCyclesByTaskConfig(modId, baseCycles, false);
 
     undoSnapshot = null;
     session = {
@@ -2829,10 +3074,7 @@ function startLegacyGame(phaseId) {
     if (isOnlyCycle3) {
         activeCycles = [3];
     } else {
-        if (state.settings.stages.c1) activeCycles.push(1);
-        if (state.settings.stages.c2) activeCycles.push(2);
-        if (state.settings.stages.c3) activeCycles.push(3);
-        if (activeCycles.length === 0) activeCycles = [1];
+        activeCycles = filterCyclesByTaskConfig(phaseId, [1, 2, 3], true);
     }
 
     undoSnapshot = null;
@@ -2877,7 +3119,7 @@ function startPhonologicalModelingModule(modId) {
     };
 
     const trials = [{ letter: pm.letter, varIdx: pm.varIdx, title: pm.title }];
-    const activeCycles = [1, 2];
+    const activeCycles = filterCyclesByTaskConfig(modId, [1, 2], false);
 
     undoSnapshot = null;
     session = {
@@ -2888,7 +3130,7 @@ function startPhonologicalModelingModule(modId) {
         trials,
         activeCycles,
         currentCycleIdx: 0,
-        currentCycle: 1,
+        currentCycle: activeCycles[0],
         isOnlyCycle3: false,
         isPreReq: false,
         currentTrialIdx: 0,
@@ -2932,7 +3174,7 @@ function startEidosModule(modId) {
                 shuffleArray(wList).slice(0, 3),
                 shuffleArray(wList).slice(0, 3)
             ];
-            activeCycles = [1, 2];
+            activeCycles = filterCyclesByTaskConfig(modId, [1, 2], false);
             break;
         }
         case 'MIRROR_GRAPH':
@@ -2945,24 +3187,17 @@ function startEidosModule(modId) {
         case 'CG_ALL_SOUNDS':
         case 'QU_GU_SOUNDS':
             trials = shuffleArray(pool).slice(0, 6);
-            activeCycles = [];
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (state.settings.stages.c3) activeCycles.push(3);
-            if (activeCycles.length === 0) activeCycles = [1];
+            activeCycles = filterCyclesByTaskConfig(modId, [1, 2, 3], false);
             break;
         case 'SYL_BUILD_SLIDER':
             trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
-            activeCycles = [1, 2, 3];
+            activeCycles = filterCyclesByTaskConfig(modId, [1, 2, 3], false);
             break;
         case 'CLASS_VC':
         case 'CLASS_SP':
             isPreReq = true;
             trials = shuffleArray(pool).slice(0, 8);
-            activeCycles = [];
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (activeCycles.length === 0) activeCycles = [1];
+            activeCycles = filterCyclesByTaskConfig(modId, [1, 2], false);
             break;
         case 'CLASS_TOTAL_MM':
             trials = [1, 2, 3, 4];
@@ -2978,7 +3213,7 @@ function startEidosModule(modId) {
             break;
         case 'SYL_WORD_BUILD':
             trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
-            activeCycles = [1, 2];
+            activeCycles = filterCyclesByTaskConfig(modId, [1, 2], false);
             break;
         case 'EQUIV_4STEPS_MM': {
             const eqList = shuffleArray(getModuleVariationItems(modId));
@@ -2987,7 +3222,7 @@ function startEidosModule(modId) {
                 shuffleArray(eqList).slice(0, 3),
                 shuffleArray(eqList).slice(0, 3)
             ];
-            activeCycles = [1, 2, 3, 4];
+            activeCycles = filterCyclesByTaskConfig(modId, [1, 2, 3, 4], false);
             break;
         }
         case 'FIG_WORD_MM': {
@@ -3026,16 +3261,9 @@ function startEidosModule(modId) {
         }
         case 'WORDS_EQ': {
             trials = shuffleArray(pool).slice(0, 5);
-            activeCycles = [];
-            if (state.settings.stages.c1) activeCycles.push(1);
-            if (state.settings.stages.c2) activeCycles.push(2);
-            if (state.settings.stages.c3) activeCycles.push(3);
             const allHaveIcons = trials.every(w => hasValidVisualRepresentation(w));
-            if (state.settings.stages.c4 && allHaveIcons) {
-                activeCycles.push(4);
-                activeCycles.push(5);
-            }
-            if (activeCycles.length === 0) activeCycles = [1];
+            const baseEq = allHaveIcons ? [1, 2, 3, 4, 5] : [1, 2, 3];
+            activeCycles = filterCyclesByTaskConfig(modId, baseEq, false);
             break;
         }
         case 'SPRINT_3S':
@@ -3110,13 +3338,14 @@ function getTopographicClasses() {
         if (tCfg.font === 'LOWER') return 'topo-lower';
         if (tCfg.font === 'SERIF') return 'topo-serif';
         if (tCfg.font === 'SCHOOL') return 'topo-school';
+        if (tCfg.font === 'MIX') {
+            const classes = ['', 'topo-serif', 'topo-school', 'topo-lower'];
+            return classes[Math.floor(Math.random() * classes.length)];
+        }
         return '';
     }
-    if (!state.settings.topoVar) return '';
-    const classes = ['', 'topo-serif', 'topo-school', 'topo-lower'];
-    return classes[Math.floor(Math.random() * classes.length)];
+    return '';
 };
-
 /* ============================================================================
    ALFAMTS PRO - MOTOR PRINCIPAL (app.js - PARTE 2 DE 2: SEÇÕES 12 A 18)
    ============================================================================ */
@@ -3370,7 +3599,8 @@ function renderTrial(restoredOptions = null) {
 
 /* RENDERIZADOR UNIVERSAL DE TAREFAS DO STUDIO COMPORTAMENTAL */
 function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRem = 3.2) {
-    const clean = String(itemStr || '').trim().toUpperCase();
+    const raw = String(itemStr || '').trim().toUpperCase();
+    const clean = getNormalizedWordKey(raw);
     if (channelType === 'IMAGE') {
         return getWordVisualRepresentationHTML(clean, sizeRem);
     }
@@ -3380,15 +3610,38 @@ function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRe
     return `<span class="${topoClass}">${formatStimulusTextHTML(clean)}</span>`;
 }
 
+function extractCRMTSUnitsFromStudioTarget(rawTarget, cycCfg) {
+    const str = String(rawTarget || '').trim().toUpperCase();
+    if (cycCfg.crmtsAutoLetters !== false || cycCfg.crmtsSplitMode === 'LETTERS') {
+        return getNormalizedWordKey(str).split('');
+    }
+    if (cycCfg.crmtsSplitMode === 'WORDS') {
+        return str.split(/\s+/).filter(Boolean);
+    }
+    // Modo CUSTOM: quebra por hífen (-), barra (/), ponto-e-vírgula (;) ou espaço se houver
+    if (/[-\/;]/.test(str)) {
+        return str.split(/[-\/;]+/).map(s => s.trim()).filter(Boolean);
+    }
+    if (/\s+/.test(str)) {
+        return str.split(/\s+/).filter(Boolean);
+    }
+    const clean = getNormalizedWordKey(str);
+    if (WORD_BANK[clean] && Array.isArray(WORD_BANK[clean].syllables)) {
+        return [...WORD_BANK[clean].syllables];
+    }
+    return clean.match(/[^AEIOUÁÉÍÓÚÂÊÔÃÕ]*[AEIOUÁÉÍÓÚÂÊÔÃÕ]+[^AEIOUÁÉÍÓÚÂÊÔÃÕ]?/gi) || [clean];
+}
+
 function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
     const customMod = session.eidosMod;
     const cycIdx = Math.max(0, (session.currentCycle || 1) - 1);
     const cycCfg = (customMod.cyclesConfig && customMod.cyclesConfig[cycIdx])
         ? customMod.cyclesConfig[cycIdx]
-        : { mechanic: 'MTS', sdMode: 'SIMPLE', sdChannel1: 'TEXT', compChannel: 'TEXT', dmtsDelay: 0, timeoutSec: 0 };
+        : { mechanic: 'MTS', sdMode: 'SIMPLE', sdChannel1: 'TEXT', compChannel: 'TEXT', crmtsAutoLetters: true, crmtsSplitMode: 'LETTERS', commandText: '', dmtsDelay: 0, timeoutSec: 0 };
 
     const topoClass = getTopographicClasses();
-    const cleanTarget = String(target || '').trim().toUpperCase();
+    const rawTarget = String(target || '').trim().toUpperCase();
+    const cleanTarget = getNormalizedWordKey(rawTarget);
     badge.innerText = `${customMod.title} • Ciclo ${cycIdx + 1}`;
 
     const hasAudioSD = (cycCfg.sdChannel1 === 'AUDIO' || (cycCfg.sdMode === 'COMPOUND' && cycCfg.sdChannel2 === 'AUDIO'));
@@ -3398,7 +3651,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
 
     // 1. MODO MULTIMODELO 3x3 DO STUDIO
     if (cycCfg.mechanic === 'MULTIMTS') {
-        const subset = shuffleArray([cleanTarget, ...session.pool.filter(x => x !== cleanTarget)]).slice(0, Math.min(3, session.pool.length));
+        const subset = shuffleArray([rawTarget, ...session.pool.filter(x => x !== rawTarget)]).slice(0, Math.min(3, session.pool.length));
         modelArea.style.minHeight = '24px';
         modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Pareie os elementos equivalentes nas duas colunas:</p>`;
 
@@ -3474,32 +3727,46 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
     if (cycCfg.sdMode === 'COMPOUND') {
         modelArea.innerHTML = `
             <div class="model-card ${topoClass}" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:20px; padding:18px 28px;">
-                <div>${renderStudioChannelStimulusHTML(cleanTarget, cycCfg.sdChannel1, topoClass, 3.4)}</div>
-                <div>${renderStudioChannelStimulusHTML(cleanTarget, cycCfg.sdChannel2, topoClass, 3.4)}</div>
+                <div>${renderStudioChannelStimulusHTML(rawTarget, cycCfg.sdChannel1, topoClass, 3.4)}</div>
+                <div>${renderStudioChannelStimulusHTML(rawTarget, cycCfg.sdChannel2, topoClass, 3.4)}</div>
             </div>
         `;
     } else {
         if (cycCfg.sdChannel1 === 'AUDIO') {
             modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${cleanTarget}')">${UI_SVGS.volume}</button>`;
         } else {
-            modelArea.innerHTML = `<div class="model-card ${topoClass}">${renderStudioChannelStimulusHTML(cleanTarget, cycCfg.sdChannel1, topoClass, 3.8)}</div>`;
+            modelArea.innerHTML = `<div class="model-card ${topoClass}">${renderStudioChannelStimulusHTML(rawTarget, cycCfg.sdChannel1, topoClass, 3.8)}</div>`;
         }
     }
 
-    // 2. MODO EXPRESSIVO / SONDAGEM ORAL DO STUDIO
+    // 2. MODO EXPRESSIVO / SONDAGEM / COMANDO AO APLICADOR DO STUDIO
     if (cycCfg.mechanic === 'EXPRESSIVE') {
-        compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Avalie a resposta expressiva do aluno e registre na barra do aplicador abaixo.</p>`;
+        const cmdBanner = (cycCfg.commandText && cycCfg.commandText.trim())
+            ? `<div style="background:var(--primary-light); border:2px solid var(--primary); color:var(--primary-dark); padding:14px 22px; border-radius:18px; font-weight:900; font-size:1.18rem; max-width:680px; text-align:center;">
+                   <span style="font-size:0.75rem; text-transform:uppercase; display:block; opacity:0.8; margin-bottom:4px;">Comando ao Aplicador</span>
+                   ${cycCfg.commandText.trim()}
+               </div>`
+            : `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Avalie a resposta do aluno e registre na barra do aplicador abaixo.</p>`;
+
+        compArea.innerHTML = cmdBanner;
         abaDock.style.display = 'flex';
         setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(cycCfg.timeoutSec); }, state.settings.latency);
         return;
     }
 
-    // 3. MODO CRMTS (CONSTRUÇÃO) DO STUDIO
+    // 3. MODO CRMTS (CONSTRUÇÃO COM QUEBRA AUTOMÁTICA EM LETRAS OU FRAGMENTOS MANUAIS)
     if (cycCfg.mechanic === 'CRMTS') {
-        const units = cleanTarget.split('');
-        const extraDist = shuffleArray(['A','E','O','M','P','B','T','L','S'].filter(c => !units.includes(c))).slice(0, 3);
+        const units = extractCRMTSUnitsFromStudioTarget(rawTarget, cycCfg);
+        const isLetters = (cycCfg.crmtsAutoLetters !== false || cycCfg.crmtsSplitMode === 'LETTERS');
+        const fallbackDistractors = isLetters
+            ? ['A','E','O','M','P','B','T','L','S']
+            : ['FA','LA','MA','BO','TA','SA','PA'];
+        const extraDist = shuffleArray(fallbackDistractors.filter(c => !units.includes(c))).slice(0, 3);
         const tilePool = shuffleArray([...units, ...extraDist]);
+
         let built = [];
+        let slotErrors = 0;
+        const allTileBtns = [];
 
         const wrap = document.createElement('div');
         wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center;';
@@ -3512,7 +3779,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
             slotsDiv.innerHTML = '';
             units.forEach((_, i) => {
                 const s = document.createElement('div');
-                s.className = `crmts-slot ${topoClass}`;
+                s.className = `crmts-slot ${topoClass} ${built[i] ? 'filled' : ''}`;
                 s.innerHTML = built[i] ? formatStimulusTextHTML(built[i]) : '';
                 slotsDiv.appendChild(s);
             });
@@ -3523,21 +3790,41 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
             t.type = 'button';
             t.className = `letter-tile ${topoClass}`;
             t.innerHTML = formatStimulusTextHTML(ch);
+            t.dataset.rawUnit = ch;
             t.onclick = () => {
                 if (blockClicks || built.length >= units.length) return;
-                if (ch === units[built.length]) {
+                const expectedUnit = units[built.length];
+                if (ch === expectedUnit) {
                     playSound('click');
+                    slotErrors = 0;
                     t.classList.add('used');
                     built.push(ch);
                     refreshSlots();
                     if (built.length === units.length) handleAnswer(true, slotsDiv);
                 } else {
+                    slotErrors++;
                     session.attemptsOnCurrent++;
                     playSound('click');
                     t.classList.add('feedback-error');
                     setTimeout(() => t.classList.remove('feedback-error'), 350);
+
+                    if (slotErrors >= 2) {
+                        slotErrors = 0;
+                        const rightBtn = allTileBtns.find(b => !b.classList.contains('used') && b.dataset.rawUnit === expectedUnit);
+                        if (rightBtn) {
+                            rightBtn.classList.add('errorless-prompt');
+                            setTimeout(() => {
+                                rightBtn.classList.remove('errorless-prompt');
+                                rightBtn.classList.add('used');
+                                built.push(expectedUnit);
+                                refreshSlots();
+                                if (built.length === units.length) handleAnswer(true, slotsDiv);
+                            }, 420);
+                        }
+                    }
                 }
             };
+            allTileBtns.push(t);
             poolDiv.appendChild(t);
         });
 
@@ -3551,12 +3838,12 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
     }
 
     // 4. MODO MTS COMUM DO STUDIO
-    const opts = generateComparisons(cleanTarget);
+    const opts = generateComparisons(rawTarget);
     opts.forEach(opt => {
         const btn = document.createElement('div');
         btn.className = `comp-card ${cycCfg.compChannel === 'IMAGE' ? 'img-only' : topoClass}`;
         btn.innerHTML = renderStudioChannelStimulusHTML(opt, cycCfg.compChannel || 'TEXT', topoClass, 3.6);
-        const isCorrect = (opt === cleanTarget);
+        const isCorrect = (getNormalizedWordKey(opt) === cleanTarget);
         btn.dataset.correct = isCorrect;
         btn.onclick = () => handleAnswer(isCorrect, btn);
         compArea.appendChild(btn);
@@ -3573,7 +3860,7 @@ function formatStimulusTextHTML(text, modId) {
     const tCfg = getTaskConfig(modId || session.phase);
     if (!tCfg || (!tCfg.colorCV && !tCfg.sylBox)) return rawStr;
 
-    const upperKey = rawStr.trim().toUpperCase();
+    const upperKey = getNormalizedWordKey(rawStr);
     const wBankObj = WORD_BANK[upperKey];
 
     const colorizeSegment = (seg) => {
@@ -3606,10 +3893,11 @@ function getPhoneticAudioModel(target) {
 }
 
 /* ============================================================================
-   13. RENDERIZADORES ESPECIALIZADOS (ZERO MATERIAL-ICONS, 100% SVGS INLINE)
+   13. RENDERIZADORES ESPECIALIZADOS (RESPEITANDO OPTS DESCENTRALIZADOS)
    ============================================================================ */
 function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge, abaDock, fluencyPill) {
     const topoClass = getTopographicClasses();
+    const numOpts = getEffectiveOptsForCurrentSession();
 
     // ALFABETO FONOLÓGICO: FASE A (EXPOSIÇÃO) E FASE B (SLIDER SILENCIOSO)
     if (subType === 'PHON_MODELING') {
@@ -3964,7 +4252,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const highlightStyle = isHighlighted ? 'border-color: var(--warning); background-color: var(--warning-light);' : '';
 
         modelArea.innerHTML = `<div class="model-card" style="font-size:2.2rem; ${highlightStyle}">LETRA</div>`;
-        const distractors = shuffleArray(['7', '4', '9', '★', '☀', '♣', '8', '♥']).slice(0, state.settings.opts - 1);
+        const distractors = shuffleArray(['7', '4', '9', '★', '☀', '♣', '8', '♥']).slice(0, numOpts - 1);
         const opts = shuffleArray([target, ...distractors]);
         opts.forEach(opt => {
             const btn = document.createElement('div');
@@ -3994,7 +4282,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
             modelArea.style.minHeight = '135px';
             modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(singleWord)}</div>`;
-            const distractors = shuffleArray(session.pool.filter(w => w !== singleWord)).slice(0, state.settings.opts - 1);
+            const distractors = shuffleArray(session.pool.filter(w => w !== singleWord)).slice(0, numOpts - 1);
             const opts = shuffleArray([singleWord, ...distractors]);
             opts.forEach(opt => {
                 const btn = document.createElement('div');
@@ -4123,7 +4411,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             { label: target, style: 'transform: scaleX(-1);', correct: false },
             { label: target, style: 'transform: scaleY(-1);', correct: false },
             { label: target, style: 'transform: rotate(180deg);', correct: false }
-        ].slice(0, state.settings.opts);
+        ].slice(0, numOpts);
         shuffleArray(transforms).forEach(item => {
             const btn = document.createElement('div');
             btn.className = 'comp-card';
@@ -4143,7 +4431,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target.target);
 
-        const rawOpts = [target.match, ...target.distractors.slice(0, state.settings.opts - 1)];
+        const rawOpts = [target.match, ...target.distractors.slice(0, numOpts - 1)];
         shuffleArray(rawOpts).forEach(wKey => {
             const btn = document.createElement('div');
             if (hasValidVisualRepresentation(wKey)) {
@@ -4772,7 +5060,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                 <div style="font-size:1.35rem; color:var(--primary-dark); margin-top:10px;">${target.question}</div>
             </div>
         `;
-        const opts = shuffleArray([target.correct, ...target.distractors.slice(0, state.settings.opts - 1)]);
+        const opts = shuffleArray([target.correct, ...target.distractors.slice(0, numOpts - 1)]);
         opts.forEach(opt => {
             const btn = document.createElement('div');
             btn.className = `comp-card ${topoClass}`;
@@ -4901,10 +5189,11 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
    14. RESPOSTAS, TRAVA ATÔMICA ERRORLESS E SNAPSHOT REAL DO UNDO
    ============================================================================ */
 function generateComparisons(target) {
+    const desiredCount = getEffectiveOptsForCurrentSession();
     let opts = [target];
     let available = session.pool.filter(x => x !== target);
     available = shuffleArray(available);
-    while (opts.length < state.settings.opts) {
+    while (opts.length < desiredCount) {
         if (available.length > 0) opts.push(available.pop());
         else {
             const fallback = ['BA','CA','DA','FA','LA','MA','PA','SA','BOLA','GATO'].filter(x => !opts.includes(x));
@@ -5145,7 +5434,7 @@ function processSpeech(transcript) {
     }
 
     let currentSpeech = removeAccents(transcript);
-    let expectedTarget = session.isPreReq ? getCategory(rawTarget) : String(rawTarget);
+    let expectedTarget = session.isPreReq ? getCategory(rawTarget) : getNormalizedWordKey(rawTarget);
     let targetClean = removeAccents(expectedTarget);
     let acceptedTerms = [targetClean];
 
@@ -5421,7 +5710,7 @@ function drawProgressChart() {
     const recent = state.log.slice(-15);
     if (recent.length === 0) return;
 
-    ctx.strokeStyle = '#0284C7';
+    ctx.strokeStyle = state.settings.themeColor || '#3B82F6';
     ctx.lineWidth = 3;
     ctx.beginPath();
     recent.forEach((item, idx) => {
@@ -5474,7 +5763,7 @@ function exportSessionLogPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     doc.setFontSize(16);
-    doc.setTextColor(2, 132, 199);
+    doc.setTextColor(59, 130, 246);
     doc.text("Relatório de Sessões - AlfaMTS", 14, 20);
     doc.setFontSize(10);
     doc.setTextColor(50, 50, 50);
@@ -5493,7 +5782,7 @@ function exportSessionLogPDF() {
         head: [['Data', 'Atividade', 'Precisão (I)', 'Latência', 'Progresso', 'Status']],
         body: rows,
         theme: 'grid',
-        headStyles: { fillColor: [2, 132, 199] },
+        headStyles: { fillColor: [59, 130, 246] },
         styles: { fontSize: 8.5 }
     });
 
@@ -5510,7 +5799,7 @@ function exportEidosChecklistPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     doc.setFontSize(15);
-    doc.setTextColor(2, 132, 199);
+    doc.setTextColor(59, 130, 246);
     doc.text("PROTOCOLO DE AVALIAÇÃO E LINHA DE BASE", 14, 18);
     doc.setFontSize(10);
     doc.setTextColor(40, 40, 40);
@@ -5559,7 +5848,7 @@ function exportEidosChecklistPDF() {
 }
 
 /* ============================================================================
-   18. CONFIGURAÇÕES GLOBAIS (PIN OBRIGATÓRIO NO TIMER + RECÁLCULO IMEDIATO)
+   18. CONFIGURAÇÕES GLOBAIS (COR LIVRE + SILABÁRIO + PIN OBRIGATÓRIO NO TIMER)
    ============================================================================ */
 function togglePasswordField() {
     const chk = document.getElementById('set-sec-enable');
@@ -5589,13 +5878,14 @@ function openSettings() {
     document.getElementById('set-name').value = getActiveFirstName();
     document.getElementById('set-crit').value = state.settings.crit;
     document.getElementById('set-consec-days').value = state.settings.consecDays || 3;
-    document.getElementById('set-strict-day').checked = !!state.settings.strictDay;
+    document.getElementById('set-strict-day').checked = state.settings.strictDay !== false;
     document.getElementById('set-errorless').checked = state.settings.errorless !== false;
-    document.getElementById('set-topo-var').checked = !!state.settings.topoVar;
     document.getElementById('set-topo-mode').value = state.settings.topoMode || 'AUTO';
-    document.getElementById('set-opts').value = state.settings.opts;
-    document.getElementById('set-theme').value = state.settings.theme;
+    document.getElementById('set-opts').value = state.settings.opts || 3;
     document.getElementById('set-latency').value = state.settings.latency;
+
+    const colorInp = document.getElementById('set-theme-color');
+    if (colorInp) colorInp.value = state.settings.themeColor || '#3B82F6';
 
     const sc = state.settings.sylComplex || {};
     document.getElementById('set-syl-ccv').checked = !!sc.ccv;
@@ -5603,11 +5893,10 @@ function openSettings() {
     document.getElementById('set-syl-cvcs').checked = !!sc.cvcS;
     document.getElementById('set-syl-cvcm').checked = !!sc.cvcM;
 
-    document.getElementById('set-stg-c1').checked = state.settings.stages.c1;
-    document.getElementById('set-stg-c2').checked = state.settings.stages.c2;
-    document.getElementById('set-stg-c3').checked = state.settings.stages.c3;
-    document.getElementById('set-stg-c4').checked = state.settings.stages.c4 !== false;
-    document.getElementById('set-use-mic').checked = state.settings.useMic;
+    document.getElementById('set-stg-c1').checked = state.settings.stages.c1 !== false;
+    document.getElementById('set-stg-c2').checked = state.settings.stages.c2 !== false;
+    document.getElementById('set-stg-c3').checked = state.settings.stages.c3 !== false;
+    document.getElementById('set-use-mic').checked = state.settings.useMic !== false;
 
     const analystPinVal = (tenantsIndex && tenantsIndex.analystPin) ? tenantsIndex.analystPin : (state.settings.security.pin || '');
     const applicatorPinVal = (tenantsIndex && tenantsIndex.applicatorPin) ? tenantsIndex.applicatorPin : '';
@@ -5615,12 +5904,10 @@ function openSettings() {
 
     const elAnalystPin = document.getElementById('set-analyst-pin');
     const elApplicatorPin = document.getElementById('set-applicator-pin');
-    const elLegacyPin = document.getElementById('set-sec-pin');
     const elSecEnable = document.getElementById('set-sec-enable');
 
     if (elAnalystPin) elAnalystPin.value = analystPinVal;
     if (elApplicatorPin) elApplicatorPin.value = applicatorPinVal;
-    if (elLegacyPin) elLegacyPin.value = analystPinVal;
     if (elSecEnable) elSecEnable.checked = !!(analystPinVal || applicatorPinVal);
 
     const elKioskExit = document.getElementById('set-kiosk-exit');
@@ -5638,7 +5925,6 @@ function openSettings() {
 function saveSettings() {
     const elAnalystPin = document.getElementById('set-analyst-pin');
     const elApplicatorPin = document.getElementById('set-applicator-pin');
-    const elLegacyPin = document.getElementById('set-sec-pin');
     const elSecEnable = document.getElementById('set-sec-enable');
     const isTimerEnabled = document.getElementById('set-timer-enable').checked;
 
@@ -5646,12 +5932,8 @@ function saveSettings() {
     let applicatorPin = '';
 
     if (elSecEnable && elSecEnable.checked) {
-        if (elAnalystPin || elApplicatorPin) {
-            analystPin = elAnalystPin ? elAnalystPin.value.trim() : '';
-            applicatorPin = elApplicatorPin ? elApplicatorPin.value.trim() : '';
-        } else if (elLegacyPin) {
-            analystPin = elLegacyPin.value.trim();
-        }
+        analystPin = elAnalystPin ? elAnalystPin.value.trim() : '';
+        applicatorPin = elApplicatorPin ? elApplicatorPin.value.trim() : '';
         if (!analystPin && !applicatorPin) {
             customAlert("PIN Obrigatório", "Informe o código PIN do Analista para ativar a proteção por senha.");
             return;
@@ -5669,8 +5951,7 @@ function saveSettings() {
     let c1 = document.getElementById('set-stg-c1').checked;
     let c2 = document.getElementById('set-stg-c2').checked;
     let c3 = document.getElementById('set-stg-c3').checked;
-    let c4 = document.getElementById('set-stg-c4').checked;
-    if (!c1 && !c2 && !c3 && !c4) c1 = true;
+    if (!c1 && !c2 && !c3) c1 = true;
 
     const firstName = String(document.getElementById('set-name').value || "ALUNO").trim().split(/\s+/)[0].toUpperCase() || "ALUNO";
     state.student = firstName;
@@ -5678,7 +5959,6 @@ function saveSettings() {
     state.settings.consecDays = parseInt(document.getElementById('set-consec-days').value) || 3;
     state.settings.strictDay = document.getElementById('set-strict-day').checked;
     state.settings.errorless = document.getElementById('set-errorless').checked;
-    state.settings.topoVar = document.getElementById('set-topo-var').checked;
     state.settings.topoMode = document.getElementById('set-topo-mode').value || 'AUTO';
     state.settings.opts = parseInt(document.getElementById('set-opts').value) || 3;
     state.settings.sylComplex = {
@@ -5687,9 +5967,11 @@ function saveSettings() {
         cvcS: document.getElementById('set-syl-cvcs').checked,
         cvcM: document.getElementById('set-syl-cvcm').checked
     };
-    state.settings.theme = document.getElementById('set-theme').value;
+
+    const colorInp = document.getElementById('set-theme-color');
+    state.settings.themeColor = (colorInp && colorInp.value) ? colorInp.value : '#3B82F6';
     state.settings.latency = parseInt(document.getElementById('set-latency').value) || 400;
-    state.settings.stages = { c1, c2, c3, c4 };
+    state.settings.stages = { c1, c2, c3, c4: true };
     state.settings.useMic = document.getElementById('set-use-mic').checked;
 
     const lockExit = document.getElementById('set-kiosk-exit') ? document.getElementById('set-kiosk-exit').checked : false;
@@ -5842,11 +6124,7 @@ function startCustomWords() {
     let pool = val.split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
     pool = [...new Set(pool)];
     const targets = shuffleArray(pool);
-    let activeCycles = [];
-    if (state.settings.stages.c1) activeCycles.push(1);
-    if (state.settings.stages.c2) activeCycles.push(2);
-    if (state.settings.stages.c3) activeCycles.push(3);
-    if (activeCycles.length === 0) activeCycles = [1];
+    const activeCycles = filterCyclesByTaskConfig('PALAVRAS', [1, 2, 3], false);
 
     undoSnapshot = null;
     session = {
@@ -5924,10 +6202,13 @@ window.handleAndroidBack = function() {
     if (modalOpen) { closeModals(); return; }
     if (document.getElementById('screen-game').classList.contains('active')) { requestAbortGame(); return; }
     if (document.getElementById('screen-home').classList.contains('active')) { handleGridBackNavigation(); return; }
+    if (document.getElementById('screen-complements') && document.getElementById('screen-complements').classList.contains('active')) {
+        handleComplementsBack();
+        return;
+    }
     if (
         document.getElementById('screen-dashboard').classList.contains('active') ||
-        document.getElementById('screen-settings').classList.contains('active') ||
-        (document.getElementById('screen-complements') && document.getElementById('screen-complements').classList.contains('active'))
+        document.getElementById('screen-settings').classList.contains('active')
     ) {
         goSplash();
         return;
