@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6BAEF5">
 
-    <!-- ESCOPO 1: CSS Crítico Inline Anti-FOUC (Renderização 0ms) -->
+    <!-- CSS Crítico Inline Anti-FOUC (Renderização 0ms) -->
     <style>
         html, body {
             margin: 0;
@@ -33,7 +33,7 @@
         }
     </style>
 
-    <!-- Bibliotecas Locais/Cache para Geração de PDF -->
+    <!-- Bibliotecas para Geração de PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
 
@@ -145,7 +145,6 @@
         <h1 class="home-brand-title">AlfaMTS</h1>
     </div>
     
-    <!-- ESCOPO 2: Grade de 4 Botões na Home do Analista -->
     <div class="splash-buttons">
         <div class="splash-btn" id="btn-start-game" onclick="openGrid()">
             <div class="icon-wrapper">
@@ -159,7 +158,7 @@
             </div>
             Telemetria
         </div>
-        <div class="splash-btn" onclick="openComplements('STUDIO')">
+        <div class="splash-btn" onclick="openComplements('HUB')">
             <div class="icon-wrapper">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02Z"/></svg>
             </div>
@@ -174,7 +173,7 @@
     </div>
 </div>
 
-<!-- ================= TELA DE JOGOS E ATIVIDADES (TRILHA + PÍLULA DE FICHAS + FOGUETE) ================= -->
+<!-- ================= TELA DE JOGOS E ATIVIDADES (SEM FOGUETE + TÍTULO CENTRALIZADO) ================= -->
 <div id="screen-home" class="screen">
     <div class="home-header-slim">
         <button type="button" class="icon-circle-btn" onclick="handleGridBackNavigation()" title="Voltar">
@@ -184,13 +183,10 @@
         <h2 id="carousel-level-title" class="dynamic-level-title">Nível 1</h2>
         
         <div class="header-right-actions">
-            <!-- Pílula de Fichas & Botão Foguete (Recompensas / Arcade) -->
-            <button type="button" class="token-balance-pill" id="grid-token-pill" onclick="handleRocketRewardClick()" title="Saldo de Fichas">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
+            <!-- Pílula de Fichas serve diretamente como botão para abrir o Modal da Loja/Arcade -->
+            <button type="button" class="token-balance-pill" id="grid-token-pill" onclick="handleRocketRewardClick()" title="Abrir Loja de Recompensas & Jogos">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
                 <span class="token-balance-count">0</span>
-            </button>
-            <button type="button" class="btn-rocket-arcade" id="btn-rocket-arcade" onclick="handleRocketRewardClick()" title="Abrir Central de Recompensas & Jogos">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
             </button>
 
             <!-- Switcher de Aluno para o Aplicador -->
@@ -229,13 +225,13 @@
     <div class="carousel-dots" id="carousel-dots"></div>
 </div>
 
-<!-- ================= ESCOPO 2, 3 E 4: TELA DE COMPLEMENTOS (STUDIO & ECONOMIA DE FICHAS) ================= -->
+<!-- ================= TELA DE COMPLEMENTOS (HUB DE 3 CARDS SEM GUIAS) ================= -->
 <div id="screen-complements" class="screen">
     <div class="settings-header" style="max-width:960px;">
-        <button type="button" class="icon-circle-btn" onclick="goSplash()" title="Voltar">
+        <button type="button" class="icon-circle-btn" onclick="handleComplementsBack()" title="Voltar">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         </button>
-        <h2 style="font-size:1.38rem; font-weight:900;">Complementos Clínicos</h2>
+        <h2 id="complements-header-title" style="font-size:1.38rem; font-weight:900;">Complementos Clínicos</h2>
         <div style="display:flex; align-items:center; gap:8px;">
             <span class="token-balance-pill" style="cursor:default;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
@@ -245,20 +241,48 @@
     </div>
 
     <div class="complements-container">
-        <div class="segmented-control" style="max-width:520px; margin:0 auto; width:100%;">
-            <button type="button" class="seg-btn active" id="comp-tab-btn-studio" onclick="switchComplementsSection('STUDIO')">Oficina de Tarefas (Studio)</button>
-            <button type="button" class="seg-btn" id="comp-tab-btn-tokens" onclick="switchComplementsSection('TOKENS')">Economia de Fichas & Loja</button>
+        <!-- HUB PRINCIPAL: 3 CARDS COM ÍCONES SVG PRÓPRIOS -->
+        <div id="comp-section-hub" class="complements-cards-grid">
+            <div class="complement-hub-card" onclick="switchComplementsSection('STUDIO')">
+                <div class="hub-icon-box">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="m15 5 3 3"/></svg>
+                </div>
+                <h3>Oficina de Tarefas</h3>
+                <p>Crie atividades personalizadas do zero com múltiplos ciclos, imagens, CRMTS e comandos expressivos.</p>
+            </div>
+
+            <div class="complement-hub-card" onclick="switchComplementsSection('TOKENS')">
+                <div class="hub-icon-box" style="background:#FEF3C7; color:#B45309;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
+                </div>
+                <h3>Economia de Fichas</h3>
+                <p>Gerencie o saldo do aluno, injete fichas manualmente, configure bônus e cadastre prêmios na loja.</p>
+            </div>
+
+            <div class="complement-hub-card" onclick="switchComplementsSection('ARCADE')">
+                <div class="hub-icon-box" style="background:#D1FAE5; color:#047857;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+                </div>
+                <h3>Arcade (Teste Livre)</h3>
+                <p>Visualize e teste imediatamente todos os jogos do repositório sem descontar fichas do aluno.</p>
+            </div>
         </div>
 
-        <!-- SEÇÃO A: OFICINA DE TAREFAS CUSTOMIZADAS (STUDIO COMPORTAMENTAL) -->
-        <div id="comp-section-studio">
+        <!-- PAINEL 1: OFICINA DE TAREFAS CUSTOMIZADAS (STUDIO COMPORTAMENTAL) -->
+        <div id="comp-section-studio" style="display:none;">
             <div class="settings-card" style="margin-bottom:18px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
                     <div>
                         <h3 style="font-size:1.1rem; font-weight:900; color:var(--text);">Criar / Editar Tarefa Personalizada</h3>
-                        <p style="font-size:0.84rem; color:var(--text-light); font-weight:600;">As tarefas criadas ficam alocadas na aba "Personalizados" do aluno ativo.</p>
+                        <p style="font-size:0.84rem; color:var(--text-light); font-weight:600;">Alocada automaticamente na aba "Personalizados" do aluno ativo.</p>
                     </div>
-                    <button type="button" class="btn-action btn-cancel" onclick="resetStudioForm()">Nova Tarefa Limpa</button>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn-action btn-cancel" onclick="openComplementsMediaBankModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            Subir Imagens (WebP)
+                        </button>
+                        <button type="button" class="btn-action btn-cancel" onclick="resetStudioForm()">Limpar</button>
+                    </div>
                 </div>
 
                 <input type="hidden" id="studio-edit-id" value="">
@@ -274,16 +298,22 @@
                     </div>
                 </div>
 
-                <div class="studio-grid-2col" style="margin-bottom:16px;">
+                <div class="studio-grid-2col" style="margin-bottom:12px;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label>Estímulos Alvo (separados por vírgula):</label>
+                        <input type="text" id="studio-targets-input" placeholder="Ex: GATO, PATO, SAPO, VACA" oninput="renderStudioTargetsMediaChips()">
+                    </div>
                     <div class="input-group" style="margin-bottom:0;">
                         <label>Fichas ao Atingir Critério neste Bloco:</label>
                         <input type="number" id="studio-reward-tokens" min="0" max="50" value="2">
                     </div>
-                    <div class="input-group" style="margin-bottom:0;">
-                        <label>Estímulos Alvo (separados por vírgula):</label>
-                        <input type="text" id="studio-targets-input" placeholder="Ex: GATO, PATO, SAPO, VACA">
-                    </div>
                 </div>
+
+                <!-- Associação direta de Imagem/Emoji dentro da Oficina sem sair da tela -->
+                <div style="margin-bottom:6px;">
+                    <span style="font-size:0.8rem; font-weight:800; color:var(--text-light);">Toque em um estímulo abaixo para vincular Imagem (IndexedDB) ou Emoji:</span>
+                </div>
+                <div id="studio-targets-media-bar" class="studio-media-chips-box"></div>
 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <strong style="font-size:0.95rem; color:var(--text);">Sequência de Ciclos da Tarefa</strong>
@@ -309,7 +339,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO B: ECONOMIA DE FICHAS & MERCADINHO DE REFORÇADORES -->
+        <!-- PAINEL 2: ECONOMIA DE FICHAS & MERCADINHO DE REFORÇADORES -->
         <div id="comp-section-tokens" style="display:none;">
             <div class="settings-card" style="margin-bottom:18px;">
                 <div class="settings-card-title">Gestão de Saldo e Concessão Manual (Analista)</div>
@@ -350,7 +380,7 @@
                     <input type="number" id="tok-rule-bonus-mastery" class="compact-input-num" min="0" max="50" value="5" onchange="saveTokenRulesFromUI()">
                 </div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Exigir PIN do Analista ao Clicar no Foguete (Tela Aplicador)</span></div>
+                    <div class="param-label-group"><span>Exigir PIN do Analista ao Clicar nas Moedas (Tela Aplicador)</span></div>
                     <label class="pill-switch">
                         <input type="checkbox" id="tok-rule-pin-rocket" checked onchange="saveTokenRulesFromUI()">
                         <span class="pill-slider"></span>
@@ -383,8 +413,8 @@
                 </div>
                 <div class="studio-grid-2col" style="margin-bottom:14px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Símbolo / Emoji ou Código de Imagem:</label>
-                        <input type="text" id="store-new-icon" placeholder="Ex: 🎈">
+                        <label>Símbolo / Emoji:</label>
+                        <input type="text" id="store-new-icon" placeholder="Ex: 🎨">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
                         <label>Descrição Breve:</label>
@@ -399,10 +429,19 @@
                 <div id="analyst-catalog-list" class="token-store-grid"></div>
             </div>
         </div>
+
+        <!-- PAINEL 3: ARCADE (VISUALIZAÇÃO E TESTE RÁPIDO SEM COBRANÇA DE MOEDAS) -->
+        <div id="comp-section-arcade" style="display:none;">
+            <div class="settings-card">
+                <div class="settings-card-title">Jogos Disponíveis no Repositório (Modo Teste Gratuito do Analista)</div>
+                <p style="font-size:0.86rem; color:var(--text-light); font-weight:600; margin-bottom:16px;">Inicie qualquer jogo abaixo para testar mecânicas e parâmetros sem descontar fichas do aluno ativo.</p>
+                <div id="analyst-arcade-test-grid" class="token-store-grid"></div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- ================= TELA DE CONFIGURAÇÕES GLOBAIS ================= -->
+<!-- ================= TELA DE CONFIGURAÇÕES GLOBAIS (DESCENTRALIZADA + COR LIVRE) ================= -->
 <div id="screen-settings" class="screen">
     <div class="settings-header">
         <button type="button" class="btn-action btn-cancel" onclick="goSplash()">
@@ -417,8 +456,9 @@
     </div>
     
     <div class="settings-single-col">
+        <!-- 1. PARÂMETROS GERAIS DO ALUNO -->
         <div class="settings-card">
-            <div class="settings-card-title">Parâmetros de Ensino</div>
+            <div class="settings-card-title">Parâmetros Gerais e Aparência</div>
             <div class="input-group">
                 <label>Primeiro Nome do Aluno Ativo:</label>
                 <input type="text" id="set-name" placeholder="Ex: MIGUEL">
@@ -439,32 +479,49 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Alternativas na Tela:</label>
-                    <select id="set-opts">
-                        <option value="2">2 Alternativas</option>
-                        <option value="3">3 Alternativas</option>
-                        <option value="4" selected>4 Alternativas</option>
-                    </select>
-                </div>
-                <div class="input-group">
                     <label>Latência de Bloqueio (ms):</label>
                     <input type="number" id="set-latency" min="0" step="100" value="400">
+                </div>
+                <div class="input-group">
+                    <label>Cor Principal do Tema:</label>
+                    <div class="color-picker-row">
+                        <input type="color" id="set-theme-color" class="color-picker-input" value="#3B82F6">
+                        <button type="button" class="btn-action btn-cancel" style="padding:10px 12px; font-size:0.8rem;" onclick="document.getElementById('set-theme-color').value='#3B82F6'">Azul Padrão</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+                <div>
+                    <label>Rodízio de Variações:</label>
+                    <select id="set-topo-mode">
+                        <option value="AUTO" selected>Automático (Alterna ao atingir critério)</option>
+                        <option value="1">Fixar na Variação 1</option>
+                        <option value="2">Fixar na Variação 2</option>
+                    </select>
                 </div>
             </div>
 
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: #F8FAFC; padding: 14px; border-radius: 14px; border: 1px solid var(--border);">
-                <input type="checkbox" id="set-strict-day" style="width:22px; height:22px;">
+                <input type="checkbox" id="set-strict-day" checked style="width:22px; height:22px;">
                 <label style="margin:0;">Avançar dia e rodar variação de estímulos apenas na data seguinte do calendário</label>
             </div>
-            <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: var(--warning-light); padding: 14px; border-radius: 14px; margin-bottom:0;">
-                <input type="checkbox" id="set-errorless" style="width:22px; height:22px;">
+            <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: var(--warning-light); padding: 14px; border-radius: 14px;">
+                <input type="checkbox" id="set-errorless" checked style="width:22px; height:22px;">
                 <label style="margin:0; color: #92400E;">Aprendizagem Sem Erro (Destacar alternativa correta após 1º erro)</label>
+            </div>
+            <div class="input-group" style="display: flex; align-items: center; gap: 12px; margin-bottom:0;">
+                <input type="checkbox" id="set-use-mic" checked style="width:22px; height:22px;">
+                <label style="margin:0;">Ativar Microfone (Reconhecimento de Voz em tarefas expressivas)</label>
             </div>
         </div>
 
+        <!-- 2. CONFIGURAÇÕES PADRONIZADAS EXCLUSIVAS DO SILABÁRIO -->
         <div class="settings-card">
-            <div class="settings-card-title">Estrutura do Silabário</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+            <div class="settings-card-title">Padronização do Silabário (Estrutura, Ciclos e Alternativas)</div>
+            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">Estes parâmetros padronizam todas as famílias do Silabário de uma só vez. As demais tarefas da trilha possuem configuração própria individual.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
                     <input type="checkbox" id="set-syl-ccv" style="width:22px; height:22px;"> Encontros (+CCV)
                 </label>
@@ -478,55 +535,31 @@
                     <input type="checkbox" id="set-syl-cvcm" style="width:22px; height:22px;"> CVC Fechado em M
                 </label>
             </div>
-        </div>
 
-        <div class="settings-card">
-            <div class="settings-card-title">Etapas e Topografia Global</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c1" style="width:22px; height:22px;"> 1. Identidade Visual / Boca
+                    <input type="checkbox" id="set-stg-c1" checked style="width:22px; height:22px;"> Ciclo 1: Identidade Visual
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c2" style="width:22px; height:22px;"> 2. Receptivo (Áudio → Letra)
+                    <input type="checkbox" id="set-stg-c2" checked style="width:22px; height:22px;"> Ciclo 2: Auditivo (Som → Sílaba)
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c3" style="width:22px; height:22px;"> 3. Expressivo (Fala)
+                    <input type="checkbox" id="set-stg-c3" checked style="width:22px; height:22px;"> Ciclo 3: Leitura Expressiva
                 </label>
-                <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c4" style="width:22px; height:22px;"> 4. Figura ↔ Palavra
-                </label>
+                <input type="checkbox" id="set-stg-c4" checked style="display:none;">
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
-                <div class="input-group">
-                    <label>Rodízio de Variações:</label>
-                    <select id="set-topo-mode">
-                        <option value="AUTO">Automático (Alterna ao atingir critério)</option>
-                        <option value="1">Fixar na Variação 1</option>
-                        <option value="2">Fixar na Variação 2</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Tema Visual:</label>
-                    <select id="set-theme">
-                        <option value="cyan">Azul Clínico</option>
-                        <option value="green">Verde</option>
-                        <option value="indigo">Índigo</option>
-                        <option value="pink">Rosa</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="input-group" style="display: flex; align-items: center; gap: 12px;">
-                <input type="checkbox" id="set-topo-var" style="width:22px; height:22px;">
-                <label style="margin:0;">Alternar fontes (incluindo Mamãe que nos faz) e caixa alta/baixa automaticamente</label>
-            </div>
-            <div class="input-group" style="display: flex; align-items: center; gap: 12px; margin-bottom:0;">
-                <input type="checkbox" id="set-use-mic" style="width:22px; height:22px;">
-                <label style="margin:0;">Ativar Microfone (Reconhecimento de Voz no Ciclo 3)</label>
+            <div class="input-group" style="margin-bottom:0; max-width:280px;">
+                <label>Alternativas na Tela (Silabário):</label>
+                <select id="set-opts">
+                    <option value="2">2 Alternativas</option>
+                    <option value="3" selected>3 Alternativas</option>
+                    <option value="4">4 Alternativas</option>
+                </select>
             </div>
         </div>
 
+        <!-- 3. SEGURANÇA E TIMER -->
         <div class="settings-card">
             <div class="settings-card-title">Segurança de Perfis e Timer de Sessão</div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px;">
@@ -561,6 +594,7 @@
             </div>
         </div>
 
+        <!-- 4. MEMÓRIA E SISTEMA -->
         <div class="settings-card">
             <div class="settings-card-title">Sistema e Memória Local</div>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -662,7 +696,7 @@
 
 <!-- ================= MODAIS DO SISTEMA ================= -->
 
-<!-- PAINEL DE CONFIGURAÇÃO DA TAREFA (4 ABAS + REMUNERAÇÃO INDIVIDUAL + FONTE MAMÃE QUE NOS FAZ) -->
+<!-- PAINEL DE CONFIGURAÇÃO INDIVIDUAL DA TAREFA (COM CICLOS E ALTERNATIVAS DESCENTRALIZADOS) -->
 <div id="modal-stimuli-editor" class="modal-overlay" data-backdrop-close="true" style="z-index: 280;">
     <div class="modal-content" style="text-align: left; max-width: 680px; padding: 24px;" onclick="closeAllTooltips(event)">
         <div class="modal-clean-header">
@@ -675,7 +709,7 @@
         <div class="segmented-control">
             <button type="button" class="seg-btn active" id="tab-btn-stim" onclick="switchTaskEditorTab('STIM')">Estímulos</button>
             <button type="button" class="seg-btn" id="tab-btn-topo" onclick="switchTaskEditorTab('TOPO')">Apresentação</button>
-            <button type="button" class="seg-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">Parâmetros ABA</button>
+            <button type="button" class="seg-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">Ciclos & ABA</button>
             <button type="button" class="seg-btn" id="tab-btn-img" onclick="switchTaskEditorTab('IMG')">Banco de Imagens</button>
         </div>
 
@@ -695,20 +729,20 @@
             </div>
         </div>
 
-        <!-- ABA 2: APRESENTAÇÃO (COM FONTE MAMÃE QUE NOS FAZ) -->
+        <!-- ABA 2: APRESENTAÇÃO (TEXTOS NEUTROS) -->
         <div id="task-tab-content-topo" style="display:none; padding: 4px 0 14px 0;">
             <div class="compact-param-row">
                 <div class="param-label-group">
                     <span>Tipografia dos Cartões</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-font')">?</button>
-                    <div id="tip-font" class="floating-popover">Permite fixar a fonte cursiva escolar local "Mamãe que nos faz", minúsculas ou serifada nesta tarefa.</div>
+                    <div id="tip-font" class="floating-popover">Permite fixar letra cursiva escolar, minúsculas, serifada ou alternar automaticamente nesta tarefa.</div>
                 </div>
                 <select id="task-cfg-font" class="compact-select">
-                    <option value="GLOBAL">Padrão Global</option>
-                    <option value="UPPER">CAIXA ALTA</option>
+                    <option value="GLOBAL">CAIXA ALTA (Padrão)</option>
                     <option value="LOWER">minúsculas</option>
                     <option value="SERIF">Serifada</option>
-                    <option value="SCHOOL">Cursiva (Mamãe que nos faz)</option>
+                    <option value="SCHOOL">Fonte Cursiva Escolar</option>
+                    <option value="MIX">Alternar Fontes Automaticamente</option>
                 </select>
             </div>
 
@@ -737,8 +771,38 @@
             </div>
         </div>
 
-        <!-- ABA 3: PARÂMETROS ABA + REMUNERAÇÃO INDIVIDUAL DE FICHAS -->
+        <!-- ABA 3: CICLOS DA TAREFA, ALTERNATIVAS & PARÂMETROS ABA INDIVIDUAIS -->
         <div id="task-tab-content-aba" style="display:none; padding: 4px 0 14px 0;">
+            <div class="compact-param-row">
+                <div class="param-label-group">
+                    <span>Alternativas na Tela (MTS)</span>
+                </div>
+                <select id="task-cfg-opts" class="compact-select">
+                    <option value="0">Padrão (3 Alternativas)</option>
+                    <option value="2">2 Alternativas</option>
+                    <option value="3">3 Alternativas</option>
+                    <option value="4">4 Alternativas</option>
+                </select>
+            </div>
+
+            <div style="background:#F8FAFC; border:1.5px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:10px;">
+                <span style="font-size:0.85rem; font-weight:800; color:var(--text); display:block; margin-bottom:8px;">Ciclos Ativos nesta Tarefa:</span>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
+                        <input type="checkbox" id="task-cfg-c1" checked style="width:18px; height:18px;"> Ciclo 1 (Visual/Base)
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
+                        <input type="checkbox" id="task-cfg-c2" checked style="width:18px; height:18px;"> Ciclo 2 (Auditivo/2º)
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
+                        <input type="checkbox" id="task-cfg-c3" checked style="width:18px; height:18px;"> Ciclo 3 (Leitura/3º)
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
+                        <input type="checkbox" id="task-cfg-c4" checked style="width:18px; height:18px;"> Ciclo 4+ (Equivalência)
+                    </label>
+                </div>
+            </div>
+
             <div class="compact-param-row" id="dmts-config-box">
                 <div class="param-label-group">
                     <span>Time Delay Visual (DMTS)</span>
@@ -841,7 +905,7 @@
     </div>
 </div>
 
-<!-- ESCOPO 5: MODAL FULLSCREEN DO HUB DE JOGOS (SANDBOX IFRAME) -->
+<!-- MODAL FULLSCREEN DO HUB DE JOGOS (SANDBOX IFRAME) -->
 <div id="modal-reward-arcade">
     <div class="arcade-top-bar">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -859,8 +923,8 @@
     <iframe id="arcade-game-frame" sandbox="allow-scripts allow-same-origin" src="about:blank"></iframe>
 </div>
 
-<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (BANCO INDEXEDDB OU EMOJI) -->
-<div id="modal-media-picker" class="modal-overlay" style="z-index: 340;">
+<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (USADO NO EDITOR E DIRETO NA OFICINA STUDIO) -->
+<div id="modal-media-picker" class="modal-overlay" data-backdrop-close="true" style="z-index: 340;">
     <div class="modal-content" style="max-width: 520px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
             <h2 class="modal-title" id="media-picker-word-title" style="margin:0; font-size:1.25rem;">Associar Figura</h2>
