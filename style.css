@@ -1,6 +1,6 @@
-/* ================= FONTES LOCAIS OFFLINE (MAMÃE QUE NOS FAZ) ================= */
+/* ================= FONTES LOCAIS OFFLINE ================= */
 @font-face {
-    font-family: 'MamaeQueNosFaz';
+    font-family: 'EscolarCursiva';
     src: url('assets/fonts/mamae-que-nos-faz.ttf') format('truetype'),
          url('assets/fonts/MamaeQueNosFaz.ttf') format('truetype'),
          url('assets/fonts/mamaequenosfaz.ttf') format('truetype'),
@@ -12,9 +12,9 @@
 
 :root {
     --splash-bg: #6baef5;
-    --primary: #0284C7;
-    --primary-dark: #0369A1;
-    --primary-light: #E0F2FE;
+    --primary: #3B82F6;
+    --primary-dark: #2563EB;
+    --primary-light: #EFF6FF;
     --bg: #F8FAFC;
     --card: #FFFFFF;
     --text: #0F172A;
@@ -30,22 +30,6 @@
     --radius-md: 16px;
     --shadow-soft: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
     --shadow-card: 0 2px 10px rgba(15, 23, 42, 0.03);
-}
-
-[data-theme="green"] {
-    --primary: #0D9488;
-    --primary-dark: #0F766E;
-    --primary-light: #CCFBF1;
-}
-[data-theme="pink"] {
-    --primary: #DB2777;
-    --primary-dark: #BE185D;
-    --primary-light: #FCE7F3;
-}
-[data-theme="indigo"] {
-    --primary: #4F46E5;
-    --primary-dark: #3730A3;
-    --primary-light: #E0E7FF;
 }
 
 * {
@@ -248,7 +232,7 @@ body {
     line-height: 1.35;
 }
 
-/* ================= 2. MULTI-TENANT SWITCHER & PÍLULA DE FICHAS ================= */
+/* ================= 2. MULTI-TENANT SWITCHER & PÍLULA DE MOEDAS ================= */
 .student-switcher-pill {
     background: #F1F5F9;
     border: 1.5px solid var(--border);
@@ -281,42 +265,25 @@ body {
 
 .token-balance-pill {
     background: #FFFBEB;
-    border: 1.5px solid #FDE68A;
+    border: 1.5px solid #FCD34D;
     color: #92400E;
-    padding: 6px 14px;
+    padding: 6px 15px;
     border-radius: 999px;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 900;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     height: 40px;
     cursor: pointer;
     transition: 0.15s ease;
     box-shadow: var(--shadow-card);
 }
-.token-balance-pill:hover { background: #FEF3C7; }
-.token-balance-pill:active { transform: scale(0.96); }
-
-.btn-rocket-arcade {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1.5px solid var(--primary);
-    background: var(--primary-light);
-    color: var(--primary-dark);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.15s ease;
-    box-shadow: var(--shadow-card);
+.token-balance-pill:hover {
+    background: #FEF3C7;
+    border-color: #F59E0B;
 }
-.btn-rocket-arcade:hover {
-    background: var(--primary);
-    color: #FFFFFF;
-}
-.btn-rocket-arcade:active { transform: scale(0.93); }
+.token-balance-pill:active { transform: scale(0.95); }
 
 /* ================= 3. TELA HOME DO ANALISTA (4 COLUNAS) ================= */
 #screen-splash {
@@ -348,7 +315,7 @@ body {
     height: auto;
     aspect-ratio: 2423 / 1691;
     margin: 0 auto 10px auto;
-    color: var(--primary, #6baef5);
+    color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,7 +383,7 @@ body {
     color: var(--primary-dark);
 }
 
-/* ================= 4. TELA DE COMPLEMENTOS & STUDIO COMPORTAMENTAL ================= */
+/* ================= 4. TELA DE COMPLEMENTOS (HUB DE 3 CARDS) & STUDIO ================= */
 .complements-container {
     max-width: 960px;
     width: 100%;
@@ -425,6 +392,61 @@ body {
     flex-direction: column;
     gap: 18px;
     padding-bottom: 40px;
+}
+
+.complements-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.complement-hub-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 30px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: var(--shadow-card);
+}
+
+.complement-hub-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+}
+
+.complement-hub-card:active { transform: scale(0.97); }
+
+.complement-hub-card .hub-icon-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.complement-hub-card h3 {
+    font-size: 1.18rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.complement-hub-card p {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-light);
+    line-height: 1.4;
 }
 
 .studio-cycle-card {
@@ -450,6 +472,36 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px;
+}
+
+.studio-media-chips-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: #F8FAFC;
+    border: 1.5px dashed var(--border);
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+
+.studio-stim-chip {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+.studio-stim-chip:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
 }
 
 .token-store-grid {
@@ -518,7 +570,7 @@ body {
     display: block;
 }
 
-/* ================= 6. TELA DE JOGOS / TRILHA (CARROSSEL) ================= */
+/* ================= 6. TELA DE JOGOS / TRILHA (TÍTULO CENTRALIZADO AO CONTAINER) ================= */
 #screen-home {
     overflow: hidden !important;
     padding: 16px 32px 14px 32px !important;
@@ -529,6 +581,7 @@ body {
 #screen-home.active { display: flex; }
 
 .home-header-slim {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -538,12 +591,18 @@ body {
     z-index: 15;
 }
 
+/* Centralização matemática absoluta em relação ao container da tela */
 .dynamic-level-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 1.35rem;
     font-weight: 900;
     color: var(--text);
     letter-spacing: -0.5px;
     text-align: center;
+    pointer-events: none;
+    white-space: nowrap;
 }
 
 .header-right-actions {
@@ -738,7 +797,7 @@ body {
     justify-content: center;
     flex-shrink: 0;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
     transition: 0.16s;
     position: relative;
     z-index: 8;
@@ -911,10 +970,10 @@ body {
     vertical-align: middle;
 }
 
-/* CLASSES TOPOGRÁFICAS (INCLUINDO FONTE MAMÃE QUE NOS FAZ) */
+/* CLASSES TOPOGRÁFICAS NEUTRAS */
 .topo-serif { font-family: Georgia, 'Times New Roman', serif !important; }
-.topo-school, .topo-mamae {
-    font-family: 'MamaeQueNosFaz', cursive, sans-serif !important;
+.topo-school {
+    font-family: 'EscolarCursiva', cursive, sans-serif !important;
     font-weight: normal !important;
     letter-spacing: 1px;
 }
@@ -930,7 +989,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(2, 132, 199, 0.28);
+    box-shadow: 0 10px 24px rgba(59, 130, 246, 0.28);
     border: none;
     transition: 0.18s;
 }
@@ -1198,7 +1257,7 @@ body {
     cursor: grab;
     position: relative;
     z-index: 5;
-    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.25);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25);
     user-select: none;
     touch-action: none;
 }
@@ -1254,7 +1313,7 @@ body {
     align-items: center;
     justify-content: center;
     border: none;
-    box-shadow: 0 10px 24px rgba(2, 132, 199, 0.25);
+    box-shadow: 0 10px 24px rgba(59, 130, 246, 0.25);
     cursor: pointer;
     transition: all 0.12s ease;
     outline: none;
@@ -1374,6 +1433,21 @@ body {
     margin-bottom: 16px;
     border-bottom: 1px solid #F1F5F9;
     padding-bottom: 10px;
+}
+
+.color-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.color-picker-input {
+    width: 52px;
+    height: 44px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: #FFFFFF;
+    padding: 3px;
+    cursor: pointer;
 }
 
 .feedback-error {
@@ -1732,6 +1806,7 @@ textarea {
 
 @media (max-width: 900px) {
     .splash-buttons { grid-template-columns: repeat(2, 1fr); max-width: 520px; }
+    .complements-cards-grid { grid-template-columns: 1fr; max-width: 460px; margin-left: auto; margin-right: auto; }
     .profile-cards-grid { grid-template-columns: 1fr; max-width: 440px; }
     .dash-kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .screen { padding: 16px; }
