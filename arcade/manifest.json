@@ -14,5 +14,21 @@
     "cost": 4,
     "durationSec": 60,
     "entry": "arcade/superchef/index.html"
+  },
+  {
+    "id": "cosmojump",
+    "title": "Cosmo Jump",
+    "desc": "Pule pelos asteroides no espaço! Toque nas laterais da tela para guiar o astronauta.",
+    "cost": 4,
+    "durationSec": 60,
+    "entry": "arcade/cosmojump/index.html"
+  },
+  {
+    "id": "guardiao",
+    "title": "Guardião da Orb",
+    "desc": "Gire o escudo 360° arrastando o dedo para proteger o núcleo de energia!",
+    "cost": 4,
+    "durationSec": 60,
+    "entry": "arcade/guardiao/index.html"
   }
 ]
