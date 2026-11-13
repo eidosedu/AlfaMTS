@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6BAEF5">
 
-    <!-- CSS Crítico Inline Anti-FOUC (Renderização 0ms) -->
+    <!-- CSS Crítico Inline Anti-FOUC -->
     <style>
         html, body {
             margin: 0;
@@ -33,7 +33,7 @@
         }
     </style>
 
-    <!-- Bibliotecas para Geração de PDF -->
+    <!-- Bibliotecas para Geração de Relatórios em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
 
@@ -69,7 +69,7 @@
     </div>
 </div>
 
-<!-- INDICADOR DE TIMER DE SESSÃO (CANTO INFERIOR ESQUERDO) -->
+<!-- INDICADOR DE TIMER DE SESSÃO -->
 <div id="header-timer-icon" title="Timer de Sessão Ativo">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg>
     <span id="header-timer-text">30:00</span>
@@ -87,7 +87,7 @@
             </svg>
         </div>
         <h1 style="font-size:2rem; font-weight:900; color:var(--text); letter-spacing:-0.5px;">Selecionar Perfil</h1>
-        <p class="gatekeeper-subtitle">Escolha o modo de operação clínica</p>
+        <p class="gatekeeper-subtitle">Escolha o modo de operação</p>
         <div class="profile-cards-grid">
             <div class="profile-select-card" onclick="selectRoleProfile('ANALYST')">
                 <div class="profile-icon-circle">
@@ -111,15 +111,15 @@
     </div>
 </div>
 
-<!-- ================= TELA HOME DO ANALISTA (4 BOTÕES + LOGO 185PX + VOLTAR) ================= -->
+<!-- ================= TELA HOME DO ANALISTA ================= -->
 <div id="screen-splash" class="screen">
     <div class="analyst-top-bar">
-        <button type="button" class="icon-circle-btn" onclick="openGatekeeper()" title="Trocar Perfil (Analista / Aplicador)">
+        <button type="button" class="icon-circle-btn" onclick="openGatekeeper()" title="Trocar Perfil">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         </button>
 
         <div style="display:flex; align-items:center; gap:10px;">
-            <button type="button" class="token-balance-pill" onclick="openComplements('TOKENS')" title="Saldo de Fichas do Aluno">
+            <button type="button" class="token-balance-pill" onclick="openComplements('TOKENS')" title="Saldo de Fichas">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
                 <span class="token-balance-count">0</span>
             </button>
@@ -173,7 +173,7 @@
     </div>
 </div>
 
-<!-- ================= TELA DE JOGOS E ATIVIDADES (SEM FOGUETE + TÍTULO CENTRALIZADO) ================= -->
+<!-- ================= TELA DE JOGOS E ATIVIDADES ================= -->
 <div id="screen-home" class="screen">
     <div class="home-header-slim">
         <button type="button" class="icon-circle-btn" onclick="handleGridBackNavigation()" title="Voltar">
@@ -183,13 +183,11 @@
         <h2 id="carousel-level-title" class="dynamic-level-title">Nível 1</h2>
         
         <div class="header-right-actions">
-            <!-- Pílula de Fichas serve diretamente como botão para abrir o Modal da Loja/Arcade -->
-            <button type="button" class="token-balance-pill" id="grid-token-pill" onclick="handleRocketRewardClick()" title="Abrir Loja de Recompensas & Jogos">
+            <button type="button" class="token-balance-pill" id="grid-token-pill" onclick="handleRocketRewardClick()" title="Abrir Loja de Recompensas">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
                 <span class="token-balance-count">0</span>
             </button>
 
-            <!-- Switcher de Aluno para o Aplicador -->
             <button type="button" class="student-switcher-pill" id="applicator-grid-switcher" onclick="openStudentSwitcherModal()" style="display:none;">
                 <span class="avatar-mini"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                 <span class="student-first-name-label">ALUNO</span>
@@ -198,7 +196,7 @@
             <button type="button" class="icon-circle-btn" id="btn-review-mode" onclick="toggleReviewMode()" title="Modo Revisão">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
-            <button type="button" class="icon-circle-btn" id="btn-config-mode" onclick="toggleConfigMode()" title="Modo Configurar Tarefa">
+            <button type="button" class="icon-circle-btn" id="btn-config-mode" onclick="toggleConfigMode()" title="Configurar Tarefa">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
             <button type="button" class="icon-circle-btn" onclick="requireAuth(openModulesManager)" id="btn-modules-mgr" title="Gerenciar Módulos">
@@ -225,13 +223,13 @@
     <div class="carousel-dots" id="carousel-dots"></div>
 </div>
 
-<!-- ================= TELA DE COMPLEMENTOS (HUB DE 3 CARDS SEM GUIAS) ================= -->
+<!-- ================= TELA DE COMPLEMENTOS ================= -->
 <div id="screen-complements" class="screen">
-    <div class="settings-header" style="max-width:960px;">
+    <div class="settings-header" style="max-width:1120px;">
         <button type="button" class="icon-circle-btn" onclick="handleComplementsBack()" title="Voltar">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         </button>
-        <h2 id="complements-header-title" style="font-size:1.38rem; font-weight:900;">Complementos Clínicos</h2>
+        <h2 id="complements-header-title" style="font-size:1.38rem; font-weight:900;">Complementos</h2>
         <div style="display:flex; align-items:center; gap:8px;">
             <span class="token-balance-pill" style="cursor:default;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
@@ -241,14 +239,14 @@
     </div>
 
     <div class="complements-container">
-        <!-- HUB PRINCIPAL: 3 CARDS COM ÍCONES SVG PRÓPRIOS -->
+        <!-- HUB PRINCIPAL: 4 CARDS -->
         <div id="comp-section-hub" class="complements-cards-grid">
             <div class="complement-hub-card" onclick="switchComplementsSection('STUDIO')">
                 <div class="hub-icon-box">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="m15 5 3 3"/></svg>
                 </div>
                 <h3>Oficina de Tarefas</h3>
-                <p>Crie atividades personalizadas do zero com múltiplos ciclos, imagens, CRMTS e comandos expressivos.</p>
+                <p>Crie atividades personalizadas com múltiplos ciclos, imagens, construção e comandos.</p>
             </div>
 
             <div class="complement-hub-card" onclick="switchComplementsSection('TOKENS')">
@@ -256,30 +254,38 @@
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>
                 </div>
                 <h3>Economia de Fichas</h3>
-                <p>Gerencie o saldo do aluno, injete fichas manualmente, configure bônus e cadastre prêmios na loja.</p>
+                <p>Gerencie o saldo do aluno, adicione fichas, configure bônus e cadastre prêmios na loja.</p>
             </div>
 
             <div class="complement-hub-card" onclick="switchComplementsSection('ARCADE')">
                 <div class="hub-icon-box" style="background:#D1FAE5; color:#047857;">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
                 </div>
-                <h3>Arcade (Teste Livre)</h3>
-                <p>Visualize e teste imediatamente todos os jogos do repositório sem descontar fichas do aluno.</p>
+                <h3>Arcade</h3>
+                <p>Configure o tempo de duração e custo em fichas de cada jogo ou teste livremente.</p>
+            </div>
+
+            <div class="complement-hub-card" onclick="switchComplementsSection('PRINTKIT')">
+                <div class="hub-icon-box" style="background:#EDE9FE; color:#6D28D9;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                </div>
+                <h3>Materiais Concretos</h3>
+                <p>Gere protocolos de mesa, folhas de registro, pranchas e cartões para impressão A4.</p>
             </div>
         </div>
 
-        <!-- PAINEL 1: OFICINA DE TAREFAS CUSTOMIZADAS (STUDIO COMPORTAMENTAL) -->
+        <!-- PAINEL 1: OFICINA DE TAREFAS (LIMPA E SEM DADOS DE EXEMPLO) -->
         <div id="comp-section-studio" style="display:none;">
             <div class="settings-card" style="margin-bottom:18px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
                     <div>
-                        <h3 style="font-size:1.1rem; font-weight:900; color:var(--text);">Criar / Editar Tarefa Personalizada</h3>
-                        <p style="font-size:0.84rem; color:var(--text-light); font-weight:600;">Alocada automaticamente na aba "Personalizados" do aluno ativo.</p>
+                        <h3 style="font-size:1.1rem; font-weight:900; color:var(--text);">Criar ou Editar Tarefa</h3>
+                        <p style="font-size:0.84rem; color:var(--text-light); font-weight:600;">Salva na aba Personalizados do aluno ativo.</p>
                     </div>
                     <div style="display:flex; gap:8px;">
                         <button type="button" class="btn-action btn-cancel" onclick="openComplementsMediaBankModal()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                            Subir Imagens (WebP)
+                            Subir Imagens
                         </button>
                         <button type="button" class="btn-action btn-cancel" onclick="resetStudioForm()">Limpar</button>
                     </div>
@@ -290,33 +296,32 @@
                 <div class="studio-grid-2col" style="margin-bottom:14px;">
                     <div class="input-group" style="margin-bottom:0;">
                         <label>Título da Atividade:</label>
-                        <input type="text" id="studio-title" placeholder="Ex: Pareamento de Animais">
+                        <input type="text" id="studio-title" value="">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Descrição / Objetivo Clínico:</label>
-                        <input type="text" id="studio-desc" placeholder="Ex: Discriminação condicional B-C">
+                        <label>Objetivo:</label>
+                        <input type="text" id="studio-desc" value="">
                     </div>
                 </div>
 
                 <div class="studio-grid-2col" style="margin-bottom:12px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Estímulos Alvo (separados por vírgula):</label>
-                        <input type="text" id="studio-targets-input" placeholder="Ex: GATO, PATO, SAPO, VACA" oninput="renderStudioTargetsMediaChips()">
+                        <label>Estímulos Alvo:</label>
+                        <input type="text" id="studio-targets-input" value="" placeholder="Separe por vírgula" oninput="renderStudioTargetsMediaChips()">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Fichas ao Atingir Critério neste Bloco:</label>
+                        <label>Fichas por Bloco Concluído:</label>
                         <input type="number" id="studio-reward-tokens" min="0" max="50" value="2">
                     </div>
                 </div>
 
-                <!-- Associação direta de Imagem/Emoji dentro da Oficina sem sair da tela -->
                 <div style="margin-bottom:6px;">
-                    <span style="font-size:0.8rem; font-weight:800; color:var(--text-light);">Toque em um estímulo abaixo para vincular Imagem (IndexedDB) ou Emoji:</span>
+                    <span style="font-size:0.8rem; font-weight:800; color:var(--text-light);">Toque em um estímulo abaixo para associar figura:</span>
                 </div>
                 <div id="studio-targets-media-bar" class="studio-media-chips-box"></div>
 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <strong style="font-size:0.95rem; color:var(--text);">Sequência de Ciclos da Tarefa</strong>
+                    <strong style="font-size:0.95rem; color:var(--text);">Sequência de Ciclos</strong>
                     <button type="button" class="btn-action" style="padding:8px 14px; font-size:0.85rem;" onclick="addStudioCycleRow()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         Adicionar Ciclo
@@ -328,83 +333,83 @@
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button type="button" class="btn-action" onclick="saveStudioCustomModule()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        Salvar Tarefa na Trilha ("Personalizados")
+                        Salvar Tarefa
                     </button>
                 </div>
             </div>
 
             <div class="settings-card">
-                <div class="settings-card-title">Tarefas Personalizadas Cadastradas</div>
+                <div class="settings-card-title">Tarefas Cadastradas</div>
                 <div id="studio-saved-modules-list" style="display:flex; flex-direction:column; gap:10px;"></div>
             </div>
         </div>
 
-        <!-- PAINEL 2: ECONOMIA DE FICHAS & MERCADINHO DE REFORÇADORES -->
+        <!-- PAINEL 2: ECONOMIA DE FICHAS & LOJA -->
         <div id="comp-section-tokens" style="display:none;">
             <div class="settings-card" style="margin-bottom:18px;">
-                <div class="settings-card-title">Gestão de Saldo e Concessão Manual (Analista)</div>
+                <div class="settings-card-title">Gestão de Saldo</div>
                 <div class="studio-grid-2col" style="align-items:end; margin-bottom:16px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Quantidade de Fichas (+ ou -):</label>
+                        <label>Quantidade de Fichas:</label>
                         <input type="number" id="token-grant-amount" value="5">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Motivo Clínico / Contingência:</label>
-                        <input type="text" id="token-grant-reason" placeholder="Ex: Engajamento em treino motor físico">
+                        <label>Motivo:</label>
+                        <input type="text" id="token-grant-reason" placeholder="Opcional">
                     </div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                     <span style="font-size:0.86rem; font-weight:700; color:var(--text-light);">Total acumulado pelo aluno: <strong id="token-total-earned-label" style="color:var(--text);">0</strong> fichas</span>
                     <button type="button" class="btn-action" style="background:var(--success);" onclick="injectManualTokens()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Injetar Fichas
+                        Adicionar Fichas
                     </button>
                 </div>
             </div>
 
             <div class="settings-card" style="margin-bottom:18px;">
-                <div class="settings-card-title">Regras Globais de Remuneração e Reforço Imediato</div>
+                <div class="settings-card-title">Regras de Remuneração e Reforço</div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Ativar Sistema de Economia de Fichas</span></div>
+                    <div class="param-label-group"><span>Ativar Economia de Fichas</span></div>
                     <label class="pill-switch">
                         <input type="checkbox" id="tok-rule-enabled" checked onchange="saveTokenRulesFromUI()">
                         <span class="pill-slider"></span>
                     </label>
                 </div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Fichas Padrão por Bloco com Meta Atingida</span></div>
+                    <div class="param-label-group"><span>Fichas Padrão por Bloco Concluído</span></div>
                     <input type="number" id="tok-rule-per-block" class="compact-input-num" min="0" max="50" value="2" onchange="saveTokenRulesFromUI()">
                 </div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Bônus ao Consolidar Módulo (Maestria Completa)</span></div>
+                    <div class="param-label-group"><span>Bônus ao Consolidar Módulo</span></div>
                     <input type="number" id="tok-rule-bonus-mastery" class="compact-input-num" min="0" max="50" value="5" onchange="saveTokenRulesFromUI()">
                 </div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Exigir PIN do Analista ao Clicar nas Moedas (Tela Aplicador)</span></div>
+                    <div class="param-label-group"><span>Exigir PIN ao Abrir Loja no Modo Aplicador</span></div>
                     <label class="pill-switch">
                         <input type="checkbox" id="tok-rule-pin-rocket" checked onchange="saveTokenRulesFromUI()">
                         <span class="pill-slider"></span>
                     </label>
                 </div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Minigame Imediato Automático ao Bater Meta do Bloco</span></div>
+                    <div class="param-label-group"><span>Liberar Jogo Imediato ao Bater Meta do Bloco</span></div>
                     <label class="pill-switch">
                         <input type="checkbox" id="tok-rule-imm-enable" onchange="saveTokenRulesFromUI()">
                         <span class="pill-slider"></span>
                     </label>
                 </div>
                 <div class="compact-param-row">
-                    <div class="param-label-group"><span>Duração do Minigame Imediato (Segundos)</span></div>
-                    <input type="number" id="tok-rule-imm-sec" class="compact-input-num" min="10" max="120" value="20" onchange="saveTokenRulesFromUI()">
+                    <div class="param-label-group"><span>Duração do Jogo Imediato em Segundos</span></div>
+                    <input type="number" id="tok-rule-imm-sec" class="compact-input-num" min="10" max="180" value="20" onchange="saveTokenRulesFromUI()">
                 </div>
             </div>
 
             <div class="settings-card">
-                <div class="settings-card-title">Cadastrar Reforçador Tangível / Voucher no Mercadinho</div>
+                <div class="settings-card-title">Cadastrar Prêmio na Loja</div>
                 <div class="studio-grid-2col" style="margin-bottom:12px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Nome do Prêmio / Voucher:</label>
-                        <input type="text" id="store-new-title" placeholder="Ex: 5 Min de Massinha">
+                        <label>Nome do Prêmio:</label>
+                        <input type="text" id="store-new-title" value="">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
                         <label>Custo em Fichas:</label>
@@ -413,12 +418,12 @@
                 </div>
                 <div class="studio-grid-2col" style="margin-bottom:14px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Símbolo / Emoji:</label>
-                        <input type="text" id="store-new-icon" placeholder="Ex: 🎨">
+                        <label>Ícone ou Emoji:</label>
+                        <input type="text" id="store-new-icon" value="">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>Descrição Breve:</label>
-                        <input type="text" id="store-new-desc" placeholder="Ex: Acesso supervisionado pelo aplicador">
+                        <label>Descrição:</label>
+                        <input type="text" id="store-new-desc" value="">
                     </div>
                 </div>
                 <button type="button" class="btn-action" style="margin-bottom:18px;" onclick="addCatalogStoreItem()">
@@ -430,23 +435,127 @@
             </div>
         </div>
 
-        <!-- PAINEL 3: ARCADE (VISUALIZAÇÃO E TESTE RÁPIDO SEM COBRANÇA DE MOEDAS) -->
+        <!-- PAINEL 3: ARCADE (TESTE LIVRE + EDIÇÃO DE DURAÇÃO E CUSTO DOS JOGOS) -->
         <div id="comp-section-arcade" style="display:none;">
             <div class="settings-card">
-                <div class="settings-card-title">Jogos Disponíveis no Repositório (Modo Teste Gratuito do Analista)</div>
-                <p style="font-size:0.86rem; color:var(--text-light); font-weight:600; margin-bottom:16px;">Inicie qualquer jogo abaixo para testar mecânicas e parâmetros sem descontar fichas do aluno ativo.</p>
+                <div class="settings-card-title">Jogos do Arcade — Duração, Custo e Teste</div>
+                <p style="font-size:0.86rem; color:var(--text-light); font-weight:600; margin-bottom:16px;">Ajuste o tempo de duração e o custo em fichas de cada jogo ou inicie uma partida para testar.</p>
                 <div id="analyst-arcade-test-grid" class="token-store-grid"></div>
+            </div>
+        </div>
+
+        <!-- PAINEL 4: ESTÚDIO DE MATERIAIS CONCRETOS (SPLIT-SCREEN + LIVE PREVIEW A4) -->
+        <div id="comp-section-printkit" style="display:none;">
+            <div class="print-studio-workspace">
+                <!-- BARRA LATERAL ESQUERDA: FILTROS EM CASCATA E PARÂMETROS -->
+                <div class="print-studio-sidebar">
+                    <div class="print-sidebar-section">
+                        <div class="print-sidebar-title">1. Seleção de Tarefa</div>
+                        <div class="input-group" style="margin-bottom:8px;">
+                            <label style="font-size:0.8rem;">Categoria / Nível:</label>
+                            <select id="pk-cat-select" class="compact-select" style="width:100%;" onchange="onPrintStudioCategoryChange()">
+                                <option value="N1">Nível 1</option>
+                                <option value="N2">Nível 2</option>
+                                <option value="N3">Nível 3</option>
+                                <option value="N4">Nível 4</option>
+                                <option value="N5">Nível 5</option>
+                                <option value="SILABARIO">Silabário</option>
+                                <option value="EXTRAS">Extras</option>
+                                <option value="PERSONALIZADOS">Personalizados</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="margin-bottom:8px;">
+                            <label style="font-size:0.8rem;">Tarefa / Módulo:</label>
+                            <select id="pk-mod-select" class="compact-select" style="width:100%;" onchange="onPrintStudioModuleChange()"></select>
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label style="font-size:0.8rem;">Variação:</label>
+                            <select id="pk-var-select" class="compact-select" style="width:100%;" onchange="renderLivePrintStudioPreview()"></select>
+                        </div>
+                    </div>
+
+                    <div class="print-sidebar-section">
+                        <div class="print-sidebar-title">2. Páginas Visíveis</div>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-page-proto" checked onchange="renderLivePrintStudioPreview()">
+                            <span>Página 1: Protocolo de Instrução</span>
+                        </label>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-page-sheet" checked onchange="renderLivePrintStudioPreview()">
+                            <span>Página 2: Folha de Registro</span>
+                        </label>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-page-board" checked onchange="renderLivePrintStudioPreview()">
+                            <span>Página 3: Prancha de Trabalho</span>
+                        </label>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-page-cards" checked onchange="renderLivePrintStudioPreview()">
+                            <span>Páginas 4+: Cartões e Fichas</span>
+                        </label>
+                    </div>
+
+                    <div class="print-sidebar-section">
+                        <div class="print-sidebar-title">3. Parâmetros da Sessão</div>
+                        <div class="input-group" style="margin-bottom:8px;">
+                            <label style="font-size:0.8rem;">Comando Verbal:</label>
+                            <input type="text" id="pk-custom-sd" placeholder="Automático pela fórmula" oninput="renderLivePrintStudioPreview()" style="padding:9px 11px; font-size:0.86rem;">
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label style="font-size:0.78rem;">Espera (s):</label>
+                                <input type="number" id="pk-wait-sec" min="1" max="60" value="5" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.86rem;">
+                            </div>
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label style="font-size:0.78rem;">Reforçamento:</label>
+                                <select id="pk-reinf-mode" class="compact-select" style="width:100%; padding:8px;" onchange="renderLivePrintStudioPreview()">
+                                    <option value="TOKEN">Fichas</option>
+                                    <option value="CRF">Contínuo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="print-sidebar-section">
+                        <div class="print-sidebar-title">4. Dicas Selecionadas</div>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-tip-gestural" checked onchange="renderLivePrintStudioPreview()">
+                            <span>Dica Gestual</span>
+                        </label>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-tip-verbal" onchange="renderLivePrintStudioPreview()">
+                            <span>Dica Verbal / Ecoica</span>
+                        </label>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-tip-partial" checked onchange="renderLivePrintStudioPreview()">
+                            <span>Física Parcial</span>
+                        </label>
+                        <label class="print-chk-item">
+                            <input type="checkbox" id="pk-tip-full" onchange="renderLivePrintStudioPreview()">
+                            <span>Física Total</span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn-action" style="width:100%; padding:13px; margin-top:auto;" onclick="window.print()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Imprimir / Salvar PDF
+                    </button>
+                </div>
+
+                <!-- ÁREA CENTRAL DIREITA: LIVE PREVIEW INTERATIVO A4 -->
+                <div class="print-studio-preview-stage">
+                    <div id="print-root"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ================= TELA DE CONFIGURAÇÕES GLOBAIS (DESCENTRALIZADA + COR LIVRE) ================= -->
+<!-- ================= TELA DE CONFIGURAÇÕES GLOBAIS ================= -->
 <div id="screen-settings" class="screen">
     <div class="settings-header">
         <button type="button" class="btn-action btn-cancel" onclick="goSplash()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-            Voltar / Cancelar
+            Voltar
         </button>
         <h2 style="font-size:1.35rem; font-weight:900;">Configurações</h2>
         <button type="button" class="btn-action" onclick="saveSettings()">
@@ -456,12 +565,11 @@
     </div>
     
     <div class="settings-single-col">
-        <!-- 1. PARÂMETROS GERAIS DO ALUNO -->
         <div class="settings-card">
             <div class="settings-card-title">Parâmetros Gerais e Aparência</div>
             <div class="input-group">
-                <label>Primeiro Nome do Aluno Ativo:</label>
-                <input type="text" id="set-name" placeholder="Ex: MIGUEL">
+                <label>Nome do Aluno Ativo:</label>
+                <input type="text" id="set-name" value="">
             </div>
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
                 <div class="input-group">
@@ -471,11 +579,11 @@
                 <div class="input-group">
                     <label>Meta de Consolidação:</label>
                     <select id="set-consec-days">
-                        <option value="1">1 Sessão / Dia</option>
-                        <option value="2">2 Sessões / Dias</option>
-                        <option value="3" selected>3 Sessões / Dias</option>
-                        <option value="4">4 Sessões / Dias</option>
-                        <option value="5">5 Sessões / Dias</option>
+                        <option value="1">1 Sessão</option>
+                        <option value="2">2 Sessões</option>
+                        <option value="3" selected>3 Sessões</option>
+                        <option value="4">4 Sessões</option>
+                        <option value="5">5 Sessões</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -483,10 +591,10 @@
                     <input type="number" id="set-latency" min="0" step="100" value="400">
                 </div>
                 <div class="input-group">
-                    <label>Cor Principal do Tema:</label>
+                    <label>Cor do Tema:</label>
                     <div class="color-picker-row">
                         <input type="color" id="set-theme-color" class="color-picker-input" value="#3B82F6">
-                        <button type="button" class="btn-action btn-cancel" style="padding:10px 12px; font-size:0.8rem;" onclick="document.getElementById('set-theme-color').value='#3B82F6'">Azul Padrão</button>
+                        <button type="button" class="btn-action btn-cancel" style="padding:10px 12px; font-size:0.8rem;" onclick="document.getElementById('set-theme-color').value='#3B82F6'">Padrão</button>
                     </div>
                 </div>
             </div>
@@ -495,7 +603,7 @@
                 <div>
                     <label>Rodízio de Variações:</label>
                     <select id="set-topo-mode">
-                        <option value="AUTO" selected>Automático (Alterna ao atingir critério)</option>
+                        <option value="AUTO" selected>Automático</option>
                         <option value="1">Fixar na Variação 1</option>
                         <option value="2">Fixar na Variação 2</option>
                     </select>
@@ -504,35 +612,34 @@
 
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: #F8FAFC; padding: 14px; border-radius: 14px; border: 1px solid var(--border);">
                 <input type="checkbox" id="set-strict-day" checked style="width:22px; height:22px;">
-                <label style="margin:0;">Avançar dia e rodar variação de estímulos apenas na data seguinte do calendário</label>
+                <label style="margin:0;">Avançar dia e rodar variação de estímulos apenas na data seguinte</label>
             </div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: var(--warning-light); padding: 14px; border-radius: 14px;">
                 <input type="checkbox" id="set-errorless" checked style="width:22px; height:22px;">
-                <label style="margin:0; color: #92400E;">Aprendizagem Sem Erro (Destacar alternativa correta após 1º erro)</label>
+                <label style="margin:0; color: #92400E;">Aprendizagem Sem Erro</label>
             </div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; margin-bottom:0;">
                 <input type="checkbox" id="set-use-mic" checked style="width:22px; height:22px;">
-                <label style="margin:0;">Ativar Microfone (Reconhecimento de Voz em tarefas expressivas)</label>
+                <label style="margin:0;">Ativar Microfone</label>
             </div>
         </div>
 
-        <!-- 2. CONFIGURAÇÕES PADRONIZADAS EXCLUSIVAS DO SILABÁRIO -->
         <div class="settings-card">
-            <div class="settings-card-title">Padronização do Silabário (Estrutura, Ciclos e Alternativas)</div>
-            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">Estes parâmetros padronizam todas as famílias do Silabário de uma só vez. As demais tarefas da trilha possuem configuração própria individual.</p>
+            <div class="settings-card-title">Padronização do Silabário</div>
+            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">Estes parâmetros padronizam todas as famílias do Silabário. As demais tarefas possuem configuração individual.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-ccv" style="width:22px; height:22px;"> Encontros (+CCV)
+                    <input type="checkbox" id="set-syl-ccv" style="width:22px; height:22px;"> Encontros Consonantais
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-cvcl" style="width:22px; height:22px;"> CVC Fechado em L
+                    <input type="checkbox" id="set-syl-cvcl" style="width:22px; height:22px;"> Fechado em L
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-cvcs" style="width:22px; height:22px;"> CVC Fechado em S
+                    <input type="checkbox" id="set-syl-cvcs" style="width:22px; height:22px;"> Fechado em S
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-cvcm" style="width:22px; height:22px;"> CVC Fechado em M
+                    <input type="checkbox" id="set-syl-cvcm" style="width:22px; height:22px;"> Fechado em M
                 </label>
             </div>
 
@@ -541,16 +648,16 @@
                     <input type="checkbox" id="set-stg-c1" checked style="width:22px; height:22px;"> Ciclo 1: Identidade Visual
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c2" checked style="width:22px; height:22px;"> Ciclo 2: Auditivo (Som → Sílaba)
+                    <input type="checkbox" id="set-stg-c2" checked style="width:22px; height:22px;"> Ciclo 2: Auditivo
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c3" checked style="width:22px; height:22px;"> Ciclo 3: Leitura Expressiva
+                    <input type="checkbox" id="set-stg-c3" checked style="width:22px; height:22px;"> Ciclo 3: Leitura Oral
                 </label>
                 <input type="checkbox" id="set-stg-c4" checked style="display:none;">
             </div>
 
             <div class="input-group" style="margin-bottom:0; max-width:280px;">
-                <label>Alternativas na Tela (Silabário):</label>
+                <label>Alternativas na Tela:</label>
                 <select id="set-opts">
                     <option value="2">2 Alternativas</option>
                     <option value="3" selected>3 Alternativas</option>
@@ -559,42 +666,40 @@
             </div>
         </div>
 
-        <!-- 3. SEGURANÇA E TIMER -->
         <div class="settings-card">
-            <div class="settings-card-title">Segurança de Perfis e Timer de Sessão</div>
+            <div class="settings-card-title">Segurança e Timer de Sessão</div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px;">
                 <input type="checkbox" id="set-sec-enable" style="width:22px; height:22px;" onchange="togglePasswordField()">
-                <label style="margin:0;">Ativar Senha Numérica (Obrigatória para usar o Timer)</label>
+                <label style="margin:0;">Ativar Senha Numérica</label>
             </div>
             
             <div id="pin-group" style="display:none; background:#F8FAFC; border:1px solid var(--border); padding:16px; border-radius:14px; margin-top:10px;">
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>PIN do Analista (Obrigatório p/ Timer):</label>
-                        <input type="password" id="set-analyst-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Ex: 1234">
+                        <label>PIN do Analista:</label>
+                        <input type="password" id="set-analyst-pin" inputmode="numeric" pattern="[0-9]*" placeholder="****">
                     </div>
                     <div class="input-group" style="margin-bottom:0;">
-                        <label>PIN do Aplicador (Opcional):</label>
-                        <input type="password" id="set-applicator-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Vazio = Acesso Livre">
+                        <label>PIN do Aplicador:</label>
+                        <input type="password" id="set-applicator-pin" inputmode="numeric" pattern="[0-9]*" placeholder="Opcional">
                     </div>
                 </div>
                 <div style="margin-top:16px; display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="set-kiosk-exit" style="width:22px; height:22px;">
-                    <label style="margin:0; font-size:0.92rem; color:var(--danger);">Bloquear botão "Sair" da atividade em andamento com PIN</label>
+                    <label style="margin:0; font-size:0.92rem; color:var(--danger);">Bloquear saída da atividade em andamento com PIN</label>
                 </div>
             </div>
 
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; margin-top:18px; margin-bottom:0;">
                 <input type="checkbox" id="set-timer-enable" style="width:22px; height:22px;" onchange="toggleTimerField()">
-                <label style="margin:0;">Ativar Timer Global de Sessão (Exige PIN do Analista)</label>
+                <label style="margin:0;">Ativar Timer de Sessão</label>
             </div>
             <div class="input-group" id="timer-group" style="display:none; margin-top:12px; margin-bottom:0;">
-                <label>Duração da Sessão (Minutos):</label>
+                <label>Duração da Sessão em Minutos:</label>
                 <input type="number" id="set-timer-min" min="1" value="30">
             </div>
         </div>
 
-        <!-- 4. MEMÓRIA E SISTEMA -->
         <div class="settings-card">
             <div class="settings-card-title">Sistema e Memória Local</div>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -614,9 +719,9 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         </button>
         
-        <h2 style="font-size:1.4rem; font-weight:900; margin:0; color:var(--text);">Telemetria Clínica</h2>
+        <h2 style="font-size:1.4rem; font-weight:900; margin:0; color:var(--text);">Telemetria</h2>
         
-        <button type="button" class="icon-circle-btn" onclick="openTelemetryOptionsModal()" title="Opções de Exportação">
+        <button type="button" class="icon-circle-btn" onclick="openTelemetryOptionsModal()" title="Exportar">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
         </button>
     </div>
@@ -642,7 +747,7 @@
 
     <div class="chart-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <strong style="font-size:0.95rem; color:var(--text);">Curva de Evolução (% Acertos Independentes)</strong>
+            <strong style="font-size:0.95rem; color:var(--text);">Curva de Evolução Independente</strong>
             <span id="chart-crit-label" style="font-size:0.82rem; font-weight:800; color:var(--danger);">--- Meta: 90%</span>
         </div>
         <canvas id="aba-progress-chart" height="170" style="width:100%; display:block;"></canvas>
@@ -663,7 +768,7 @@
             <div id="fluency-timer-pill" class="trial-progress-pill" style="display:none; border-color:var(--warning); color:#B45309;">
                 <span id="fluency-ms-text">0.0s</span>
             </div>
-            <button type="button" class="icon-circle-btn" onclick="openQuickPeekModal()" title="Ver Estímulo e Resposta em Texto">
+            <button type="button" class="icon-circle-btn" onclick="openQuickPeekModal()" title="Consultar Gabarito">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
             <div id="trial-counter-pill" class="trial-progress-pill">1 / 5</div>
@@ -681,7 +786,7 @@
             <button type="button" class="btn-aba undo" id="btn-dock-undo" onclick="undoLastTrial()" style="display:none;" title="Desfazer">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
             </button>
-            <button type="button" class="btn-aba erro" onclick="recordMediatedTrial('N')" title="Erro / Não Emite">
+            <button type="button" class="btn-aba erro" onclick="recordMediatedTrial('N')" title="Erro">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             <button type="button" class="btn-aba dica" onclick="recordMediatedTrial('D')" title="Com Dica">
@@ -696,7 +801,7 @@
 
 <!-- ================= MODAIS DO SISTEMA ================= -->
 
-<!-- PAINEL DE CONFIGURAÇÃO INDIVIDUAL DA TAREFA (COM CICLOS E ALTERNATIVAS DESCENTRALIZADOS) -->
+<!-- PAINEL DE CONFIGURAÇÃO INDIVIDUAL DA TAREFA -->
 <div id="modal-stimuli-editor" class="modal-overlay" data-backdrop-close="true" style="z-index: 280;">
     <div class="modal-content" style="text-align: left; max-width: 680px; padding: 24px;" onclick="closeAllTooltips(event)">
         <div class="modal-clean-header">
@@ -709,8 +814,8 @@
         <div class="segmented-control">
             <button type="button" class="seg-btn active" id="tab-btn-stim" onclick="switchTaskEditorTab('STIM')">Estímulos</button>
             <button type="button" class="seg-btn" id="tab-btn-topo" onclick="switchTaskEditorTab('TOPO')">Apresentação</button>
-            <button type="button" class="seg-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">Ciclos & ABA</button>
-            <button type="button" class="seg-btn" id="tab-btn-img" onclick="switchTaskEditorTab('IMG')">Banco de Imagens</button>
+            <button type="button" class="seg-btn" id="tab-btn-aba" onclick="switchTaskEditorTab('ABA')">Ciclos & Parâmetros</button>
+            <button type="button" class="seg-btn" id="tab-btn-img" onclick="switchTaskEditorTab('IMG')">Figuras</button>
         </div>
 
         <!-- ABA 1: ESTÍMULOS -->
@@ -729,28 +834,28 @@
             </div>
         </div>
 
-        <!-- ABA 2: APRESENTAÇÃO (TEXTOS NEUTROS) -->
+        <!-- ABA 2: APRESENTAÇÃO -->
         <div id="task-tab-content-topo" style="display:none; padding: 4px 0 14px 0;">
             <div class="compact-param-row">
                 <div class="param-label-group">
                     <span>Tipografia dos Cartões</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-font')">?</button>
-                    <div id="tip-font" class="floating-popover">Permite fixar letra cursiva escolar, minúsculas, serifada ou alternar automaticamente nesta tarefa.</div>
+                    <div id="tip-font" class="floating-popover">Define o estilo da letra exibida nos cartões desta tarefa.</div>
                 </div>
                 <select id="task-cfg-font" class="compact-select">
-                    <option value="GLOBAL">CAIXA ALTA (Padrão)</option>
+                    <option value="GLOBAL">CAIXA ALTA</option>
                     <option value="LOWER">minúsculas</option>
                     <option value="SERIF">Serifada</option>
-                    <option value="SCHOOL">Fonte Cursiva Escolar</option>
-                    <option value="MIX">Alternar Fontes Automaticamente</option>
+                    <option value="SCHOOL">Cursiva Escolar</option>
+                    <option value="MIX">Alternar Automaticamente</option>
                 </select>
             </div>
 
             <div class="compact-param-row">
                 <div class="param-label-group">
-                    <span>Colorizar Consoante / Vogal</span>
+                    <span>Colorizar Consoante e Vogal</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-cv')">?</button>
-                    <div id="tip-cv" class="floating-popover">Exibe consoantes em preto e vogais em vermelho para destacar a estrutura intrassilábica.</div>
+                    <div id="tip-cv" class="floating-popover">Exibe consoantes em preto e vogais em vermelho.</div>
                 </div>
                 <label class="pill-switch">
                     <input type="checkbox" id="task-cfg-color-cv">
@@ -760,9 +865,9 @@
 
             <div class="compact-param-row">
                 <div class="param-label-group">
-                    <span>Moldura Silábica Azul</span>
+                    <span>Moldura Silábica</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-box')">?</button>
-                    <div id="tip-box" class="floating-popover">Enquadra visualmente cada sílaba da palavra com uma borda azul para apoiar a fusão silábica.</div>
+                    <div id="tip-box" class="floating-popover">Enquadra visualmente cada sílaba da palavra com uma borda azul.</div>
                 </div>
                 <label class="pill-switch">
                     <input type="checkbox" id="task-cfg-syl-box">
@@ -771,14 +876,14 @@
             </div>
         </div>
 
-        <!-- ABA 3: CICLOS DA TAREFA, ALTERNATIVAS & PARÂMETROS ABA INDIVIDUAIS -->
+        <!-- ABA 3: CICLOS & PARÂMETROS -->
         <div id="task-tab-content-aba" style="display:none; padding: 4px 0 14px 0;">
             <div class="compact-param-row">
                 <div class="param-label-group">
-                    <span>Alternativas na Tela (MTS)</span>
+                    <span>Alternativas na Tela</span>
                 </div>
                 <select id="task-cfg-opts" class="compact-select">
-                    <option value="0">Padrão (3 Alternativas)</option>
+                    <option value="0">Padrão</option>
                     <option value="2">2 Alternativas</option>
                     <option value="3">3 Alternativas</option>
                     <option value="4">4 Alternativas</option>
@@ -789,70 +894,70 @@
                 <span style="font-size:0.85rem; font-weight:800; color:var(--text); display:block; margin-bottom:8px;">Ciclos Ativos nesta Tarefa:</span>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px;">
                     <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
-                        <input type="checkbox" id="task-cfg-c1" checked style="width:18px; height:18px;"> Ciclo 1 (Visual/Base)
+                        <input type="checkbox" id="task-cfg-c1" checked style="width:18px; height:18px;"> Ciclo 1
                     </label>
                     <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
-                        <input type="checkbox" id="task-cfg-c2" checked style="width:18px; height:18px;"> Ciclo 2 (Auditivo/2º)
+                        <input type="checkbox" id="task-cfg-c2" checked style="width:18px; height:18px;"> Ciclo 2
                     </label>
                     <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
-                        <input type="checkbox" id="task-cfg-c3" checked style="width:18px; height:18px;"> Ciclo 3 (Leitura/3º)
+                        <input type="checkbox" id="task-cfg-c3" checked style="width:18px; height:18px;"> Ciclo 3
                     </label>
                     <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; cursor:pointer;">
-                        <input type="checkbox" id="task-cfg-c4" checked style="width:18px; height:18px;"> Ciclo 4+ (Equivalência)
+                        <input type="checkbox" id="task-cfg-c4" checked style="width:18px; height:18px;"> Ciclo 4+
                     </label>
                 </div>
             </div>
 
             <div class="compact-param-row" id="dmts-config-box">
                 <div class="param-label-group">
-                    <span>Time Delay Visual (DMTS)</span>
+                    <span>Atraso do Modelo</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-dmts')">?</button>
-                    <div id="tip-dmts" class="floating-popover">Exige toque de observação no modelo visual; o modelo apaga e as escolhas surgem após o atraso.</div>
+                    <div id="tip-dmts" class="floating-popover">Exige toque no modelo visual; o modelo apaga e as opções surgem após o tempo definido.</div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px; width: 220px;">
-                    <input type="range" id="task-cfg-dmts" min="0" max="5" step="1" value="0" style="flex:1;" oninput="document.getElementById('dmts-val-label').innerText = this.value == 0 ? '0s (Off)' : this.value + 's'">
-                    <strong id="dmts-val-label" style="min-width:65px; text-align:right; font-size:0.9rem; color:var(--primary-dark);">0s (Off)</strong>
+                    <input type="range" id="task-cfg-dmts" min="0" max="5" step="1" value="0" style="flex:1;" oninput="document.getElementById('dmts-val-label').innerText = this.value == 0 ? '0s' : this.value + 's'">
+                    <strong id="dmts-val-label" style="min-width:45px; text-align:right; font-size:0.9rem; color:var(--primary-dark);">0s</strong>
                 </div>
             </div>
 
             <div class="compact-param-row">
                 <div class="param-label-group">
-                    <span>Timeout de Latência (s)</span>
+                    <span>Tempo Limite de Resposta (s)</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-lat')">?</button>
-                    <div id="tip-lat" class="floating-popover">Exibe contador regressivo no topo direito da tarefa e avança se o tempo esgotar (0 = sem limite).</div>
+                    <div id="tip-lat" class="floating-popover">Exibe contador regressivo na tarefa e avança se o tempo esgotar.</div>
                 </div>
                 <input type="number" id="task-cfg-timeout" class="compact-input-num" min="0" max="60" value="0" placeholder="0">
             </div>
 
             <div class="compact-param-row">
                 <div class="param-label-group">
-                    <span>Fichas por Bloco Concluído (Individual)</span>
+                    <span>Fichas por Bloco Concluído</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-tok')">?</button>
-                    <div id="tip-tok" class="floating-popover">Define quantas fichas o aluno ganha ao atingir a meta especificamente nesta tarefa (-1 = usar padrão global).</div>
+                    <div id="tip-tok" class="floating-popover">Define quantas fichas o aluno ganha ao atingir a meta nesta tarefa (-1 usa o valor global).</div>
                 </div>
                 <input type="number" id="task-cfg-tokens" class="compact-input-num" min="-1" max="50" value="-1" placeholder="-1">
             </div>
         </div>
 
-        <!-- ABA 4: BANCO PARTICULAR DE IMAGENS (INDEXEDDB) -->
+        <!-- ABA 4: GALERIA DE FIGURAS -->
         <div id="task-tab-content-img" style="display:none; padding: 4px 0 14px 0;">
             <div style="background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:14px; padding:14px; margin-bottom:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
                     <div>
-                        <strong style="font-size:0.92rem; color:var(--text); display:block;">Enviar Imagens para o Banco Local (IndexedDB)</strong>
-                        <span style="font-size:0.76rem; color:var(--text-light); font-weight:600;">Converte automaticamente para WebP leve.</span>
+                        <strong style="font-size:0.92rem; color:var(--text); display:block;">Enviar Novas Figuras</strong>
+                        <span style="font-size:0.76rem; color:var(--text-light); font-weight:600;">Otimização automática de tamanho.</span>
                     </div>
-                    <select id="img-upload-scale" class="compact-select" title="Escala de Redimensionamento">
-                        <option value="0.5" selected>Reduzir 50% (Recomendado)</option>
-                        <option value="0.25">Reduzir 25% (Ultra Leve)</option>
-                        <option value="1">100% (Máx 640px)</option>
+                    <select id="img-upload-scale" class="compact-select" title="Qualidade">
+                        <option value="0.5" selected>Média</option>
+                        <option value="0.25">Compacta</option>
+                        <option value="1">Alta</option>
                     </select>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
                     <input type="file" id="img-upload-input" accept="image/*" multiple style="display:none;" onchange="handleBatchImageUpload(this.files)">
                     <button type="button" class="btn-action" style="width:100%; padding:10px;" onclick="document.getElementById('img-upload-input').click()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        Selecionar Imagens (Múltiplas)
+                        Selecionar Imagens
                     </button>
                 </div>
                 <div id="img-upload-status" style="font-size:0.78rem; font-weight:800; color:var(--primary-dark); margin-top:8px;"></div>
@@ -877,7 +982,7 @@
     </div>
 </div>
 
-<!-- MODAL CENTRAL DE RECOMPENSAS DO APLICADOR (MERCADINHO + JOGOS ARCADE) -->
+<!-- MODAL CENTRAL DE RECOMPENSAS DO APLICADOR -->
 <div id="modal-store-checkout" class="modal-overlay" data-backdrop-close="true" style="z-index: 390;">
     <div class="modal-content" style="max-width: 680px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
@@ -893,10 +998,10 @@
             </button>
         </div>
 
-        <strong style="font-size:0.86rem; color:var(--text-light); text-transform:uppercase; display:block; margin-bottom:8px;">Jogos Digitais (Arcade Sandbox)</strong>
+        <strong style="font-size:0.86rem; color:var(--text-light); text-transform:uppercase; display:block; margin-bottom:8px;">Jogos Digitais</strong>
         <div id="checkout-arcade-grid" class="token-store-grid" style="margin-bottom:18px;"></div>
 
-        <strong style="font-size:0.86rem; color:var(--text-light); text-transform:uppercase; display:block; margin-bottom:8px;">Prêmios Tangíveis & Vouchers</strong>
+        <strong style="font-size:0.86rem; color:var(--text-light); text-transform:uppercase; display:block; margin-bottom:8px;">Prêmios da Loja</strong>
         <div id="checkout-vouchers-grid" class="token-store-grid" style="margin-bottom:16px;"></div>
 
         <div style="display:flex; justify-content:flex-end;">
@@ -923,7 +1028,7 @@
     <iframe id="arcade-game-frame" sandbox="allow-scripts allow-same-origin" src="about:blank"></iframe>
 </div>
 
-<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (USADO NO EDITOR E DIRETO NA OFICINA STUDIO) -->
+<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO -->
 <div id="modal-media-picker" class="modal-overlay" data-backdrop-close="true" style="z-index: 340;">
     <div class="modal-content" style="max-width: 520px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
@@ -933,13 +1038,13 @@
             </button>
         </div>
 
-        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:8px;">1. Toque em uma imagem do seu Banco Particular (IndexedDB):</p>
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:8px;">1. Selecione uma figura enviada:</p>
         <div id="media-picker-idb-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(95px, 1fr)); gap:8px; max-height:180px; overflow-y:auto; background:#F8FAFC; border:1.5px solid var(--border); border-radius:12px; padding:10px; margin-bottom:14px;"></div>
 
-        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:6px;">2. Ou associe um Emoji / Símbolo direto:</p>
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:6px;">2. Ou digite um ícone / símbolo:</p>
         <div style="display:flex; gap:8px; margin-bottom:16px;">
-            <input type="text" id="media-picker-emoji-input" placeholder="Ex: 🐶" style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:1.2rem; text-align:center; outline:none;">
-            <button type="button" class="btn-action" onclick="saveEmojiForActiveWord()">Aplicar Emoji</button>
+            <input type="text" id="media-picker-emoji-input" placeholder="" style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:1.2rem; text-align:center; outline:none;">
+            <button type="button" class="btn-action" onclick="saveEmojiForActiveWord()">Aplicar</button>
         </div>
 
         <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border); padding-top:12px;">
@@ -960,7 +1065,7 @@
         </div>
         <div id="tenant-students-list" style="display:flex; flex-direction:column; gap:10px; max-height:40vh; overflow-y:auto; margin-bottom:18px; padding-right:4px;"></div>
         <div style="display:flex; gap:8px; align-items:center; border-top:1.5px solid var(--border); padding-top:14px;">
-            <input type="text" id="new-tenant-name-input" placeholder="Primeiro nome..." style="flex:1; padding:11px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:800; font-size:0.95rem; outline:none;" onkeypress="if(event.key==='Enter') handleAddStudentFromModal()">
+            <input type="text" id="new-tenant-name-input" placeholder="Nome do aluno..." style="flex:1; padding:11px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:800; font-size:0.95rem; outline:none;" onkeypress="if(event.key==='Enter') handleAddStudentFromModal()">
             <button type="button" class="btn-action" onclick="handleAddStudentFromModal()">Novo</button>
         </div>
     </div>
@@ -982,7 +1087,7 @@
             </button>
             <button type="button" class="menu-option-row" onclick="exportEidosChecklistPDF()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                Protocolo / Laudo PDF
+                Protocolo de Linha de Base PDF
             </button>
             <button type="button" class="menu-option-row" onclick="exportSessionLogPDF()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -990,7 +1095,7 @@
             </button>
             <button type="button" class="menu-option-row" onclick="openReport()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                Dados Brutos (JSON)
+                Dados Estruturados
             </button>
         </div>
     </div>
@@ -1006,28 +1111,28 @@
         <h2 id="push-det-title" class="modal-title" style="font-size:1.45rem; margin-bottom:10px;">Título</h2>
         <p id="push-det-desc" style="font-size:0.98rem; color:var(--text); font-weight:600; line-height:1.5; margin-bottom:14px;"></p>
         <div style="background:#F8FAFC; border:1.5px solid var(--border); border-radius:14px; padding:12px 14px;">
-            <span style="font-size:0.75rem; font-weight:900; color:var(--primary-dark); text-transform:uppercase; display:block; margin-bottom:4px;">Metodologia & Objetivo Clínico</span>
+            <span style="font-size:0.75rem; font-weight:900; color:var(--primary-dark); text-transform:uppercase; display:block; margin-bottom:4px;">Metodologia & Objetivo</span>
             <p id="push-det-method" style="font-size:0.88rem; color:var(--text-light); font-weight:600; line-height:1.4; margin:0;"></p>
         </div>
     </div>
 </div>
 
-<!-- MODAL DE VISUALIZAÇÃO RÁPIDA EM TEXTO -->
+<!-- MODAL DE CONSULTA RÁPIDA -->
 <div id="modal-quick-peek" class="modal-overlay" data-backdrop-close="true" style="z-index: 420;">
     <div class="modal-content" style="max-width: 440px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
-            <h2 class="modal-title" style="font-size:1.3rem; margin:0;">Consulta Rápida (Texto)</h2>
+            <h2 class="modal-title" style="font-size:1.3rem; margin:0;">Consulta Rápida</h2>
             <button type="button" class="icon-circle-btn" onclick="closeModals()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
             <div style="background:#F8FAFC; padding:14px; border-radius:14px; border:1.5px solid var(--border);">
-                <span style="font-size:0.75rem; font-weight:900; color:var(--text-light); text-transform:uppercase;">Estímulo Modelo (Alvo)</span>
+                <span style="font-size:0.75rem; font-weight:900; color:var(--text-light); text-transform:uppercase;">Estímulo Modelo</span>
                 <strong id="peek-stimulus-text" style="display:block; font-size:1.35rem; color:var(--text); margin-top:4px; word-break:break-word;">-</strong>
             </div>
             <div style="background:var(--success-light); padding:14px; border-radius:14px; border:1.5px solid var(--success);">
-                <span style="font-size:0.75rem; font-weight:900; color:#065F46; text-transform:uppercase;">Resposta Esperada (Gabarito)</span>
+                <span style="font-size:0.75rem; font-weight:900; color:#065F46; text-transform:uppercase;">Resposta Esperada</span>
                 <strong id="peek-answer-text" style="display:block; font-size:1.35rem; color:#065F46; margin-top:4px; word-break:break-word;">-</strong>
             </div>
         </div>
@@ -1038,10 +1143,10 @@
 <div id="modal-modules" class="modal-overlay" data-backdrop-close="true">
     <div class="modal-content" style="text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
         <h2 class="modal-title">Liberar ou Bloquear Módulos</h2>
-        <p class="modal-desc" style="margin-bottom:12px;">Selecione os módulos disponíveis ou marque todos para avaliação de Linha de Base.</p>
+        <p class="modal-desc" style="margin-bottom:12px;">Selecione os módulos disponíveis para este aluno.</p>
         
         <label style="display:flex; align-items:center; justify-content:space-between; background:var(--primary-light); color:var(--primary-dark); padding:12px 16px; border-radius:14px; font-weight:900; margin-bottom:12px; cursor:pointer;">
-            <span>Selecionar Todos os Módulos (Linha de Base / Avaliação)</span>
+            <span>Selecionar Todos os Módulos</span>
             <input type="checkbox" id="mod-select-all-chk" onchange="toggleSelectAllModules(this.checked)" style="width:24px; height:24px;">
         </label>
 
@@ -1095,9 +1200,9 @@
 <!-- MODAL PALAVRAS CUSTOMIZADAS -->
 <div id="modal-words" class="modal-overlay" data-backdrop-close="true">
     <div class="modal-content" style="text-align: left;">
-        <h2 class="modal-title" style="color: #B45309;">Palavras Customizadas</h2>
+        <h2 class="modal-title" style="color: #B45309;">Palavras Livres</h2>
         <p class="modal-desc">Insira as palavras separadas por vírgula.</p>
-        <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Ex: BOLA, GATO, BOLO, SAPATO, FACA, VACA"></textarea>
+        <textarea id="custom-words-input" oninput="checkWordsInput()" placeholder="Separe cada palavra por vírgula"></textarea>
         <div style="display:flex; gap:12px;">
             <button type="button" class="btn-action btn-cancel" style="flex:1" onclick="closeModals()">Cancelar</button>
             <button type="button" class="btn-action" id="btn-start-words" style="flex:1; background: var(--warning); color:#1E293B;" onclick="startCustomWords()" disabled>Iniciar</button>
