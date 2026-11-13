@@ -1,10 +1,9 @@
 /* ============================================================================
-   ALFAMTS PRO - MOTOR PRINCIPAL (app.js - PARTE 1 DE 2: SEÇÕES 5.0 A 11)
-   100% OFFLINE • ZERO MATERIAL-ICONS • MULTI-TENANT • STUDIO • TOKENS • ARCADE
+   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 2: SEÇÕES 5.0 A 11)
    ============================================================================ */
 
 /* ============================================================================
-   5.0 CATÁLOGO DE SVGS INLINE, ÁUDIO FONÊMICO E BANCO DE IMAGENS (INDEXEDDB)
+   5.0 CATÁLOGO DE SVGS INLINE, ÁUDIO FONÊMICO E BANCO DE IMAGENS
    ============================================================================ */
 const UI_SVGS = {
     volume: `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
@@ -85,7 +84,7 @@ function playPhonemeAudioFile(letter, varIdx = '1', playTwice = false) {
     }
 }
 
-/* BANCO DE IMAGENS PARTICULAR (INDEXEDDB + COMPRESSÃO WEBP 100%, 50%, 25%) */
+/* BANCO DE IMAGENS LOCAL */
 const MEDIA_DB_NAME = 'AlfaMTS_MediaDB';
 const MEDIA_STORE_NAME = 'custom_images';
 let mediaDBInstance = null;
@@ -208,7 +207,6 @@ function compressAndConvertImageToWebP(file, scaleFactor = 0.5, quality = 0.82) 
     });
 }
 
-// Extrai a chave limpa do estímulo mesmo se estiver fragmentado para CRMTS (ex: "BO-LA" -> "BOLA")
 function getNormalizedWordKey(rawKey) {
     const str = String(rawKey || '').trim().toUpperCase();
     if (str.includes(';') || str.includes('/') || str.includes('-')) {
@@ -264,7 +262,7 @@ function hasValidVisualRepresentation(wordKey) {
 /* ============================================================================
    5. ESTADO GLOBAL MULTI-TENANT (POR ALUNO), TOKENS, STUDIO E DESBLOQUEIO
    ============================================================================ */
-let activeRole = 'ANALYST'; // 'ANALYST' | 'APPLICATOR'
+let activeRole = 'ANALYST';
 
 function getDefaultTokensClone() {
     if (typeof DEFAULT_TOKEN_STATE !== 'undefined') {
@@ -478,6 +476,9 @@ function switchActiveStudent(studentId) {
     if (document.getElementById('screen-complements') && document.getElementById('screen-complements').classList.contains('active')) {
         renderStudioSavedModulesList();
         renderTokensManagementUI();
+        if (currentComplementsView === 'PRINTKIT' && typeof initPrintStudioCascades === 'function') {
+            initPrintStudioCascades();
+        }
     }
 }
 
@@ -749,7 +750,7 @@ let session = {
 };
 
 /* ============================================================================
-   6. ÁUDIO SINTÉTICO, TTS, TEMA EM RGB LIVRE E ECONOMIA COMPORTAMENTAL
+   6. ÁUDIO SINTÉTICO, TTS, TEMA EM RGB LIVRE E ECONOMIA DE FICHAS
    ============================================================================ */
 let audioCtx = null;
 
@@ -859,7 +860,7 @@ function awardTokensToActiveStudent(amount, reason = '') {
 }
 
 /* ============================================================================
-   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, TECLADO, COMPLEMENTOS, STUDIO & ARCADE
+   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, COMPLEMENTOS, OFICINA LIMPA E ARCADE
    ============================================================================ */
 let authCallback = null;
 let expectedAuthPin = '';
@@ -868,6 +869,37 @@ let backdropMouseDownTarget = null;
 let arcadeCountdownInterval = null;
 let currentComplementsView = 'HUB';
 let arcadeCatalogList = (typeof DEFAULT_ARCADE_MANIFEST !== 'undefined') ? [...DEFAULT_ARCADE_MANIFEST] : [];
+
+function getArcadeCustomOverrides() {
+    try {
+        return JSON.parse(localStorage.getItem('alfamts_arcade_overrides')) || {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function applyArcadeOverridesToList() {
+    const ov = getArcadeCustomOverrides();
+    arcadeCatalogList.forEach(g => {
+        if (ov[g.id]) {
+            if (typeof ov[g.id].durationSec === 'number' && ov[g.id].durationSec >= 5) {
+                g.durationSec = ov[g.id].durationSec;
+            }
+            if (typeof ov[g.id].cost === 'number' && ov[g.id].cost >= 0) {
+                g.cost = ov[g.id].cost;
+            }
+        }
+    });
+}
+
+function updateArcadeGameParam(gameId, field, rawVal) {
+    const num = Math.max(field === 'durationSec' ? 5 : 0, parseInt(rawVal) || 0);
+    const ov = getArcadeCustomOverrides();
+    if (!ov[gameId]) ov[gameId] = {};
+    ov[gameId][field] = num;
+    localStorage.setItem('alfamts_arcade_overrides', JSON.stringify(ov));
+    applyArcadeOverridesToList();
+}
 
 function dismissSplashScreen() {
     const splash = document.getElementById('splash-screen');
@@ -915,6 +947,7 @@ async function loadArcadeManifest() {
             }
         }
     } catch (e) {}
+    applyArcadeOverridesToList();
 }
 
 function clearAllTrialTimers() {
@@ -1057,7 +1090,7 @@ function openGame() {
     document.getElementById('screen-game').classList.add('active');
 }
 
-/* TELA DE COMPLEMENTOS (HUB DE 3 CARDS: STUDIO, TOKENS, ARCADE TESTE LIVRE) */
+/* TELA DE COMPLEMENTOS (HUB DE 4 CARDS: STUDIO, TOKENS, ARCADE, PRINTKIT) */
 let studioCyclesDraft = [];
 
 function openComplements(initialSection = 'HUB') {
@@ -1089,41 +1122,55 @@ function switchComplementsSection(sec) {
     const studio = document.getElementById('comp-section-studio');
     const tokens = document.getElementById('comp-section-tokens');
     const arcade = document.getElementById('comp-section-arcade');
+    const printkit = document.getElementById('comp-section-printkit');
     const headerTitle = document.getElementById('complements-header-title');
 
     if (hub) hub.style.display = (sec === 'HUB') ? 'grid' : 'none';
     if (studio) studio.style.display = (sec === 'STUDIO') ? 'block' : 'none';
     if (tokens) tokens.style.display = (sec === 'TOKENS') ? 'block' : 'none';
     if (arcade) arcade.style.display = (sec === 'ARCADE') ? 'block' : 'none';
+    if (printkit) printkit.style.display = (sec === 'PRINTKIT') ? 'block' : 'none';
 
     if (headerTitle) {
-        if (sec === 'STUDIO') headerTitle.innerText = 'Oficina de Tarefas (Studio)';
-        else if (sec === 'TOKENS') headerTitle.innerText = 'Economia de Fichas & Loja';
-        else if (sec === 'ARCADE') headerTitle.innerText = 'Arcade (Teste do Analista)';
-        else headerTitle.innerText = 'Complementos Clínicos';
+        if (sec === 'STUDIO') headerTitle.innerText = 'Oficina de Tarefas';
+        else if (sec === 'TOKENS') headerTitle.innerText = 'Economia de Fichas';
+        else if (sec === 'ARCADE') headerTitle.innerText = 'Arcade';
+        else if (sec === 'PRINTKIT') headerTitle.innerText = 'Materiais Concretos';
+        else headerTitle.innerText = 'Complementos';
     }
     if (sec === 'STUDIO') renderStudioTargetsMediaChips();
     if (sec === 'ARCADE') renderAnalystArcadeFreeTestGrid();
+    if (sec === 'PRINTKIT' && typeof initPrintStudioCascades === 'function') {
+        initPrintStudioCascades();
+    }
 }
 
 function renderAnalystArcadeFreeTestGrid() {
     const grid = document.getElementById('analyst-arcade-test-grid');
     if (!grid) return;
     grid.innerHTML = '';
+    applyArcadeOverridesToList();
+
     arcadeCatalogList.forEach(game => {
         const card = document.createElement('div');
         card.className = 'store-item-card';
         card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="meta-chip" style="background:var(--primary-light); color:var(--primary-dark);">${game.durationSec || 60}s</span>
-                <span class="meta-chip" style="background:var(--success-light); color:#065F46;">TESTE GRATUITO</span>
-            </div>
             <div style="text-align:left;">
                 <strong style="font-size:1.05rem; color:var(--text); display:block;">${game.title}</strong>
                 <span style="font-size:0.78rem; color:var(--text-light); font-weight:600;">${game.desc || ''}</span>
             </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#F8FAFC; padding:10px; border-radius:12px; border:1px solid var(--border);">
+                <div style="text-align:left;">
+                    <label style="font-size:0.72rem; font-weight:800; color:var(--text-light); display:block; margin-bottom:4px;">Duração (s):</label>
+                    <input type="number" class="compact-input-num" style="width:100%; padding:6px;" min="10" max="600" value="${game.durationSec || 60}" onchange="updateArcadeGameParam('${game.id}', 'durationSec', this.value)">
+                </div>
+                <div style="text-align:left;">
+                    <label style="font-size:0.72rem; font-weight:800; color:var(--text-light); display:block; margin-bottom:4px;">Fichas:</label>
+                    <input type="number" class="compact-input-num" style="width:100%; padding:6px;" min="0" max="100" value="${game.cost ?? 3}" onchange="updateArcadeGameParam('${game.id}', 'cost', this.value)">
+                </div>
+            </div>
             <button type="button" class="btn-action" style="width:100%; padding:10px;" onclick="redeemArcadeGame('${game.id}', true)">
-                Testar Jogo Agora
+                Testar Jogo
             </button>
         `;
         grid.appendChild(card);
@@ -1134,7 +1181,7 @@ function openComplementsMediaBankModal() {
     playSound('click');
     editorSession.modId = null;
     editorSession.hasEditableStimuli = false;
-    document.getElementById('stim-editor-title').innerText = 'Banco Particular de Imagens (WebP)';
+    document.getElementById('stim-editor-title').innerText = 'Galeria de Figuras';
     document.getElementById('tab-btn-stim').style.display = 'none';
     document.getElementById('tab-btn-topo').style.display = 'none';
     document.getElementById('tab-btn-aba').style.display = 'none';
@@ -1150,7 +1197,7 @@ function renderStudioTargetsMediaChips() {
 
     const items = inp.value.split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
     if (items.length === 0) {
-        bar.innerHTML = `<span style="font-size:0.8rem; color:var(--text-light); font-weight:600;">Digite os estímulos acima separados por vírgula para atribuir imagens ou emojis.</span>`;
+        bar.innerHTML = `<span style="font-size:0.8rem; color:var(--text-light); font-weight:600;">Nenhum estímulo informado.</span>`;
         return;
     }
 
@@ -1186,7 +1233,7 @@ function resetStudioForm() {
     if (tInp) tInp.value = '';
     if (dInp) dInp.value = '';
     if (rInp) rInp.value = '2';
-    if (tgInp) tgInp.value = 'BOLA, GATO, BOLO, SAPO';
+    if (tgInp) tgInp.value = '';
 
     studioCyclesDraft = [
         {
@@ -1260,46 +1307,46 @@ function renderStudioCyclesDraftUI() {
             </div>
             <div class="studio-grid-2col">
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>Formato da Mecânica:</label>
+                    <label>Mecânica:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].mechanic = this.value; renderStudioCyclesDraftUI();">
-                        <option value="MTS" ${cyc.mechanic === 'MTS' ? 'selected' : ''}>MTS Comum (1 Modelo x Alternativas)</option>
-                        <option value="MULTIMTS" ${cyc.mechanic === 'MULTIMTS' ? 'selected' : ''}>Multi-MTS (Pareamento 3x3 em Colunas)</option>
-                        <option value="CRMTS" ${cyc.mechanic === 'CRMTS' ? 'selected' : ''}>CRMTS (Construção por Fragmentos)</option>
-                        <option value="EXPRESSIVE" ${cyc.mechanic === 'EXPRESSIVE' ? 'selected' : ''}>Expressivo / Sondagem / Comando ao Aplicador</option>
+                        <option value="MTS" ${cyc.mechanic === 'MTS' ? 'selected' : ''}>Pareamento</option>
+                        <option value="MULTIMTS" ${cyc.mechanic === 'MULTIMTS' ? 'selected' : ''}>Pareamento em Colunas</option>
+                        <option value="CRMTS" ${cyc.mechanic === 'CRMTS' ? 'selected' : ''}>Construção</option>
+                        <option value="EXPRESSIVE" ${cyc.mechanic === 'EXPRESSIVE' ? 'selected' : ''}>Expressivo / Comando</option>
                     </select>
                 </div>
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>Apresentação do Modelo (SD):</label>
+                    <label>Apresentação do Modelo:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdMode = this.value; renderStudioCyclesDraftUI();">
-                        <option value="SIMPLE" ${cyc.sdMode === 'SIMPLE' ? 'selected' : ''}>Estímulo Simples (1 Canal)</option>
-                        <option value="COMPOUND" ${cyc.sdMode === 'COMPOUND' ? 'selected' : ''}>Estímulo Composto Duplo (Ex: BC Lado a Lado)</option>
+                        <option value="SIMPLE" ${cyc.sdMode === 'SIMPLE' ? 'selected' : ''}>Estímulo Simples</option>
+                        <option value="COMPOUND" ${cyc.sdMode === 'COMPOUND' ? 'selected' : ''}>Estímulo Duplo</option>
                     </select>
                 </div>
             </div>
             <div class="studio-grid-2col">
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>Canal Principal do Modelo (SD 1):</label>
+                    <label>Canal do Modelo:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdChannel1 = this.value;">
-                        <option value="TEXT" ${cyc.sdChannel1 === 'TEXT' ? 'selected' : ''}>Texto Impresso (Palavra / Sílaba / Frase)</option>
-                        <option value="IMAGE" ${cyc.sdChannel1 === 'IMAGE' ? 'selected' : ''}>Figura (Banco IndexedDB / Emoji)</option>
-                        <option value="AUDIO" ${cyc.sdChannel1 === 'AUDIO' ? 'selected' : ''}>Áudio (Voz Sintetizada TTS)</option>
+                        <option value="TEXT" ${cyc.sdChannel1 === 'TEXT' ? 'selected' : ''}>Texto Impresso</option>
+                        <option value="IMAGE" ${cyc.sdChannel1 === 'IMAGE' ? 'selected' : ''}>Figura</option>
+                        <option value="AUDIO" ${cyc.sdChannel1 === 'AUDIO' ? 'selected' : ''}>Áudio</option>
                     </select>
                 </div>
                 ${showChannel2 ? `
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>2º Canal Conjugado (SD 2 - Composto):</label>
+                    <label>Segundo Canal do Modelo:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].sdChannel2 = this.value;">
                         <option value="TEXT" ${cyc.sdChannel2 === 'TEXT' ? 'selected' : ''}>Texto Impresso</option>
-                        <option value="IMAGE" ${cyc.sdChannel2 === 'IMAGE' ? 'selected' : ''}>Figura (IndexedDB / Emoji)</option>
-                        <option value="AUDIO" ${cyc.sdChannel2 === 'AUDIO' ? 'selected' : ''}>Áudio (TTS)</option>
+                        <option value="IMAGE" ${cyc.sdChannel2 === 'IMAGE' ? 'selected' : ''}>Figura</option>
+                        <option value="AUDIO" ${cyc.sdChannel2 === 'AUDIO' ? 'selected' : ''}>Áudio</option>
                     </select>
                 </div>` : ''}
                 ${showCompChannel ? `
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>Canal das Comparações (Escolhas):</label>
+                    <label>Canal das Alternativas:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].compChannel = this.value;">
                         <option value="TEXT" ${cyc.compChannel === 'TEXT' ? 'selected' : ''}>Texto Impresso</option>
-                        <option value="IMAGE" ${cyc.compChannel === 'IMAGE' ? 'selected' : ''}>Figura (IndexedDB / Emoji)</option>
+                        <option value="IMAGE" ${cyc.compChannel === 'IMAGE' ? 'selected' : ''}>Figura</option>
                     </select>
                 </div>` : ''}
             </div>
@@ -1312,27 +1359,27 @@ function renderStudioCyclesDraftUI() {
                 </label>
                 ${!cyc.crmtsAutoLetters ? `
                 <div style="margin-top:10px;">
-                    <label style="font-size:0.82rem; font-weight:800; color:var(--text-light); display:block; margin-bottom:6px;">Modo de Fragmentação Manual:</label>
+                    <label style="font-size:0.82rem; font-weight:800; color:var(--text-light); display:block; margin-bottom:6px;">Fragmentação:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].crmtsSplitMode = this.value;">
-                        <option value="CUSTOM" ${cyc.crmtsSplitMode === 'CUSTOM' ? 'selected' : ''}>Por Hífen / Barra / Ponto-e-vírgula no estímulo (Ex: BO-LA ou O-GATO)</option>
-                        <option value="WORDS" ${cyc.crmtsSplitMode === 'WORDS' ? 'selected' : ''}>Por Espaços (Montar Frases por Palavras, ex: O GATO PULOU)</option>
+                        <option value="CUSTOM" ${cyc.crmtsSplitMode === 'CUSTOM' ? 'selected' : ''}>Por Hífen ou Barra no Estímulo</option>
+                        <option value="WORDS" ${cyc.crmtsSplitMode === 'WORDS' ? 'selected' : ''}>Por Espaços</option>
                     </select>
                 </div>` : ''}
             </div>` : ''}
 
             ${isExpressive ? `
             <div class="input-group" style="margin-bottom:0;">
-                <label>Comando / Instrução para o Aplicador (Exibido na tela do jogo):</label>
-                <input type="text" placeholder="Ex: Peça ao aluno para ler em voz alta ou copiar no caderno" value="${cyc.commandText || ''}" oninput="studioCyclesDraft[${idx}].commandText = this.value;">
+                <label>Comando para o Aplicador:</label>
+                <input type="text" placeholder="Instrução exibida na tela" value="${cyc.commandText || ''}" oninput="studioCyclesDraft[${idx}].commandText = this.value;">
             </div>` : ''}
 
             <div class="studio-grid-2col" style="padding-top:6px; border-top:1px dashed var(--border);">
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>Time Delay DMTS (0 a 5s):</label>
+                    <label>Atraso do Modelo (s):</label>
                     <input type="number" class="compact-input-num" style="width:100%;" min="0" max="5" value="${cyc.dmtsDelay || 0}" onchange="studioCyclesDraft[${idx}].dmtsDelay = parseInt(this.value) || 0;">
                 </div>
                 <div class="input-group" style="margin-bottom:0;">
-                    <label>Timeout de Latência (s):</label>
+                    <label>Tempo Limite (s):</label>
                     <input type="number" class="compact-input-num" style="width:100%;" min="0" max="60" value="${cyc.timeoutSec || 0}" onchange="studioCyclesDraft[${idx}].timeoutSec = parseInt(this.value) || 0;">
                 </div>
             </div>
@@ -1343,13 +1390,13 @@ function renderStudioCyclesDraftUI() {
 
 function saveStudioCustomModule() {
     const titleVal = (document.getElementById('studio-title').value || '').trim();
-    const descVal = (document.getElementById('studio-desc').value || '').trim() || 'Tarefa clínica personalizada.';
+    const descVal = (document.getElementById('studio-desc').value || '').trim() || 'Tarefa personalizada.';
     const rewardTok = Math.max(0, parseInt(document.getElementById('studio-reward-tokens').value) || 0);
     const rawTargets = (document.getElementById('studio-targets-input').value || '').split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
     const editId = document.getElementById('studio-edit-id').value;
 
     if (!titleVal) {
-        customAlert("Título Obrigatório", "Informe um nome para identificar a tarefa personalizada.");
+        customAlert("Título Obrigatório", "Informe um nome para identificar a tarefa.");
         return;
     }
     if (rawTargets.length < 1) {
@@ -1385,7 +1432,7 @@ function saveStudioCustomModule() {
     playSound('win');
     resetStudioForm();
     renderStudioSavedModulesList();
-    customAlert("Tarefa Salva!", `A atividade "${titleVal}" já está disponível na aba "Personalizados" da trilha.`);
+    customAlert("Tarefa Salva!", `A atividade "${titleVal}" já está disponível na aba Personalizados.`);
 }
 
 function editStudioCustomModule(modId) {
@@ -1417,7 +1464,7 @@ function renderStudioSavedModulesList() {
     box.innerHTML = '';
     const list = state.customModules || [];
     if (list.length === 0) {
-        box.innerHTML = `<p style="color:var(--text-light); font-size:0.88rem; font-weight:700; text-align:center; padding:16px;">Nenhuma tarefa personalizada criada para este aluno ainda.</p>`;
+        box.innerHTML = `<p style="color:var(--text-light); font-size:0.88rem; font-weight:700; text-align:center; padding:16px;">Nenhuma tarefa personalizada cadastrada.</p>`;
         return;
     }
     list.forEach(m => {
@@ -1497,7 +1544,7 @@ function injectManualTokens() {
     const rsnInp = document.getElementById('token-grant-reason');
     const val = parseInt(amtInp ? amtInp.value : 0) || 0;
     if (val === 0) return;
-    const reason = (rsnInp && rsnInp.value.trim()) ? rsnInp.value.trim() : 'Concessão manual do Analista';
+    const reason = (rsnInp && rsnInp.value.trim()) ? rsnInp.value.trim() : 'Concessão manual';
     awardTokensToActiveStudent(val, reason);
     playSound('win');
     if (rsnInp) rsnInp.value = '';
@@ -1510,7 +1557,7 @@ function addCatalogStoreItem() {
     const icon = (document.getElementById('store-new-icon').value || '').trim() || '🎁';
     const desc = (document.getElementById('store-new-desc').value || '').trim();
     if (!title) {
-        customAlert("Nome Obrigatório", "Informe o nome do reforçador ou voucher.");
+        customAlert("Nome Obrigatório", "Informe o nome do prêmio.");
         return;
     }
     state.tokens.catalog.push({
@@ -1547,6 +1594,7 @@ function handleRocketRewardClick() {
 
 function openRewardStoreCheckoutModal() {
     updateTokenBalanceUI();
+    applyArcadeOverridesToList();
     const arcGrid = document.getElementById('checkout-arcade-grid');
     const vchGrid = document.getElementById('checkout-vouchers-grid');
     const bal = (state.tokens && typeof state.tokens.balance === 'number') ? state.tokens.balance : 0;
@@ -1607,18 +1655,19 @@ function redeemPhysicalVoucher(vouchId) {
 
     closeModals();
     customAlert(
-        "Confirmar Resgate de Prêmio",
+        "Confirmar Resgate",
         `Deseja descontar ${item.cost} ficha(s) para liberar "${item.title}" ao aluno?`,
         () => {
             awardTokensToActiveStudent(-item.cost, `Resgate: ${item.title}`);
             playSound('win');
-            customAlert("Prêmio Liberado!", `O voucher "${item.title}" foi resgatado com sucesso.`);
+            customAlert("Prêmio Liberado!", `O prêmio "${item.title}" foi resgatado com sucesso.`);
         },
         true
     );
 }
 
 function redeemArcadeGame(gameId, isFreeTestOrImmediate = false, customDurationSec = null) {
+    applyArcadeOverridesToList();
     const game = arcadeCatalogList.find(g => g.id === gameId) || arcadeCatalogList[0];
     if (!game) return;
 
@@ -1781,7 +1830,7 @@ function updateLobbyButton() {
     const clock = document.getElementById('header-timer-icon');
     if (!btn) return;
     if (state.settings.timer.enabled && state.session.expired) {
-        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Sessão Finalizada (PIN)`;
+        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Sessão Finalizada`;
         btn.onclick = () => {
             requireAuth(() => {
                 state.session.expired = false;
@@ -1839,7 +1888,7 @@ function renderStudentSwitcherModalList() {
             </div>
             <div style="text-align:left;">
                 <strong style="display:block; font-size:0.98rem; color:var(--text);">${stu.firstName}</strong>
-                <span style="font-size:0.74rem; color:var(--text-light); font-weight:600;">Instância Isolada</span>
+                <span style="font-size:0.74rem; color:var(--text-light); font-weight:600;">Perfil do Aluno</span>
             </div>
         `;
 
@@ -1963,7 +2012,7 @@ function renderDotsHTML(modId, hasVariations = false) {
         const filled = (prog.status === 'mastered' || i < prog.streak) ? 'filled' : '';
         dots += `<span class="day-dot ${filled}"></span>`;
     }
-    const dmtsBadge = (tCfg.dmtsDelay > 0) ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">DMTS ${tCfg.dmtsDelay}s</span>` : '';
+    const dmtsBadge = (tCfg.dmtsDelay > 0) ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">${tCfg.dmtsDelay}s</span>` : '';
     const varBadge = hasVariations ? `<span class="var-pill-tag">Var ${activeV}</span>` : '';
     const statusText = prog.status === 'mastered'
         ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
@@ -2048,15 +2097,15 @@ function attachPushToViewEvents(cardEl, metaInfo) {
 }
 
 function getMethodExplanation(engine) {
-    if (engine === 'CUSTOM_STUDIO') return 'Tarefa Clínica Personalizada (Studio): sequência de ciclos desenhada sob medida pelo Analista para o repertório deste aluno.';
-    if (engine === 'REWARD_PORTAL') return 'Card de Recompensa / Portal: desbloqueia atividades complementares ou guias especiais e leva diretamente para lá ao tocar.';
-    if (engine === 'PHON_MODEL') return 'Modelagem Fonológica em 2 Fases: Fase A (Exposição com imagem articulatória da boca + repetição dupla do fonema com 600ms) e Fase B (Sustentação motora livre via slider horizontal).';
-    if (engine === 'SYL_SLIDER') return 'Formação Silábica por Triplo Slider: deslize a Consoante, a Vogal e a Sílaba resultante no Ciclo 1, seguido de seleção auditiva (Ciclo 2) e leitura (Ciclo 3).';
-    if (engine === 'MULTIMTS') return 'Emparelhamento Multimodelo: exige parear simultaneamente múltiplos estímulos modelo e comparações, fortalecendo varredura visual e equivalência.';
-    if (engine === 'CRMTS') return 'Resposta Construída (CRMTS): montagem ativa de unidades menores com sondagem de leitura pura sem dicas visuais ou auditivas.';
-    if (engine === 'FLUENCY') return 'Treino de Fluência sob Velocidade: leitura oral ágil sob controle de tempo (< 3s) para automatização lexical.';
-    if (engine === 'DTT') return 'Tentativa Discreta (DTT): apresentação direta do estímulo com mediação imediata do aplicador.';
-    return 'Emparelhamento ao Modelo (MTS): discriminação condicional entre modelo e comparações com suporte a aprendizagem sem erro e Time Delay.';
+    if (engine === 'CUSTOM_STUDIO') return 'Tarefa personalizada configurada na Oficina de Tarefas.';
+    if (engine === 'REWARD_PORTAL') return 'Portal de acesso rápido para módulos complementares.';
+    if (engine === 'PHON_MODEL') return 'Modelagem articulatória e sustentação sonora contínua.';
+    if (engine === 'SYL_SLIDER') return 'Fusão silábica progressiva seguida de seleção auditiva e leitura.';
+    if (engine === 'MULTIMTS') return 'Pareamento simultâneo de múltiplos estímulos em colunas.';
+    if (engine === 'CRMTS') return 'Construção ativa de unidades a partir do modelo.';
+    if (engine === 'FLUENCY') return 'Leitura ágil sob controle de tempo.';
+    if (engine === 'DTT') return 'Apresentação direta com registro imediato pelo aplicador.';
+    return 'Pareamento ao modelo com suporte a aprendizagem sem erro.';
 }
 
 function executeRewardPortalAction(modId) {
@@ -2111,7 +2160,7 @@ function buildCleanCardElement(itemData) {
                </button>`
             : '';
         card.innerHTML = `
-            <span class="code-tag" style="background:var(--warning-light); color:#92400E; width:fit-content;">RECOMPENSA • OPCIONAL</span>
+            <span class="code-tag" style="background:var(--warning-light); color:#92400E; width:fit-content;">ACESSO EXTRA</span>
             <div class="clean-card-body">
                 <h3 class="clean-card-title">${itemData.title}</h3>
                 ${portalBtn}
@@ -2130,7 +2179,7 @@ function buildCleanCardElement(itemData) {
     }
 
     const playBtnHTML = itemData.isUnlocked
-        ? `<button type="button" class="card-play-btn" title="Iniciar Atividade Agora" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos}, true)">
+        ? `<button type="button" class="card-play-btn" title="Iniciar Atividade" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos}, true)">
                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
            </button>`
         : '';
@@ -2230,7 +2279,7 @@ function renderGrid() {
                     title: pm.title,
                     desc: pm.desc,
                     engine: 'PHON_MODEL',
-                    codeBadge: `FONEMA • MODELAGEM A/B`,
+                    codeBadge: `FONEMA`,
                     methodText: getMethodExplanation('PHON_MODEL'),
                     isUnlocked,
                     isMastered: false,
@@ -2252,7 +2301,7 @@ function renderGrid() {
                     title: p,
                     desc: displayDesc,
                     engine: 'MTS',
-                    codeBadge: `SILABÁRIO • MTS`,
+                    codeBadge: `SILABÁRIO`,
                     methodText: getMethodExplanation('MTS'),
                     isUnlocked,
                     isMastered: prog.status === 'mastered',
@@ -2273,7 +2322,7 @@ function renderGrid() {
                     title: mod.title,
                     desc: mod.desc,
                     engine: mod.engine,
-                    codeBadge: `${mod.code} • ${mod.engine}`,
+                    codeBadge: `${mod.code}`,
                     methodText: getMethodExplanation(mod.engine),
                     isUnlocked,
                     isMastered: prog.status === 'mastered',
@@ -2288,7 +2337,7 @@ function renderGrid() {
                 const prog = getModuleProgress(p);
                 const title = (p === 'PALAVRAS') ? 'PALAVRAS LIVRES' : p;
                 const desc = (p === 'PSEUDOPALAVRAS')
-                    ? 'Decodificação fonológica pura de palavras inventadas.'
+                    ? 'Decodificação fonológica de pseudopalavras.'
                     : 'Treino customizado com lista aberta de palavras.';
 
                 page.appendChild(buildCleanCardElement({
@@ -2296,7 +2345,7 @@ function renderGrid() {
                     title,
                     desc,
                     engine: 'MTS',
-                    codeBadge: `EXTRA • MTS`,
+                    codeBadge: `EXTRA`,
                     methodText: getMethodExplanation('MTS'),
                     isUnlocked,
                     isMastered: prog.status === 'mastered',
@@ -2310,7 +2359,7 @@ function renderGrid() {
             if (customList.length === 0) {
                 const emptyBox = document.createElement('div');
                 emptyBox.style.cssText = 'grid-column: 1 / -1; text-align:center; padding:40px 20px; color:var(--text-light); font-weight:700;';
-                emptyBox.innerHTML = `Nenhuma tarefa personalizada criada.<br>${activeRole === 'ANALYST' ? '<button type="button" class="btn-action" style="margin-top:12px;" onclick="openComplements(\'STUDIO\')">Abrir Oficina de Tarefas (Studio)</button>' : ''}`;
+                emptyBox.innerHTML = `Nenhuma tarefa personalizada criada.<br>${activeRole === 'ANALYST' ? '<button type="button" class="btn-action" style="margin-top:12px;" onclick="openComplements(\'STUDIO\')">Abrir Oficina de Tarefas</button>' : ''}`;
                 page.appendChild(emptyBox);
             } else {
                 customList.forEach(cm => {
@@ -2318,9 +2367,9 @@ function renderGrid() {
                     page.appendChild(buildCleanCardElement({
                         id: cm.id,
                         title: cm.title,
-                        desc: cm.desc || 'Tarefa personalizada do Studio.',
+                        desc: cm.desc || 'Tarefa personalizada.',
                         engine: 'CUSTOM_STUDIO',
-                        codeBadge: `STUDIO • ${(cm.cyclesConfig || []).length} CICLO(S)`,
+                        codeBadge: `PERSONALIZADO • ${(cm.cyclesConfig || []).length} CICLO(S)`,
                         methodText: getMethodExplanation('CUSTOM_STUDIO'),
                         isUnlocked: true,
                         isMastered: prog.status === 'mastered',
@@ -2349,7 +2398,7 @@ function renderGrid() {
 }
 
 /* ============================================================================
-   9. PAINEL DA TAREFA (DESCENTRALIZADO: CICLOS, OPTS, FONTE E INDEXEDDB)
+   9. PAINEL DA TAREFA (CICLOS, OPTS, TIPOGRAFIA E FIGURAS)
    ============================================================================ */
 let editorSession = {
     modId: null,
@@ -2425,7 +2474,7 @@ function openStimuliEditor(modId) {
     if (c4El) c4El.checked = stg.c4 !== false;
 
     document.getElementById('task-cfg-dmts').value = tCfg.dmtsDelay || 0;
-    document.getElementById('dmts-val-label').innerText = (tCfg.dmtsDelay > 0) ? `${tCfg.dmtsDelay}s` : '0s (Off)';
+    document.getElementById('dmts-val-label').innerText = (tCfg.dmtsDelay > 0) ? `${tCfg.dmtsDelay}s` : '0s';
     document.getElementById('task-cfg-timeout').value = tCfg.responseTimeout || 0;
     const tokInp = document.getElementById('task-cfg-tokens');
     if (tokInp) tokInp.value = (typeof tCfg.rewardTokens === 'number') ? tCfg.rewardTokens : -1;
@@ -2434,7 +2483,7 @@ function openStimuliEditor(modId) {
     if (mod.isAudioModel) {
         dmtsBox.style.opacity = '0.45';
         dmtsBox.style.pointerEvents = 'none';
-        document.getElementById('dmts-val-label').innerText = 'N/A (Áudio)';
+        document.getElementById('dmts-val-label').innerText = 'N/A';
     } else {
         dmtsBox.style.opacity = '1';
         dmtsBox.style.pointerEvents = 'auto';
@@ -2526,7 +2575,7 @@ function renderStimuliEditorUI() {
         mediaBtn.className = 'icon-circle-btn';
         mediaBtn.style.width = '34px';
         mediaBtn.style.height = '34px';
-        mediaBtn.title = 'Associar Imagem do Banco ou Emoji';
+        mediaBtn.title = 'Associar Figura';
         const hasCustom = state.customWordMedia && state.customWordMedia[cleanKey];
         if (hasCustom) {
             mediaBtn.style.borderColor = 'var(--primary)';
@@ -2567,7 +2616,7 @@ async function handleBatchImageUpload(fileList) {
     const scaleSelect = document.getElementById('img-upload-scale');
     const scaleVal = scaleSelect ? parseFloat(scaleSelect.value) : 0.5;
     const statusEl = document.getElementById('img-upload-status');
-    if (statusEl) statusEl.innerText = `Convertendo ${fileList.length} imagem(ns) para WebP...`;
+    if (statusEl) statusEl.innerText = `Processando ${fileList.length} imagem(ns)...`;
 
     let count = 0;
     for (let i = 0; i < fileList.length; i++) {
@@ -2581,7 +2630,7 @@ async function handleBatchImageUpload(fileList) {
     }
 
     playSound('win');
-    if (statusEl) statusEl.innerText = `${count} imagem(ns) salva(s) em WebP no banco local!`;
+    if (statusEl) statusEl.innerText = `${count} imagem(ns) salva(s)!`;
     const fileInp = document.getElementById('img-upload-input');
     if (fileInp) fileInp.value = '';
     renderCustomImagesBankGallery();
@@ -2595,7 +2644,7 @@ function renderCustomImagesBankGallery() {
 
     const list = Object.values(customImagesCache);
     if (list.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-light); font-size:0.88rem; font-weight:700;">Nenhuma imagem no banco local. Envie arquivos acima para converter automaticamente em WebP.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-light); font-size:0.88rem; font-weight:700;">Nenhuma figura cadastrada.</div>`;
         return;
     }
 
@@ -2605,7 +2654,7 @@ function renderCustomImagesBankGallery() {
         card.innerHTML = `
             <img src="${item.dataUrl}" alt="${item.name}" style="width:68px; height:68px; object-fit:contain; border-radius:8px;">
             <strong style="font-size:0.74rem; color:var(--text); max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.name}</strong>
-            <span style="font-size:0.65rem; color:var(--text-light); font-weight:700;">${item.width}x${item.height} • ${item.sizeKB}KB</span>
+            <span style="font-size:0.65rem; color:var(--text-light); font-weight:700;">${item.width}x${item.height}</span>
         `;
         const del = document.createElement('button');
         del.type = 'button';
@@ -2626,7 +2675,7 @@ function renderCustomImagesBankGallery() {
 function openStimulusMediaAssignPicker(wordStr) {
     activeMediaTargetWord = getNormalizedWordKey(wordStr);
     const titleEl = document.getElementById('media-picker-word-title');
-    if (titleEl) titleEl.innerText = `Associar Mídia: "${activeMediaTargetWord}"`;
+    if (titleEl) titleEl.innerText = `Associar Figura: "${activeMediaTargetWord}"`;
 
     const curMedia = state.customWordMedia && state.customWordMedia[activeMediaTargetWord];
     const emojiInp = document.getElementById('media-picker-emoji-input');
@@ -2637,7 +2686,7 @@ function openStimulusMediaAssignPicker(wordStr) {
         gal.innerHTML = '';
         const list = Object.values(customImagesCache);
         if (list.length === 0) {
-            gal.innerHTML = `<p style="grid-column:1/-1; color:var(--text-light); font-size:0.85rem; font-weight:700; text-align:center; padding:16px;">Nenhuma imagem no Banco Local. Adicione imagens no botão "Subir Imagens (WebP)".</p>`;
+            gal.innerHTML = `<p style="grid-column:1/-1; color:var(--text-light); font-size:0.85rem; font-weight:700; text-align:center; padding:16px;">Nenhuma figura enviada.</p>`;
         } else {
             list.forEach(imgItem => {
                 const isSel = curMedia && curMedia.type === 'IDB' && curMedia.val === imgItem.id;
@@ -2800,13 +2849,13 @@ function openQuickPeekModal() {
         ansText = t.join(' ');
     } else if (typeof t === 'object') {
         if (t.letter && t.varIdx) {
-            stimText = `Fonema ${t.title || t.letter} (Boca: b-${t.letter.toLowerCase()}-${t.varIdx}.webp | Áudio: ${getPhonemeAudioPath(t.letter, t.varIdx)})`;
-            ansText = session.currentCycle === 1 ? 'Fase A: Observar boca, ouvir 2x e imitar' : 'Fase B: Arrastar o bloco até o final';
+            stimText = `Fonema ${t.title || t.letter}`;
+            ansText = session.currentCycle === 1 ? 'Observar articulação e repetir' : 'Sustentar o som deslizando';
         } else if (t.target && t.match) {
             stimText = `Alvo: ${t.target}`;
-            ansText = `Par Correto: ${t.match}`;
+            ansText = `Correto: ${t.match}`;
         } else if (t.target && t.distractor) {
-            stimText = `Áudio / Par Mínimo (${t.contrast || ''}): ${t.target}`;
+            stimText = `Alvo (${t.contrast || ''}): ${t.target}`;
             ansText = t.target;
         } else if (t.sentence && t.question) {
             stimText = `${t.sentence} — ${t.question}`;
@@ -2846,7 +2895,7 @@ function hardResetAppCache() {
     closeModals();
     customAlert(
         "Limpar Todo o Cache e Dados?",
-        "Isso apagará todo o histórico local, configurações e removerá o cache offline do Service Worker para recarregar o aplicativo limpo.",
+        "Isso apagará todo o histórico local, configurações e recarregará o aplicativo limpo.",
         async () => {
             localStorage.clear();
             sessionStorage.clear();
@@ -2903,8 +2952,8 @@ function generatePseudoWords() {
     return pseudos;
 }
 
-function getModuleVariationItems(modId) {
-    const activeV = getActiveVariationForModule(modId);
+function getModuleVariationItems(modId, specificVarKey = null) {
+    const activeV = specificVarKey || getActiveVariationForModule(modId);
     const map = getModuleVariationsMap(modId);
     if (map && map[activeV] && map[activeV].length > 0) {
         return [...map[activeV]];
@@ -2916,19 +2965,20 @@ function getModuleVariationItems(modId) {
     return [];
 }
 
-function getPhasePool(phaseId) {
+function getPhasePool(phaseId, specificVarKey = null) {
     const customMod = (state.customModules || []).find(m => m.id === phaseId);
     if (customMod) {
         const map = getModuleVariationsMap(phaseId);
-        return (map && map[1]) ? [...map[1]] : [...(customMod.targets || [])];
+        const vk = specificVarKey || 1;
+        return (map && map[vk]) ? [...map[vk]] : [...(customMod.targets || [])];
     }
     const pMod = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
     if (pMod) return [pMod.letter];
     const eMod = EIDOS_MODULES.find(m => m.id === phaseId);
     if (eMod) {
-        const activeV = getActiveVariationForModule(phaseId);
+        const activeV = specificVarKey || getActiveVariationForModule(phaseId);
         if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[phaseId]) {
-            return getModuleVariationItems(phaseId);
+            return getModuleVariationItems(phaseId, activeV);
         }
         if (eMod.subType === 'SYM_DISC') return ['A', 'B', 'E', 'M', 'P', 'S'];
         if (eMod.subType === 'MIRROR_GRAPH') return ['b', 'd', 'p', 'q', 'E', 'S'];
@@ -2936,25 +2986,25 @@ function getPhasePool(phaseId) {
         if (eMod.subType === 'CLASS_VC') return ['F','V','M','N','S','L','P','B','T','D', ...vowels];
         if (eMod.subType === 'RHYME') {
             const rList = RHYME_VARIATIONS[activeV] || RHYME_VARIATIONS[1];
-            return rList.map(r => `${r.target} ↔ ${r.match}`);
+            return rList.map(r => r.target);
         }
         if (eMod.subType === 'ALLITERATION') {
             const aList = ALLIT_VARIATIONS[activeV] || ALLIT_VARIATIONS[1];
-            return aList.map(a => `${a.target} ↔ ${a.match}`);
+            return aList.map(a => a.target);
         }
         if (eMod.subType === 'CONT_PHON') return ['F','V','S','Z','X','J','M','N','L','R'];
         if (eMod.subType === 'OCCL_PHON') return ['P','B','T','D','C','K','G'];
         if (eMod.subType === 'CLASS_SP') return ['FA','MA','LA','SA','BO','TA', 'BOLA','MALA','FACA','SAPO','BOLO','GATO'];
         if (eMod.subType === 'CLASS_TOTAL_MM') return ['A','E','I','O','U','F','M','L','P','B','FA','MA','LA','BO','BOLA','GATO','MALA','FACA'];
         if (eMod.subType === 'MIN_PAIRS') {
-            return MINIMAL_PAIRS_DB.filter(p => !p.var || p.var === activeV).map(p => `${p.target} / ${p.distractor}`);
+            return MINIMAL_PAIRS_DB.filter(p => !p.var || p.var === activeV).map(p => p.target);
         }
         if (eMod.subType === 'WORDS_EQ') {
             return Object.values(WORD_BANK).filter(w => w.struct === eMod.filterStruct).map(w => w.word);
         }
-        if (eMod.subType === 'SYNTACTIC_WH') return ['Quem realizou a ação?', 'O que fez?', 'Onde aconteceu?'];
+        if (eMod.subType === 'SYNTACTIC_WH') return ['O menino comeu o bolo na cozinha.', 'A menina chutou a bola no parque.', 'O gato bebeu o leite na sala.'];
         if (eMod.subType === 'INTRUDER_WORD') return NARRATIVES_DB.map(n => n.intruderSentence.join(' '));
-        if (eMod.subType === 'CHRONO_SEQ') return NARRATIVES_DB.map((_, i) => `Sequência 3 Passos #${i + 1}`);
+        if (eMod.subType === 'CHRONO_SEQ') return NARRATIVES_DB.flatMap(n => n.steps);
     }
     if (phaseId === 'VOGAIS') return [...vowels];
     if (phaseId === 'ENCONTROS') return [...encounters];
@@ -3347,11 +3397,11 @@ function getTopographicClasses() {
     return '';
 };
 /* ============================================================================
-   ALFAMTS PRO - MOTOR PRINCIPAL (app.js - PARTE 2 DE 2: SEÇÕES 12 A 18)
+   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 2 DE 2: SEÇÕES 12 A 19)
    ============================================================================ */
 
 /* ============================================================================
-   12. MOTOR DE RENDERIZAÇÃO, DMTS (TIME DELAY) E MINI CONTADOR DE LATÊNCIA
+   12. MOTOR DE RENDERIZAÇÃO, DMTS E MINI CONTADOR DE LATÊNCIA
    ============================================================================ */
 function ensureLatencyCountdownPill() {
     let pill = document.getElementById('latency-countdown-pill');
@@ -3510,7 +3560,7 @@ function renderTrial(restoredOptions = null) {
     session.currentRenderedOptions = [...optionsToRender];
 
     if (session.currentCycle === 1) {
-        badge.innerText = session.isPreReq ? "Ciclo 1: Classifique" : `Ciclo 1: Identidade Visual (Var ${session.activeVar})`;
+        badge.innerText = session.isPreReq ? "Ciclo 1: Classifique" : `Ciclo 1: Identidade Visual`;
         modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(target)}</div>`;
         optionsToRender.forEach(opt => {
             const btn = document.createElement('div');
@@ -3547,7 +3597,7 @@ function renderTrial(restoredOptions = null) {
         applyDMTSWrapperIfEnabled(modelArea, compArea, false);
     } else if (session.currentCycle === 3) {
         badge.innerText = (session.eidosMod && session.eidosMod.subType === 'RECOMB_STT')
-            ? `Leitura Recombinativa (Var ${session.activeVar})`
+            ? `Leitura Recombinativa`
             : "Ciclo 3: Leitura Oral";
         modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(target)}</div>`;
         abaDock.style.display = 'flex';
@@ -3597,7 +3647,7 @@ function renderTrial(restoredOptions = null) {
     }
 }
 
-/* RENDERIZADOR UNIVERSAL DE TAREFAS DO STUDIO COMPORTAMENTAL */
+/* RENDERIZADOR UNIVERSAL DE TAREFAS DA OFICINA */
 function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRem = 3.2) {
     const raw = String(itemStr || '').trim().toUpperCase();
     const clean = getNormalizedWordKey(raw);
@@ -3618,7 +3668,6 @@ function extractCRMTSUnitsFromStudioTarget(rawTarget, cycCfg) {
     if (cycCfg.crmtsSplitMode === 'WORDS') {
         return str.split(/\s+/).filter(Boolean);
     }
-    // Modo CUSTOM: quebra por hífen (-), barra (/), ponto-e-vírgula (;) ou espaço se houver
     if (/[-\/;]/.test(str)) {
         return str.split(/[-\/;]+/).map(s => s.trim()).filter(Boolean);
     }
@@ -3649,7 +3698,6 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
         speakTTS(cleanTarget);
     }
 
-    // 1. MODO MULTIMODELO 3x3 DO STUDIO
     if (cycCfg.mechanic === 'MULTIMTS') {
         const subset = shuffleArray([rawTarget, ...session.pool.filter(x => x !== rawTarget)]).slice(0, Math.min(3, session.pool.length));
         modelArea.style.minHeight = '24px';
@@ -3722,7 +3770,6 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
         return;
     }
 
-    // Renderiza Modelo (SD Simples ou Composto Duplo BC) para MTS, CRMTS e EXPRESSIVE
     modelArea.style.minHeight = '140px';
     if (cycCfg.sdMode === 'COMPOUND') {
         modelArea.innerHTML = `
@@ -3739,14 +3786,13 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
         }
     }
 
-    // 2. MODO EXPRESSIVO / SONDAGEM / COMANDO AO APLICADOR DO STUDIO
     if (cycCfg.mechanic === 'EXPRESSIVE') {
         const cmdBanner = (cycCfg.commandText && cycCfg.commandText.trim())
             ? `<div style="background:var(--primary-light); border:2px solid var(--primary); color:var(--primary-dark); padding:14px 22px; border-radius:18px; font-weight:900; font-size:1.18rem; max-width:680px; text-align:center;">
                    <span style="font-size:0.75rem; text-transform:uppercase; display:block; opacity:0.8; margin-bottom:4px;">Comando ao Aplicador</span>
                    ${cycCfg.commandText.trim()}
                </div>`
-            : `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Avalie a resposta do aluno e registre na barra do aplicador abaixo.</p>`;
+            : `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Avalie a resposta do aluno e registre na barra abaixo.</p>`;
 
         compArea.innerHTML = cmdBanner;
         abaDock.style.display = 'flex';
@@ -3754,7 +3800,6 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
         return;
     }
 
-    // 3. MODO CRMTS (CONSTRUÇÃO COM QUEBRA AUTOMÁTICA EM LETRAS OU FRAGMENTOS MANUAIS)
     if (cycCfg.mechanic === 'CRMTS') {
         const units = extractCRMTSUnitsFromStudioTarget(rawTarget, cycCfg);
         const isLetters = (cycCfg.crmtsAutoLetters !== false || cycCfg.crmtsSplitMode === 'LETTERS');
@@ -3837,7 +3882,6 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
         return;
     }
 
-    // 4. MODO MTS COMUM DO STUDIO
     const opts = generateComparisons(rawTarget);
     opts.forEach(opt => {
         const btn = document.createElement('div');
@@ -3893,13 +3937,12 @@ function getPhoneticAudioModel(target) {
 }
 
 /* ============================================================================
-   13. RENDERIZADORES ESPECIALIZADOS (RESPEITANDO OPTS DESCENTRALIZADOS)
+   13. RENDERIZADORES ESPECIALIZADOS
    ============================================================================ */
 function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge, abaDock, fluencyPill) {
     const topoClass = getTopographicClasses();
     const numOpts = getEffectiveOptsForCurrentSession();
 
-    // ALFABETO FONOLÓGICO: FASE A (EXPOSIÇÃO) E FASE B (SLIDER SILENCIOSO)
     if (subType === 'PHON_MODELING') {
         const letter = target.letter || (session.eidosMod ? session.eidosMod.letter : 'A');
         const varIdx = target.varIdx || (session.eidosMod ? session.eidosMod.varIdx : '1');
@@ -3910,10 +3953,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             modelArea.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;">
                     <div class="mouth-articulatory-box">
-                        <img src="${imgPath}" alt="Boca Articulatória ${letter}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img src="${imgPath}" alt="Boca ${letter}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div style="display:none; flex-direction:column; align-items:center; justify-content:center; color:var(--primary-dark); font-weight:900;">
                             <span style="font-size:4.2rem;" class="${topoClass}">${formatStimulusTextHTML(letter)}</span>
-                            <span style="font-size:0.8rem; color:var(--text-light); margin-top:4px;">Boca b-${letter.toLowerCase()}-${varIdx}.webp</span>
                         </div>
                     </div>
                 </div>
@@ -3925,7 +3967,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                         ${UI_SVGS.volumeSm}
                         Ouvir e Treinar
                     </button>
-                    <span style="font-size:0.88rem; font-weight:800; color:var(--text-light);">Reproduz o fonema 2x seguidas (600ms). Valide abaixo para ir à Fase B.</span>
+                    <span style="font-size:0.88rem; font-weight:800; color:var(--text-light);">Valide abaixo para avançar à Fase B.</span>
                 </div>
             `;
 
@@ -3946,7 +3988,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             modelArea.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
                     <h3 style="font-size:1.75rem; font-weight:900; color:var(--text); text-align:center;">Arraste e repita o som</h3>
-                    <p style="font-size:0.95rem; font-weight:700; color:var(--text-light);">Sustente a emissão vocal do fonema enquanto desliza a letra até o final</p>
+                    <p style="font-size:0.95rem; font-weight:700; color:var(--text-light);">Sustente a emissão vocal enquanto desliza a letra até o final</p>
                 </div>
             `;
 
@@ -4036,7 +4078,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    // 2.6 FORMAÇÃO DE SÍLABAS (TRIPLO SLIDER C + V -> CV)
     if (subType === 'SYL_BUILD_SLIDER') {
         const sylStr = String(target || 'FA').trim().toUpperCase();
         const consChar = sylStr.charAt(0) || 'F';
@@ -4153,7 +4194,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    // 2.3 & 2.4: CONSOANTES CONTÍNUAS E OCLUSIVAS
     if (subType === 'CONT_PHON' || subType === 'OCCL_PHON') {
         const isCont = (subType === 'CONT_PHON');
         const modLabel = isCont ? '2.3 Consoantes Contínuas' : '2.4 Consoantes Oclusivas';
@@ -4180,7 +4220,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     <img src="${mPath}" alt="Boca ${cleanOpt}" style="width:110px; height:110px; object-fit:contain; border-radius:14px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div style="display:none; flex-direction:column; align-items:center; justify-content:center;">
                         <span style="font-size:2.2rem; font-weight:900;">${cleanOpt}</span>
-                        <span style="font-size:0.7rem; color:var(--text-light);">Boca ${cleanOpt}</span>
                     </div>
                 `;
                 const isCorrect = (cleanOpt === cleanTarget);
@@ -4211,16 +4250,15 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         } else {
             badge.innerText = `${modLabel} • Ciclo 3: Letra → Fala do Aluno`;
             modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.6rem;">${formatStimulusTextHTML(cleanTarget)}</div>`;
-            compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Solicite a emissão oral do som da letra e registre na barra do aplicador abaixo.</p>`;
+            compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Solicite a emissão oral do som da letra e registre abaixo.</p>`;
             abaDock.style.display = 'flex';
             setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
             return;
         }
     }
 
-    // 1.1: RASTREIO VISUAL
     if (subType === 'TRACKING') {
-        badge.innerText = `1.1 Rastreio Visual (Var ${session.activeVar})`;
+        badge.innerText = `1.1 Rastreio Visual`;
         const words = String(target).trim().split(/\s+/);
         const total = words.length;
         let formattedLines = '';
@@ -4245,7 +4283,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 1.2: DISCRIMINAÇÃO DE SÍMBOLOS
     if (subType === 'SYM_DISC') {
         badge.innerText = `1.2 Discriminação de Símbolos`;
         const isHighlighted = state.reviewHighlights && state.reviewHighlights[target];
@@ -4271,10 +4308,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 1.3 IDENTIDADE DE PALAVRAS (2 CICLOS) E OUTROS MULTIMODELOS
     if (['WORD_IDENT_MM', 'CLASS_TOTAL_MM', 'FIG_WORD_MM', 'SEMANTIC_CAT_MM'].includes(subType)) {
         if (subType === 'WORD_IDENT_MM' && session.currentCycle === 1) {
-            badge.innerText = `1.3 Identidade de Palavras • Ciclo 1: MTS Simples (Var ${session.activeVar})`;
+            badge.innerText = `1.3 Identidade de Palavras • Ciclo 1: Pareamento Simples`;
             const wordsArr = Array.isArray(target) ? target : [String(target || 'BOLA')];
             const singleWord = wordsArr[0];
             const isHighlighted = state.reviewHighlights && state.reviewHighlights[singleWord];
@@ -4299,11 +4335,11 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
         let pairs = [];
         if (subType === 'WORD_IDENT_MM') {
-            badge.innerText = `1.3 Identidade de Palavras • Ciclo 2: Multimodelo (Var ${session.activeVar})`;
+            badge.innerText = `1.3 Identidade de Palavras • Ciclo 2: Colunas`;
             const words = Array.isArray(target) ? target : ['BOLA', 'MALA', 'SAPO'];
             pairs = words.map(w => ({ id: w, leftHTML: formatStimulusTextHTML(w), rightHTML: formatStimulusTextHTML(w), speak: w }));
         } else if (subType === 'CLASS_TOTAL_MM') {
-            badge.innerText = `Estrutura Total Multimodelo`;
+            badge.innerText = `Estrutura Total`;
             const vPick = shuffleArray(vowels)[0];
             const cPick = shuffleArray(['F','M','L','P','B','T','S'])[0];
             const sPick = shuffleArray(['FA','MA','LA','BO','TA','SA'])[0];
@@ -4315,7 +4351,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                 { id: 'PALAVRA', leftHTML: formatStimulusTextHTML(wPick), rightHTML: 'PALAVRA', speak: wPick }
             ];
         } else if (subType === 'FIG_WORD_MM') {
-            badge.innerText = `Relação Figura-Palavra Multimodelo`;
+            badge.innerText = `Relação Figura-Palavra`;
             const words = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
             pairs = words.map(w => ({
                 id: w,
@@ -4324,7 +4360,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                 speak: w
             }));
         } else if (subType === 'SEMANTIC_CAT_MM') {
-            badge.innerText = `Categorização Semântica Multimodelo`;
+            badge.innerText = `Categorização Semântica`;
             const words = Array.isArray(target) ? target : ['GATO', 'BOLO', 'BOLA'];
             pairs = words.map((w, idx) => {
                 const wObj = WORD_BANK[w] || { cat: 'OBJETO' };
@@ -4402,7 +4438,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 1.4: ORIENTAÇÃO DO GRAFEMA
     if (subType === 'MIRROR_GRAPH') {
         badge.innerText = `1.4 Orientação do Grafema`;
         modelArea.innerHTML = `<div class="model-card" style="font-size:4.4rem;">${formatStimulusTextHTML(target)}</div>`;
@@ -4424,10 +4459,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 2.1 & 2.2: RIMAS E ALITERAÇÃO
     if (subType === 'RHYME' || subType === 'ALLITERATION') {
         const isRhyme = subType === 'RHYME';
-        badge.innerText = isRhyme ? `2.1 Rimas (Var ${session.activeVar})` : `2.2 Aliteração (Var ${session.activeVar})`;
+        badge.innerText = isRhyme ? `2.1 Rimas` : `2.2 Aliteração`;
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target.target);
 
@@ -4450,9 +4484,8 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 2.5: SEGMENTAÇÃO SILÁBICA ORAL
     if (subType === 'SYL_COUNT') {
-        badge.innerText = `2.5 Segmentação Silábica (Var ${session.activeVar})`;
+        badge.innerText = `2.5 Segmentação Silábica`;
         const wObj = WORD_BANK[target] || { count: Math.max(1, Math.ceil(target.length / 2)) };
         let tapCount = 0;
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')">${UI_SVGS.volume}</button>`;
@@ -4486,7 +4519,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.1: CONSTRUÇÃO DE PALAVRAS (CRMTS + LEITURA/SONDAGEM SEM FIGURA E SEM TTS)
     if (subType === 'SYL_WORD_BUILD') {
         const cleanWord = String(target || 'MALA').trim().toUpperCase();
         const wObj = WORD_BANK[cleanWord];
@@ -4495,16 +4527,16 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             : (cleanWord.match(/[^AEIOUÁÉÍÓÚÂÊÔÃÕ]*[AEIOUÁÉÍÓÚÂÊÔÃÕ]+[^AEIOUÁÉÍÓÚÂÊÔÃÕ]?/gi) || [cleanWord]);
 
         if (session.currentCycle === 2) {
-            badge.innerText = `3.1 Construção de Palavras • Ciclo 2: Sondagem de Leitura`;
+            badge.innerText = `3.1 Construção de Palavras • Ciclo 2: Leitura`;
             modelArea.style.minHeight = '145px';
             modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.4rem;">${formatStimulusTextHTML(cleanWord)}</div>`;
-            compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Leitura sem apoio pictórico ou auditivo. Registre na barra abaixo.</p>`;
+            compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Leitura sem apoio visual ou auditivo. Registre na barra abaixo.</p>`;
             abaDock.style.display = 'flex';
             setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
             return;
         }
 
-        badge.innerText = `3.1 Construção de Palavras • Ciclo 1: Montagem (Var ${session.activeVar})`;
+        badge.innerText = `3.1 Construção de Palavras • Ciclo 1: Montagem`;
         const visualHTML = getWordVisualRepresentationHTML(cleanWord, 3.6);
         modelArea.style.minHeight = '140px';
         modelArea.innerHTML = `
@@ -4548,8 +4580,8 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         function triggerReadingWithoutCueGate() {
             const promptBox = document.getElementById('crmts-top-prompt-box');
             if (promptBox) promptBox.style.display = 'none';
-            modelArea.innerHTML = `<p style="font-weight:900; color:var(--primary-dark); font-size:1.35rem;">Agora leia a palavra que você montou:</p>`;
-            poolDiv.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.05rem;">Registre a leitura na barra do aplicador abaixo para avançar.</p>`;
+            modelArea.innerHTML = `<p style="font-weight:900; color:var(--primary-dark); font-size:1.35rem;">Agora leia a palavra montada:</p>`;
+            poolDiv.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.05rem;">Registre a leitura na barra abaixo para avançar.</p>`;
         }
 
         tilePool.forEach(syl => {
@@ -4609,7 +4641,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.2: EQUIVALÊNCIA E PAREAMENTO MULTIMODAL EM 4 CICLOS
     if (subType === 'EQUIV_4STEPS_MM') {
         const words = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
         abaDock.style.display = 'flex';
@@ -4634,32 +4665,32 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
         let pairs = [];
         if (session.currentCycle === 1) {
-            badge.innerText = `3.2 Equivalência • Ciclo 1: Identidade de Figuras + Nomeação Oral`;
+            badge.innerText = `3.2 Equivalência • Ciclo 1: Identidade de Figuras + Nomeação`;
             pairs = words.map(w => ({
                 id: w,
                 leftHTML: getWordVisualRepresentationHTML(w, 2.8),
                 rightHTML: getWordVisualRepresentationHTML(w, 2.8)
             }));
             modelArea.style.minHeight = '24px';
-            modelArea.innerHTML = `<p style="font-weight:800; color:var(--primary-dark); font-size:0.95rem;">Pareie as figuras iguais e peça ao aluno para nomear cada figura (registre na barra abaixo ao concluir):</p>`;
+            modelArea.innerHTML = `<p style="font-weight:800; color:var(--primary-dark); font-size:0.95rem;">Pareie as figuras iguais e solicite a nomeação oral:</p>`;
         } else if (session.currentCycle === 2) {
-            badge.innerText = `3.2 Equivalência • Ciclo 2: Pareamento com Dica (BC → C)`;
+            badge.innerText = `3.2 Equivalência • Ciclo 2: Pareamento Composto`;
             pairs = words.map(w => ({
                 id: w,
                 leftHTML: `<div style="display:flex; align-items:center; gap:12px;">${getWordVisualRepresentationHTML(w, 2.3)} <span style="font-size:1.45rem;">${formatStimulusTextHTML(w)}</span></div>`,
                 rightHTML: formatStimulusTextHTML(w)
             }));
             modelArea.style.minHeight = '24px';
-            modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Conecte o bloco Figura+Palavra (BC) à Palavra correspondente (C):</p>`;
+            modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Conecte o bloco Figura+Palavra à Palavra correspondente:</p>`;
         } else {
-            badge.innerText = `3.2 Equivalência • Ciclo 3: Figura → Palavra Sem Dica (B → C)`;
+            badge.innerText = `3.2 Equivalência • Ciclo 3: Figura → Palavra`;
             pairs = words.map(w => ({
                 id: w,
                 leftHTML: getWordVisualRepresentationHTML(w, 2.8),
                 rightHTML: formatStimulusTextHTML(w)
             }));
             modelArea.style.minHeight = '24px';
-            modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Conecte cada Figura (B) à sua Palavra escrita (C):</p>`;
+            modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Conecte cada Figura à sua Palavra escrita:</p>`;
         }
 
         const board = document.createElement('div');
@@ -4702,7 +4733,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     completedCount++;
                     if (completedCount === pairs.length) {
                         if (session.currentCycle === 1) {
-                            modelArea.innerHTML = `<p style="font-weight:900; color:var(--success); font-size:1.15rem;">Figuras pareadas! Peça a nomeação oral ao aluno e clique em Certo, Dica ou Erro na barra abaixo.</p>`;
+                            modelArea.innerHTML = `<p style="font-weight:900; color:var(--success); font-size:1.15rem;">Figuras pareadas! Peça a nomeação oral e registre abaixo.</p>`;
                         } else {
                             handleAnswer(true, board);
                         }
@@ -4727,10 +4758,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.3 & 3.4: CONSTRUTOR DE PALAVRAS POR LETRAS (CÓPIA E DITADO)
     if (subType === 'COPY_CRMTS' || subType === 'DICT_CRMTS') {
         const isCopy = (subType === 'COPY_CRMTS');
-        badge.innerText = isCopy ? `3.3 Transcrição e Cópia (Var ${session.activeVar})` : `3.4 Escrita sob Ditado (Var ${session.activeVar})`;
+        badge.innerText = isCopy ? `3.3 Transcrição e Cópia` : `3.4 Escrita sob Ditado`;
 
         if (isCopy) {
             modelArea.innerHTML = `<div class="model-card ${topoClass}">${formatStimulusTextHTML(target)}</div>`;
@@ -4823,9 +4853,8 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.5: ESPAÇO NA FRASE
     if (subType === 'WORD_SPACE') {
-        badge.innerText = `3.5 Espaço na Frase (Var ${session.activeVar})`;
+        badge.innerText = `3.5 Espaço na Frase`;
         const totalGaps = target.length - 1;
         let cutGaps = 0;
 
@@ -4860,7 +4889,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 4.1: PARES MÍNIMOS AUDITIVOS
     if (subType === 'MIN_PAIRS') {
         badge.innerText = `4.1 Pares Mínimos (${target.contrast})`;
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
@@ -4886,9 +4914,8 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 4.7: FLUÊNCIA DE PALAVRAS (< 3 SEGUNDOS)
     if (subType === 'SPRINT_3S') {
-        badge.innerText = `4.7 Fluência de Palavras (< 3s)`;
+        badge.innerText = `4.7 Fluência de Palavras`;
         fluencyPill.style.display = 'inline-flex';
         modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.6rem;">${formatStimulusTextHTML(target)}</div>`;
         abaDock.style.display = 'flex';
@@ -4909,18 +4936,16 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 5.1: AGRUPAMENTO SINTÁTICO
     if (subType === 'SYNTACTIC_GROUP') {
-        badge.innerText = `5.1 Agrupamento Sintático (Var ${session.activeVar})`;
+        badge.innerText = `5.1 Agrupamento Sintático`;
         modelArea.innerHTML = `<div class="model-card sentence-mode ${topoClass}">${formatStimulusTextHTML(target)}</div>`;
         abaDock.style.display = 'flex';
         setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
         return;
     }
 
-    // 5.2: COMPOSIÇÃO SINTÁTICA SOB DITADO
     if (subType === 'SENTENCE_BUILD') {
-        badge.innerText = `5.2 Composição Sintática (Var ${session.activeVar})`;
+        badge.innerText = `5.2 Composição Sintática`;
         const spokenPhrase = target.shortSpoken || target.wordsArray.join(' ');
 
         modelArea.innerHTML = `
@@ -5051,7 +5076,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 5.3: COMPREENSÃO WH
     if (subType === 'SYNTACTIC_WH') {
         badge.innerText = `5.3 Compreensão WH`;
         modelArea.innerHTML = `
@@ -5075,7 +5099,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 5.4: AUTOCORREÇÃO SEMÂNTICA
     if (subType === 'INTRUDER_WORD') {
         badge.innerText = `5.4 Autocorreção Semântica`;
         const box = document.createElement('div');
@@ -5137,9 +5160,8 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 5.5: SEQUÊNCIA LÓGICA (1º, 2º, 3º)
     if (subType === 'CHRONO_SEQ') {
-        badge.innerText = `5.5 Sequência Lógica (1º, 2º, 3º)`;
+        badge.innerText = `5.5 Sequência Lógica`;
         const cleanSteps = target.steps.map(s => s.replace(/^\dº:\s*/, ''));
         const shuffled = shuffleArray(cleanSteps.map((text, origIdx) => ({ text, origIdx })));
         let pickedOrder = [];
@@ -5186,7 +5208,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 }
 
 /* ============================================================================
-   14. RESPOSTAS, TRAVA ATÔMICA ERRORLESS E SNAPSHOT REAL DO UNDO
+   14. RESPOSTAS, TRAVA ATÔMICA ERRORLESS E SNAPSHOT DO UNDO
    ============================================================================ */
 function generateComparisons(target) {
     const desiredCount = getEffectiveOptsForCurrentSession();
@@ -5470,7 +5492,7 @@ function processSpeech(transcript) {
 window.receberTextoDoKodular = function(transcript) { processSpeech(transcript); };
 
 /* ============================================================================
-   16. FECHAMENTO DE BLOCO, CRÉDITO DE FICHAS, MINIGAME IMEDIATO E TELEMETRIA
+   16. FECHAMENTO DE BLOCO, CRÉDITO DE FICHAS, JOGO IMEDIATO E TELEMETRIA
    ============================================================================ */
 function finishCycle() {
     session.currentTrialIdx = 0;
@@ -5574,7 +5596,7 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
         <button type="button" class="btn-action" style="flex:1; background:var(--primary-dark);" onclick="closeResult(); repeatLesson()">
             ${UI_SVGS.replay} Jogar Novamente
         </button>
-        ${immEnabled ? `<button type="button" class="btn-action" style="width:100%; background:var(--success);" onclick="closeResult(); openGrid(); redeemArcadeGame('baloes', true, ${immSec})">Abrir Minigame de Reforço (${immSec}s)</button>` : ''}
+        ${immEnabled ? `<button type="button" class="btn-action" style="width:100%; background:var(--success);" onclick="closeResult(); openGrid(); redeemArcadeGame('baloes', true, ${immSec})">Abrir Jogo de Reforço (${immSec}s)</button>` : ''}
     `;
     document.getElementById('modal-result').style.display = 'flex';
 
@@ -5582,7 +5604,7 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
         setTimeout(() => {
             customAlert(
                 "Habilitar Sílabas Complexas?",
-                "O aluno atingiu o critério em Encontros Consonantais (CCV)! Deseja pré-ativar automaticamente Sílabas Complexas (+CCV, CVC-L, CVC-S, CVC-M) para treino livre no Silabário?",
+                "O aluno atingiu o critério em Encontros Consonantais! Deseja pré-ativar automaticamente Sílabas Complexas para treino no Silabário?",
                 () => {
                     state.settings.sylComplex = { ccv: true, cvcL: true, cvcS: true, cvcM: true };
                     saveState();
@@ -5848,7 +5870,7 @@ function exportEidosChecklistPDF() {
 }
 
 /* ============================================================================
-   18. CONFIGURAÇÕES GLOBAIS (COR LIVRE + SILABÁRIO + PIN OBRIGATÓRIO NO TIMER)
+   18. CONFIGURAÇÕES GLOBAIS
    ============================================================================ */
 function togglePasswordField() {
     const chk = document.getElementById('set-sec-enable');
@@ -5943,7 +5965,7 @@ function saveSettings() {
     if (isTimerEnabled && !analystPin) {
         document.getElementById('set-sec-enable').checked = true;
         togglePasswordField();
-        customAlert("Senha Obrigatória para o Timer", "Para usar o Timer de Sessão, defina obrigatoriamente um PIN para o Analista.");
+        customAlert("Senha Obrigatória", "Para usar o Timer de Sessão, defina um PIN para o Analista.");
         if (elAnalystPin) setTimeout(() => elAnalystPin.focus(), 200);
         return;
     }
@@ -6054,9 +6076,9 @@ function openModulesManager() {
     const container = document.getElementById('modules-list-container');
     container.innerHTML = '';
     const allItems = [
-        ...EIDOS_MODULES.map(m => ({ id: m.id, label: `${m.code} - ${m.title} (${m.level})` })),
+        ...EIDOS_MODULES.map(m => ({ id: m.id, label: `${m.code} - ${m.title}` })),
         ...(state.customModules || []).map(cm => ({ id: cm.id, label: `Personalizado: ${cm.title}` })),
-        ...PHONOLOGICAL_ALPHABET_MODULES.map(pm => ({ id: pm.id, label: `Alfabeto Fonológico: ${pm.title}` })),
+        ...PHONOLOGICAL_ALPHABET_MODULES.map(pm => ({ id: pm.id, label: `Fonológico: ${pm.title}` })),
         ...syllabaryOrder.map(c => ({ id: c, label: `Silabário: ${c}` })),
         ...extraModules.map(e => ({ id: e, label: `Extra: ${e}` }))
     ];
@@ -6096,7 +6118,7 @@ function confirmSaveModulesManager() {
     closeModals();
     customAlert(
         "Controle Manual de Progressão",
-        "Atenção: A liberação ou bloqueio manual de módulos desativará a progressão automática da trilha deste aluno (ideal para Linha de Base). Deseja aplicar?",
+        "A liberação manual de módulos desativará a progressão automática da trilha deste aluno. Deseja aplicar?",
         () => {
             state.unlocked = unlocked;
             state.manualProgressionOverride = true;
@@ -6151,7 +6173,7 @@ function startCustomWords() {
 
 function openReport() {
     closeModals();
-    document.getElementById('report-modal-title').innerText = "Dados Estruturados (JSON)";
+    document.getElementById('report-modal-title').innerText = "Dados Estruturados";
     document.getElementById('report-modal-desc').innerText = `Histórico completo do aluno: ${getActiveFirstName()}`;
     document.getElementById('json-output').value = state.log.length === 0
         ? "Nenhum dado registrado."
@@ -6190,6 +6212,657 @@ function closeAlert(confirmed) {
 
 function resetApp() {
     hardResetAppCache();
+}
+
+/* ============================================================================
+   19. ESTÚDIO DE MATERIAIS CONCRETOS (CASCATA + TRANSPILADOR SD->R + LIVE PREVIEW A4)
+   ============================================================================ */
+let printStudioExcludedCards = new Set();
+
+function initPrintStudioCascades() {
+    const catSel = document.getElementById('pk-cat-select');
+    if (!catSel) return;
+    if (!catSel.value) catSel.value = 'N1';
+    onPrintStudioCategoryChange();
+}
+
+function onPrintStudioCategoryChange() {
+    const catSel = document.getElementById('pk-cat-select');
+    const modSel = document.getElementById('pk-mod-select');
+    if (!catSel || !modSel) return;
+
+    const cat = catSel.value;
+    modSel.innerHTML = '';
+    let options = [];
+
+    if (['N1', 'N2', 'N3', 'N4', 'N5'].includes(cat)) {
+        options = EIDOS_MODULES.filter(m => m.level === cat && m.engine !== 'REWARD_PORTAL').map(m => ({
+            id: m.id,
+            label: `${m.code} — ${m.title}`
+        }));
+    } else if (cat === 'SILABARIO') {
+        options = syllabaryOrder.map(s => ({
+            id: s,
+            label: `Família ${s}`
+        }));
+    } else if (cat === 'EXTRAS') {
+        options = [
+            ...EIDOS_MODULES.filter(m => m.level === 'EXTRAS').map(m => ({ id: m.id, label: `${m.code} — ${m.title}` })),
+            ...extraModules.map(e => ({ id: e, label: e === 'PALAVRAS' ? 'Palavras Livres' : e }))
+        ];
+    } else if (cat === 'PERSONALIZADOS') {
+        options = (state.customModules || []).map(cm => ({
+            id: cm.id,
+            label: cm.title
+        }));
+    }
+
+    if (options.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.innerText = 'Nenhuma tarefa nesta categoria';
+        modSel.appendChild(opt);
+    } else {
+        options.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.id;
+            opt.innerText = o.label;
+            modSel.appendChild(opt);
+        });
+    }
+
+    onPrintStudioModuleChange();
+}
+
+function onPrintStudioModuleChange() {
+    const modSel = document.getElementById('pk-mod-select');
+    const varSel = document.getElementById('pk-var-select');
+    const waitInp = document.getElementById('pk-wait-sec');
+    const sdInp = document.getElementById('pk-custom-sd');
+    if (!modSel || !varSel) return;
+
+    printStudioExcludedCards.clear();
+    const modId = modSel.value;
+    varSel.innerHTML = '';
+
+    if (!modId) {
+        renderLivePrintStudioPreview();
+        return;
+    }
+
+    const availVars = getAvailableVariationKeys(modId);
+    const activeV = getActiveVariationForModule(modId);
+    availVars.forEach(vk => {
+        const opt = document.createElement('option');
+        opt.value = String(vk);
+        opt.innerText = `Variação ${vk}`;
+        if (vk === activeV) opt.selected = true;
+        varSel.appendChild(opt);
+    });
+
+    const tCfg = getTaskConfig(modId);
+    if (waitInp) {
+        waitInp.value = (tCfg && tCfg.responseTimeout > 0) ? tCfg.responseTimeout : 5;
+    }
+    if (sdInp) {
+        sdInp.value = '';
+    }
+
+    renderLivePrintStudioPreview();
+}
+
+/* TRANSPILADOR ALGORÍTMICO DE CICLOS EM FÓRMULAS (SD -> R) */
+function mapStudioChannelToCode(ch) {
+    if (ch === 'AUDIO') return 'A';
+    if (ch === 'IMAGE') return 'B';
+    return 'C';
+}
+
+function parseStudioCycleToFormula(cyc) {
+    let sdCode = mapStudioChannelToCode(cyc.sdChannel1);
+    if (cyc.sdMode === 'COMPOUND') {
+        const sd2 = mapStudioChannelToCode(cyc.sdChannel2);
+        if (sd2 !== sdCode) sdCode = `${sdCode}${sd2}`;
+    }
+
+    let rCode = 'C';
+    if (cyc.mechanic === 'EXPRESSIVE') {
+        rCode = 'D';
+    } else if (cyc.mechanic === 'CRMTS') {
+        rCode = 'E';
+    } else {
+        rCode = mapStudioChannelToCode(cyc.compChannel || 'TEXT');
+    }
+
+    return {
+        formula: `${sdCode} → ${rCode}`,
+        sdCode,
+        rCode,
+        mechanic: cyc.mechanic,
+        customCommand: cyc.commandText || ''
+    };
+}
+
+function extractModuleFormulasForStudent(modId) {
+    const customMod = (state.customModules || []).find(m => m.id === modId);
+    const isSyl = syllabaryOrder.includes(modId);
+    const stg = getEffectiveStagesForModule(modId, isSyl);
+
+    if (customMod) {
+        const rawCycles = Array.isArray(customMod.cyclesConfig) && customMod.cyclesConfig.length > 0
+            ? customMod.cyclesConfig
+            : [{ mechanic: 'MTS', sdMode: 'SIMPLE', sdChannel1: 'TEXT', compChannel: 'TEXT' }];
+
+        return rawCycles
+            .map((c, idx) => ({ idx: idx + 1, ...parseStudioCycleToFormula(c) }))
+            .filter(item => {
+                if (item.idx === 1) return stg.c1 !== false;
+                if (item.idx === 2) return stg.c2 !== false;
+                if (item.idx === 3) return stg.c3 !== false;
+                return stg.c4 !== false;
+            });
+    }
+
+    const eMod = EIDOS_MODULES.find(m => m.id === modId);
+    const subType = eMod ? eMod.subType : (modId === 'PSEUDOPALAVRAS' ? 'RECOMB_STT' : 'SYLLABARY_STD');
+    const list = [];
+
+    switch (subType) {
+        case 'TRACKING':
+        case 'SPRINT_3S':
+        case 'RECOMB_STT':
+        case 'SYNTACTIC_GROUP':
+            list.push({ idx: 1, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            break;
+        case 'COPY_CRMTS':
+        case 'WORD_SPACE':
+        case 'INTRUDER_WORD':
+        case 'CHRONO_SEQ':
+            list.push({ idx: 1, formula: 'C → E', sdCode: 'C', rCode: 'E' });
+            break;
+        case 'DICT_CRMTS':
+        case 'SENTENCE_BUILD':
+            list.push({ idx: 1, formula: 'A → E', sdCode: 'A', rCode: 'E' });
+            break;
+        case 'MIN_PAIRS':
+            list.push({ idx: 1, formula: 'A → C', sdCode: 'A', rCode: 'C' });
+            break;
+        case 'RHYME':
+        case 'ALLITERATION':
+            list.push({ idx: 1, formula: 'A → B', sdCode: 'A', rCode: 'B' });
+            break;
+        case 'SYL_COUNT':
+            list.push({ idx: 1, formula: 'A → D', sdCode: 'A', rCode: 'D' });
+            break;
+        case 'SYL_WORD_BUILD':
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'AB → E', sdCode: 'AB', rCode: 'E' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            break;
+        case 'EQUIV_4STEPS_MM':
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'B → B (+D)', sdCode: 'B', rCode: 'BD' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'BC → C', sdCode: 'BC', rCode: 'C' });
+            if (stg.c3 !== false) list.push({ idx: 3, formula: 'B → C', sdCode: 'B', rCode: 'C' });
+            if (stg.c4 !== false) list.push({ idx: 4, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            break;
+        case 'SYL_BUILD_SLIDER':
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'C → E', sdCode: 'C', rCode: 'E' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
+            if (stg.c3 !== false) list.push({ idx: 3, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            break;
+        case 'CONT_PHON':
+        case 'OCCL_PHON':
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'A → B', sdCode: 'A', rCode: 'B' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
+            if (stg.c3 !== false) list.push({ idx: 3, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            break;
+        case 'CLASS_VC':
+        case 'CLASS_SP':
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'C → C', sdCode: 'C', rCode: 'C' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
+            break;
+        case 'WORDS_EQ':
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'C → C', sdCode: 'C', rCode: 'C' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
+            if (stg.c3 !== false) list.push({ idx: 3, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            if (stg.c4 !== false) {
+                list.push({ idx: 4, formula: 'B → C', sdCode: 'B', rCode: 'C' });
+                list.push({ idx: 5, formula: 'C → B', sdCode: 'C', rCode: 'B' });
+            }
+            break;
+        default:
+            if (stg.c1 !== false) list.push({ idx: 1, formula: 'C → C', sdCode: 'C', rCode: 'C' });
+            if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
+            if (stg.c3 !== false) list.push({ idx: 3, formula: 'C → D', sdCode: 'C', rCode: 'D' });
+            break;
+    }
+
+    if (list.length === 0) {
+        list.push({ idx: 1, formula: 'C → C', sdCode: 'C', rCode: 'C' });
+    }
+    return list;
+}
+
+function synthesizeProcedureFromFormula(sdCode, rCode, numOpts, customCmd = '') {
+    let leftPart = '';
+    if (sdCode === 'A') leftPart = 'Ditar o estímulo em voz alta (sem mostrar cartão).';
+    else if (sdCode === 'B') leftPart = 'Apresentar o cartão da Figura no topo da mesa.';
+    else if (sdCode === 'C') leftPart = 'Apresentar o cartão da Palavra/Texto no topo da mesa.';
+    else if (sdCode === 'BC' || sdCode === 'CB') leftPart = 'Apresentar Figura + Palavra juntas como modelo.';
+    else if (sdCode === 'AB' || sdCode === 'BA') leftPart = 'Apresentar a Figura e ditar o estímulo em voz alta.';
+    else leftPart = 'Apresentar o estímulo modelo ao aluno.';
+
+    let rightPart = '';
+    if (customCmd && customCmd.trim()) {
+        rightPart = customCmd.trim();
+    } else if (rCode === 'BD') {
+        rightPart = `Dispor ${numOpts} figuras na mesa para pareamento e solicitar a nomeação oral.`;
+    } else if (rCode === 'B') {
+        rightPart = `Dispor ${numOpts} cartões de figuras na mesa e solicitar que aponte ou pareie a correspondente.`;
+    } else if (rCode === 'C') {
+        rightPart = `Dispor ${numOpts} cartões de texto na mesa e solicitar que aponte ou pareie o correspondente.`;
+    } else if (rCode === 'D') {
+        rightPart = 'Sem opções na mesa. Solicitar leitura ou nomeação oral.';
+    } else if (rCode === 'E') {
+        rightPart = 'Entregar as peças móveis e solicitar a montagem na ordem correta.';
+    }
+
+    return `${leftPart} ${rightPart}`;
+}
+
+function removeCardFromPrintPreview(cardKey) {
+    playSound('click');
+    printStudioExcludedCards.add(cardKey);
+    renderLivePrintStudioPreview();
+}
+
+function renderLivePrintStudioPreview() {
+    const printRoot = document.getElementById('print-root');
+    const modSel = document.getElementById('pk-mod-select');
+    const varSel = document.getElementById('pk-var-select');
+    if (!printRoot || !modSel) return;
+
+    printRoot.innerHTML = '';
+    const modId = modSel.value;
+    if (!modId) {
+        printRoot.innerHTML = `<div style="color:#E2E8F0; font-weight:800; padding:60px 20px; text-align:center;">Selecione uma tarefa na barra lateral esquerda para gerar o documento A4.</div>`;
+        return;
+    }
+
+    const chosenVar = parseInt(varSel ? varSel.value : '1') || 1;
+    const showProto = document.getElementById('pk-page-proto')?.checked !== false;
+    const showSheet = document.getElementById('pk-page-sheet')?.checked !== false;
+    const showBoard = document.getElementById('pk-page-board')?.checked !== false;
+    const showCards = document.getElementById('pk-page-cards')?.checked !== false;
+
+    const customSD = (document.getElementById('pk-custom-sd')?.value || '').trim();
+    const waitSec = parseInt(document.getElementById('pk-wait-sec')?.value) || 5;
+    const reinfMode = document.getElementById('pk-reinf-mode')?.value || 'TOKEN';
+
+    const selectedTips = [];
+    if (document.getElementById('pk-tip-gestural')?.checked) selectedTips.push('Dica Gestual (Apontar)');
+    if (document.getElementById('pk-tip-verbal')?.checked) selectedTips.push('Dica Verbal / Ecoica');
+    if (document.getElementById('pk-tip-partial')?.checked) selectedTips.push('Dica Física Parcial');
+    if (document.getElementById('pk-tip-full')?.checked) selectedTips.push('Dica Física Total');
+
+    const customMod = (state.customModules || []).find(m => m.id === modId);
+    const eMod = EIDOS_MODULES.find(m => m.id === modId);
+    const modCode = eMod ? eMod.code : (customMod ? 'PERS' : 'SIL');
+    const modTitle = eMod ? eMod.title : (customMod ? customMod.title : `Família ${modId}`);
+
+    const tCfg = getTaskConfig(modId);
+    const numOpts = syllabaryOrder.includes(modId)
+        ? (parseInt(state.settings.opts) || 3)
+        : ((tCfg && tCfg.opts >= 2) ? parseInt(tCfg.opts) : (parseInt(state.settings.opts) || 3));
+
+    const studentName = getActiveFirstName();
+    const rawPool = getPhasePool(modId, chosenVar);
+    const cleanPool = rawPool.map(it => {
+        if (typeof it === 'object') return it.target || it.sentence || JSON.stringify(it);
+        return String(it).trim();
+    }).filter(Boolean);
+
+    const formulas = extractModuleFormulasForStudent(modId);
+
+    // ================= PÁGINA 1: PROTOCOLO DE INSTRUÇÃO =================
+    if (showProto) {
+        const page1 = document.createElement('div');
+        page1.className = 'a4-sheet';
+
+        const cyclesRowsHTML = formulas.map((f, i) => {
+            const procText = synthesizeProcedureFromFormula(
+                f.sdCode,
+                f.rCode,
+                numOpts,
+                customSD || f.customCommand || ''
+            );
+            return `
+                <tr>
+                    <td style="font-weight:900; width:75px; text-align:center;">Ciclo ${i + 1}</td>
+                    <td style="font-weight:900; width:115px; text-align:center; color:#1E293B;">${f.formula}</td>
+                    <td contenteditable="true">${procText}</td>
+                </tr>
+            `;
+        }).join('');
+
+        const tipsHTML = selectedTips.length > 0
+            ? selectedTips.map(tp => `
+                <div class="print-chk-line">
+                    <span class="print-square"></span>
+                    <span contenteditable="true">${tp}</span>
+                </div>
+            `).join('')
+            : `<div style="font-size:0.8rem; font-weight:700; color:#475569;">Apenas Resposta Independente (Sem dicas autorizadas)</div>`;
+
+        const reinfLabel = reinfMode === 'CRF'
+            ? 'Esquema Contínuo (Reforçar a cada resposta correta)'
+            : `Economia de Fichas (+${state.tokens?.rules?.pointsPerMasteryBlock || 2} fichas por bloco concluído)`;
+
+        page1.innerHTML = `
+            <div>
+                <div class="doc-header">
+                    <div>
+                        <span style="font-size:0.72rem; font-weight:900; color:#475569; text-transform:uppercase;">AlfaMTS • Protocolo de Instrução em Mesa</span>
+                        <h2 contenteditable="true" style="font-size:1.35rem; font-weight:900; color:#0F172A; margin-top:2px;">${modCode} — ${modTitle} (Var ${chosenVar})</h2>
+                    </div>
+                    <div style="text-align:right; font-size:0.8rem; font-weight:800; color:#0F172A;">
+                        <div>Aluno(a): <strong>${studentName}</strong></div>
+                        <div style="margin-top:3px;">Critério: ${state.settings.crit}% (${state.settings.consecDays} sessões)</div>
+                    </div>
+                </div>
+
+                <div class="doc-legend-strip">
+                    <span><strong>A:</strong> Auditivo / Ditado</span>
+                    <span><strong>B:</strong> Figura</span>
+                    <span><strong>C:</strong> Palavra / Texto</span>
+                    <span><strong>D:</strong> Resposta Oral</span>
+                    <span><strong>E:</strong> Escrita / Montagem</span>
+                </div>
+
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Ciclo</th>
+                            <th style="text-align:center;">Relação (SD → R)</th>
+                            <th>Procedimento na Mesa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cyclesRowsHTML}
+                    </tbody>
+                </table>
+
+                <div class="doc-box-grid">
+                    <div class="doc-panel">
+                        <h4>Parâmetros de Resposta e Reforçamento</h4>
+                        <div class="print-chk-line">
+                            <span class="print-square filled"></span>
+                            <span contenteditable="true">Tempo de Espera (Latência): ${waitSec} segundos</span>
+                        </div>
+                        <div class="print-chk-line">
+                            <span class="print-square filled"></span>
+                            <span contenteditable="true">${reinfLabel}</span>
+                        </div>
+                        <div class="print-chk-line" style="margin-bottom:0;">
+                            <span class="print-square"></span>
+                            <span contenteditable="true">Alternativas por tentativa: ${numOpts} opções</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-panel">
+                        <h4>Dicas Autorizadas para a Sessão</h4>
+                        ${tipsHTML}
+                    </div>
+                </div>
+
+                <div class="doc-panel">
+                    <h4>Estímulos Alvo da Variação ${chosenVar}</h4>
+                    <div contenteditable="true" style="font-size:0.86rem; font-weight:800; color:#0F172A; line-height:1.5;">
+                        ${cleanPool.map(s => getNormalizedWordKey(s)).join('  •  ')}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top:1.5px solid #0F172A; padding-top:6px; display:flex; justify-content:space-between; font-size:0.7rem; font-weight:800; color:#334155;">
+                <span>AlfaMTS • Material Concreto</span>
+                <span>Aluno: ${studentName} • ${modCode} (Var ${chosenVar}) • Página 1: Protocolo</span>
+            </div>
+        `;
+        printRoot.appendChild(page1);
+    }
+
+    // ================= PÁGINA 2: FOLHA DE REGISTRO ISOLADA (DATA SHEET) =================
+    if (showSheet) {
+        const page2 = document.createElement('div');
+        page2.className = 'a4-sheet';
+
+        const rows10 = [];
+        for (let i = 0; i < 10; i++) {
+            const targetItem = getNormalizedWordKey(cleanPool[i % Math.max(1, cleanPool.length)] || '');
+            rows10.push(`
+                <tr>
+                    <td style="width:42px; font-weight:900;">${String(i + 1).padStart(2, '0')}</td>
+                    <td contenteditable="true" style="font-weight:900; width:170px;">${targetItem}</td>
+                    <td style="width:155px;">
+                        <div style="display:inline-flex; align-items:center; gap:10px;">
+                            <span class="print-square"></span> + &nbsp;
+                            <span class="print-square"></span> - &nbsp;
+                            <span class="print-square"></span> 0
+                        </div>
+                    </td>
+                    <td style="width:140px;"></td>
+                    <td></td>
+                </tr>
+            `);
+        }
+
+        page2.innerHTML = `
+            <div>
+                <div class="doc-header">
+                    <div>
+                        <span style="font-size:0.72rem; font-weight:900; color:#475569; text-transform:uppercase;">Folha de Registro em Mesa</span>
+                        <h2 contenteditable="true" style="font-size:1.3rem; font-weight:900; color:#0F172A; margin-top:2px;">${modCode} — ${modTitle} (Var ${chosenVar})</h2>
+                    </div>
+                    <div style="text-align:right; font-size:0.8rem; font-weight:800; color:#0F172A;">
+                        <div>Aluno(a): <strong>${studentName}</strong></div>
+                        <div style="margin-top:4px;">Data: ____/____/202___</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:800; margin-bottom:10px; padding:6px 10px; border:1.5px solid #0F172A; border-radius:8px;">
+                    <span>Aplicador(a): ____________________________________</span>
+                    <span>Ciclo Avaliado: _________</span>
+                </div>
+
+                <table class="doc-table doc-datasheet-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Modelo (Alvo)</th>
+                            <th>Resposta (+ / - / 0)</th>
+                            <th>Dica Utilizada</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows10.join('')}
+                    </tbody>
+                </table>
+
+                <div class="doc-panel" style="margin-top:10px;">
+                    <h4> fechamento da Sessão</h4>
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; font-size:0.82rem; font-weight:800;">
+                        <div>Acertos Independentes (+): ____ / 10</div>
+                        <div>Precisão Final: ______ %</div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            Meta Atingida: <span class="print-square"></span> Sim &nbsp; <span class="print-square"></span> Não
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top:1.5px solid #0F172A; padding-top:6px; display:flex; justify-content:space-between; font-size:0.7rem; font-weight:800; color:#334155;">
+                <span>AlfaMTS • Folha de Registro</span>
+                <span>Aluno: ${studentName} • ${modCode} (Var ${chosenVar}) • Página 2: Registro</span>
+            </div>
+        `;
+        printRoot.appendChild(page2);
+    }
+
+    // ================= PÁGINA 3: PRANCHA DE TRABALHO (MESA) =================
+    if (showBoard) {
+        const page3 = document.createElement('div');
+        page3.className = 'a4-sheet';
+
+        let compZonesHTML = '';
+        for (let c = 0; c < numOpts; c++) {
+            compZonesHTML += `
+                <div class="workboard-comp-zone">
+                    <span style="font-size:0.78rem; font-weight:900; color:#64748B; text-transform:uppercase;">Comparação ${c + 1}</span>
+                </div>
+            `;
+        }
+
+        page3.innerHTML = `
+            <div>
+                <div class="doc-header">
+                    <div>
+                        <span style="font-size:0.72rem; font-weight:900; color:#475569; text-transform:uppercase;">Prancha de Trabalho em Mesa</span>
+                        <h2 contenteditable="true" style="font-size:1.25rem; font-weight:900; color:#0F172A;">${modCode} — ${modTitle} (${numOpts} Alternativas)</h2>
+                    </div>
+                    <span style="font-size:0.75rem; font-weight:800; color:#475569;">Base para Plastificação</span>
+                </div>
+
+                <div style="margin-top:8mm;">
+                    <span style="font-size:0.8rem; font-weight:900; text-transform:uppercase; color:#0F172A; display:block; margin-bottom:3mm; text-align:center;">Zona do Estímulo Modelo</span>
+                    <div class="workboard-model-zone">
+                        <span style="font-size:0.85rem; font-weight:900; color:#64748B; text-transform:uppercase;">Posicione o Estímulo Modelo Aqui</span>
+                    </div>
+
+                    <span style="font-size:0.8rem; font-weight:900; text-transform:uppercase; color:#0F172A; display:block; margin-bottom:3mm; text-align:center;">Zona das Comparações</span>
+                    <div class="workboard-comp-grid" style="grid-template-columns: repeat(${numOpts}, 1fr);">
+                        ${compZonesHTML}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top:1.5px solid #0F172A; padding-top:6px; display:flex; justify-content:space-between; font-size:0.7rem; font-weight:800; color:#334155;">
+                <span>AlfaMTS • Prancha de Trabalho</span>
+                <span>Aluno: ${studentName} • ${modCode} • Página 3: Prancha</span>
+            </div>
+        `;
+        printRoot.appendChild(page3);
+    }
+
+    // ================= PÁGINAS 4+: CARTÕES DE ESTÍMULOS E FICHAS MÓVEIS =================
+    if (showCards) {
+        const allCards = [];
+        const uniqueStimuli = [...new Set(cleanPool)];
+        const needsImageCards = formulas.some(f => f.sdCode.includes('B') || f.rCode.includes('B'));
+        const needsFragments = formulas.some(f => f.rCode === 'E');
+
+        uniqueStimuli.forEach((stim, sIdx) => {
+            const cleanW = getNormalizedWordKey(stim);
+            const isLongSentence = cleanW.length > 18 || cleanW.includes(' ');
+
+            const textKey = `txt_${sIdx}_${cleanW}`;
+            if (!printStudioExcludedCards.has(textKey)) {
+                allCards.push({
+                    key: textKey,
+                    sizeClass: isLongSentence ? 'wide-sentence-card' : '',
+                    label: cleanW,
+                    html: `<span contenteditable="true">${formatStimulusTextHTML(cleanW, modId)}</span>`
+                });
+            }
+
+            if ((needsImageCards || hasValidVisualRepresentation(cleanW)) && !isLongSentence && hasValidVisualRepresentation(cleanW)) {
+                const imgKey = `img_${sIdx}_${cleanW}`;
+                if (!printStudioExcludedCards.has(imgKey)) {
+                    allCards.push({
+                        key: imgKey,
+                        sizeClass: '',
+                        label: `${cleanW} (Fig)`,
+                        html: getWordVisualRepresentationHTML(cleanW, 3.2)
+                    });
+                }
+            }
+
+            if (needsFragments) {
+                let frags = [];
+                if (/[-\/;]/.test(stim)) {
+                    frags = stim.split(/[-\/;]+/).map(x => x.trim()).filter(Boolean);
+                } else if (WORD_BANK[cleanW] && Array.isArray(WORD_BANK[cleanW].syllables)) {
+                    frags = [...WORD_BANK[cleanW].syllables];
+                } else if (!isLongSentence && cleanW.length <= 8) {
+                    frags = cleanW.split('');
+                }
+                frags.forEach((fg, fIdx) => {
+                    const fgKey = `frag_${sIdx}_${fIdx}_${fg}`;
+                    if (!printStudioExcludedCards.has(fgKey)) {
+                        allCards.push({
+                            key: fgKey,
+                            sizeClass: '',
+                            label: `${cleanW} [${fg}]`,
+                            html: `<span contenteditable="true">${formatStimulusTextHTML(fg, modId)}</span>`
+                        });
+                    }
+                });
+            }
+        });
+
+        // Paginação inteligente respeitando cartões largos de frases
+        const pagesBuckets = [];
+        let currentBucket = [];
+        let currentWeight = 0;
+
+        allCards.forEach(card => {
+            const weight = card.sizeClass === 'wide-sentence-card' ? 3 : 1;
+            if (currentWeight + weight > 9 && currentBucket.length > 0) {
+                pagesBuckets.push(currentBucket);
+                currentBucket = [];
+                currentWeight = 0;
+            }
+            currentBucket.push(card);
+            currentWeight += weight;
+        });
+        if (currentBucket.length > 0) pagesBuckets.push(currentBucket);
+
+        pagesBuckets.forEach((bucket, bIdx) => {
+            const cardSheet = document.createElement('div');
+            cardSheet.className = 'a4-sheet';
+
+            cardSheet.innerHTML = `
+                <div>
+                    <div class="doc-header">
+                        <div>
+                            <span style="font-size:0.72rem; font-weight:900; color:#475569; text-transform:uppercase;">Cartões de Estímulos e Fichas Móveis</span>
+                            <h2 contenteditable="true" style="font-size:1.2rem; font-weight:900; color:#0F172A;">${modCode} — ${modTitle} (Var ${chosenVar})</h2>
+                        </div>
+                        <span style="font-size:0.75rem; font-weight:800; color:#475569;">Folha de Recorte ${bIdx + 1}/${pagesBuckets.length}</span>
+                    </div>
+
+                    <div class="cutout-cards-flex" style="margin-top:4mm;">
+                        ${bucket.map(c => `
+                            <div class="cutout-card ${c.sizeClass}">
+                                <button type="button" class="card-remove-preview-btn" title="Remover este cartão" onclick="removeCardFromPrintPreview('${c.key}')">×</button>
+                                <div class="cutout-card-main ${getTopographicClasses()}">
+                                    ${c.html}
+                                </div>
+                                <div class="cutout-card-footer">
+                                    ${modCode} • Var ${chosenVar} • ${c.label}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div style="border-top:1.5px solid #0F172A; padding-top:6px; display:flex; justify-content:space-between; font-size:0.7rem; font-weight:800; color:#334155;">
+                    <span>AlfaMTS • Cartões para Plastificação</span>
+                    <span>Aluno: ${studentName} • ${modCode} (Var ${chosenVar})</span>
+                </div>
+            `;
+            printRoot.appendChild(cardSheet);
+        });
+    }
 }
 
 window.handleAndroidBack = function() {
