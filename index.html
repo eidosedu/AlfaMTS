@@ -625,8 +625,8 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-card-title">Padronização do Silabário</div>
-            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">Estes parâmetros padronizam todas as famílias do Silabário. As demais tarefas possuem configuração individual.</p>
+            <div class="settings-card-title">Padronização do Silabário Cumulativo</div>
+            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">Padroniza os passos e estruturas para todas as famílias do Silabário.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
@@ -645,13 +645,13 @@
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c1" checked style="width:22px; height:22px;"> Ciclo 1: Identidade Visual
+                    <input type="checkbox" id="set-stg-c1" checked style="width:22px; height:22px;"> Passo 1: Sílabas Estruturadas
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c2" checked style="width:22px; height:22px;"> Ciclo 2: Auditivo
+                    <input type="checkbox" id="set-stg-c2" checked style="width:22px; height:22px;"> Passo 2: Palavras Estruturadas
                 </label>
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
-                    <input type="checkbox" id="set-stg-c3" checked style="width:22px; height:22px;"> Ciclo 3: Leitura Oral
+                    <input type="checkbox" id="set-stg-c3" checked style="width:22px; height:22px;"> Passo 3: Transição Texto Preto
                 </label>
                 <input type="checkbox" id="set-stg-c4" checked style="display:none;">
             </div>
@@ -878,6 +878,17 @@
 
         <!-- ABA 3: CICLOS & PARÂMETROS -->
         <div id="task-tab-content-aba" style="display:none; padding: 4px 0 14px 0;">
+            <div class="compact-param-row" id="task-probe-mode-row">
+                <div class="param-label-group">
+                    <span>Modo de Execução</span>
+                </div>
+                <select id="task-cfg-probe-mode" class="compact-select">
+                    <option value="AUTO">Automático (Sonda após Maestria)</option>
+                    <option value="TRAIN">Forçar Modo Treino</option>
+                    <option value="PROBE">Forçar Modo Sondagem</option>
+                </select>
+            </div>
+
             <div class="compact-param-row">
                 <div class="param-label-group">
                     <span>Alternativas na Tela</span>
@@ -1028,9 +1039,9 @@
     <iframe id="arcade-game-frame" sandbox="allow-scripts allow-same-origin" src="about:blank"></iframe>
 </div>
 
-<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO -->
+<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (BUSCA INSTANTÂNEA + REPOSITÓRIO .WEBP + ENVIADAS) -->
 <div id="modal-media-picker" class="modal-overlay" data-backdrop-close="true" style="z-index: 340;">
-    <div class="modal-content" style="max-width: 520px; text-align: left; padding: 24px;">
+    <div class="modal-content" style="max-width: 560px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
             <h2 class="modal-title" id="media-picker-word-title" style="margin:0; font-size:1.25rem;">Associar Figura</h2>
             <button type="button" class="icon-circle-btn" onclick="closeMediaAssignPicker()">
@@ -1038,10 +1049,11 @@
             </button>
         </div>
 
-        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:8px;">1. Selecione uma figura enviada:</p>
-        <div id="media-picker-idb-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(95px, 1fr)); gap:8px; max-height:180px; overflow-y:auto; background:#F8FAFC; border:1.5px solid var(--border); border-radius:12px; padding:10px; margin-bottom:14px;"></div>
+        <input type="text" id="media-picker-search-input" placeholder="Buscar figura pelo nome..." oninput="renderMediaPickerUnifiedGallery(this.value)" style="width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-weight:700; font-size:0.9rem; margin-bottom:10px; outline:none; background:#F8FAFC;">
 
-        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:6px;">2. Ou digite um ícone / símbolo:</p>
+        <div id="media-picker-idb-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(95px, 1fr)); gap:8px; max-height:220px; overflow-y:auto; background:#F8FAFC; border:1.5px solid var(--border); border-radius:12px; padding:10px; margin-bottom:14px;"></div>
+
+        <p style="font-size:0.82rem; color:var(--text-light); font-weight:700; margin-bottom:6px;">Ou digite um símbolo personalizado:</p>
         <div style="display:flex; gap:8px; margin-bottom:16px;">
             <input type="text" id="media-picker-emoji-input" placeholder="" style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:1.2rem; text-align:center; outline:none;">
             <button type="button" class="btn-action" onclick="saveEmojiForActiveWord()">Aplicar</button>
