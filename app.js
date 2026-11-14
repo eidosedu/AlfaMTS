@@ -1,6 +1,6 @@
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 2: SEÇÕES 5.0 A 11)
-   ARQUITETURA: CONVENÇÃO .WEBP • CAP. 4 (TREINO VS SONDA) • CAP. 5 (SILABÁRIO)
+   DICIONÁRIO SILÁBICO ESTRITO (ZERO REGEX) • TRILHA N1-N5 • SILABÁRIO • PALAVRÁRIO
    ============================================================================ */
 
 /* ============================================================================
@@ -26,17 +26,27 @@ const UI_SVGS = {
     imageMini: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
 };
 
-/* NORMALIZADOR DE SLUG E CATÁLOGO DO REPOSITÓRIO (.WEBP POR CONVENÇÃO) */
+/* CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO (CONVENÇÃO SOBRE CONFIGURAÇÃO) */
 const DEFAULT_REPO_WORDS_CATALOG = [
-    'bola', 'gato', 'bolo', 'sapato', 'faca', 'vaca', 'mala', 'pato', 'sapo', 'rato',
-    'pipa', 'lata', 'luva', 'bota', 'cama', 'casa', 'copo', 'dado', 'dedo', 'fogo',
-    'foca', 'galo', 'gelo', 'lixo', 'lobo', 'lua', 'maca', 'macaco', 'mato', 'meia',
-    'mesa', 'mola', 'moto', 'navio', 'ovo', 'pente', 'peixe', 'rede', 'rei', 'roda',
-    'rosa', 'rua', 'sino', 'sofa', 'sol', 'suco', 'tatu', 'teia', 'tela', 'teto',
-    'tomate', 'trem', 'urso', 'uva', 'vela', 'zebra', 'aviao', 'banana', 'batata',
-    'boneca', 'cabide', 'caneca', 'cavalo', 'escova', 'jacare', 'janela', 'menina',
-    'menino', 'muleta', 'panela', 'peteca', 'pirulito', 'salada', 'tapete', 'tijolo',
-    'tucano', 'violao'
+    'abacaxi', 'abelha', 'aquario', 'arvore', 'aviao', 'azeite', 'banana', 'barco',
+    'batata', 'bebe', 'blusa', 'boca', 'bola', 'bolo', 'boneca', 'bota', 'bruxa',
+    'bule', 'buzina', 'cabide', 'cachorro', 'caixa', 'caju', 'cama', 'caneca', 'caqui',
+    'carro', 'casa', 'cavalo', 'chave', 'chuva', 'cobra', 'cola', 'copo', 'dado',
+    'dedo', 'dente', 'dia', 'doce', 'escova', 'espada', 'estrela', 'faca', 'fala',
+    'familia', 'figo', 'fita', 'flor', 'flauta', 'foca', 'fofo', 'fogo', 'folha',
+    'formiga', 'galinha', 'galo', 'garfo', 'gato', 'gelo', 'girafa', 'gota', 'guitarra',
+    'ilha', 'jacare', 'janela', 'jiboia', 'jogo', 'laco', 'lago', 'lama', 'lata',
+    'leao', 'leite', 'leque', 'limao', 'livro', 'lixo', 'lobo', 'lote', 'lua',
+    'luta', 'luva', 'maca', 'macaco', 'mala', 'mao', 'martelo', 'mato', 'meia',
+    'melao', 'menina', 'menino', 'mesa', 'milho', 'mola', 'moto', 'muleta', 'navio',
+    'ninho', 'nuvem', 'olho', 'osso', 'ovelha', 'ovo', 'panela', 'pao', 'passaro',
+    'pasta', 'pato', 'paz', 'pe', 'peixe', 'pente', 'peteca', 'pipa', 'pirulito',
+    'planta', 'ponte', 'porta', 'pote', 'prato', 'quatro', 'queijo', 'quiabo', 'rato',
+    'rede', 'rei', 'relogio', 'roda', 'rosa', 'roupa', 'rua', 'salada', 'sapato',
+    'sapo', 'sino', 'sofa', 'sol', 'suco', 'tambor', 'tapete', 'tatu', 'taxi',
+    'teia', 'tela', 'teto', 'tia', 'tigre', 'tijolo', 'tio', 'tomate', 'trator',
+    'trem', 'tucano', 'tudo', 'urso', 'uva', 'vaca', 'vassoura', 'vela', 'violao',
+    'xale', 'xicara', 'zebra', 'zero'
 ];
 
 let repoWordsCatalog = (typeof REPO_WORDS_CATALOG !== 'undefined' && Array.isArray(REPO_WORDS_CATALOG))
@@ -252,12 +262,59 @@ function compressAndConvertImageToWebP(file, scaleFactor = 0.5, quality = 0.82) 
     });
 }
 
+/* PARSER SILÁBICO ESTRITO (MORTE AO REGEX: APENAS DICIONÁRIO OU HÍFEN EXPLÍCITO) */
 function getNormalizedWordKey(rawKey) {
     const str = String(rawKey || '').trim().toUpperCase();
     if (str.includes(';') || str.includes('/') || str.includes('-')) {
-        return str.replace(/[;\/\-]\s*/g, '').trim();
+        const parts = str.split(/[;\/\-]+/).map(s => s.trim()).filter(Boolean);
+        const joined = parts.join('');
+        if (parts.length > 1 && typeof state !== 'undefined' && state && state.customSyllablesMap) {
+            state.customSyllablesMap[joined] = parts;
+        }
+        return joined;
     }
     return str;
+}
+
+function extractExplicitSyllables(rawKey) {
+    const str = String(rawKey || '').trim().toUpperCase();
+    if (!str) return [];
+
+    // 1. Se o Analista digitou com hífen, barra ou ponto-e-vírgula (ex: XI-CRIN-HA)
+    if (str.includes('-') || str.includes('/') || str.includes(';')) {
+        const parts = str.split(/[-\/;]+/).map(s => s.trim()).filter(Boolean);
+        const cleanJoined = parts.join('');
+        if (parts.length > 1 && typeof state !== 'undefined' && state) {
+            if (!state.customSyllablesMap) state.customSyllablesMap = {};
+            state.customSyllablesMap[cleanJoined] = parts;
+        }
+        return parts;
+    }
+
+    const cleanKey = getNormalizedWordKey(str);
+
+    // 2. Se já foi salvo no mapa de sílabas customizadas do aluno
+    if (typeof state !== 'undefined' && state && state.customSyllablesMap && Array.isArray(state.customSyllablesMap[cleanKey])) {
+        return [...state.customSyllablesMap[cleanKey]];
+    }
+
+    // 3. Dicionário explícito WORD_BANK (database.js)
+    if (typeof WORD_BANK !== 'undefined' && WORD_BANK[cleanKey] && Array.isArray(WORD_BANK[cleanKey].syllables)) {
+        return [...WORD_BANK[cleanKey].syllables];
+    }
+
+    // 4. Sem adivinhação por Regex: retorna a unidade inteira preservada
+    return [cleanKey];
+}
+
+function getExplicitSyllableCount(rawKey) {
+    const syls = extractExplicitSyllables(rawKey);
+    if (syls.length > 1) return syls.length;
+    const cleanKey = getNormalizedWordKey(rawKey);
+    if (typeof WORD_BANK !== 'undefined' && WORD_BANK[cleanKey] && typeof WORD_BANK[cleanKey].count === 'number') {
+        return WORD_BANK[cleanKey].count;
+    }
+    return 1;
 }
 
 /* CASCATA DE RESOLUÇÃO VISUAL POR CONVENÇÃO (CUSTOM -> IDB -> REPO .WEBP -> FALLBACK SVG) */
@@ -273,7 +330,6 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
         ? (state.customWordMedia[rawUpper] || state.customWordMedia[cleanKey])
         : null;
 
-    // 1. Vínculo Manual pelo Analista
     if (customMedia) {
         if (customMedia.type === 'IDB' && customImagesCache[customMedia.val]) {
             const src = customImagesCache[customMedia.val].dataUrl;
@@ -288,7 +344,6 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
         }
     }
 
-    // 2. Upload Local no Tablet (IndexedDB com mesmo nome ou slug)
     const matchedByName = Object.values(customImagesCache).find(item =>
         item.name === cleanKey || item.name === rawUpper || toCleanSlug(item.name) === slug
     );
@@ -296,7 +351,6 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
         return `<img src="${matchedByName.dataUrl}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
     }
 
-    // 3. Caminho explícito em WORD_BANK ou Convenção Automática ./assets/img/palavras/[slug].webp
     const wObj = (typeof WORD_BANK !== 'undefined') ? (WORD_BANK[cleanKey] || WORD_BANK[rawUpper]) : null;
     const targetSrc = (wObj && wObj.img) ? wObj.img : getRepoWordWebpPath(slug);
 
@@ -316,11 +370,10 @@ function hasValidVisualRepresentation(wordKey) {
 }
 
 /* ============================================================================
-   5. ESTADO GLOBAL MULTI-TENANT, PROGRESSÃO CAP. 4 (TREINO/SONDA) E CAP. 5 (SILABÁRIO)
+   5. ESTADO GLOBAL, SILABÁRIO (CAP. 5) E PALAVRÁRIO (8 GAVETAS CAP. 4)
    ============================================================================ */
 let activeRole = 'ANALYST';
 
-// Nova Ordem Cumulativa dos 6 Conjuntos Silábicos (Cap. 5 - Camila Gomes)
 const STRUCTURED_SYLLABARY_ORDER = [
     'VOGAIS', 'ENCONTROS',
     'T', 'L', 'M',     // Conjunto 1
@@ -328,14 +381,13 @@ const STRUCTURED_SYLLABARY_ORDER = [
     'P', 'N', 'V',     // Conjunto 3
     'S', 'D', 'J',     // Conjunto 4
     'X', 'Z',          // Conjunto 5
-    'C', 'G', 'Q'      // Conjunto 6 (CA/CO/CU, GA/GO/GU, QUA/QUE/QUI)
+    'C', 'G', 'Q'      // Conjunto 6
 ];
 
-// Palavras Cumulativas por Família (usando apenas sílabas da família atual + famílias anteriores)
 const FALLBACK_CUMULATIVE_SYL_WORDS = {
     'T': ['TATU', 'TETO', 'TIA', 'TIO', 'TEIA', 'TUDO'],
     'L': ['LATA', 'LUTA', 'TELA', 'LUA', 'LEITE', 'LOTE'],
-    'M': ['MALA', 'MATO', 'MOLA', 'TOMATE', 'MULETA', ' LAMA'],
+    'M': ['MALA', 'MATO', 'MOLA', 'TOMATE', 'MULETA', 'LAMA'],
     'F': ['FACA', 'FITA', 'FOGO', 'FAMÍLIA', 'FALA', 'FOFO'],
     'B': ['BOLA', 'BOLO', 'BOTA', 'BULE', 'LOBO', 'BEBÊ'],
     'R': ['RATO', 'RODA', 'REDE', 'RUA', 'REI', 'ROUPA'],
@@ -351,6 +403,97 @@ const FALLBACK_CUMULATIVE_SYL_WORDS = {
     'G': ['GATO', 'GALO', 'FOGO', 'GOTA', 'LAGO', 'FIGO'],
     'Q': ['QUEIJO', 'QUIABO', 'QUATRO', 'AQUÁRIO', 'LEQUE', 'CAQUI']
 };
+
+/* AS 8 GAVETAS LEXICAIS DO PALAVRÁRIO */
+const DEFAULT_PALAVRARIO_DRAWERS = [
+    {
+        id: 'PAL_1',
+        code: 'GAVETA 1',
+        title: 'Dissílabas CV (Conj. 1 e 2)',
+        desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.',
+        variations: {
+            1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'],
+            2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA']
+        }
+    },
+    {
+        id: 'PAL_2',
+        code: 'GAVETA 2',
+        title: 'Dissílabas CV (Conj. 3 a 6)',
+        desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.',
+        variations: {
+            1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'],
+            2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO']
+        }
+    },
+    {
+        id: 'PAL_3',
+        code: 'GAVETA 3',
+        title: 'Trissílabas Simples',
+        desc: 'Palavras de 3 sílabas abertas controladas por extensão.',
+        variations: {
+            1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'],
+            2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO']
+        }
+    },
+    {
+        id: 'PAL_4',
+        code: 'GAVETA 4',
+        title: 'Encontros Vocálicos e Nasais',
+        desc: 'Vocábulos com ditongos orais e vogais/ditongos nasais.',
+        variations: {
+            1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'],
+            2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO']
+        }
+    },
+    {
+        id: 'PAL_5',
+        code: 'GAVETA 5',
+        title: 'Sílabas Travadas (CVC)',
+        desc: 'Palavras com coda silábica em R, S, L, M, N.',
+        variations: {
+            1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'],
+            2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM']
+        }
+    },
+    {
+        id: 'PAL_6',
+        code: 'GAVETA 6',
+        title: 'Encontros Consonantais (CCV)',
+        desc: 'Sílabas complexas com grupos consonantais em R e L.',
+        variations: {
+            1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'],
+            2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA']
+        }
+    },
+    {
+        id: 'PAL_7',
+        code: 'GAVETA 7',
+        title: 'Dígrafos',
+        desc: 'Palavras com CH, LH, NH, RR, SS, QU e GU.',
+        variations: {
+            1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'],
+            2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE']
+        }
+    },
+    {
+        id: 'PAL_8',
+        code: 'GAVETA 8',
+        title: 'Irregulares e Contextuais',
+        desc: 'Casos de CE/CI, GE/GI, Ç, S com som de Z e valores do X.',
+        variations: {
+            1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'],
+            2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA']
+        }
+    }
+];
+
+function getEffectivePalavrarioDrawers() {
+    if (typeof PALAVRARIO_DRAWERS !== 'undefined' && Array.isArray(PALAVRARIO_DRAWERS) && PALAVRARIO_DRAWERS.length > 0) {
+        return PALAVRARIO_DRAWERS;
+    }
+    return DEFAULT_PALAVRARIO_DRAWERS;
+}
 
 function getEffectiveSyllabaryOrder() {
     return STRUCTURED_SYLLABARY_ORDER;
@@ -384,15 +527,19 @@ function getDefaultTokensClone() {
         },
         ledger: [],
         catalog: [
-            { id: 'vouch_1', title: '5 Min de Massinha', cost: 4, mediaType: 'EMOJI', mediaVal: '🎨', desc: 'Tempo livre com massinha de modelar.' },
-            { id: 'vouch_2', title: 'Bolhas de Sabão', cost: 3, mediaType: 'EMOJI', mediaVal: '🫧', desc: 'Brincadeira sensorial com bolhas.' }
+            { id: 'vouch_1', title: '5 Min de Massinha', cost: 4, mediaType: 'EMOJI', mediaVal: '🎨', desc: 'Tempo livre supervisionado.' },
+            { id: 'vouch_2', title: 'Bolhas de Sabão', cost: 3, mediaType: 'EMOJI', mediaVal: '🫧', desc: 'Brincadeira sensorial.' }
         ]
     };
 }
 
 function createFreshStudentState(firstName = 'ALUNO') {
     const cleanFirst = String(firstName || 'ALUNO').trim().split(/\s+/)[0].toUpperCase() || 'ALUNO';
-    const unlockedInit = ['VOGAIS', 'ENCONTROS', 'T', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'R_N1_VC'];
+    const unlockedInit = [
+        'VOGAIS', 'ENCONTROS', 'T',
+        'PAL_1', 'PAL_2',
+        'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'E1_6', 'R_N1_EXTRA'
+    ];
     if (typeof EIDOS_MODULES !== 'undefined') {
         EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
             if (!unlockedInit.includes(m.id)) unlockedInit.push(m.id);
@@ -410,6 +557,7 @@ function createFreshStudentState(firstName = 'ALUNO') {
         unlocked: unlockedInit,
         moduleProgress: {},
         customCurriculum: {},
+        customSyllablesMap: {},
         customWordMedia: {},
         customModules: [],
         tokens: getDefaultTokensClone(),
@@ -479,6 +627,7 @@ function initTenantsAndActiveStudent() {
 function normalizeStudentState(st) {
     if (!st.moduleProgress) st.moduleProgress = {};
     if (!st.customCurriculum) st.customCurriculum = {};
+    if (!st.customSyllablesMap) st.customSyllablesMap = {};
     if (!st.customWordMedia) st.customWordMedia = {};
     if (!Array.isArray(st.customModules)) st.customModules = [];
     if (!st.tokens || typeof st.tokens !== 'object') {
@@ -503,9 +652,11 @@ function normalizeStudentState(st) {
     if (!st.settings.sylComplex) st.settings.sylComplex = { ccv: false, cvcL: false, cvcS: false, cvcM: false };
     if (!st.settings.security) st.settings.security = { enabled: false, pin: '', analystPin: '', applicatorPin: '', lockExit: false };
     if (!st.session) st.session = { expired: false, endTime: null, configuredMin: st.settings.timer ? st.settings.timer.min : 30 };
-    if (!st.unlocked) st.unlocked = ['VOGAIS', 'ENCONTROS', 'T', 'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'R_N1_VC'];
-    if (!st.unlocked.includes('VOGAIS')) st.unlocked.push('VOGAIS');
-    if (!st.unlocked.includes('T')) st.unlocked.push('T');
+    if (!Array.isArray(st.unlocked)) st.unlocked = [];
+
+    ['VOGAIS', 'ENCONTROS', 'T', 'PAL_1', 'PAL_2'].forEach(baseId => {
+        if (!st.unlocked.includes(baseId)) st.unlocked.push(baseId);
+    });
     if (typeof EIDOS_MODULES !== 'undefined') {
         EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
             if (!st.unlocked.includes(m.id)) st.unlocked.push(m.id);
@@ -600,7 +751,7 @@ function createNewStudentTenant(rawName) {
 
 function deleteStudentTenant(studentId) {
     if (!tenantsIndex || tenantsIndex.students.length <= 1) {
-        customAlert("Ação Bloqueada", "É necessário manter pelo menos um aluno cadastrado.");
+        customAlert("Ação Bloqueada", "É necessário manter pelo menos um perfil cadastrado.");
         return;
     }
     tenantsIndex.students = tenantsIndex.students.filter(s => s.id !== studentId);
@@ -663,6 +814,10 @@ function getModuleVariationsMap(modId) {
     if (customMod && Array.isArray(customMod.targets)) {
         return { 1: [...customMod.targets] };
     }
+    const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
+    if (palDrawer && palDrawer.variations) {
+        return JSON.parse(JSON.stringify(palDrawer.variations));
+    }
     if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId]) {
         return JSON.parse(JSON.stringify(DEFAULT_MODULE_VARIATIONS[modId].variations));
     }
@@ -682,7 +837,7 @@ function getModuleProgress(modId) {
             streak: 0,
             lastDate: '',
             status: 'in_progress',
-            mode: 'TRAIN', // 'TRAIN' | 'PROBE' (Cap. 4 - Camila Gomes)
+            mode: 'TRAIN',
             bestAcc: 0,
             avgLatency: 0,
             activeVar: 1,
@@ -726,7 +881,6 @@ function getActiveVariationForModule(modId) {
     return prog.activeVar;
 }
 
-/* REGISTRO DE MAESTRIA COM TRANSIÇÃO AUTOMÁTICA TREINO <-> SONDAGEM (CAP. 4) */
 function registerMasteryAttempt(modId, accuracy, avgLatencySec, probeGateFailed = false) {
     const prog = getModuleProgress(modId);
     const wasMastered = (prog.status === 'mastered');
@@ -743,8 +897,6 @@ function registerMasteryAttempt(modId, accuracy, avgLatencySec, probeGateFailed 
     prog.revertedToTrain = false;
     prog.promotedToProbe = false;
 
-    // 1. Se estava em Modo Sondagem e falhou no Gatekeeper B->C ou ficou abaixo do critério:
-    // Reverte automaticamente para Modo Treino para consolidação (Cap. 4 - Camila Gomes)
     if (wasInProbe && (probeGateFailed || accuracy < crit)) {
         prog.mode = 'TRAIN';
         prog.status = 'in_progress';
@@ -789,7 +941,6 @@ function registerMasteryAttempt(modId, accuracy, avgLatencySec, probeGateFailed 
             earnedTokensNow += blockReward;
         }
 
-        // Atingiu a meta de consolidação no Treino -> promove automaticamente para Modo Sondagem
         if (prog.streak >= targetDays) {
             if (prog.mode === 'TRAIN' && !wasInProbe) {
                 prog.mode = 'PROBE';
@@ -860,6 +1011,13 @@ function unlockNextInSequence(modId) {
         const nextSyl = sylList[sIdx + 1];
         if (!state.unlocked.includes(nextSyl)) state.unlocked.push(nextSyl);
     }
+
+    const palList = getEffectivePalavrarioDrawers().map(d => d.id);
+    const pIdx = palList.indexOf(modId);
+    if (pIdx >= 0 && pIdx < palList.length - 1) {
+        const nextPal = palList[pIdx + 1];
+        if (!state.unlocked.includes(nextPal)) state.unlocked.push(nextPal);
+    }
 }
 
 let session = {
@@ -869,6 +1027,7 @@ let session = {
     isProbeMode: false,
     probeGateFailed: false,
     isStructuredSyllabary: false,
+    isPalavrarioDrawer: false,
     sylData: null,
     pool: [],
     trials: [],
@@ -1003,7 +1162,7 @@ function awardTokensToActiveStudent(amount, reason = '') {
 }
 
 /* ============================================================================
-   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, COMPLEMENTOS, OFICINA LIMPA E ARCADE
+   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, COMPLEMENTOS, BACKUP JSON E ARCADE
    ============================================================================ */
 let authCallback = null;
 let expectedAuthPin = '';
@@ -1345,6 +1504,8 @@ function renderStudioTargetsMediaChips() {
     }
 
     [...new Set(items)].forEach(rawItem => {
+        // Registra automaticamente sílabas se tiver hífen (ex: XI-CRIN-HA)
+        extractExplicitSyllables(rawItem);
         const cleanKey = getNormalizedWordKey(rawItem);
         const hasMedia = hasValidVisualRepresentation(rawItem);
         const chip = document.createElement('button');
@@ -1504,7 +1665,7 @@ function renderStudioCyclesDraftUI() {
                 <div style="margin-top:10px;">
                     <label style="font-size:0.82rem; font-weight:800; color:var(--text-light); display:block; margin-bottom:6px;">Fragmentação:</label>
                     <select class="compact-select" style="width:100%;" onchange="studioCyclesDraft[${idx}].crmtsSplitMode = this.value;">
-                        <option value="CUSTOM" ${cyc.crmtsSplitMode === 'CUSTOM' ? 'selected' : ''}>Por Hífen ou Barra no Estímulo</option>
+                        <option value="CUSTOM" ${cyc.crmtsSplitMode === 'CUSTOM' ? 'selected' : ''}>Por Hífen ou Dicionário Silábico</option>
                         <option value="WORDS" ${cyc.crmtsSplitMode === 'WORDS' ? 'selected' : ''}>Por Espaços</option>
                     </select>
                 </div>` : ''}
@@ -1546,6 +1707,9 @@ function saveStudioCustomModule() {
         customAlert("Estímulos Insuficientes", "Insira pelo menos 1 estímulo alvo.");
         return;
     }
+
+    // Registra separação silábica explícita caso o analista tenha usado hífen (ex: XI-CRIN-HA)
+    rawTargets.forEach(rt => extractExplicitSyllables(rt));
 
     if (!Array.isArray(state.customModules)) state.customModules = [];
     const modId = editId || ('CUST_' + Date.now());
@@ -2073,14 +2237,128 @@ function handleAddStudentFromModal() {
     }
 }
 
+/* BACKUP COMPLETO DO PERFIL EM JSON (EXPORTAR / IMPORTAR NA TELEMETRIA) */
 function openTelemetryOptionsModal() {
     playSound('click');
     const modal = document.getElementById('modal-telemetry-options');
-    if (modal) modal.style.display = 'flex';
+    if (!modal) return;
+
+    // Garante dinamicamente os botões de Exportar/Importar Backup JSON caso o HTML ainda não os tenha
+    const listBox = modal.querySelector('.modal-content > div:last-child');
+    if (listBox && !document.getElementById('btn-backup-export-json')) {
+        const expBtn = document.createElement('button');
+        expBtn.type = 'button';
+        expBtn.id = 'btn-backup-export-json';
+        expBtn.className = 'menu-option-row';
+        expBtn.onclick = exportStudentProfileJSON;
+        expBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar Backup do Aluno (.json)
+        `;
+
+        const impBtn = document.createElement('button');
+        impBtn.type = 'button';
+        impBtn.id = 'btn-backup-import-json';
+        impBtn.className = 'menu-option-row';
+        impBtn.onclick = triggerImportStudentProfileJSON;
+        impBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Importar Backup do Aluno (.json)
+        `;
+
+        const fileInp = document.createElement('input');
+        fileInp.type = 'file';
+        fileInp.id = 'backup-json-file-input';
+        fileInp.accept = '.json,application/json';
+        fileInp.style.display = 'none';
+        fileInp.onchange = (e) => handleImportStudentProfileFile(e.target.files);
+
+        listBox.appendChild(expBtn);
+        listBox.appendChild(impBtn);
+        listBox.appendChild(fileInp);
+    }
+
+    modal.style.display = 'flex';
+}
+
+function exportStudentProfileJSON() {
+    closeModals();
+    saveState();
+    const payload = {
+        alfamtsBackupVersion: 2,
+        exportedAt: new Date().toISOString(),
+        studentProfile: state
+    };
+    const jsonStr = JSON.stringify(payload, null, 2);
+    const fileName = `Backup_${getActiveFirstName()}_AlfaMTS.json`;
+
+    try {
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 250);
+        playSound('win');
+    } catch (e) {
+        document.getElementById('report-modal-title').innerText = "Backup Completo (JSON)";
+        document.getElementById('report-modal-desc').innerText = "Copie o código abaixo para salvar seu backup:";
+        document.getElementById('json-output').value = jsonStr;
+        document.getElementById('modal-report').style.display = 'flex';
+    }
+}
+
+function triggerImportStudentProfileJSON() {
+    closeModals();
+    const fileInp = document.getElementById('backup-json-file-input');
+    if (fileInp) {
+        fileInp.value = '';
+        fileInp.click();
+    }
+}
+
+function handleImportStudentProfileFile(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    const file = fileList[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        try {
+            const parsed = JSON.parse(ev.target.result);
+            const importedState = (parsed && parsed.studentProfile) ? parsed.studentProfile : parsed;
+            if (!importedState || typeof importedState !== 'object' || !importedState.settings) {
+                customAlert("Arquivo Inválido", "O arquivo selecionado não contém um perfil válido do AlfaMTS.");
+                return;
+            }
+            normalizeStudentState(importedState);
+            const firstName = importedState.student || 'ALUNO';
+            const existing = tenantsIndex.students.find(s => s.firstName === firstName);
+            let targetId = existing ? existing.id : ('stu_' + Date.now());
+            if (!existing) {
+                tenantsIndex.students.push({
+                    id: targetId,
+                    firstName,
+                    createdAt: new Date().toLocaleDateString('pt-BR')
+                });
+            }
+            localStorage.setItem('alfamts_student_' + targetId, JSON.stringify(importedState));
+            switchActiveStudent(targetId);
+            playSound('win');
+            renderDashboard();
+            customAlert("Backup Restaurado!", `O perfil e o histórico de "${firstName}" foram carregados com sucesso.`);
+        } catch (err) {
+            customAlert("Erro na Importação", "Não foi possível ler o arquivo JSON.");
+        }
+    };
+    reader.readAsText(file);
 }
 
 /* ============================================================================
-   8. CARROSSEL HORIZONTAL, TAGS DE SONDA CAP. 4 E CONJUNTOS SILÁBICOS CAP. 5
+   8. CARROSSEL DE 10 GUIAS (N1-N5 + ALFABETO + SILABÁRIO + PALAVRÁRIO + EXTRAS + PERS)
    ============================================================================ */
 const CAROUSEL_LEVELS = [
     { key: 'N1', title: 'Nível 1' },
@@ -2090,6 +2368,7 @@ const CAROUSEL_LEVELS = [
     { key: 'N5', title: 'Nível 5' },
     { key: 'FONOLOGICO', title: 'Alfabeto Fonológico' },
     { key: 'SILABARIO', title: 'Silabário' },
+    { key: 'PALAVRARIO', title: 'Palavrário' },
     { key: 'EXTRAS', title: 'Extras' },
     { key: 'PERSONALIZADOS', title: 'Personalizados' }
 ];
@@ -2245,13 +2524,14 @@ function attachPushToViewEvents(cardEl, metaInfo) {
 }
 
 function getMethodExplanation(engine) {
+    if (engine === 'PALAVRARIO_ENGINE') return 'Gaveta Lexical do Palavrário: integra Treino (Equivalência BC-C + Montagem Silábica + Desmame Tipográfico) e Sondagem Condicional (B-C → C-B → C-D → A-C).';
     if (engine === 'CUSTOM_STUDIO') return 'Tarefa personalizada configurada na Oficina de Tarefas.';
-    if (engine === 'REWARD_PORTAL') return 'Portal de acesso rápido para módulos complementares.';
-    if (engine === 'PHON_MODEL') return 'Modelagem articulatória e sustentação sonora contínua.';
+    if (engine === 'REWARD_PORTAL') return 'Portal de acesso rápido para desbloquear e abrir módulos nos Hubs e Extras.';
+    if (engine === 'PHON_MODEL') return 'Modelagem articulatória (Fase A) e sustentação sonora contínua (Fase B).';
     if (engine === 'SYL_SLIDER') return 'Fusão silábica progressiva seguida de seleção auditiva e leitura.';
-    if (engine === 'MULTIMTS') return 'Ensino direto (B-D e BC-C) com transição automática para Sondagem de Equivalência (B-C, C-B, C-D, A-C).';
-    if (engine === 'CRMTS') return 'Construção ativa de unidades a partir do modelo.';
-    if (engine === 'FLUENCY') return 'Leitura ágil sob controle de tempo.';
+    if (engine === 'MULTIMTS') return 'Ensino direto em colunas com transição automática para Sondagem de Equivalência.';
+    if (engine === 'CRMTS') return 'Construção ativa de unidades (sílabas, letras ou palavras) a partir do modelo.';
+    if (engine === 'FLUENCY') return 'Leitura ágil sob controle de latência (< 3s).';
     if (engine === 'DTT') return 'Apresentação direta com registro imediato pelo aplicador.';
     return 'Ensino estruturado com suporte a aprendizagem sem erro e sondagem sem dica.';
 }
@@ -2269,6 +2549,11 @@ function executeRewardPortalAction(modId) {
     if (mod.targetTab === 'SILABARIO') {
         getEffectiveSyllabaryOrder().slice(0, 5).forEach(s => {
             if (!state.unlocked.includes(s)) state.unlocked.push(s);
+        });
+    }
+    if (mod.targetTab === 'PALAVRARIO') {
+        ['PAL_1', 'PAL_2', 'PAL_3'].forEach(p => {
+            if (!state.unlocked.includes(p)) state.unlocked.push(p);
         });
     }
     if (mod.targetTab === 'FONOLOGICO' && typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
@@ -2308,7 +2593,7 @@ function buildCleanCardElement(itemData) {
                </button>`
             : '';
         card.innerHTML = `
-            <span class="code-tag" style="background:var(--warning-light); color:#92400E; width:fit-content;">ACESSO EXTRA</span>
+            <span class="code-tag" style="background:var(--warning-light); color:#92400E; width:fit-content;">PORTAL • DESBLOQUEIO</span>
             <div class="clean-card-body">
                 <h3 class="clean-card-title">${itemData.title}</h3>
                 ${portalBtn}
@@ -2373,6 +2658,8 @@ function triggerCardPlay(id, isEidos, forceDirectPlay = false) {
         startPhonologicalModelingModule(id);
     } else if (String(id).startsWith('CUST_')) {
         startCustomStudioModule(id);
+    } else if (String(id).startsWith('PAL_')) {
+        startPalavrarioDrawer(id);
     } else if (isEidos || EIDOS_MODULES.some(m => m.id === id)) {
         startEidosModule(id);
     } else {
@@ -2413,7 +2700,7 @@ function renderGrid() {
                 const isUnlocked = state.unlocked.includes(mod.id);
                 const prog = getModuleProgress(mod.id);
                 const isEditable = !!(typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[mod.id] && DEFAULT_MODULE_VARIATIONS[mod.id].editable);
-                const hasVar = isEditable || ['E2_1', 'E2_2', 'E4_1'].includes(mod.id);
+                const hasVar = isEditable || ['E5_6'].includes(mod.id);
 
                 page.appendChild(buildCleanCardElement({
                     id: mod.id,
@@ -2468,6 +2755,25 @@ function renderGrid() {
                     isEidos: false
                 }));
             });
+        } else if (lvl.key === 'PALAVRARIO') {
+            getEffectivePalavrarioDrawers().forEach(drawer => {
+                const isUnlocked = state.unlocked.includes(drawer.id);
+                const prog = getModuleProgress(drawer.id);
+
+                page.appendChild(buildCleanCardElement({
+                    id: drawer.id,
+                    title: drawer.title,
+                    desc: drawer.desc,
+                    engine: 'PALAVRARIO_ENGINE',
+                    codeBadge: `${drawer.code} • PALAVRÁRIO`,
+                    methodText: getMethodExplanation('PALAVRARIO_ENGINE'),
+                    isUnlocked,
+                    isMastered: prog.status === 'mastered',
+                    canConfigure: true,
+                    hasVar: true,
+                    isEidos: false
+                }));
+            });
         } else if (lvl.key === 'EXTRAS') {
             const extraEidosMods = EIDOS_MODULES.filter(m => m.level === 'EXTRAS');
             extraEidosMods.forEach(mod => {
@@ -2485,7 +2791,7 @@ function renderGrid() {
                     isUnlocked,
                     isMastered: prog.status === 'mastered',
                     canConfigure: true,
-                    hasVar: isEditable,
+                    hasVar: isEditable || ['EX_RHYME', 'EX_ALLIT', 'EX_MIN_PAIRS'].includes(mod.id),
                     isEidos: true
                 }));
             });
@@ -2556,7 +2862,7 @@ function renderGrid() {
 }
 
 /* ============================================================================
-   9. PAINEL DA TAREFA E NOVO SELETOR VISUAL DE MÍDIA COM BUSCA INSTANTÂNEA
+   9. PAINEL DA TAREFA E SELETOR VISUAL DE MÍDIA COM BUSCA INSTANTÂNEA
    ============================================================================ */
 let editorSession = {
     modId: null,
@@ -2604,12 +2910,12 @@ function ensureProbeModeSelectorInTaskModal(modId) {
         probeRow.className = 'compact-param-row';
         probeRow.innerHTML = `
             <div class="param-label-group">
-                <span>Modo de Execução (Treino / Sondagem)</span>
+                <span>Modo de Execução</span>
             </div>
             <select id="task-cfg-probe-mode" class="compact-select">
                 <option value="AUTO">Automático (Sonda após Maestria)</option>
-                <option value="TRAIN">Forçar Modo Treino (Com Dica)</option>
-                <option value="PROBE">Forçar Modo Sondagem (Sem Dica)</option>
+                <option value="TRAIN">Forçar Modo Treino</option>
+                <option value="PROBE">Forçar Modo Sondagem</option>
             </select>
         `;
         abaTab.insertBefore(probeRow, abaTab.firstChild);
@@ -2621,14 +2927,16 @@ function ensureProbeModeSelectorInTaskModal(modId) {
 
 function openStimuliEditor(modId) {
     const customMod = (state.customModules || []).find(m => m.id === modId);
+    const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
     const mod = EIDOS_MODULES.find(m => m.id === modId)
         || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId)
+        || palDrawer
         || customMod
         || { id: modId, title: String(modId), isAudioModel: false };
 
     const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId])
         ? DEFAULT_MODULE_VARIATIONS[modId]
-        : (customMod ? { editable: true, min: 1, max: 20 } : null);
+        : ((customMod || palDrawer) ? { editable: true, min: 1, max: 20 } : null);
 
     editorSession.modId = modId;
     editorSession.hasEditableStimuli = !!(meta && meta.editable);
@@ -2857,7 +3165,6 @@ function renderCustomImagesBankGallery() {
     });
 }
 
-/* MODAL SELETOR DE MÍDIA COM BUSCA INSTANTÂNEA + GALERIA DO REPOSITÓRIO (.WEBP) + ENVIADAS */
 function openStimulusMediaAssignPicker(wordStr) {
     activeMediaTargetWord = getNormalizedWordKey(wordStr);
     const titleEl = document.getElementById('media-picker-word-title');
@@ -2894,7 +3201,6 @@ function renderMediaPickerUnifiedGallery(queryStr = '') {
     const cleanQuery = toCleanSlug(queryStr);
     const curMedia = state.customWordMedia && state.customWordMedia[activeMediaTargetWord];
 
-    // 1. Imagens enviadas pelo usuário (IndexedDB)
     const idbList = Object.values(customImagesCache).filter(item =>
         !cleanQuery || toCleanSlug(item.name).includes(cleanQuery)
     );
@@ -2918,7 +3224,6 @@ function renderMediaPickerUnifiedGallery(queryStr = '') {
         gal.appendChild(box);
     });
 
-    // 2. Figuras oficiais do Repositório (assets/img/palavras/[slug].webp)
     const repoFiltered = repoWordsCatalog.filter(slug =>
         !cleanQuery || slug.includes(cleanQuery)
     );
@@ -2995,8 +3300,9 @@ function addStimulusItemToEditor() {
         return;
     }
 
-    const needsUpper = !['E5_1'].includes(editorSession.modId);
+    const needsUpper = !['E5_3'].includes(editorSession.modId);
     const formatted = needsUpper ? raw.toUpperCase() : raw;
+    extractExplicitSyllables(formatted);
 
     currentList.push(formatted);
     inp.value = '';
@@ -3021,6 +3327,7 @@ function saveStimuliEditorChanges() {
                 customAlert("Quantidade Insuficiente", `A Variação ${k} precisa ter pelo menos ${meta.min} estímulo(s) válido(s).`);
                 return;
             }
+            cleaned.forEach(item => extractExplicitSyllables(item));
             editorSession.tempMap[k] = cleaned;
         }
         state.customCurriculum[modId] = JSON.parse(JSON.stringify(editorSession.tempMap));
@@ -3120,14 +3427,14 @@ function openQuickPeekModal() {
         }
     } else {
         stimText = String(t);
-        const wObj = WORD_BANK[stimText];
+        const syls = extractExplicitSyllables(stimText);
         if (session.eidosMod && session.eidosMod.subType === 'SYL_COUNT') {
-            const cnt = wObj ? wObj.count : Math.max(1, Math.ceil(stimText.length / 2));
-            ansText = `${stimText} (${cnt} sílabas)`;
+            const cnt = getExplicitSyllableCount(stimText);
+            ansText = `${getNormalizedWordKey(stimText)} (${cnt} sílabas)`;
         } else if (session.isPreReq) {
             ansText = `${stimText} → ${getCategory(stimText)}`;
         } else {
-            ansText = wObj && wObj.syllables ? `${stimText} (${wObj.syllables.join('-')})` : stimText;
+            ansText = syls.length > 1 ? `${getNormalizedWordKey(stimText)} (${syls.join('-')})` : stimText;
         }
     }
 
@@ -3161,13 +3468,13 @@ function hardResetAppCache() {
 }
 
 /* ============================================================================
-   10. GERADORES DE SÍLABAS PURAS (SEM AI/ÃO E SEM CE/CI/GE/GI NO CONJ. 6)
+   10. GERADORES DE SÍLABAS PURAS, POOLS E GAVETAS DO PALAVRÁRIO
    ============================================================================ */
 function generateSyllables(cons) {
     let pool = vowels.map(v => cons + v);
     if (cons === 'Q') pool = ['QUA', 'QUE', 'QUI', 'QUO'];
-    else if (cons === 'C') pool = ['CA', 'CO', 'CU']; // Cap. 5: regulares oclusivas puras
-    else if (cons === 'G') pool = ['GA', 'GO', 'GU']; // Cap. 5: regulares sonoras puras
+    else if (cons === 'C') pool = ['CA', 'CO', 'CU'];
+    else if (cons === 'G') pool = ['GA', 'GO', 'GU'];
 
     const sc = state.settings.sylComplex || {};
     const baseCV = [...pool];
@@ -3217,6 +3524,10 @@ function getPhasePool(phaseId, specificVarKey = null) {
         const vk = specificVarKey || 1;
         return (map && map[vk]) ? [...map[vk]] : [...(customMod.targets || [])];
     }
+    const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === phaseId);
+    if (palDrawer) {
+        return getModuleVariationItems(phaseId, specificVarKey);
+    }
     const pMod = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
     if (pMod) return [pMod.letter];
     const eMod = EIDOS_MODULES.find(m => m.id === phaseId);
@@ -3228,6 +3539,7 @@ function getPhasePool(phaseId, specificVarKey = null) {
         if (eMod.subType === 'SYM_DISC') return ['A', 'B', 'E', 'M', 'P', 'S'];
         if (eMod.subType === 'MIRROR_GRAPH') return ['b', 'd', 'p', 'q', 'E', 'S'];
         if (eMod.subType === 'VOWELS_PURE') return ['A', 'E', 'I', 'O', 'U'];
+        if (eMod.subType === 'VOCAL_ENCOUNTERS') return ['AI', 'EI', 'OI', 'UI', 'AU', 'EU', 'OU', 'ÃO'];
         if (eMod.subType === 'CLASS_VC') return ['F','V','M','N','S','L','P','B','T','D', ...vowels];
         if (eMod.subType === 'RHYME') {
             const rList = RHYME_VARIATIONS[activeV] || RHYME_VARIATIONS[1];
@@ -3237,8 +3549,6 @@ function getPhasePool(phaseId, specificVarKey = null) {
             const aList = ALLIT_VARIATIONS[activeV] || ALLIT_VARIATIONS[1];
             return aList.map(a => a.target);
         }
-        if (eMod.subType === 'CONT_PHON') return ['F','V','S','Z','X','J','M','N','L','R'];
-        if (eMod.subType === 'OCCL_PHON') return ['P','B','T','D','C','K','G'];
         if (eMod.subType === 'CLASS_SP') return ['FA','MA','LA','SA','BO','TA', 'BOLA','MALA','FACA','SAPO','BOLO','GATO'];
         if (eMod.subType === 'CLASS_TOTAL_MM') return ['A','E','I','O','U','F','M','L','P','B','FA','MA','LA','BO','BOLA','GATO','MALA','FACA'];
         if (eMod.subType === 'MIN_PAIRS') {
@@ -3248,6 +3558,11 @@ function getPhasePool(phaseId, specificVarKey = null) {
             return Object.values(WORD_BANK).filter(w => w.struct === eMod.filterStruct).map(w => w.word);
         }
         if (eMod.subType === 'SYNTACTIC_WH') return ['O menino comeu o bolo na cozinha.', 'A menina chutou a bola no parque.', 'O gato bebeu o leite na sala.'];
+        if (eMod.subType === 'NARRATIVE_COHERENCE') {
+            return activeV === 2
+                ? NARRATIVES_DB.flatMap(n => n.steps)
+                : NARRATIVES_DB.map(n => n.intruderSentence.join(' '));
+        }
         if (eMod.subType === 'INTRUDER_WORD') return NARRATIVES_DB.map(n => n.intruderSentence.join(' '));
         if (eMod.subType === 'CHRONO_SEQ') return NARRATIVES_DB.flatMap(n => n.steps);
     }
@@ -3269,7 +3584,7 @@ function getCategory(item) {
 }
 
 /* ============================================================================
-   11. INICIALIZADOR UNIFICADO: SILABÁRIO CAP. 5 E SONDAGEM CAP. 4
+   11. INICIALIZADOR UNIFICADO: TRILHA N1-N5, SILABÁRIO E PALAVRÁRIO
    ============================================================================ */
 function ensureSessionTimerStarted() {
     if (state.settings.timer.enabled) {
@@ -3338,6 +3653,7 @@ function startCustomStudioModule(modId) {
         isProbeMode: inProbe,
         probeGateFailed: false,
         isStructuredSyllabary: false,
+        isPalavrarioDrawer: false,
         sylData: null,
         pool,
         trials: targets,
@@ -3357,7 +3673,84 @@ function startCustomStudioModule(modId) {
     renderTrial();
 }
 
-/* NOVO MOTOR ESTRUTURADO DO SILABÁRIO (CAP. 5 - CAMILA GOMES) */
+/* MOTOR DE GAVETAS DO PALAVRÁRIO (CAP. 4 & 5: TREINO INTEGRADO + SONDAGEM CONDICIONAL) */
+function startPalavrarioDrawer(drawerId) {
+    const drawer = getEffectivePalavrarioDrawers().find(d => d.id === drawerId);
+    if (!drawer) return;
+    if (!ensureSessionTimerStarted()) return;
+
+    const activeVar = getActiveVariationForModule(drawerId);
+    const inProbe = isModuleInProbeMode(drawerId);
+    const wordsPool = shuffleArray(getModuleVariationItems(drawerId, activeVar)).slice(0, 6);
+
+    // No Palavrário:
+    // - Modo Treino (TRAIN):
+    //   Ciclo 1: Pareamento Composto BC -> C com observação (grupos 3x3)
+    //   Ciclo 2: Montagem por Sílabas CRMTS com pista visual intrassilábica (palavras individuais)
+    //   Ciclo 3: Desmame Tipográfico 3x3 ([BO][LA] colorido -> BOLA preto puro)
+    // - Modo Sondagem (PROBE - Cap. 4):
+    //   Ciclo 3: Sonda Gatekeeper B -> C (Figura -> Palavra 3x3 sem dica, exige 100%)
+    //   Ciclo 4: Sonda Simetria C -> B (Palavra -> Figura 3x3)
+    //   Ciclo 5: Sonda Leitura Oral Pura C -> D (antes do áudio)
+    //   Ciclo 6: Sonda Auditiva A -> C (Ditado -> Palavra)
+    const group3x3 = [wordsPool.slice(0, 3), wordsPool.slice(3, 6)].filter(g => g.length > 0);
+    const activeCycles = inProbe ? [3, 4, 5, 6] : filterCyclesByTaskConfig(drawerId, [1, 2, 3], false);
+    const firstCycle = activeCycles[0];
+
+    const initialTrials = (!inProbe && firstCycle === 2) ? [...wordsPool] : group3x3;
+
+    const modDescriptor = {
+        id: drawer.id,
+        code: drawer.code,
+        level: 'PALAVRARIO',
+        title: drawer.title,
+        desc: drawer.desc,
+        engine: 'PALAVRARIO_ENGINE',
+        subType: inProbe ? 'EQUIV_4STEPS_MM' : 'PALAVRARIO_TRAIN',
+        isAudioModel: false
+    };
+
+    undoSnapshot = null;
+    session = {
+        phase: drawer.id,
+        eidosMod: modDescriptor,
+        activeVar,
+        isProbeMode: inProbe,
+        probeGateFailed: false,
+        isStructuredSyllabary: false,
+        isPalavrarioDrawer: true,
+        sylData: {
+            words: wordsPool,
+            groups: group3x3
+        },
+        pool: wordsPool,
+        trials: initialTrials,
+        activeCycles,
+        currentCycleIdx: 0,
+        currentCycle: firstCycle,
+        isOnlyCycle3: false,
+        isPreReq: false,
+        currentTrialIdx: 0,
+        attemptsOnCurrent: 0,
+        currentRenderedOptions: null,
+        isRepeating: false,
+        latencies: [],
+        stats: inProbe
+            ? resetSessionStats(activeCycles, group3x3.length)
+            : {
+                c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? group3x3.length : 0 },
+                c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? wordsPool.length : 0 },
+                c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? group3x3.length : 0 },
+                c4: { indep: 0, dica: 0, erro: 0, total: 0 },
+                c5: { indep: 0, dica: 0, erro: 0, total: 0 },
+                c6: { indep: 0, dica: 0, erro: 0, total: 0 }
+            }
+    };
+    openGame();
+    renderTrial();
+}
+
+/* MOTOR ESTRUTURADO DO SILABÁRIO (CAP. 5 - CAMILA GOMES) */
 function startStructuredSyllabary(phaseId) {
     if (phaseId === 'PALAVRAS') {
         document.getElementById('custom-words-input').value = state.customWords || '';
@@ -3374,7 +3767,6 @@ function startStructuredSyllabary(phaseId) {
     if (isBaseVocal || isPseudo) {
         const pool = getPhasePool(phaseId);
         const targets = shuffleArray(pool).slice(0, isPseudo ? 10 : 5);
-        // Em Sondagem: C->D (Ciclo 3, Leitura Oral) vem ANTES de A->C (Ciclo 2, Ditado)
         const baseCycles = isPseudo ? [3] : (inProbe ? [3, 2] : [1, 2, 3]);
         const activeCycles = isPseudo ? [3] : filterCyclesByTaskConfig(phaseId, baseCycles, true);
 
@@ -3386,6 +3778,7 @@ function startStructuredSyllabary(phaseId) {
             isProbeMode: inProbe,
             probeGateFailed: false,
             isStructuredSyllabary: false,
+            isPalavrarioDrawer: false,
             sylData: null,
             pool,
             trials: targets,
@@ -3406,11 +3799,6 @@ function startStructuredSyllabary(phaseId) {
         return;
     }
 
-    // Família Consonantal Estruturada em 4 Passos (Cap. 5):
-    // Passo 1: Sílabas (CV) com pista intrassilábica (colorCV + sylBox)
-    // Passo 2: Palavras Cumulativas com pista intrassilábica ([TA][TU])
-    // Passo 3: Generalização Tipográfica 3x3 (Palavra Estruturada Colorida <-> Palavra Preta Pura)
-    // Passo 4: Sondagem Terminal em Preto Puro (Leitura Oral C->D e Compreensão B->C)
     const familySyllables = generateSyllables(phaseId);
     const cumulativeWords = shuffleArray(getCumulativeWordsForSyllableFamily(phaseId)).slice(0, 6);
     const candidateCycles = inProbe ? [4] : [1, 2, 3, 4];
@@ -3429,6 +3817,7 @@ function startStructuredSyllabary(phaseId) {
         isProbeMode: inProbe,
         probeGateFailed: false,
         isStructuredSyllabary: true,
+        isPalavrarioDrawer: false,
         sylData: {
             consonant: phaseId,
             syllables: familySyllables,
@@ -3459,7 +3848,6 @@ function startStructuredSyllabary(phaseId) {
     renderTrial();
 }
 
-// Alias de compatibilidade
 const startLegacyGame = startStructuredSyllabary;
 
 function startPhonologicalModelingModule(modId) {
@@ -3491,6 +3879,7 @@ function startPhonologicalModelingModule(modId) {
         isProbeMode: false,
         probeGateFailed: false,
         isStructuredSyllabary: false,
+        isPalavrarioDrawer: false,
         sylData: null,
         pool: [pm.letter],
         trials,
@@ -3533,6 +3922,20 @@ function startEidosModule(modId) {
         case 'SYM_DISC':
             trials = ['A', 'B', 'E', 'M', 'P', 'S'];
             break;
+        case 'MIRROR_GRAPH':
+            trials = ['b', 'd', 'p', 'q', 'E', 'S'];
+            break;
+        case 'VOWELS_PURE':
+        case 'VOCAL_ENCOUNTERS':
+        case 'SYL_RECOG_CV':
+        case 'CV_FUSION':
+        case 'CG_ALL_SOUNDS':
+        case 'QU_GU_SOUNDS': {
+            trials = shuffleArray(pool).slice(0, 6);
+            const baseOrder = inProbe ? [3, 2] : [1, 2, 3];
+            activeCycles = filterCyclesByTaskConfig(modId, baseOrder, false);
+            break;
+        }
         case 'WORD_IDENT_MM': {
             const wList = shuffleArray(getModuleVariationItems(modId));
             trials = [
@@ -3541,21 +3944,6 @@ function startEidosModule(modId) {
                 shuffleArray(wList).slice(0, 3)
             ];
             activeCycles = filterCyclesByTaskConfig(modId, [1, 2], false);
-            break;
-        }
-        case 'MIRROR_GRAPH':
-            trials = ['b', 'd', 'p', 'q', 'E', 'S'];
-            break;
-        case 'VOWELS_PURE':
-        case 'CONT_PHON':
-        case 'OCCL_PHON':
-        case 'CV_FUSION':
-        case 'CG_ALL_SOUNDS':
-        case 'QU_GU_SOUNDS': {
-            trials = shuffleArray(pool).slice(0, 6);
-            // Em Sondagem: cobrar Leitura Oral (C->D, Ciclo 3) ANTES do Ditado (A->C, Ciclo 2)
-            const baseOrder = inProbe ? [3, 2] : [1, 2, 3];
-            activeCycles = filterCyclesByTaskConfig(modId, baseOrder, false);
             break;
         }
         case 'SYL_BUILD_SLIDER':
@@ -3584,16 +3972,19 @@ function startEidosModule(modId) {
             trials = shuffleArray(getModuleVariationItems(modId)).slice(0, 5);
             activeCycles = inProbe ? [2] : filterCyclesByTaskConfig(modId, [1, 2], false);
             break;
+        case 'FADEOUT_COLOR_MM':
+        case 'CASE_GEN_MM': {
+            const mmWords = shuffleArray(getModuleVariationItems(modId));
+            trials = [
+                mmWords.slice(0, 3),
+                shuffleArray(mmWords).slice(0, 3),
+                shuffleArray(mmWords).slice(0, 3)
+            ];
+            activeCycles = [1];
+            break;
+        }
         case 'EQUIV_4STEPS_MM': {
-            // CAPÍTULO 4 (CAMILA GOMES):
-            // - Modo Treino (TRAIN): Ciclos [1, 2] -> Ensino direto de B->D (Nomeação) e BC->C (Composto com atraso)
-            // - Modo Sondagem (PROBE):
-            //   Ciclo 3 = Sonda B->C (Gatekeeper: exige 100%)
-            //   Ciclo 4 = Sonda C->B (Simetria Palavra->Figura)
-            //   Ciclo 5 = Sonda C->D (Leitura Oral pura, ANTES do áudio)
-            //   Ciclo 6 = Sonda A->C (Ditado -> Palavra impressa)
             const eqList = shuffleArray(getModuleVariationItems(modId));
-            // Agrupa palavras controladas pelo mesmo comprimento silábico/ortográfico quando disponível
             trials = [
                 eqList.slice(0, 3),
                 shuffleArray(eqList).slice(0, 3)
@@ -3636,7 +4027,6 @@ function startEidosModule(modId) {
         case 'WORDS_EQ': {
             trials = shuffleArray(pool).slice(0, 5);
             const allHaveIcons = trials.every(w => hasValidVisualRepresentation(w));
-            // Em Sondagem: Ordem Anti-Contaminação (B->C [4], C->B [5], C->D Leitura Oral [3], A->C Ditado [2])
             if (inProbe) {
                 activeCycles = allHaveIcons ? [4, 5, 3, 2] : [3, 2];
             } else {
@@ -3673,6 +4063,18 @@ function startEidosModule(modId) {
                 generateLogicalSentenceTrial()
             ];
             break;
+        case 'NARRATIVE_COHERENCE':
+            if (activeVar === 2) {
+                trials = NARRATIVES_DB.map(n => ({ steps: n.steps }));
+            } else {
+                trials = NARRATIVES_DB.map(n => ({
+                    words: n.intruderSentence,
+                    intruder: n.intruderWord,
+                    fix: n.correctReplacement,
+                    distractors: n.distractorReplacements || ['PEDRA', 'JANELA']
+                }));
+            }
+            break;
         case 'INTRUDER_WORD':
             trials = NARRATIVES_DB.map(n => ({
                 words: n.intruderSentence,
@@ -3696,6 +4098,7 @@ function startEidosModule(modId) {
         isProbeMode: inProbe,
         probeGateFailed: false,
         isStructuredSyllabary: false,
+        isPalavrarioDrawer: false,
         sylData: null,
         pool,
         trials,
@@ -3734,7 +4137,7 @@ function getTopographicClasses() {
    ============================================================================ */
 
 /* ============================================================================
-   12. MOTOR DE RENDERIZAÇÃO, SILABÁRIO CAP. 5, SONDAGEM CAP. 4 E DMTS
+   12. MOTOR DE RENDERIZAÇÃO, SILABÁRIO CAP. 5, PALAVRÁRIO, SONDAGEM CAP. 4 E DMTS
    ============================================================================ */
 function ensureLatencyCountdownPill() {
     let pill = document.getElementById('latency-countdown-pill');
@@ -3875,23 +4278,25 @@ function renderTrial(restoredOptions = null) {
         return;
     }
 
-    // 2. NOVO SILABÁRIO CUMULATIVO EM 4 PASSOS (CAP. 5 - CAMILA GOMES)
+    // 2. SILABÁRIO CUMULATIVO EM 4 PASSOS (CAP. 5)
     if (session.isStructuredSyllabary && session.sylData) {
         renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaDock);
         return;
     }
 
-    // 3. MÓDULOS ESPECIALIZADOS
-    const stdSubTypes = ['VOWELS_PURE', 'CV_FUSION', 'WORDS_EQ', 'CG_ALL_SOUNDS', 'QU_GU_SOUNDS', 'CLASS_VC', 'CLASS_SP', 'RECOMB_STT'];
+    // 3. MÓDULOS ESPECIALIZADOS E PALAVRÁRIO
+    const stdSubTypes = ['VOWELS_PURE', 'VOCAL_ENCOUNTERS', 'SYL_RECOG_CV', 'CV_FUSION', 'WORDS_EQ', 'CG_ALL_SOUNDS', 'QU_GU_SOUNDS', 'CLASS_VC', 'CLASS_SP', 'RECOMB_STT'];
     if (session.eidosMod && !stdSubTypes.includes(session.eidosMod.subType)) {
         renderSpecializedEidosTrial(session.eidosMod.subType, target, modelArea, compArea, badge, abaDock, fluencyPill);
         return;
     }
 
-    const isHighlighted = !session.isProbeMode && state.reviewHighlights && state.reviewHighlights[target];
+    const cleanTarget = getNormalizedWordKey(target);
+    const isHighlighted = !session.isProbeMode && state.reviewHighlights && state.reviewHighlights[cleanTarget];
     const highlightStyle = isHighlighted ? 'border-color: var(--warning); background-color: var(--warning-light);' : '';
     const topoClass = getTopographicClasses();
     const probePrefix = session.isProbeMode ? 'SONDA • ' : '';
+    const forceCue = (session.eidosMod && session.eidosMod.subType === 'SYL_RECOG_CV' && !session.isProbeMode);
 
     let optionsToRender = [];
     if (restoredOptions && Array.isArray(restoredOptions)) {
@@ -3906,16 +4311,17 @@ function renderTrial(restoredOptions = null) {
 
     if (session.currentCycle === 1) {
         badge.innerText = `${probePrefix}${session.isPreReq ? "Ciclo 1: Classifique" : "Ciclo 1: Identidade Visual"}`;
-        modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(target)}</div>`;
+        modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(target, session.phase, forceCue, false)}</div>`;
         optionsToRender.forEach(opt => {
+            const cleanOpt = getNormalizedWordKey(opt);
             const btn = document.createElement('div');
             btn.className = `comp-card ${getTopographicClasses()}`;
-            if (!session.isProbeMode && state.reviewHighlights && state.reviewHighlights[opt]) {
+            if (!session.isProbeMode && state.reviewHighlights && state.reviewHighlights[cleanOpt]) {
                 btn.style.borderColor = 'var(--warning)';
                 btn.style.backgroundColor = 'var(--warning-light)';
             }
-            btn.innerHTML = formatStimulusTextHTML(opt);
-            const isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
+            btn.innerHTML = formatStimulusTextHTML(opt, session.phase, forceCue, false);
+            const isCorrect = session.isPreReq ? (getCategory(cleanTarget) === cleanOpt) : (cleanOpt === cleanTarget);
             btn.dataset.correct = isCorrect;
             btn.onclick = () => handleAnswer(isCorrect, btn);
             compArea.appendChild(btn);
@@ -3923,33 +4329,34 @@ function renderTrial(restoredOptions = null) {
         applyDMTSWrapperIfEnabled(modelArea, compArea, true);
     } else if (session.currentCycle === 2) {
         badge.innerText = `${probePrefix}Auditivo → Escrita (A → C)`;
-        const spokenModel = getPhoneticAudioModel(target);
+        const spokenModel = getPhoneticAudioModel(cleanTarget);
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${spokenModel}')">${UI_SVGS.volume}</button>`;
         speakTTS(spokenModel);
         optionsToRender.forEach(opt => {
+            const cleanOpt = getNormalizedWordKey(opt);
             const btn = document.createElement('div');
             btn.className = `comp-card ${topoClass}`;
-            if (!session.isProbeMode && state.reviewHighlights && state.reviewHighlights[opt]) {
+            if (!session.isProbeMode && state.reviewHighlights && state.reviewHighlights[cleanOpt]) {
                 btn.style.borderColor = 'var(--warning)';
                 btn.style.backgroundColor = 'var(--warning-light)';
             }
-            btn.innerHTML = formatStimulusTextHTML(opt);
-            const isCorrect = session.isPreReq ? (getCategory(target) === opt) : (opt === target);
+            btn.innerHTML = formatStimulusTextHTML(opt, session.phase, forceCue, false);
+            const isCorrect = session.isPreReq ? (getCategory(cleanTarget) === cleanOpt) : (cleanOpt === cleanTarget);
             btn.dataset.correct = isCorrect;
             btn.onclick = () => handleAnswer(isCorrect, btn);
             compArea.appendChild(btn);
         });
         applyDMTSWrapperIfEnabled(modelArea, compArea, false);
     } else if (session.currentCycle === 3) {
-        badge.innerText = `${probePrefix}${(session.eidosMod && session.eidosMod.subType === 'RECOMB_STT') ? 'Leitura Recombinativa' : 'Leitura Oral (C → D)'}`;
-        modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(target)}</div>`;
+        badge.innerText = `${probePrefix}${(session.eidosMod && session.eidosMod.subType === 'RECOMB_STT') ? '3.6 Leitura Recombinativa' : 'Leitura Oral (C → D)'}`;
+        modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(target, session.phase, false, session.isProbeMode)}</div>`;
         abaDock.style.display = 'flex';
 
         if (state.settings.useMic) {
             compArea.innerHTML = `
                 <div class="stt-area">
                     <input type="text" id="ghost-stt" class="ghost-input" tabindex="-1">
-                    <p id="mic-feedback" style="color:var(--text-light); font-weight:800; font-size:1.2rem;">Segure o microfone e fale: '${target}'</p>
+                    <p id="mic-feedback" style="color:var(--text-light); font-weight:800; font-size:1.2rem;">Segure o microfone e fale: '${cleanTarget}'</p>
                     <div class="stt-controls">
                         <button type="button" class="stt-btn" id="mic-btn" onmousedown="startMicrophone()" onmouseup="stopMicrophone()" onmouseleave="stopMicrophone()" ontouchstart="event.preventDefault(); startMicrophone()" ontouchend="event.preventDefault(); stopMicrophone()">
                             ${UI_SVGS.mic}
@@ -3963,12 +4370,13 @@ function renderTrial(restoredOptions = null) {
         }, state.settings.latency);
     } else if (session.currentCycle === 4) {
         badge.innerText = `${probePrefix}Figura → Palavra (B → C)`;
-        modelArea.innerHTML = `<div class="model-card" style="padding:16px;">${getWordVisualRepresentationHTML(target, 4.6)}</div>`;
+        modelArea.innerHTML = `<div class="model-card" style="padding:16px;">${getWordVisualRepresentationHTML(cleanTarget, 4.6)}</div>`;
         optionsToRender.forEach(opt => {
+            const cleanOpt = getNormalizedWordKey(opt);
             const btn = document.createElement('div');
             btn.className = `comp-card ${topoClass}`;
             btn.innerHTML = formatStimulusTextHTML(opt);
-            const isCorrect = (opt === target);
+            const isCorrect = (cleanOpt === cleanTarget);
             btn.dataset.correct = isCorrect;
             btn.onclick = () => handleAnswer(isCorrect, btn);
             compArea.appendChild(btn);
@@ -3978,10 +4386,11 @@ function renderTrial(restoredOptions = null) {
         badge.innerText = `${probePrefix}Palavra → Figura (C → B)`;
         modelArea.innerHTML = `<div class="model-card ${topoClass}">${formatStimulusTextHTML(target)}</div>`;
         optionsToRender.forEach(opt => {
+            const cleanOpt = getNormalizedWordKey(opt);
             const btn = document.createElement('div');
             btn.className = 'comp-card img-only';
-            btn.innerHTML = getWordVisualRepresentationHTML(opt, 3.8);
-            const isCorrect = (opt === target);
+            btn.innerHTML = getWordVisualRepresentationHTML(cleanOpt, 3.8);
+            const isCorrect = (cleanOpt === cleanTarget);
             btn.dataset.correct = isCorrect;
             btn.onclick = () => handleAnswer(isCorrect, btn);
             compArea.appendChild(btn);
@@ -3990,13 +4399,12 @@ function renderTrial(restoredOptions = null) {
     }
 }
 
-/* RENDERIZADOR DOS 4 PASSOS DO SILABÁRIO CUMULATIVO (CAP. 5 - CAMILA GOMES) */
+/* RENDERIZADOR DOS 4 PASSOS DO SILABÁRIO CUMULATIVO (CAP. 5) */
 function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaDock) {
     const topoClass = getTopographicClasses();
     const cons = session.sylData.consonant;
     const cyc = session.currentCycle;
 
-    // PASSO 1: SÍLABAS CV COM ESTRUTURA VISUAL INTRASSILÁBICA (CONSOANTE PRETA + VOGAL VERMELHA + MOLDURA AZUL)
     if (cyc === 1) {
         badge.innerText = `Família ${cons} • Passo 1: Sílabas Estruturadas`;
         const sylStr = String(target || '').trim().toUpperCase();
@@ -4024,28 +4432,28 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
         return;
     }
 
-    // PASSO 2: PALAVRAS CUMULATIVAS ESTRUTURADAS ([TA][TU]) + MODELO FLUENTE AO ACERTAR
     if (cyc === 2) {
         badge.innerText = `Família ${cons} • Passo 2: Palavras Estruturadas`;
-        const wordStr = String(target || '').trim().toUpperCase();
+        const wordStr = getNormalizedWordKey(target);
         modelArea.style.minHeight = '145px';
         modelArea.innerHTML = `
             <div class="model-card ${topoClass}">
-                ${formatStimulusTextHTML(wordStr, session.phase, true, false)}
+                ${formatStimulusTextHTML(target, session.phase, true, false)}
             </div>
         `;
 
-        const distWords = shuffleArray(session.sylData.words.filter(w => w !== wordStr)).slice(0, getEffectiveOptsForCurrentSession() - 1);
-        const opts = shuffleArray([wordStr, ...distWords]);
+        const distWords = shuffleArray(session.sylData.words.filter(w => getNormalizedWordKey(w) !== wordStr)).slice(0, getEffectiveOptsForCurrentSession() - 1);
+        const opts = shuffleArray([target, ...distWords]);
         opts.forEach(opt => {
+            const cleanOpt = getNormalizedWordKey(opt);
             const btn = document.createElement('div');
             btn.className = `comp-card ${topoClass}`;
             btn.style.fontSize = '2.1rem';
             btn.innerHTML = formatStimulusTextHTML(opt, session.phase, true, false);
-            const isCorrect = (opt === wordStr);
+            const isCorrect = (cleanOpt === wordStr);
             btn.dataset.correct = isCorrect;
             btn.onclick = () => {
-                if (isCorrect) speakTTS(wordStr); // Emite modelo fluente ("você leu tatu!")
+                if (isCorrect) speakTTS(wordStr);
                 handleAnswer(isCorrect, btn);
             };
             compArea.appendChild(btn);
@@ -4055,7 +4463,6 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
         return;
     }
 
-    // PASSO 3: GENERALIZAÇÃO TIPOGRÁFICA (DESMAME DE DICA 3x3: ESTRUTURADA COLORIDA -> PRETO PURO)
     if (cyc === 3) {
         badge.innerText = `Família ${cons} • Passo 3: Transição para Texto Preto`;
         const groupWords = Array.isArray(target) ? target : session.sylData.words.slice(0, 3);
@@ -4074,6 +4481,7 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
         let completedCount = 0;
 
         shuffleArray(groupWords).forEach(w => {
+            const cleanW = getNormalizedWordKey(w);
             const cardL = document.createElement('div');
             cardL.className = `mm-card ${topoClass}`;
             cardL.innerHTML = `<span>${formatStimulusTextHTML(w, session.phase, true, false)}</span><span style="color:var(--text-light);">${UI_SVGS.arrowRight}</span>`;
@@ -4082,21 +4490,21 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
                 playSound('click');
                 colLeft.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
                 cardL.classList.add('selected');
-                selectedLeft = { id: w, el: cardL };
+                selectedLeft = { id: cleanW, el: cardL };
             };
             colLeft.appendChild(cardL);
         });
 
         shuffleArray(groupWords).forEach(w => {
+            const cleanW = getNormalizedWordKey(w);
             const cardR = document.createElement('div');
             cardR.className = `mm-card ${topoClass}`;
-            // Coluna Direita: Texto Preto Puro sem moldura e sem cor intrassilábica
-            cardR.innerHTML = `<span style="color:#0F172A;">${formatStimulusTextHTML(w, session.phase, false, true)}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
+            cardR.innerHTML = `<span style="color:#0F172A;">${formatStimulusTextHTML(cleanW, session.phase, false, true)}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
             cardR.onclick = () => {
                 if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
-                if (selectedLeft.id === w) {
+                if (selectedLeft.id === cleanW) {
                     playSound('win');
-                    speakTTS(w);
+                    speakTTS(cleanW);
                     selectedLeft.el.classList.remove('selected');
                     selectedLeft.el.classList.add('paired');
                     cardR.classList.add('paired');
@@ -4127,9 +4535,8 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
         return;
     }
 
-    // PASSO 4: SONDAGEM TERMINAL EM TEXTO PRETO PURO (LEITURA C->D E COMPREENSÃO B->C)
     badge.innerText = `Família ${cons} • Passo 4: Sondagem de Leitura e Compreensão`;
-    const wordStr = String(target || '').trim().toUpperCase();
+    const wordStr = getNormalizedWordKey(target);
     modelArea.style.minHeight = '145px';
     modelArea.innerHTML = `
         <div class="model-card ${topoClass}" style="border-style:solid;">
@@ -4137,8 +4544,8 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
         </div>
     `;
 
-    const distWords = shuffleArray(session.sylData.words.filter(w => w !== wordStr)).slice(0, getEffectiveOptsForCurrentSession() - 1);
-    const opts = shuffleArray([wordStr, ...distWords]);
+    const distWords = shuffleArray(session.sylData.words.filter(w => getNormalizedWordKey(w) !== wordStr)).slice(0, getEffectiveOptsForCurrentSession() - 1);
+    const opts = shuffleArray([wordStr, ...distWords.map(d => getNormalizedWordKey(d))]);
     opts.forEach(opt => {
         const btn = document.createElement('div');
         btn.className = 'comp-card img-only';
@@ -4152,7 +4559,7 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
     setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
 }
 
-/* RENDERIZADOR UNIVERSAL DE TAREFAS DA OFICINA */
+/* RENDERIZADOR UNIVERSAL DE TAREFAS DA OFICINA (ZERO REGEX) */
 function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRem = 3.2) {
     const raw = String(itemStr || '').trim().toUpperCase();
     const clean = getNormalizedWordKey(raw);
@@ -4162,7 +4569,7 @@ function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRe
     if (channelType === 'AUDIO') {
         return `<button type="button" class="model-audio-btn" style="width:86px; height:86px;" onclick="event.stopPropagation(); speakTTS('${clean}')">${UI_SVGS.volumeSm}</button>`;
     }
-    return `<span class="${topoClass}">${formatStimulusTextHTML(clean)}</span>`;
+    return `<span class="${topoClass}">${formatStimulusTextHTML(raw)}</span>`;
 }
 
 function extractCRMTSUnitsFromStudioTarget(rawTarget, cycCfg) {
@@ -4173,17 +4580,7 @@ function extractCRMTSUnitsFromStudioTarget(rawTarget, cycCfg) {
     if (cycCfg.crmtsSplitMode === 'WORDS') {
         return str.split(/\s+/).filter(Boolean);
     }
-    if (/[-\/;]/.test(str)) {
-        return str.split(/[-\/;]+/).map(s => s.trim()).filter(Boolean);
-    }
-    if (/\s+/.test(str)) {
-        return str.split(/\s+/).filter(Boolean);
-    }
-    const clean = getNormalizedWordKey(str);
-    if (WORD_BANK[clean] && Array.isArray(WORD_BANK[clean].syllables)) {
-        return [...WORD_BANK[clean].syllables];
-    }
-    return clean.match(/[^AEIOUÁÉÍÓÚÂÊÔÃÕ]*[AEIOUÁÉÍÓÚÂÊÔÃÕ]+[^AEIOUÁÉÍÓÚÂÊÔÃÕ]?/gi) || [clean];
+    return extractExplicitSyllables(str);
 }
 
 function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
@@ -4231,7 +4628,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
                 playSound('click');
                 colLeft.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
                 cardL.classList.add('selected');
-                selectedLeft = { id: w, el: cardL };
+                selectedLeft = { id: getNormalizedWordKey(w), el: cardL };
             };
             colLeft.appendChild(cardL);
         });
@@ -4243,7 +4640,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
             cardR.innerHTML = `<span>${rightContent}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
             cardR.onclick = () => {
                 if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
-                if (selectedLeft.id === w) {
+                if (selectedLeft.id === getNormalizedWordKey(w)) {
                     playSound(session.isProbeMode ? 'click' : 'win');
                     selectedLeft.el.classList.remove('selected');
                     selectedLeft.el.classList.add('paired');
@@ -4410,19 +4807,23 @@ function isVowelChar(ch) {
     return /^[AEIOUÁÉÍÓÚÂÊÔÃÕÜ]$/i.test(ch);
 }
 
+/* FORMATAÇÃO VISUAL E MOLDURA SILÁBICA SEM REGEX (ESTRITAMENTE DICIONÁRIO OU HÍFEN) */
 function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainBlack = false) {
-    const rawStr = String(text || '');
+    const rawStr = String(text || '').trim();
+    if (!rawStr) return '';
+
+    const cleanDisplayStr = rawStr.includes(' ')
+        ? rawStr
+        : getNormalizedWordKey(rawStr);
+
     if (forcePlainBlack || (session && session.isProbeMode && !forceVisualCue)) {
-        return rawStr;
+        return cleanDisplayStr;
     }
 
-    const tCfg = getTaskConfig(modId || session.phase);
+    const tCfg = getTaskConfig(modId || (session ? session.phase : ''));
     const useColorCV = forceVisualCue || (tCfg && tCfg.colorCV);
     const useSylBox = forceVisualCue || (tCfg && tCfg.sylBox);
-    if (!useColorCV && !useSylBox) return rawStr;
-
-    const upperKey = getNormalizedWordKey(rawStr);
-    const wBankObj = WORD_BANK[upperKey];
+    if (!useColorCV && !useSylBox) return cleanDisplayStr;
 
     const colorizeSegment = (seg) => {
         if (!useColorCV) return seg;
@@ -4435,30 +4836,214 @@ function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainB
 
     const boxStyle = `display:inline-flex; align-items:center; justify-content:center; border:2.5px solid #2563EB; border-radius:10px; padding:1px 7px; margin:0 3px; background:#fff;`;
 
-    if (useSylBox && wBankObj && Array.isArray(wBankObj.syllables)) {
-        return wBankObj.syllables.map(s => `<span style="${boxStyle}">${colorizeSegment(s)}</span>`).join('');
-    } else if (useSylBox && rawStr.length >= 2 && !rawStr.includes(' ')) {
-        const chunks = rawStr.match(/[^AEIOUÁÉÍÓÚÂÊÔÃÕ]*[AEIOUÁÉÍÓÚÂÊÔÃÕ]+[^AEIOUÁÉÍÓÚÂÊÔÃÕ]?/gi) || [rawStr];
-        return chunks.map(s => `<span style="${boxStyle}">${colorizeSegment(s)}</span>`).join('');
+    if (useSylBox && !rawStr.includes(' ')) {
+        const explicitSyls = extractExplicitSyllables(rawStr);
+        return explicitSyls.map(s => `<span style="${boxStyle}">${colorizeSegment(s)}</span>`).join('');
     }
 
-    return colorizeSegment(rawStr);
+    return colorizeSegment(cleanDisplayStr);
 }
 
 function getPhoneticAudioModel(target) {
-    if (session.eidosMod && session.eidosMod.subType === 'CONT_PHON') {
-        const map = { 'F': 'fff', 'V': 'vvv', 'M': 'mmm', 'N': 'nnn', 'S': 'sss', 'Z': 'zzz', 'L': 'lll', 'R': 'rrr', 'X': 'chhh', 'J': 'jjj' };
-        return map[target] || target;
-    }
-    return target;
+    return getNormalizedWordKey(target);
 }
 
 /* ============================================================================
-   13. RENDERIZADORES ESPECIALIZADOS (INCLUINDO CAP. 4 EQUIV_4STEPS_MM)
+   13. RENDERIZADORES ESPECIALIZADOS (N1-N5, PALAVRÁRIO, 3.2 E 3.3)
    ============================================================================ */
 function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge, abaDock, fluencyPill) {
     const topoClass = getTopographicClasses();
     const numOpts = getEffectiveOptsForCurrentSession();
+
+    // TREINO INTEGRADO DAS GAVETAS DO PALAVRÁRIO (CAP. 4 & 5):
+    // Ciclo 1: Pareamento Composto BC -> C com observação
+    // Ciclo 2: Montagem Silábica CRMTS com pista intrassilábica e leitura
+    // Ciclo 3: Desmame de Pista Visual 3x3 ([BO][LA] colorido -> BOLA preto)
+    if (subType === 'PALAVRARIO_TRAIN') {
+        if (session.currentCycle === 1) {
+            // Reutiliza o Ciclo 2 do EQUIV_4STEPS_MM (BC -> C com palavra coberta para observação)
+            const prevCycle = session.currentCycle;
+            session.currentCycle = 2;
+            renderSpecializedEidosTrial('EQUIV_4STEPS_MM', target, modelArea, compArea, badge, abaDock, fluencyPill);
+            session.currentCycle = prevCycle;
+            badge.innerText = `${session.eidosMod.title} • Etapa 1/3: Pareamento Composto (BC → C)`;
+            return;
+        }
+        if (session.currentCycle === 2) {
+            const prevCycle = session.currentCycle;
+            session.currentCycle = 1;
+            renderSpecializedEidosTrial('SYL_WORD_BUILD', target, modelArea, compArea, badge, abaDock, fluencyPill);
+            session.currentCycle = prevCycle;
+            badge.innerText = `${session.eidosMod.title} • Etapa 2/3: Construção por Sílabas`;
+            return;
+        }
+        if (session.currentCycle === 3) {
+            renderSpecializedEidosTrial('FADEOUT_COLOR_MM', target, modelArea, compArea, badge, abaDock, fluencyPill);
+            badge.innerText = `${session.eidosMod.title} • Etapa 3/3: Desmame para Texto Preto`;
+            return;
+        }
+    }
+
+    // 3.2 NOVO: DESMAME DE PISTA VISUAL (COLORIDO + MOLDURA -> TEXTO PRETO PURO EM 3x3)
+    if (subType === 'FADEOUT_COLOR_MM') {
+        badge.innerText = `3.2 Desmame de Pista Visual (Cor → Preto)`;
+        const groupWords = Array.isArray(target) ? target : ['BOLA', 'MALA', 'SAPO'];
+
+        modelArea.style.minHeight = '24px';
+        modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Leia a palavra com apoio colorido à esquerda e pareie com a palavra em preto puro à direita:</p>`;
+
+        const board = document.createElement('div');
+        board.className = 'multimodel-board';
+        const colLeft = document.createElement('div');
+        colLeft.className = 'mm-column';
+        const colRight = document.createElement('div');
+        colRight.className = 'mm-column';
+
+        let selectedLeft = null;
+        let completedCount = 0;
+
+        shuffleArray(groupWords).forEach(w => {
+            const cleanW = getNormalizedWordKey(w);
+            const cardL = document.createElement('div');
+            cardL.className = `mm-card ${topoClass}`;
+            cardL.innerHTML = `<span>${formatStimulusTextHTML(w, session.phase, true, false)}</span><span style="color:var(--text-light);">${UI_SVGS.arrowRight}</span>`;
+            cardL.onclick = () => {
+                if (blockClicks || cardL.classList.contains('paired')) return;
+                playSound('click');
+                colLeft.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
+                cardL.classList.add('selected');
+                selectedLeft = { id: cleanW, el: cardL };
+            };
+            colLeft.appendChild(cardL);
+        });
+
+        shuffleArray(groupWords).forEach(w => {
+            const cleanW = getNormalizedWordKey(w);
+            const cardR = document.createElement('div');
+            cardR.className = `mm-card ${topoClass}`;
+            cardR.innerHTML = `<span style="color:#0F172A;">${formatStimulusTextHTML(cleanW, session.phase, false, true)}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
+            cardR.onclick = () => {
+                if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
+                if (selectedLeft.id === cleanW) {
+                    playSound(session.isProbeMode ? 'click' : 'win');
+                    if (!session.isProbeMode) speakTTS(cleanW);
+                    selectedLeft.el.classList.remove('selected');
+                    selectedLeft.el.classList.add('paired');
+                    cardR.classList.add('paired');
+                    cardR.querySelector('.chk-icon').style.color = 'var(--success)';
+                    selectedLeft = null;
+                    completedCount++;
+                    if (completedCount === groupWords.length) {
+                        handleAnswer(true, board);
+                    }
+                } else {
+                    session.attemptsOnCurrent++;
+                    playSound('click');
+                    if (!session.isProbeMode) {
+                        cardR.classList.add('feedback-error');
+                        setTimeout(() => cardR.classList.remove('feedback-error'), 380);
+                    }
+                    if (session.isProbeMode || session.attemptsOnCurrent >= 3) {
+                        handleAnswer(false, board);
+                    }
+                }
+            };
+            colRight.appendChild(cardR);
+        });
+
+        board.appendChild(colLeft);
+        board.appendChild(colRight);
+        compArea.appendChild(board);
+        abaDock.style.display = 'flex';
+        setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+        return;
+    }
+
+    // 3.3 NOVO: GENERALIZAÇÃO MAIÚSCULA <-> minúscula (CAP. 6.1 - 3x3)
+    if (subType === 'CASE_GEN_MM') {
+        badge.innerText = `3.3 Generalização MAIÚSCULA ↔ minúscula`;
+        const groupWords = Array.isArray(target) ? target : ['BOLA', 'GATO', 'SAPO'];
+
+        modelArea.style.minHeight = '24px';
+        modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Conecte cada palavra em CAIXA ALTA à sua forma em letra minúscula:</p>`;
+
+        const board = document.createElement('div');
+        board.className = 'multimodel-board';
+        const colLeft = document.createElement('div');
+        colLeft.className = 'mm-column';
+        const colRight = document.createElement('div');
+        colRight.className = 'mm-column';
+
+        let selectedLeft = null;
+        let completedCount = 0;
+
+        shuffleArray(groupWords).forEach(w => {
+            const cleanW = getNormalizedWordKey(w);
+            const cardL = document.createElement('div');
+            cardL.className = 'mm-card';
+            cardL.innerHTML = `<span style="text-transform:uppercase;">${cleanW}</span><span style="color:var(--text-light);">${UI_SVGS.arrowRight}</span>`;
+            cardL.onclick = () => {
+                if (blockClicks || cardL.classList.contains('paired')) return;
+                playSound('click');
+                colLeft.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
+                cardL.classList.add('selected');
+                selectedLeft = { id: cleanW, el: cardL };
+            };
+            colLeft.appendChild(cardL);
+        });
+
+        shuffleArray(groupWords).forEach(w => {
+            const cleanW = getNormalizedWordKey(w);
+            const cardR = document.createElement('div');
+            cardR.className = 'mm-card topo-lower';
+            cardR.innerHTML = `<span class="topo-lower">${cleanW.toLowerCase()}</span><span class="chk-icon" style="color:var(--border);">${UI_SVGS.checkCircle}</span>`;
+            cardR.onclick = () => {
+                if (blockClicks || cardR.classList.contains('paired') || !selectedLeft) return;
+                if (selectedLeft.id === cleanW) {
+                    playSound(session.isProbeMode ? 'click' : 'win');
+                    if (!session.isProbeMode) speakTTS(cleanW);
+                    selectedLeft.el.classList.remove('selected');
+                    selectedLeft.el.classList.add('paired');
+                    cardR.classList.add('paired');
+                    cardR.querySelector('.chk-icon').style.color = 'var(--success)';
+                    selectedLeft = null;
+                    completedCount++;
+                    if (completedCount === groupWords.length) {
+                        handleAnswer(true, board);
+                    }
+                } else {
+                    session.attemptsOnCurrent++;
+                    playSound('click');
+                    if (!session.isProbeMode) {
+                        cardR.classList.add('feedback-error');
+                        setTimeout(() => cardR.classList.remove('feedback-error'), 380);
+                    }
+                    if (session.isProbeMode || session.attemptsOnCurrent >= 3) {
+                        handleAnswer(false, board);
+                    }
+                }
+            };
+            colRight.appendChild(cardR);
+        });
+
+        board.appendChild(colLeft);
+        board.appendChild(colRight);
+        compArea.appendChild(board);
+        abaDock.style.display = 'flex';
+        setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+        return;
+    }
+
+    // 5.6 UNIFICADO: COERÊNCIA E SEQUÊNCIA NARRATIVA (VAR 1 = INTRUSA | VAR 2 = SEQUÊNCIA 1º, 2º, 3º)
+    if (subType === 'NARRATIVE_COHERENCE') {
+        if (target && Array.isArray(target.steps)) {
+            renderSpecializedEidosTrial('CHRONO_SEQ', target, modelArea, compArea, badge, abaDock, fluencyPill);
+            return;
+        } else {
+            renderSpecializedEidosTrial('INTRUDER_WORD', target, modelArea, compArea, badge, abaDock, fluencyPill);
+            return;
+        }
+    }
 
     if (subType === 'PHON_MODELING') {
         const letter = target.letter || (session.eidosMod ? session.eidosMod.letter : 'A');
@@ -4599,9 +5184,10 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const sylStr = String(target || 'FA').trim().toUpperCase();
         const consChar = sylStr.charAt(0) || 'F';
         const vowChar = sylStr.slice(1) || 'A';
+        const modTitle = session.eidosMod ? session.eidosMod.title : 'Fusão Silábica';
 
         if (session.currentCycle === 1) {
-            badge.innerText = `2.6 Formação de Sílabas • Ciclo 1: Fusão (${sylStr})`;
+            badge.innerText = `${modTitle} • Ciclo 1: Fusão (${sylStr})`;
             modelArea.style.minHeight = '30px';
             modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Deslize a Consoante, a Vogal e por fim a Sílaba formada:</p>`;
 
@@ -4610,17 +5196,17 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     <div id="tri-track-1" class="drag-track" style="height:68px;">
                         <div id="tri-fill-1" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
                         <span style="position:absolute; right:18px; font-size:0.8rem; font-weight:800; color:var(--text-light); pointer-events:none;">1º SOM (${consChar})</span>
-                        <div id="tri-box-1" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem;">${formatStimulusTextHTML(consChar)}</div>
+                        <div id="tri-box-1" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem; background:#0F172A;">${consChar}</div>
                     </div>
                     <div id="tri-track-2" class="drag-track" style="height:68px; opacity:0.45; pointer-events:none;">
                         <div id="tri-fill-2" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
                         <span style="position:absolute; right:18px; font-size:0.8rem; font-weight:800; color:var(--text-light); pointer-events:none;">2º SOM (${vowChar})</span>
-                        <div id="tri-box-2" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem;">${formatStimulusTextHTML(vowChar)}</div>
+                        <div id="tri-box-2" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem; background:#EF4444;">${vowChar}</div>
                     </div>
                     <div id="tri-track-3" class="drag-track" style="height:82px; margin-top:10px; border-color:var(--primary); opacity:0.45; pointer-events:none;">
                         <div id="tri-fill-3" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--success-light); pointer-events:none;"></div>
                         <span style="position:absolute; right:18px; font-size:0.88rem; font-weight:900; color:var(--primary-dark); pointer-events:none;">SÍLABA (${sylStr})</span>
-                        <div id="tri-box-3" class="drag-box ${topoClass}" style="width:110px; height:64px; font-size:2.2rem; background:var(--primary-dark);">${formatStimulusTextHTML(sylStr)}</div>
+                        <div id="tri-box-3" class="drag-box ${topoClass}" style="width:110px; height:64px; font-size:2.2rem; background:var(--primary-dark);">${sylStr}</div>
                     </div>
                 </div>
             `;
@@ -4686,14 +5272,14 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
             return;
         } else if (session.currentCycle === 2) {
-            badge.innerText = `2.6 Formação de Sílabas • Ouça e Selecione`;
+            badge.innerText = `${modTitle} • Ouça e Selecione`;
             modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${sylStr}')">${UI_SVGS.volume}</button>`;
             speakTTS(sylStr);
             const opts = generateComparisons(sylStr);
             opts.forEach(opt => {
                 const btn = document.createElement('div');
                 btn.className = `comp-card ${topoClass}`;
-                btn.innerHTML = formatStimulusTextHTML(opt);
+                btn.innerHTML = formatStimulusTextHTML(opt, session.phase, true, false);
                 const isCorrect = (opt === sylStr);
                 btn.dataset.correct = isCorrect;
                 btn.onclick = () => handleAnswer(isCorrect, btn);
@@ -4702,72 +5288,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             applyDMTSWrapperIfEnabled(modelArea, compArea, false);
             return;
         } else {
-            badge.innerText = `2.6 Formação de Sílabas • Leitura Oral`;
-            modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.5rem;">${formatStimulusTextHTML(sylStr)}</div>`;
+            badge.innerText = `${modTitle} • Leitura Oral`;
+            modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.5rem;">${formatStimulusTextHTML(sylStr, session.phase, !session.isProbeMode, session.isProbeMode)}</div>`;
             compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Solicite a leitura da sílaba e registre abaixo.</p>`;
-            abaDock.style.display = 'flex';
-            setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
-            return;
-        }
-    }
-
-    if (subType === 'CONT_PHON' || subType === 'OCCL_PHON') {
-        const isCont = (subType === 'CONT_PHON');
-        const modLabel = isCont ? '2.3 Consoantes Contínuas' : '2.4 Consoantes Oclusivas';
-        const cleanTarget = String(target || 'F').trim().toUpperCase();
-        let optionsToRender = session.currentRenderedOptions;
-        if (!optionsToRender || !Array.isArray(optionsToRender) || optionsToRender.length === 0) {
-            optionsToRender = generateComparisons(cleanTarget);
-            session.currentRenderedOptions = [...optionsToRender];
-        }
-
-        if (session.currentCycle === 1) {
-            badge.innerText = `${modLabel} • Ciclo 1: Som → Boca`;
-            modelArea.innerHTML = `<button type="button" class="model-audio-btn" id="btn-cons-audio-c1" title="Ouvir Fonema">${UI_SVGS.volume}</button>`;
-            document.getElementById('btn-cons-audio-c1').onclick = () => playPhonemeAudioFile(cleanTarget, '1', false);
-            playPhonemeAudioFile(cleanTarget, '1', false);
-
-            optionsToRender.forEach(opt => {
-                const cleanOpt = String(opt).trim().toUpperCase();
-                const btn = document.createElement('div');
-                btn.className = 'comp-card';
-                btn.style.padding = '10px';
-                const mPath = getMouthImagePath(cleanOpt, '1');
-                btn.innerHTML = `
-                    <img src="${mPath}" alt="Boca ${cleanOpt}" style="width:110px; height:110px; object-fit:contain; border-radius:14px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div style="display:none; flex-direction:column; align-items:center; justify-content:center;">
-                        <span style="font-size:2.2rem; font-weight:900;">${cleanOpt}</span>
-                    </div>
-                `;
-                const isCorrect = (cleanOpt === cleanTarget);
-                btn.dataset.correct = isCorrect;
-                btn.onclick = () => handleAnswer(isCorrect, btn);
-                compArea.appendChild(btn);
-            });
-            applyDMTSWrapperIfEnabled(modelArea, compArea, false);
-            return;
-        } else if (session.currentCycle === 2) {
-            badge.innerText = `${modLabel} • Som → Letra`;
-            modelArea.innerHTML = `<button type="button" class="model-audio-btn" id="btn-cons-audio-c2" title="Ouvir Fonema">${UI_SVGS.volume}</button>`;
-            document.getElementById('btn-cons-audio-c2').onclick = () => playPhonemeAudioFile(cleanTarget, '1', false);
-            playPhonemeAudioFile(cleanTarget, '1', false);
-
-            optionsToRender.forEach(opt => {
-                const cleanOpt = String(opt).trim().toUpperCase();
-                const btn = document.createElement('div');
-                btn.className = `comp-card ${topoClass}`;
-                btn.innerHTML = formatStimulusTextHTML(cleanOpt);
-                const isCorrect = (cleanOpt === cleanTarget);
-                btn.dataset.correct = isCorrect;
-                btn.onclick = () => handleAnswer(isCorrect, btn);
-                compArea.appendChild(btn);
-            });
-            applyDMTSWrapperIfEnabled(modelArea, compArea, false);
-            return;
-        } else {
-            badge.innerText = `${modLabel} • Letra → Fala do Aluno`;
-            modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.6rem;">${formatStimulusTextHTML(cleanTarget)}</div>`;
-            compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Solicite a emissão oral do som da letra e registre abaixo.</p>`;
             abaDock.style.display = 'flex';
             setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
             return;
@@ -4827,15 +5350,15 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
     if (['WORD_IDENT_MM', 'CLASS_TOTAL_MM', 'FIG_WORD_MM', 'SEMANTIC_CAT_MM'].includes(subType)) {
         if (subType === 'WORD_IDENT_MM' && session.currentCycle === 1) {
-            badge.innerText = `1.3 Identidade de Palavras • Pareamento Simples`;
+            badge.innerText = `1.5 Identidade de Palavras • Pareamento Simples`;
             const wordsArr = Array.isArray(target) ? target : [String(target || 'BOLA')];
-            const singleWord = wordsArr[0];
+            const singleWord = getNormalizedWordKey(wordsArr[0]);
             const isHighlighted = !session.isProbeMode && state.reviewHighlights && state.reviewHighlights[singleWord];
             const highlightStyle = isHighlighted ? 'border-color: var(--warning); background-color: var(--warning-light);' : '';
 
             modelArea.style.minHeight = '135px';
             modelArea.innerHTML = `<div class="model-card ${topoClass}" style="${highlightStyle}">${formatStimulusTextHTML(singleWord)}</div>`;
-            const distractors = shuffleArray(session.pool.filter(w => w !== singleWord)).slice(0, numOpts - 1);
+            const distractors = shuffleArray(session.pool.map(w => getNormalizedWordKey(w)).filter(w => w !== singleWord)).slice(0, numOpts - 1);
             const opts = shuffleArray([singleWord, ...distractors]);
             opts.forEach(opt => {
                 const btn = document.createElement('div');
@@ -4852,9 +5375,12 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
         let pairs = [];
         if (subType === 'WORD_IDENT_MM') {
-            badge.innerText = `1.3 Identidade de Palavras • Colunas`;
+            badge.innerText = `1.5 Identidade de Palavras • Colunas 3x3`;
             const words = Array.isArray(target) ? target : ['BOLA', 'MALA', 'SAPO'];
-            pairs = words.map(w => ({ id: w, leftHTML: formatStimulusTextHTML(w), rightHTML: formatStimulusTextHTML(w), speak: w }));
+            pairs = words.map(w => {
+                const cw = getNormalizedWordKey(w);
+                return { id: cw, leftHTML: formatStimulusTextHTML(w), rightHTML: formatStimulusTextHTML(w), speak: cw };
+            });
         } else if (subType === 'CLASS_TOTAL_MM') {
             badge.innerText = `Estrutura Total`;
             const vPick = shuffleArray(vowels)[0];
@@ -4870,18 +5396,22 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         } else if (subType === 'FIG_WORD_MM') {
             badge.innerText = `Relação Figura-Palavra`;
             const words = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
-            pairs = words.map(w => ({
-                id: w,
-                leftHTML: getWordVisualRepresentationHTML(w, 2.8),
-                rightHTML: formatStimulusTextHTML(w),
-                speak: w
-            }));
+            pairs = words.map(w => {
+                const cw = getNormalizedWordKey(w);
+                return {
+                    id: cw,
+                    leftHTML: getWordVisualRepresentationHTML(cw, 2.8),
+                    rightHTML: formatStimulusTextHTML(w),
+                    speak: cw
+                };
+            });
         } else if (subType === 'SEMANTIC_CAT_MM') {
             badge.innerText = `Categorização Semântica`;
             const words = Array.isArray(target) ? target : ['GATO', 'BOLO', 'BOLA'];
             pairs = words.map((w, idx) => {
-                const wObj = WORD_BANK[w] || { cat: 'OBJETO' };
-                return { id: `${w}_${idx}`, matchCat: wObj.cat, leftHTML: formatStimulusTextHTML(w), rightHTML: wObj.cat, speak: w };
+                const cw = getNormalizedWordKey(w);
+                const wObj = WORD_BANK[cw] || { cat: 'OBJETO' };
+                return { id: `${cw}_${idx}`, matchCat: wObj.cat, leftHTML: formatStimulusTextHTML(w), rightHTML: wObj.cat, speak: cw };
             });
         }
 
@@ -4958,7 +5488,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'MIRROR_GRAPH') {
-        badge.innerText = `1.4 Orientação do Grafema`;
+        badge.innerText = `1.3 Orientação Espacial`;
         modelArea.innerHTML = `<div class="model-card" style="font-size:4.4rem;">${formatStimulusTextHTML(target)}</div>`;
         const transforms = [
             { label: target, style: '', correct: true },
@@ -4980,7 +5510,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
     if (subType === 'RHYME' || subType === 'ALLITERATION') {
         const isRhyme = subType === 'RHYME';
-        badge.innerText = isRhyme ? `2.1 Rimas` : `2.2 Aliteração`;
+        badge.innerText = isRhyme ? `Rimas` : `Aliteração`;
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target.target);
 
@@ -5003,12 +5533,14 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
+    // CONTAGEM SILÁBICA SEM REGEX (ESTRITAMENTE DICIONÁRIO OU HÍFEN)
     if (subType === 'SYL_COUNT') {
-        badge.innerText = `2.5 Segmentação Silábica`;
-        const wObj = WORD_BANK[target] || { count: Math.max(1, Math.ceil(target.length / 2)) };
+        badge.innerText = `Segmentação Silábica`;
+        const cleanWord = getNormalizedWordKey(target);
+        const expectedCount = getExplicitSyllableCount(target);
         let tapCount = 0;
-        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')">${UI_SVGS.volume}</button>`;
-        speakTTS(target);
+        modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${cleanWord}')">${UI_SVGS.volume}</button>`;
+        speakTTS(cleanWord);
         compArea.innerHTML = `
             <div style="display:flex; align-items:center; gap:18px;">
                 <button type="button" id="drum-tap-btn" class="btn-action" style="font-size:1.5rem; padding:22px 36px; border-radius:24px;">
@@ -5032,21 +5564,19 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             document.getElementById('drum-count-val').innerText = 0;
         };
         document.getElementById('drum-confirm-btn').onclick = (e) => {
-            handleAnswer(tapCount === wObj.count, e.currentTarget);
+            handleAnswer(tapCount === expectedCount, e.currentTarget);
         };
         setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
         return;
     }
 
+    // 3.1: CONSTRUÇÃO POR SÍLABAS SEM REGEX (ESTRITAMENTE DICIONÁRIO OU HÍFEN)
     if (subType === 'SYL_WORD_BUILD') {
-        const cleanWord = String(target || 'MALA').trim().toUpperCase();
-        const wObj = WORD_BANK[cleanWord];
-        const syllables = (wObj && Array.isArray(wObj.syllables))
-            ? wObj.syllables
-            : (cleanWord.match(/[^AEIOUÁÉÍÓÚÂÊÔÃÕ]*[AEIOUÁÉÍÓÚÂÊÔÃÕ]+[^AEIOUÁÉÍÓÚÂÊÔÃÕ]?/gi) || [cleanWord]);
+        const cleanWord = getNormalizedWordKey(target || 'MALA');
+        const syllables = extractExplicitSyllables(target || 'MALA');
 
         if (session.currentCycle === 2) {
-            badge.innerText = `3.1 Construção de Palavras • Sondagem de Leitura`;
+            badge.innerText = `3.1 Construção por Sílabas • Sondagem de Leitura`;
             modelArea.style.minHeight = '145px';
             modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.4rem;">${formatStimulusTextHTML(cleanWord, session.phase, false, true)}</div>`;
             compArea.innerHTML = `<p style="color:var(--text-light); font-weight:800; font-size:1.1rem;">Leitura sem apoio visual ou auditivo. Registre na barra abaixo.</p>`;
@@ -5055,7 +5585,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             return;
         }
 
-        badge.innerText = `3.1 Construção de Palavras • Montagem`;
+        badge.innerText = `3.1 Construção por Sílabas • Montagem`;
         const visualHTML = getWordVisualRepresentationHTML(cleanWord, 3.6);
         modelArea.style.minHeight = '140px';
         modelArea.innerHTML = `
@@ -5091,7 +5621,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             syllables.forEach((_, idx) => {
                 const s = document.createElement('div');
                 s.className = `crmts-slot ${topoClass} ${built[idx] ? 'filled' : ''}`;
-                s.innerHTML = built[idx] ? formatStimulusTextHTML(built[idx].syl) : '';
+                s.innerHTML = built[idx] ? formatStimulusTextHTML(built[idx].syl, session.phase, true, false) : '';
                 slotsDiv.appendChild(s);
             });
         }
@@ -5107,7 +5637,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             const t = document.createElement('button');
             t.type = 'button';
             t.className = `letter-tile ${topoClass}`;
-            t.innerHTML = formatStimulusTextHTML(syl);
+            t.innerHTML = formatStimulusTextHTML(syl, session.phase, true, false);
             t.dataset.rawSyl = syl;
             t.onclick = () => {
                 if (blockClicks || built.length >= syllables.length) return;
@@ -5160,14 +5690,14 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.2: CAPÍTULO 4 (CAMILA GOMES) — TREINO DIRETO (B->D, BC->C) vs. BATERIA DE SONDAGEM (B->C [GATE], C->B, C->D, A->C)
+    // 1.6 E SONDAGEM DO PALAVRÁRIO: CAPÍTULO 4 (CAMILA GOMES)
     if (subType === 'EQUIV_4STEPS_MM') {
-        const words = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
+        const rawWords = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
+        const words = rawWords.map(w => getNormalizedWordKey(w));
         abaDock.style.display = 'flex';
 
-        // CICLO 5 (SONDA C->D: LEITURA ORAL PURA ANTES DO ÁUDIO)
         if (session.currentCycle === 5) {
-            badge.innerText = `SONDA 3/4 • Comportamento Textual / Leitura Oral (C → D)`;
+            badge.innerText = `SONDA 3/4 • Leitura Oral Pura (C → D)`;
             modelArea.style.minHeight = '30px';
             modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.98rem;">Solicite a leitura oral das palavras abaixo (sem dicas) e registre na barra:</p>`;
             const row = document.createElement('div');
@@ -5184,7 +5714,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             return;
         }
 
-        // CICLO 6 (SONDA A->C: DITADO AUDITIVO -> PALAVRA IMPRESSA, SEMPRE APÓS C->D)
         if (session.currentCycle === 6) {
             badge.innerText = `SONDA 4/4 • Compreensão Auditiva (A → C)`;
             const targetW = words[0];
@@ -5205,11 +5734,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             return;
         }
 
-        // CICLOS MULTIMODELO 3x3:
-        // Ciclo 1 (Treino): B -> B + Nomeação Oral (B -> D)
-        // Ciclo 2 (Treino): BC -> C com atraso parcial (palavra do modelo começa coberta -> revela para olhar -> cobre ao parear)
-        // Ciclo 3 (Sonda Gatekeeper): B -> C (exige 100% para prosseguir às sondas 4, 5 e 6)
-        // Ciclo 4 (Sonda Simetria): C -> B (Palavra -> Figura)
         let pairs = [];
         if (session.currentCycle === 1) {
             badge.innerText = `TREINO 1/2 • Nomeação de Figuras (B → D)`;
@@ -5274,8 +5798,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                 colLeft.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
                 cardL.classList.add('selected');
 
-                // Detalhe técnico Cap. 4 (Ciclo 2 BC->C): revela a palavra do modelo composto para observação e volta a cobrir
-                if (session.currentCycle === 2) {
+                if (session.currentCycle === 2 || (session.isPalavrarioDrawer && !session.isProbeMode && session.currentCycle === 1)) {
                     const masked = cardL.querySelector('.bc-masked-word');
                     if (masked) {
                         masked.style.background = '#FEF3C7';
@@ -5304,7 +5827,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     playSound(session.isProbeMode ? 'click' : 'win');
                     selectedLeft.el.classList.remove('selected');
                     selectedLeft.el.classList.add('paired');
-                    // Revela em definitivo para conferência visual no fim do par BC->C
                     const masked = selectedLeft.el.querySelector('.bc-masked-word');
                     if (masked) {
                         masked.style.background = '#FFFFFF';
@@ -5315,7 +5837,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     selectedLeft = null;
                     completedCount++;
                     if (completedCount === pairs.length) {
-                        if (session.currentCycle === 1) {
+                        if (session.currentCycle === 1 && !session.isPalavrarioDrawer) {
                             modelArea.innerHTML = `<p style="font-weight:900; color:var(--success); font-size:1.15rem;">Figuras pareadas! Confirme a nomeação oral na barra abaixo.</p>`;
                         } else {
                             handleAnswer(true, board);
@@ -5324,8 +5846,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                 } else {
                     session.attemptsOnCurrent++;
                     playSound('click');
-                    if (session.currentCycle === 3) {
-                        // Falhou na Sonda Gatekeeper B->C -> marca falha imediata
+                    if (session.isProbeMode && session.currentCycle === 3) {
                         session.probeGateFailed = true;
                         handleAnswer(false, board);
                         return;
@@ -5353,16 +5874,17 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
     if (subType === 'COPY_CRMTS' || subType === 'DICT_CRMTS') {
         const isCopy = (subType === 'COPY_CRMTS');
-        badge.innerText = isCopy ? `3.3 Transcrição e Cópia` : `3.4 Escrita sob Ditado`;
+        const cleanWord = getNormalizedWordKey(target);
+        badge.innerText = isCopy ? `3.4 Transcrição e Cópia` : `3.5 Escrita sob Ditado`;
 
         if (isCopy) {
-            modelArea.innerHTML = `<div class="model-card ${topoClass}">${formatStimulusTextHTML(target)}</div>`;
+            modelArea.innerHTML = `<div class="model-card ${topoClass}">${formatStimulusTextHTML(cleanWord)}</div>`;
         } else {
-            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target}')">${UI_SVGS.volume}</button>`;
-            speakTTS(target);
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${cleanWord}')">${UI_SVGS.volume}</button>`;
+            speakTTS(cleanWord);
         }
 
-        const letters = target.split('');
+        const letters = cleanWord.split('');
         const extraDistractors = shuffleArray(['M','P','B','T','L','S','R','A','E','O'].filter(l => !letters.includes(l))).slice(0, 3);
         const tilePool = shuffleArray([...letters, ...extraDistractors]);
         let built = [];
@@ -5451,7 +5973,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'WORD_SPACE') {
-        badge.innerText = `3.5 Espaço na Frase`;
+        badge.innerText = `5.2 Segmentação Lexical`;
         const totalGaps = target.length - 1;
         let cutGaps = 0;
 
@@ -5487,7 +6009,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'MIN_PAIRS') {
-        badge.innerText = `4.1 Pares Mínimos (${target.contrast})`;
+        badge.innerText = `Pares Mínimos (${target.contrast})`;
         modelArea.innerHTML = `<button type="button" class="model-audio-btn" onclick="speakTTS('${target.target}')">${UI_SVGS.volume}</button>`;
         speakTTS(target.target);
 
@@ -5512,7 +6034,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'SPRINT_3S') {
-        badge.innerText = `4.7 Fluência de Palavras`;
+        badge.innerText = `5.1 Fluência de Palavras (< 3s)`;
         fluencyPill.style.display = 'inline-flex';
         modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:4.6rem;">${formatStimulusTextHTML(target)}</div>`;
         abaDock.style.display = 'flex';
@@ -5534,7 +6056,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'SYNTACTIC_GROUP') {
-        badge.innerText = `5.1 Agrupamento Sintático`;
+        badge.innerText = `5.3 Agrupamento Sintático`;
         modelArea.innerHTML = `<div class="model-card sentence-mode ${topoClass}">${formatStimulusTextHTML(target)}</div>`;
         abaDock.style.display = 'flex';
         setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
@@ -5542,7 +6064,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'SENTENCE_BUILD') {
-        badge.innerText = `5.2 Composição Sintática`;
+        badge.innerText = `5.4 Composição de Frases`;
         const spokenPhrase = target.shortSpoken || target.wordsArray.join(' ');
 
         modelArea.innerHTML = `
@@ -5674,7 +6196,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'SYNTACTIC_WH') {
-        badge.innerText = `5.3 Compreensão WH`;
+        badge.innerText = `5.5 Compreensão de Frases (WH)`;
         modelArea.innerHTML = `
             <div class="model-card sentence-mode ${topoClass}" style="margin-bottom:8px;">
                 <div>${formatStimulusTextHTML(target.sentence)}</div>
@@ -5697,7 +6219,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'INTRUDER_WORD') {
-        badge.innerText = `5.4 Autocorreção Semântica`;
+        badge.innerText = `5.6 Coerência Semântica`;
         const box = document.createElement('div');
         box.className = `space-sentence-box ${topoClass}`;
         box.style.fontSize = '1.85rem';
@@ -5758,7 +6280,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 
     if (subType === 'CHRONO_SEQ') {
-        badge.innerText = `5.5 Sequência Lógica`;
+        badge.innerText = `5.6 Sequência Narrativa`;
         const cleanSteps = target.steps.map(s => s.replace(/^\dº:\s*/, ''));
         const shuffled = shuffleArray(cleanSteps.map((text, origIdx) => ({ text, origIdx })));
         let pickedOrder = [];
@@ -5809,8 +6331,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
    ============================================================================ */
 function generateComparisons(target) {
     const desiredCount = getEffectiveOptsForCurrentSession();
+    const cleanTarget = getNormalizedWordKey(target);
     let opts = [target];
-    let available = session.pool.filter(x => x !== target);
+    let available = session.pool.filter(x => getNormalizedWordKey(x) !== cleanTarget);
     available = shuffleArray(available);
     while (opts.length < desiredCount) {
         if (available.length > 0) opts.push(available.pop());
@@ -5864,13 +6387,12 @@ function handleAnswer(isCorrect, element) {
     const cat = getCurrentStatCat();
     const isProbeNow = session.isProbeMode || (session.isStructuredSyllabary && session.currentCycle === 4);
 
-    // MODO SONDAGEM (CAP. 4): EXTINÇÃO / REGISTRO NEUTRO SEM REF. DIFERENCIAL E SEM DICA ERRORLESS
     if (isProbeNow) {
         blockClicks = true;
         if (compArea) compArea.classList.add('locked-pointer');
         saveUndoSnapshot();
         session.latencies.push(elapsedSec);
-        playSound('click'); // Som neutro em sonda
+        playSound('click');
 
         if (!session.isRepeating && session.stats[cat]) {
             if (isCorrect) {
@@ -6070,19 +6592,20 @@ function processSpeech(transcript) {
     if (btn) btn.classList.remove('listening');
     const feedback = document.getElementById('mic-feedback');
     const rawTarget = session.trials[session.currentTrialIdx];
+    const cleanTarget = getNormalizedWordKey(rawTarget);
 
     if (!transcript || transcript.trim() === "") {
         if (feedback) {
             feedback.innerText = "Som não detectado. Tente de novo.";
             setTimeout(() => {
-                if (feedback) feedback.innerText = `Segure o microfone e fale: '${rawTarget}'`;
+                if (feedback) feedback.innerText = `Segure o microfone e fale: '${cleanTarget}'`;
             }, 2000);
         }
         return;
     }
 
     let currentSpeech = removeAccents(transcript);
-    let expectedTarget = session.isPreReq ? getCategory(rawTarget) : getNormalizedWordKey(rawTarget);
+    let expectedTarget = session.isPreReq ? getCategory(cleanTarget) : cleanTarget;
     let targetClean = removeAccents(expectedTarget);
     let acceptedTerms = [targetClean];
 
@@ -6108,7 +6631,7 @@ function processSpeech(transcript) {
                 feedback.innerText = `Você disse: "${transcript}". Tente novamente!`;
                 setTimeout(() => {
                     if (feedback && feedback.innerText.includes("Tente novamente")) {
-                        feedback.innerText = `Segure o microfone e fale: '${rawTarget}'`;
+                        feedback.innerText = `Segure o microfone e fale: '${cleanTarget}'`;
                     }
                 }, 2000);
             }
@@ -6121,14 +6644,10 @@ window.receberTextoDoKodular = function(transcript) { processSpeech(transcript);
    16. FECHAMENTO DE CICLO, GATEKEEPER B->C CAP. 4 E TRANSIÇÃO AUTOMÁTICA
    ============================================================================ */
 function finishCycle() {
-    // REGRA DO CAPÍTULO 4 (CAMILA GOMES):
-    // Na Sondagem de Equivalência (3.2), o Ciclo 3 (B -> C) é o Gatekeeper.
-    // Se o aluno não cravar 100% em B -> C, aborta imediatamente as demais sondas (C-B, C-D, A-C) e retorna ao Treino.
     if (session.isProbeMode && session.eidosMod && session.eidosMod.subType === 'EQUIV_4STEPS_MM' && session.currentCycle === 3) {
         const c3Stats = session.stats.c3 || { indep: 0, total: 0, erro: 0, dica: 0 };
         if (session.probeGateFailed || c3Stats.erro > 0 || c3Stats.dica > 0 || c3Stats.indep < c3Stats.total) {
             session.probeGateFailed = true;
-            // Zera o total dos ciclos de sonda abortados (c4, c5, c6) para calcular precisão real sobre o que foi aplicado
             session.stats.c4.total = 0;
             session.stats.c5.total = 0;
             session.stats.c6.total = 0;
@@ -6143,13 +6662,19 @@ function finishCycle() {
         checkBlockMastery();
     } else {
         session.currentCycle = session.activeCycles[session.currentCycleIdx];
-        // No Silabário Cumulativo (Cap. 5), alterna o vetor de trials conforme o passo atual
         if (session.isStructuredSyllabary && session.sylData) {
             if (session.currentCycle === 1) {
                 session.trials = [...session.sylData.syllables];
             } else if (session.currentCycle === 2 || session.currentCycle === 4) {
                 session.trials = shuffleArray([...session.sylData.words]);
             } else if (session.currentCycle === 3) {
+                const w = shuffleArray([...session.sylData.words]);
+                session.trials = [w.slice(0, 3), w.slice(3, 6)].filter(g => g.length > 0);
+            }
+        } else if (session.isPalavrarioDrawer && !session.isProbeMode && session.sylData) {
+            if (session.currentCycle === 2) {
+                session.trials = shuffleArray([...session.sylData.words]);
+            } else {
                 const w = shuffleArray([...session.sylData.words]);
                 session.trials = [w.slice(0, 3), w.slice(3, 6)].filter(g => g.length > 0);
             }
@@ -6294,6 +6819,8 @@ function repeatLesson() {
         startPhonologicalModelingModule(session.phase);
     } else if (String(session.phase).startsWith('CUST_')) {
         startCustomStudioModule(session.phase);
+    } else if (String(session.phase).startsWith('PAL_')) {
+        startPalavrarioDrawer(session.phase);
     } else if (session.eidosMod) {
         startEidosModule(session.phase);
     } else {
@@ -6715,16 +7242,18 @@ function openReview(phaseId) {
     }
     const mod = EIDOS_MODULES.find(m => m.id === phaseId)
         || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId)
+        || getEffectivePalavrarioDrawers().find(d => d.id === phaseId)
         || (state.customModules || []).find(m => m.id === phaseId);
     document.getElementById('review-title').innerText = mod ? `Revisão: ${mod.title}` : `Revisão: ${phaseId}`;
     const grid = document.getElementById('review-grid');
     grid.innerHTML = '';
 
     pool.forEach(item => {
-        const labelText = typeof item === 'object' ? (item.sentence || item.text || JSON.stringify(item)) : String(item);
-        const isMarked = state.reviewHighlights && state.reviewHighlights[labelText];
+        const rawLabel = typeof item === 'object' ? (item.sentence || item.text || JSON.stringify(item)) : String(item);
+        const cleanKey = getNormalizedWordKey(rawLabel);
+        const isMarked = state.reviewHighlights && state.reviewHighlights[cleanKey];
         const chip = document.createElement('div');
-        chip.innerHTML = formatStimulusTextHTML(labelText, phaseId);
+        chip.innerHTML = formatStimulusTextHTML(rawLabel, phaseId);
         chip.style.padding = "12px 20px";
         chip.style.borderRadius = "14px";
         chip.style.fontSize = "1.15rem";
@@ -6734,8 +7263,8 @@ function openReview(phaseId) {
         chip.style.background = isMarked ? "var(--warning-light)" : "#fff";
         chip.onclick = () => {
             playSound('click');
-            if (state.reviewHighlights[labelText]) delete state.reviewHighlights[labelText];
-            else state.reviewHighlights[labelText] = true;
+            if (state.reviewHighlights[cleanKey]) delete state.reviewHighlights[cleanKey];
+            else state.reviewHighlights[cleanKey] = true;
             saveState();
             openReview(phaseId);
         };
@@ -6749,6 +7278,7 @@ function openModulesManager() {
     container.innerHTML = '';
     const allItems = [
         ...EIDOS_MODULES.map(m => ({ id: m.id, label: `${m.code} - ${m.title}` })),
+        ...getEffectivePalavrarioDrawers().map(d => ({ id: d.id, label: `Palavrário: ${d.title}` })),
         ...(state.customModules || []).map(cm => ({ id: cm.id, label: `Personalizado: ${cm.title}` })),
         ...PHONOLOGICAL_ALPHABET_MODULES.map(pm => ({ id: pm.id, label: `Fonológico: ${pm.title}` })),
         ...getEffectiveSyllabaryOrder().map(c => ({ id: c, label: `Silabário: ${c}` })),
@@ -6816,6 +7346,7 @@ function startCustomWords() {
     if (!ensureSessionTimerStarted()) return;
 
     let pool = val.split(',').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
+    pool.forEach(w => extractExplicitSyllables(w));
     pool = [...new Set(pool)];
     const targets = shuffleArray(pool);
     const activeCycles = filterCyclesByTaskConfig('PALAVRAS', [1, 2, 3], false);
@@ -6828,6 +7359,7 @@ function startCustomWords() {
         isProbeMode: isModuleInProbeMode('PALAVRAS'),
         probeGateFailed: false,
         isStructuredSyllabary: false,
+        isPalavrarioDrawer: false,
         sylData: null,
         pool,
         trials: targets,
@@ -6891,13 +7423,25 @@ function resetApp() {
 }
 
 /* ============================================================================
-   19. ESTÚDIO DE MATERIAIS CONCRETOS (CASCATA + TRANSPILADOR SD->R + LIVE PREVIEW A4)
+   19. ESTÚDIO DE MATERIAIS CONCRETOS (COM SUPORTE AO PALAVRÁRIO E ZERO REGEX)
    ============================================================================ */
 let printStudioExcludedCards = new Set();
 
 function initPrintStudioCascades() {
     const catSel = document.getElementById('pk-cat-select');
     if (!catSel) return;
+    // Garante que a opção PALAVRARIO exista no select de categorias
+    if (!Array.from(catSel.options).some(o => o.value === 'PALAVRARIO')) {
+        const palOpt = document.createElement('option');
+        palOpt.value = 'PALAVRARIO';
+        palOpt.innerText = 'Palavrário';
+        const sylOpt = Array.from(catSel.options).find(o => o.value === 'SILABARIO');
+        if (sylOpt && sylOpt.nextSibling) {
+            catSel.insertBefore(palOpt, sylOpt.nextSibling);
+        } else {
+            catSel.appendChild(palOpt);
+        }
+    }
     if (!catSel.value) catSel.value = 'N1';
     onPrintStudioCategoryChange();
 }
@@ -6920,6 +7464,11 @@ function onPrintStudioCategoryChange() {
         options = getEffectiveSyllabaryOrder().map(s => ({
             id: s,
             label: ['VOGAIS', 'ENCONTROS'].includes(s) ? s : `Família ${s} (${getSyllableSetLabel(s).split('•')[0].trim()})`
+        }));
+    } else if (cat === 'PALAVRARIO') {
+        options = getEffectivePalavrarioDrawers().map(d => ({
+            id: d.id,
+            label: `${d.code} — ${d.title}`
         }));
     } else if (cat === 'EXTRAS') {
         options = [
@@ -6987,7 +7536,6 @@ function onPrintStudioModuleChange() {
     renderLivePrintStudioPreview();
 }
 
-/* TRANSPILADOR ALGORÍTMICO DE CICLOS EM FÓRMULAS (SD -> R) */
 function mapStudioChannelToCode(ch) {
     if (ch === 'AUDIO') return 'A';
     if (ch === 'IMAGE') return 'B';
@@ -7021,6 +7569,7 @@ function parseStudioCycleToFormula(cyc) {
 
 function extractModuleFormulasForStudent(modId) {
     const customMod = (state.customModules || []).find(m => m.id === modId);
+    const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
     const isSyl = getEffectiveSyllabaryOrder().includes(modId);
     const stg = getEffectiveStagesForModule(modId, isSyl);
 
@@ -7039,10 +7588,18 @@ function extractModuleFormulasForStudent(modId) {
             });
     }
 
-    // Silabário Cumulativo Cap. 5 (Famílias Consonantais em 4 Passos)
+    if (palDrawer) {
+        return [
+            { idx: 1, formula: 'Treino: BC → C', sdCode: 'BC', rCode: 'C', customCommand: 'Ensino direto: nomear a figura (B → D), revelar a palavra do modelo composto para observação e parear com a palavra igual (BC → C).' },
+            { idx: 2, formula: 'Treino: AB → E', sdCode: 'AB', rCode: 'E', customCommand: 'Construção silábica: apresentar a figura, ditar a palavra e entregar as sílabas móveis para montagem e leitura.' },
+            { idx: 3, formula: 'Desmame: C(Cor)→C', sdCode: 'C', rCode: 'C', customCommand: 'Generalização tipográfica: parear a palavra estruturada colorida com a palavra em texto preto puro.' },
+            { idx: 4, formula: 'Sonda: B→C | C→D', sdCode: 'B', rCode: 'C', customCommand: 'Sondagem sem ajuda: testar B → C (exige 100%), Simetria (C → B), Leitura Oral (C → D, antes do áudio) e Ditado (A → C).' }
+        ];
+    }
+
     if (isSyl && !['VOGAIS', 'ENCONTROS'].includes(modId)) {
         const listSyl = [];
-        if (stg.c1 !== false) listSyl.push({ idx: 1, formula: 'C → C (Sílabas)', sdCode: 'C', rCode: 'C', customCommand: 'Apresentar as 5 sílabas com apoio visual intrassilábico para leitura e pareamento.' });
+        if (stg.c1 !== false) listSyl.push({ idx: 1, formula: 'C → C (Sílabas)', sdCode: 'C', rCode: 'C', customCommand: 'Apresentar as sílabas com apoio visual intrassilábico para leitura e pareamento.' });
         if (stg.c2 !== false) listSyl.push({ idx: 2, formula: 'C → D (Palavras)', sdCode: 'C', rCode: 'D', customCommand: 'Apresentar as palavras cumulativas estruturadas e fornecer modelo fluente após leitura silabada.' });
         if (stg.c3 !== false) listSyl.push({ idx: 3, formula: 'C(Cor) → C(Preto)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor as palavras estruturadas coloridas de um lado e parear com as palavras em texto preto puro.' });
         if (stg.c4 !== false) listSyl.push({ idx: 4, formula: 'C → B / C → D', sdCode: 'C', rCode: 'B', customCommand: 'Sondagem sem dica visual: leitura da palavra em preto puro e pareamento com a figura correspondente.' });
@@ -7060,10 +7617,17 @@ function extractModuleFormulasForStudent(modId) {
         case 'SYNTACTIC_GROUP':
             list.push({ idx: 1, formula: 'C → D', sdCode: 'C', rCode: 'D' });
             break;
+        case 'FADEOUT_COLOR_MM':
+            list.push({ idx: 1, formula: 'C(Cor) → C(Preto)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor 3 palavras estruturadas (consoante preta, vogal vermelha e moldura azul) e solicitar o pareamento com as palavras em texto preto puro.' });
+            break;
+        case 'CASE_GEN_MM':
+            list.push({ idx: 1, formula: 'C(MAIÚSC) → C(minúsc)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor 3 palavras em letra de imprensa MAIÚSCULA e solicitar o pareamento com suas correspondentes em imprensa minúscula.' });
+            break;
         case 'COPY_CRMTS':
         case 'WORD_SPACE':
         case 'INTRUDER_WORD':
         case 'CHRONO_SEQ':
+        case 'NARRATIVE_COHERENCE':
             list.push({ idx: 1, formula: 'C → E', sdCode: 'C', rCode: 'E' });
             break;
         case 'DICT_CRMTS':
@@ -7091,12 +7655,6 @@ function extractModuleFormulasForStudent(modId) {
             break;
         case 'SYL_BUILD_SLIDER':
             if (stg.c1 !== false) list.push({ idx: 1, formula: 'C → E', sdCode: 'C', rCode: 'E' });
-            if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
-            if (stg.c3 !== false) list.push({ idx: 3, formula: 'C → D', sdCode: 'C', rCode: 'D' });
-            break;
-        case 'CONT_PHON':
-        case 'OCCL_PHON':
-            if (stg.c1 !== false) list.push({ idx: 1, formula: 'A → B', sdCode: 'A', rCode: 'B' });
             if (stg.c2 !== false) list.push({ idx: 2, formula: 'A → C', sdCode: 'A', rCode: 'C' });
             if (stg.c3 !== false) list.push({ idx: 3, formula: 'C → D', sdCode: 'C', rCode: 'D' });
             break;
@@ -7191,10 +7749,13 @@ function renderLivePrintStudioPreview() {
     if (document.getElementById('pk-tip-full')?.checked) selectedTips.push('Dica Física Total');
 
     const customMod = (state.customModules || []).find(m => m.id === modId);
+    const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
     const eMod = EIDOS_MODULES.find(m => m.id === modId);
     const isSylFamily = getEffectiveSyllabaryOrder().includes(modId) && !['VOGAIS', 'ENCONTROS'].includes(modId);
-    const modCode = eMod ? eMod.code : (customMod ? 'PERS' : 'SIL');
-    const modTitle = eMod ? eMod.title : (customMod ? customMod.title : `Família ${modId}`);
+    const isPalDrawer = !!palDrawer;
+
+    const modCode = eMod ? eMod.code : (palDrawer ? palDrawer.code : (customMod ? 'PERS' : 'SIL'));
+    const modTitle = eMod ? eMod.title : (palDrawer ? palDrawer.title : (customMod ? customMod.title : `Família ${modId}`));
 
     const tCfg = getTaskConfig(modId);
     const numOpts = getEffectiveSyllabaryOrder().includes(modId)
@@ -7443,26 +8004,27 @@ function renderLivePrintStudioPreview() {
         printRoot.appendChild(page3);
     }
 
-    // ================= PÁGINAS 4+: CARTÕES DE ESTÍMULOS E FICHAS MÓVEIS =================
+    // ================= PÁGINAS 4+: CARTÕES DE ESTÍMULOS E FICHAS MÓVEIS (ZERO REGEX) =================
     if (showCards) {
         const allCards = [];
         const uniqueStimuli = [...new Set(cleanPool)];
-        const needsImageCards = isSylFamily || formulas.some(f => f.sdCode.includes('B') || f.rCode.includes('B'));
-        const needsFragments = formulas.some(f => f.rCode === 'E');
+        const needsImageCards = isSylFamily || isPalDrawer || formulas.some(f => f.sdCode.includes('B') || f.rCode.includes('B'));
+        const needsFragments = isPalDrawer || formulas.some(f => f.rCode === 'E');
+        const isCaseGen = (eMod && eMod.subType === 'CASE_GEN_MM');
+        const isFadeoutColor = (eMod && eMod.subType === 'FADEOUT_COLOR_MM');
 
         uniqueStimuli.forEach((stim, sIdx) => {
             const cleanW = getNormalizedWordKey(stim);
             const isLongSentence = cleanW.length > 18 || cleanW.includes(' ');
 
-            // No Silabário Cumulativo (Cap. 5), gera tanto o cartão com pista intrassilábica quanto o cartão em preto puro para as palavras
-            if (isSylFamily && cleanW.length >= 3) {
+            if ((isSylFamily || isPalDrawer || isFadeoutColor) && cleanW.length >= 3 && !isLongSentence) {
                 const structKey = `struct_${sIdx}_${cleanW}`;
                 if (!printStudioExcludedCards.has(structKey)) {
                     allCards.push({
                         key: structKey,
                         sizeClass: '',
                         label: `${cleanW} [Estruturada]`,
-                        html: `<span contenteditable="true">${formatStimulusTextHTML(cleanW, modId, true, false)}</span>`
+                        html: `<span contenteditable="true">${formatStimulusTextHTML(stim, modId, true, false)}</span>`
                     });
                 }
                 const plainKey = `plain_${sIdx}_${cleanW}`;
@@ -7474,6 +8036,25 @@ function renderLivePrintStudioPreview() {
                         html: `<span contenteditable="true">${formatStimulusTextHTML(cleanW, modId, false, true)}</span>`
                     });
                 }
+            } else if (isCaseGen) {
+                const upKey = `up_${sIdx}_${cleanW}`;
+                if (!printStudioExcludedCards.has(upKey)) {
+                    allCards.push({
+                        key: upKey,
+                        sizeClass: '',
+                        label: `${cleanW} [MAIÚSC]`,
+                        html: `<span contenteditable="true">${cleanW.toUpperCase()}</span>`
+                    });
+                }
+                const lowKey = `low_${sIdx}_${cleanW}`;
+                if (!printStudioExcludedCards.has(lowKey)) {
+                    allCards.push({
+                        key: lowKey,
+                        sizeClass: '',
+                        label: `${cleanW.toLowerCase()} [minúsc]`,
+                        html: `<span contenteditable="true" class="topo-lower">${cleanW.toLowerCase()}</span>`
+                    });
+                }
             } else {
                 const textKey = `txt_${sIdx}_${cleanW}`;
                 if (!printStudioExcludedCards.has(textKey)) {
@@ -7481,7 +8062,7 @@ function renderLivePrintStudioPreview() {
                         key: textKey,
                         sizeClass: isLongSentence ? 'wide-sentence-card' : '',
                         label: cleanW,
-                        html: `<span contenteditable="true">${formatStimulusTextHTML(cleanW, modId, isSylFamily, false)}</span>`
+                        html: `<span contenteditable="true">${formatStimulusTextHTML(stim, modId, isSylFamily, false)}</span>`
                     });
                 }
             }
@@ -7498,15 +8079,12 @@ function renderLivePrintStudioPreview() {
                 }
             }
 
-            if (needsFragments) {
-                let frags = [];
-                if (/[-\/;]/.test(stim)) {
-                    frags = stim.split(/[-\/;]+/).map(x => x.trim()).filter(Boolean);
-                } else if (WORD_BANK[cleanW] && Array.isArray(WORD_BANK[cleanW].syllables)) {
-                    frags = [...WORD_BANK[cleanW].syllables];
-                } else if (!isLongSentence && cleanW.length <= 8) {
-                    frags = cleanW.split('');
-                }
+            if (needsFragments && !isLongSentence) {
+                const explicitSyls = extractExplicitSyllables(stim);
+                const frags = explicitSyls.length > 1
+                    ? explicitSyls
+                    : (cleanW.length <= 8 ? cleanW.split('') : []);
+
                 frags.forEach((fg, fIdx) => {
                     const fgKey = `frag_${sIdx}_${fIdx}_${fg}`;
                     if (!printStudioExcludedCards.has(fgKey)) {
