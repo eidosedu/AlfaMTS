@@ -447,7 +447,7 @@
         <!-- PAINEL 4: ESTÚDIO DE MATERIAIS CONCRETOS (SPLIT-SCREEN + LIVE PREVIEW A4) -->
         <div id="comp-section-printkit" style="display:none;">
             <div class="print-studio-workspace">
-                <!-- BARRA LATERAL ESQUERDA: FILTROS EM CASCATA E PARÂMETROS -->
+                <!-- BARRA LATERAL ESQUERDA: FILTROS EM CASCATA, PARÂMETROS E ESQUEMA DE REFORÇAMENTO DETALHADO -->
                 <div class="print-studio-sidebar">
                     <div class="print-sidebar-section">
                         <div class="print-sidebar-title">1. Seleção de Tarefa</div>
@@ -496,7 +496,7 @@
                     </div>
 
                     <div class="print-sidebar-section">
-                        <div class="print-sidebar-title">3. Parâmetros da Sessão</div>
+                        <div class="print-sidebar-title">3. Parâmetros e Esquema de Reforçamento</div>
                         <div class="input-group" style="margin-bottom:8px;">
                             <label style="font-size:0.8rem;">Comando Verbal:</label>
                             <input type="text" id="pk-custom-sd" placeholder="Automático pela fórmula" oninput="renderLivePrintStudioPreview()" style="padding:9px 11px; font-size:0.86rem;">
@@ -507,10 +507,28 @@
                                 <input type="number" id="pk-wait-sec" min="1" max="60" value="5" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.86rem;">
                             </div>
                             <div class="input-group" style="margin-bottom:0;">
-                                <label style="font-size:0.78rem;">Reforçamento:</label>
+                                <label style="font-size:0.78rem;">Esquema Base:</label>
                                 <select id="pk-reinf-mode" class="compact-select" style="width:100%; padding:8px;" onchange="renderLivePrintStudioPreview()">
                                     <option value="TOKEN">Fichas</option>
                                     <option value="CRF">Contínuo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px; border-top:1px dashed var(--border); padding-top:8px;">
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label style="font-size:0.78rem;">Reforço Contínuo (Social / Imediato):</label>
+                                <input type="text" id="pk-reinf-social-input" value="Elogio social descritivo ('Muito bem!')" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.82rem;">
+                            </div>
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label style="font-size:0.78rem;">Intermitente (Frequência e Duração):</label>
+                                <input type="text" id="pk-reinf-interm-input" value="VR-3 (1 ficha a cada 3 acertos) | 45s de jogo" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.82rem;">
+                            </div>
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label style="font-size:0.78rem;">Momento de Entrega:</label>
+                                <select id="pk-reinf-moment-select" class="compact-select" style="width:100%; padding:8px; font-size:0.82rem;" onchange="renderLivePrintStudioPreview()">
+                                    <option value="ITEM">A cada item / tentativa correta</option>
+                                    <option value="CYCLE" selected>Ao final de cada ciclo concluído</option>
+                                    <option value="TASK">Ao concluir a tarefa completa</option>
                                 </select>
                             </div>
                         </div>
@@ -567,7 +585,7 @@
     
     <div class="settings-single-col">
         <div class="settings-card">
-            <div class="settings-card-title">Parâmetros Gerais e Aparência</div>
+            <div class="settings-card-title">Parâmetros Gerais, Ritmo Clínico e Aparência</div>
             <div class="input-group">
                 <label>Nome do Aluno Ativo:</label>
                 <input type="text" id="set-name" value="">
@@ -609,11 +627,23 @@
                         <option value="2">Fixar na Variação 2</option>
                     </select>
                 </div>
+                <div>
+                    <label>Preset Clínico de Ritmo:</label>
+                    <select id="set-clinical-preset" onchange="applyClinicalPresetToSettingsUI(this.value)">
+                        <option value="REGULAR" selected>Regular / Escolar (Cap. 5)</option>
+                        <option value="INTENSIVO">Intensivo / TEA Inicial</option>
+                        <option value="AVANCADO">Avançado / Alta Velocidade</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Limite de Avanços Novos/Dia:</label>
+                    <input type="number" id="set-daily-cap" min="1" max="15" value="3">
+                </div>
             </div>
 
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: #F8FAFC; padding: 14px; border-radius: 14px; border: 1px solid var(--border);">
                 <input type="checkbox" id="set-strict-day" checked style="width:22px; height:22px;">
-                <label style="margin:0;">Avançar dia e rodar variação de estímulos apenas na data seguinte</label>
+                <label style="margin:0;">Avançar retenção multi-dias e rodar variação na data seguinte</label>
             </div>
             <div class="input-group" style="display: flex; align-items: center; gap: 12px; background: var(--warning-light); padding: 14px; border-radius: 14px;">
                 <input type="checkbox" id="set-errorless" checked style="width:22px; height:22px;">
