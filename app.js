@@ -1,6 +1,6 @@
 /* ============================================================================
-   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 2: SEÇÕES 5.0 A 11)
-   DICIONÁRIO SILÁBICO ESTRITO (ZERO REGEX) • TRILHA N1-N5 • SILABÁRIO • PALAVRÁRIO
+   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 3: SEÇÕES 5.0 A 9)
+   ARQUITETURA LIMPA E UNIFICADA • ZERO DUPLICAÇÕES • ZERO REGEX
    ============================================================================ */
 
 /* ============================================================================
@@ -23,30 +23,34 @@ const UI_SVGS = {
     grid: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
     replay: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`,
     coin: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>`,
-    imageMini: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
+    imageMini: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+    zap: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`
 };
 
-/* CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO (CONVENÇÃO SOBRE CONFIGURAÇÃO) */
+/* CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO */
 const DEFAULT_REPO_WORDS_CATALOG = [
     'abacaxi', 'abelha', 'aquario', 'arvore', 'aviao', 'azeite', 'banana', 'barco',
-    'batata', 'bebe', 'blusa', 'boca', 'bola', 'bolo', 'boneca', 'bota', 'bruxa',
-    'bule', 'buzina', 'cabide', 'cachorro', 'caixa', 'caju', 'cama', 'caneca', 'caqui',
-    'carro', 'casa', 'cavalo', 'chave', 'chuva', 'cobra', 'cola', 'copo', 'dado',
-    'dedo', 'dente', 'dia', 'doce', 'escova', 'espada', 'estrela', 'faca', 'fala',
-    'familia', 'figo', 'fita', 'flor', 'flauta', 'foca', 'fofo', 'fogo', 'folha',
-    'formiga', 'galinha', 'galo', 'garfo', 'gato', 'gelo', 'girafa', 'gota', 'guitarra',
-    'ilha', 'jacare', 'janela', 'jiboia', 'jogo', 'laco', 'lago', 'lama', 'lata',
-    'leao', 'leite', 'leque', 'limao', 'livro', 'lixo', 'lobo', 'lote', 'lua',
-    'luta', 'luva', 'maca', 'macaco', 'mala', 'mao', 'martelo', 'mato', 'meia',
-    'melao', 'menina', 'menino', 'mesa', 'milho', 'mola', 'moto', 'muleta', 'navio',
-    'ninho', 'nuvem', 'olho', 'osso', 'ovelha', 'ovo', 'panela', 'pao', 'passaro',
-    'pasta', 'pato', 'paz', 'pe', 'peixe', 'pente', 'peteca', 'pipa', 'pirulito',
-    'planta', 'ponte', 'porta', 'pote', 'prato', 'quatro', 'queijo', 'quiabo', 'rato',
-    'rede', 'rei', 'relogio', 'roda', 'rosa', 'roupa', 'rua', 'salada', 'sapato',
-    'sapo', 'sino', 'sofa', 'sol', 'suco', 'tambor', 'tapete', 'tatu', 'taxi',
-    'teia', 'tela', 'teto', 'tia', 'tigre', 'tijolo', 'tio', 'tomate', 'trator',
-    'trem', 'tucano', 'tudo', 'urso', 'uva', 'vaca', 'vassoura', 'vela', 'violao',
-    'xale', 'xicara', 'zebra', 'zero'
+    'batata', 'bebe', 'bico', 'blusa', 'boca', 'bola', 'bolo', 'boneca', 'bota',
+    'bote', 'bruxa', 'bule', 'buzina', 'cabide', 'cachorro', 'caixa', 'caju', 'cama',
+    'caneca', 'caqui', 'carro', 'carta', 'casa', 'cavalo', 'cebola', 'cenoura', 'chave',
+    'chuva', 'cinto', 'cobra', 'cola', 'copo', 'coruja', 'dado', 'dedo', 'dente',
+    'dez', 'dia', 'doce', 'escada', 'escova', 'espada', 'estrela', 'faca', 'fada',
+    'fala', 'familia', 'figo', 'fila', 'fita', 'flauta', 'flor', 'foca', 'fofo',
+    'fogo', 'foguete', 'folha', 'formiga', 'galinha', 'galo', 'garfo', 'gato', 'gelo',
+    'gema', 'girafa', 'gola', 'gota', 'guitarra', 'ilha', 'jacare', 'janela', 'jiboia',
+    'joaninha', 'jogo', 'laco', 'lago', 'lama', 'lata', 'leao', 'leite', 'leque',
+    'limao', 'livro', 'lixo', 'lobo', 'lote', 'lua', 'luta', 'luva', 'maca',
+    'macaco', 'mala', 'mamadeira', 'mao', 'martelo', 'mato', 'meia', 'melao', 'menina',
+    'menino', 'mesa', 'milho', 'mola', 'moto', 'muleta', 'navio', 'ninho', 'noite',
+    'nuvem', 'olho', 'osso', 'ovelha', 'ovo', 'panela', 'pao', 'passaro', 'pasta',
+    'pata', 'pato', 'paz', 'pe', 'pedra', 'peixe', 'pente', 'peteca', 'pipa',
+    'pirulito', 'placa', 'planta', 'ponte', 'porta', 'pote', 'prato', 'prego', 'quatro',
+    'queijo', 'quiabo', 'rato', 'rede', 'rei', 'relogio', 'rio', 'roda', 'rosa',
+    'roupa', 'rua', 'sabonete', 'sacola', 'salada', 'sapato', 'sapo', 'sino', 'sofa',
+    'sol', 'suco', 'tambor', 'tapete', 'tatu', 'taxi', 'teia', 'tela', 'telefone',
+    'teto', 'tia', 'tigre', 'tijolo', 'tio', 'tomate', 'trator', 'trem', 'tucano',
+    'tudo', 'urso', 'uva', 'vaca', 'vassoura', 'vela', 'vila', 'violao', 'xale',
+    'xicara', 'zebra', 'zero'
 ];
 
 let repoWordsCatalog = (typeof REPO_WORDS_CATALOG !== 'undefined' && Array.isArray(REPO_WORDS_CATALOG))
@@ -81,17 +85,33 @@ function getRepoWordWebpPath(wordOrSlug) {
 }
 
 function getPhonemeAudioPath(letter, varIdx = '1') {
-    const k = String(letter || '').toUpperCase().trim();
+    const k = String(letter || '').toUpperCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const entry = (typeof FONEMAS_AUDIO_MAP !== 'undefined') ? FONEMAS_AUDIO_MAP[k] : null;
-    if (!entry) return `assets/audio/fonemas/c-${k.toLowerCase()}-${varIdx}.ogg`;
+    const isVowel = ['A', 'E', 'I', 'O', 'U'].includes(k);
+    const prefix = isVowel ? 'v' : 'c';
+    if (!entry) return `assets/audio/fonemas/${prefix}-${k.toLowerCase()}-${varIdx}.ogg`;
     if (typeof entry === 'string') return `assets/audio/fonemas/${entry}`;
     const file = entry[String(varIdx)] || entry['1'] || Object.values(entry)[0];
     return `assets/audio/fonemas/${file}`;
 }
 
+/* CAMINHOS DAS IMAGENS DE BOCAS (COM FALLBACK AUTOMÁTICO ENTRE /bocas/ E /img/) */
 function getMouthImagePath(letter, varIdx = '1') {
-    const k = String(letter || '').toLowerCase().trim();
-    return `assets/img/b-${k}-${varIdx}.webp`;
+    const k = String(letter || 'a').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const v = String(varIdx || '1').trim().toLowerCase();
+    return `assets/img/bocas/b-${k}-${v}.webp`;
+}
+
+function getMouthFallbackPath(letter, varIdx = '1') {
+    const k = String(letter || 'a').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const v = String(varIdx || '1').trim().toLowerCase();
+    return `assets/img/b-${k}-${v}.webp`;
+}
+
+function buildMouthImgTagWithFallback(letter, varIdx = '1', styleStr = 'width:100%; height:100%; object-fit:contain;') {
+    const primarySrc = getMouthImagePath(letter, varIdx);
+    const fallbackSrc = getMouthFallbackPath(letter, varIdx);
+    return `<img src="${primarySrc}" alt="Boca ${letter}" style="${styleStr}" onerror="if(this.src.indexOf('/bocas/')!==-1){this.src='${fallbackSrc}';}else{this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';}">`;
 }
 
 let activePhonemeAudioObj = null;
@@ -262,7 +282,7 @@ function compressAndConvertImageToWebP(file, scaleFactor = 0.5, quality = 0.82) 
     });
 }
 
-/* PARSER SILÁBICO ESTRITO (MORTE AO REGEX: APENAS DICIONÁRIO OU HÍFEN EXPLÍCITO) */
+/* PARSER SILÁBICO ESTRITO (ZERO REGEX + PRESERVAÇÃO DE CAIXA ORIGINAL) */
 function getNormalizedWordKey(rawKey) {
     const str = String(rawKey || '').trim().toUpperCase();
     if (str.includes(';') || str.includes('/') || str.includes('-')) {
@@ -280,7 +300,6 @@ function extractExplicitSyllables(rawKey) {
     const str = String(rawKey || '').trim().toUpperCase();
     if (!str) return [];
 
-    // 1. Se o Analista digitou com hífen, barra ou ponto-e-vírgula (ex: XI-CRIN-HA)
     if (str.includes('-') || str.includes('/') || str.includes(';')) {
         const parts = str.split(/[-\/;]+/).map(s => s.trim()).filter(Boolean);
         const cleanJoined = parts.join('');
@@ -292,18 +311,12 @@ function extractExplicitSyllables(rawKey) {
     }
 
     const cleanKey = getNormalizedWordKey(str);
-
-    // 2. Se já foi salvo no mapa de sílabas customizadas do aluno
     if (typeof state !== 'undefined' && state && state.customSyllablesMap && Array.isArray(state.customSyllablesMap[cleanKey])) {
         return [...state.customSyllablesMap[cleanKey]];
     }
-
-    // 3. Dicionário explícito WORD_BANK (database.js)
     if (typeof WORD_BANK !== 'undefined' && WORD_BANK[cleanKey] && Array.isArray(WORD_BANK[cleanKey].syllables)) {
         return [...WORD_BANK[cleanKey].syllables];
     }
-
-    // 4. Sem adivinhação por Regex: retorna a unidade inteira preservada
     return [cleanKey];
 }
 
@@ -317,7 +330,6 @@ function getExplicitSyllableCount(rawKey) {
     return 1;
 }
 
-/* CASCATA DE RESOLUÇÃO VISUAL POR CONVENÇÃO (CUSTOM -> IDB -> REPO .WEBP -> FALLBACK SVG) */
 function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
     const rawUpper = String(wordKey || '').trim().toUpperCase();
     const cleanKey = getNormalizedWordKey(rawUpper);
@@ -370,7 +382,7 @@ function hasValidVisualRepresentation(wordKey) {
 }
 
 /* ============================================================================
-   5. ESTADO GLOBAL, SILABÁRIO (CAP. 5) E PALAVRÁRIO (8 GAVETAS CAP. 4)
+   5. ESTADO GLOBAL, PRESETS CLÍNICOS, JANELA DIÁRIA E 7 CONJUNTOS FONÊMICOS
    ============================================================================ */
 let activeRole = 'ANALYST';
 
@@ -383,6 +395,78 @@ const STRUCTURED_SYLLABARY_ORDER = [
     'X', 'Z',          // Conjunto 5
     'C', 'G', 'Q'      // Conjunto 6
 ];
+
+const DEFAULT_PHONEME_SETS = [
+    { setNum: 1, id: 'FA_CHK_1', title: '★ Check-point Conjunto 1 (Vogais Orais)', members: ['FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1'] },
+    { setNum: 2, id: 'FA_CHK_2', title: '★ Check-point Conjunto 2 (Fechadas e Nasais)', members: ['FA_A_2', 'FA_E_2', 'FA_O_2'] },
+    { setNum: 3, id: 'FA_CHK_3', title: '★ Check-point Conjunto 3 (D, T, Z, M, N)', members: ['FA_D_1', 'FA_T_1', 'FA_Z_1', 'FA_M_1', 'FA_N_1'] },
+    { setNum: 4, id: 'FA_CHK_4', title: '★ Check-point Conjunto 4 (P, B, K)', members: ['FA_P_1', 'FA_B_1', 'FA_K_1'] },
+    { setNum: 5, id: 'FA_CHK_5', title: '★ Check-point Conjunto 5 (L, V, X)', members: ['FA_L_1', 'FA_L_2', 'FA_V_1', 'FA_X_1'] },
+    { setNum: 6, id: 'FA_CHK_6', title: '★ Check-point Conjunto 6 (C, G, F, J)', members: ['FA_C_1', 'FA_C_2', 'FA_G_1', 'FA_G_2', 'FA_F_1', 'FA_J_1'] },
+    { setNum: 7, id: 'FA_CHK_7', title: '★ Check-point Conjunto 7 (R, S, Q, W)', members: ['FA_R_1', 'FA_R_2', 'FA_S_1', 'FA_S_2', 'FA_Q_1', 'FA_W_1'] }
+];
+
+function getPhonemeSetsCatalog() {
+    if (typeof PHONEME_SETS !== 'undefined' && Array.isArray(PHONEME_SETS)) return PHONEME_SETS;
+    return DEFAULT_PHONEME_SETS;
+}
+
+const DEFAULT_PHONEME_SETS_MODULES = [
+    { id: 'FA_A_1', setNum: 1, letter: 'A', varIdx: '1', title: 'A (Oral /a/)', desc: 'Conjunto 1 • Vogal oral aberta /a/.' },
+    { id: 'FA_I_1', setNum: 1, letter: 'I', varIdx: '1', title: 'I (Oral /i/)', desc: 'Conjunto 1 • Vogal oral anterior /i/.' },
+    { id: 'FA_O_1', setNum: 1, letter: 'O', varIdx: '1', title: 'O (Aberto /ɔ/)', desc: 'Conjunto 1 • Vogal oral aberta /ɔ/.' },
+    { id: 'FA_E_1', setNum: 1, letter: 'E', varIdx: '1', title: 'E (Aberto /ɛ/)', desc: 'Conjunto 1 • Vogal oral aberta /ɛ/.' },
+    { id: 'FA_U_1', setNum: 1, letter: 'U', varIdx: '1', title: 'U (Oral /u/)', desc: 'Conjunto 1 • Vogal oral posterior /u/.' },
+    { id: 'FA_CHK_1', setNum: 1, letter: 'A', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 1 (Vogais)', desc: 'Sondagem mista sem modelo das Vogais Orais.' },
+
+    { id: 'FA_A_2', setNum: 2, letter: 'A', varIdx: '2', title: 'A (Nasal /ã/)', desc: 'Conjunto 2 • Vogal nasalizada /ã/.' },
+    { id: 'FA_E_2', setNum: 2, letter: 'E', varIdx: '2', title: 'E (Fechado /e/)', desc: 'Conjunto 2 • Vogal fechada /e/.' },
+    { id: 'FA_O_2', setNum: 2, letter: 'O', varIdx: '2', title: 'O (Fechado /o/)', desc: 'Conjunto 2 • Vogal fechada /o/.' },
+    { id: 'FA_CHK_2', setNum: 2, letter: 'E', varIdx: '2', isCheckpoint: true, title: '★ Avaliar Conjunto 2 (Variações)', desc: 'Sondagem cumulativa dos Conjuntos 1 e 2.' },
+
+    { id: 'FA_D_1', setNum: 3, letter: 'D', varIdx: '1', title: 'D (/d/)', desc: 'Conjunto 3 • Oclusiva dental sonora /d/.' },
+    { id: 'FA_T_1', setNum: 3, letter: 'T', varIdx: '1', title: 'T (/t/)', desc: 'Conjunto 3 • Oclusiva dental surda /t/.' },
+    { id: 'FA_Z_1', setNum: 3, letter: 'Z', varIdx: '1', title: 'Z (/z/)', desc: 'Conjunto 3 • Fricativa alveolar sonora /z/.' },
+    { id: 'FA_M_1', setNum: 3, letter: 'M', varIdx: '1', title: 'M (/m/)', desc: 'Conjunto 3 • Nasal bilabial /m/.' },
+    { id: 'FA_N_1', setNum: 3, letter: 'N', varIdx: '1', title: 'N (/n/)', desc: 'Conjunto 3 • Nasal alveolar /n/.' },
+    { id: 'FA_CHK_3', setNum: 3, letter: 'D', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 3 (D, T, Z, M, N)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 3.' },
+
+    { id: 'FA_P_1', setNum: 4, letter: 'P', varIdx: '1', title: 'P (/p/)', desc: 'Conjunto 4 • Oclusiva bilabial surda /p/.' },
+    { id: 'FA_B_1', setNum: 4, letter: 'B', varIdx: '1', title: 'B (/b/)', desc: 'Conjunto 4 • Oclusiva bilabial sonora /b/.' },
+    { id: 'FA_K_1', setNum: 4, letter: 'K', varIdx: '1', title: 'K (/k/)', desc: 'Conjunto 4 • Oclusiva velar surda /k/.' },
+    { id: 'FA_CHK_4', setNum: 4, letter: 'P', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 4 (P, B, K)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 4.' },
+
+    { id: 'FA_L_1', setNum: 5, letter: 'L', varIdx: '1', title: 'L (Inicial /l/)', desc: 'Conjunto 5 • Lateral alveolar /l/.' },
+    { id: 'FA_L_2', setNum: 5, letter: 'L', varIdx: '2', title: 'L (Final /w/)', desc: 'Conjunto 5 • L em coda silábica /w/.' },
+    { id: 'FA_V_1', setNum: 5, letter: 'V', varIdx: '1', title: 'V (/v/)', desc: 'Conjunto 5 • Fricativa labiodental sonora /v/.' },
+    { id: 'FA_X_1', setNum: 5, letter: 'X', varIdx: '1', title: 'X (/ʃ/)', desc: 'Conjunto 5 • Fricativa pós-alveolar surda /ʃ/.' },
+    { id: 'FA_CHK_5', setNum: 5, letter: 'L', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 5 (L, V, X)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 5.' },
+
+    { id: 'FA_C_1', setNum: 6, letter: 'C', varIdx: '1', title: 'C (Forte /k/)', desc: 'Conjunto 6 • Oclusiva velar surda /k/.' },
+    { id: 'FA_C_2', setNum: 6, letter: 'C', varIdx: '2', title: 'C (Brando /s/)', desc: 'Conjunto 6 • Fricativa surda /s/ antes de E, I.' },
+    { id: 'FA_G_1', setNum: 6, letter: 'G', varIdx: '1', title: 'G (Forte /g/)', desc: 'Conjunto 6 • Oclusiva velar sonora /g/.' },
+    { id: 'FA_G_2', setNum: 6, letter: 'G', varIdx: '2', title: 'G (Brando /ʒ/)', desc: 'Conjunto 6 • Fricativa sonora /ʒ/ antes de E, I.' },
+    { id: 'FA_F_1', setNum: 6, letter: 'F', varIdx: '1', title: 'F (/f/)', desc: 'Conjunto 6 • Fricativa labiodental surda /f/.' },
+    { id: 'FA_J_1', setNum: 6, letter: 'J', varIdx: '1', title: 'J (/ʒ/)', desc: 'Conjunto 6 • Fricativa pós-alveolar sonora /ʒ/.' },
+    { id: 'FA_CHK_6', setNum: 6, letter: 'C', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 6 (C, G, F, J)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 6.' },
+
+    { id: 'FA_R_1', setNum: 7, letter: 'R', varIdx: '1', title: 'R (Forte /x/)', desc: 'Conjunto 7 • R inicial ou duplo forte /x/.' },
+    { id: 'FA_R_2', setNum: 7, letter: 'R', varIdx: '2', title: 'R (Brando /ɾ/)', desc: 'Conjunto 7 • Tepe alveolar intervocálico /ɾ/.' },
+    { id: 'FA_S_1', setNum: 7, letter: 'S', varIdx: '1', title: 'S (Surdo /s/)', desc: 'Conjunto 7 • Fricativa alveolar surda /s/.' },
+    { id: 'FA_S_2', setNum: 7, letter: 'S', varIdx: '2', title: 'S (Intervocálico /z/)', desc: 'Conjunto 7 • S intervocálico sonoro /z/.' },
+    { id: 'FA_Q_1', setNum: 7, letter: 'Q', varIdx: '1', title: 'Q (/k/)', desc: 'Conjunto 7 • Oclusiva velar /k/.' },
+    { id: 'FA_W_1', setNum: 7, letter: 'W', varIdx: '1', title: 'W (/w/)', desc: 'Conjunto 7 • Aproximante labiovelar /w/.' },
+    { id: 'FA_CHK_7', setNum: 7, letter: 'R', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 7 (Domínio Total)', desc: 'Sondagem final de todos os 7 Conjuntos Fonêmicos.' }
+];
+
+function getEffectivePhonologicalModules() {
+    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined' &&
+        Array.isArray(PHONOLOGICAL_ALPHABET_MODULES) &&
+        PHONOLOGICAL_ALPHABET_MODULES.some(m => m.isCheckpoint)) {
+        return PHONOLOGICAL_ALPHABET_MODULES;
+    }
+    return DEFAULT_PHONEME_SETS_MODULES;
+}
 
 const FALLBACK_CUMULATIVE_SYL_WORDS = {
     'T': ['TATU', 'TETO', 'TIA', 'TIO', 'TEIA', 'TUDO'],
@@ -404,88 +488,15 @@ const FALLBACK_CUMULATIVE_SYL_WORDS = {
     'Q': ['QUEIJO', 'QUIABO', 'QUATRO', 'AQUÁRIO', 'LEQUE', 'CAQUI']
 };
 
-/* AS 8 GAVETAS LEXICAIS DO PALAVRÁRIO */
 const DEFAULT_PALAVRARIO_DRAWERS = [
-    {
-        id: 'PAL_1',
-        code: 'GAVETA 1',
-        title: 'Dissílabas CV (Conj. 1 e 2)',
-        desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.',
-        variations: {
-            1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'],
-            2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA']
-        }
-    },
-    {
-        id: 'PAL_2',
-        code: 'GAVETA 2',
-        title: 'Dissílabas CV (Conj. 3 a 6)',
-        desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.',
-        variations: {
-            1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'],
-            2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO']
-        }
-    },
-    {
-        id: 'PAL_3',
-        code: 'GAVETA 3',
-        title: 'Trissílabas Simples',
-        desc: 'Palavras de 3 sílabas abertas controladas por extensão.',
-        variations: {
-            1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'],
-            2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO']
-        }
-    },
-    {
-        id: 'PAL_4',
-        code: 'GAVETA 4',
-        title: 'Encontros Vocálicos e Nasais',
-        desc: 'Vocábulos com ditongos orais e vogais/ditongos nasais.',
-        variations: {
-            1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'],
-            2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO']
-        }
-    },
-    {
-        id: 'PAL_5',
-        code: 'GAVETA 5',
-        title: 'Sílabas Travadas (CVC)',
-        desc: 'Palavras com coda silábica em R, S, L, M, N.',
-        variations: {
-            1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'],
-            2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM']
-        }
-    },
-    {
-        id: 'PAL_6',
-        code: 'GAVETA 6',
-        title: 'Encontros Consonantais (CCV)',
-        desc: 'Sílabas complexas com grupos consonantais em R e L.',
-        variations: {
-            1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'],
-            2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA']
-        }
-    },
-    {
-        id: 'PAL_7',
-        code: 'GAVETA 7',
-        title: 'Dígrafos',
-        desc: 'Palavras com CH, LH, NH, RR, SS, QU e GU.',
-        variations: {
-            1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'],
-            2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE']
-        }
-    },
-    {
-        id: 'PAL_8',
-        code: 'GAVETA 8',
-        title: 'Irregulares e Contextuais',
-        desc: 'Casos de CE/CI, GE/GI, Ç, S com som de Z e valores do X.',
-        variations: {
-            1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'],
-            2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA']
-        }
-    }
+    { id: 'PAL_1', code: 'GAVETA 1', title: 'Dissílabas CV (Conj. 1 e 2)', desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.', variations: { 1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'], 2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA'] } },
+    { id: 'PAL_2', code: 'GAVETA 2', title: 'Dissílabas CV (Conj. 3 a 6)', desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.', variations: { 1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'], 2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO'] } },
+    { id: 'PAL_3', code: 'GAVETA 3', title: 'Trissílabas Simples', desc: 'Palavras de 3 sílabas abertas controladas por extensão.', variations: { 1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'], 2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO'] } },
+    { id: 'PAL_4', code: 'GAVETA 4', title: 'Encontros Vocálicos e Nasais', desc: 'Vocábulos com ditongos orais e vogais ou ditongos nasais.', variations: { 1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'], 2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO'] } },
+    { id: 'PAL_5', code: 'GAVETA 5', title: 'Sílabas Travadas (CVC)', desc: 'Palavras com coda silábica em R, S, L, M, N.', variations: { 1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'], 2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM'] } },
+    { id: 'PAL_6', code: 'GAVETA 6', title: 'Encontros Consonantais (CCV)', desc: 'Sílabas complexas com grupos consonantais em R e L.', variations: { 1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'], 2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA'] } },
+    { id: 'PAL_7', code: 'GAVETA 7', title: 'Dígrafos', desc: 'Palavras com CH, LH, NH, RR, SS, QU e GU.', variations: { 1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'], 2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE'] } },
+    { id: 'PAL_8', code: 'GAVETA 8', title: 'Irregulares e Contextuais', desc: 'Casos de CE/CI, GE/GI, Ç, S com som de Z e valores do X.', variations: { 1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'], 2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA'] } }
 ];
 
 function getEffectivePalavrarioDrawers() {
@@ -538,16 +549,12 @@ function createFreshStudentState(firstName = 'ALUNO') {
     const unlockedInit = [
         'VOGAIS', 'ENCONTROS', 'T',
         'PAL_1', 'PAL_2',
-        'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'E1_6', 'R_N1_EXTRA'
+        'E1_1', 'E1_2', 'E1_3', 'E1_4', 'E1_5', 'E1_6', 'R_N1_EXTRA',
+        'FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1', 'FA_CHK_1'
     ];
     if (typeof EIDOS_MODULES !== 'undefined') {
         EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
             if (!unlockedInit.includes(m.id)) unlockedInit.push(m.id);
-        });
-    }
-    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
-        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-            if (!unlockedInit.includes(pm.id)) unlockedInit.push(pm.id);
         });
     }
     return {
@@ -556,6 +563,11 @@ function createFreshStudentState(firstName = 'ALUNO') {
         manualProgressionOverride: false,
         unlocked: unlockedInit,
         moduleProgress: {},
+        phonemeMastery: {},
+        dailyUnlocksTracker: {
+            date: new Date().toLocaleDateString('pt-BR'),
+            count: 0
+        },
         customCurriculum: {},
         customSyllablesMap: {},
         customWordMedia: {},
@@ -564,8 +576,11 @@ function createFreshStudentState(firstName = 'ALUNO') {
         taskSettings: {},
         minimalPairSwaps: { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 },
         settings: {
+            clinicalPreset: 'REGULAR',
+            dailyNewUnlocksCap: 3,
+            autoEntryProbe: false,
             crit: 90,
-            consecDays: 3,
+            consecDays: 2,
             strictDay: true,
             errorless: true,
             topoVar: false,
@@ -626,6 +641,11 @@ function initTenantsAndActiveStudent() {
 
 function normalizeStudentState(st) {
     if (!st.moduleProgress) st.moduleProgress = {};
+    if (!st.phonemeMastery) st.phonemeMastery = {};
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    if (!st.dailyUnlocksTracker || st.dailyUnlocksTracker.date !== todayStr) {
+        st.dailyUnlocksTracker = { date: todayStr, count: 0 };
+    }
     if (!st.customCurriculum) st.customCurriculum = {};
     if (!st.customSyllablesMap) st.customSyllablesMap = {};
     if (!st.customWordMedia) st.customWordMedia = {};
@@ -643,7 +663,10 @@ function normalizeStudentState(st) {
     if (!st.taskSettings) st.taskSettings = {};
     if (!st.minimalPairSwaps) st.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
     if (!st.settings) st.settings = createFreshStudentState(st.student).settings;
-    if (!st.settings.consecDays) st.settings.consecDays = 3;
+    if (!st.settings.clinicalPreset) st.settings.clinicalPreset = 'REGULAR';
+    if (typeof st.settings.dailyNewUnlocksCap !== 'number') st.settings.dailyNewUnlocksCap = 3;
+    if (typeof st.settings.autoEntryProbe !== 'boolean') st.settings.autoEntryProbe = false;
+    if (!st.settings.consecDays) st.settings.consecDays = 2;
     if (typeof st.settings.strictDay !== 'boolean') st.settings.strictDay = true;
     if (!st.settings.topoMode) st.settings.topoMode = 'AUTO';
     if (!st.settings.themeColor || !String(st.settings.themeColor).startsWith('#')) {
@@ -654,17 +677,12 @@ function normalizeStudentState(st) {
     if (!st.session) st.session = { expired: false, endTime: null, configuredMin: st.settings.timer ? st.settings.timer.min : 30 };
     if (!Array.isArray(st.unlocked)) st.unlocked = [];
 
-    ['VOGAIS', 'ENCONTROS', 'T', 'PAL_1', 'PAL_2'].forEach(baseId => {
+    ['VOGAIS', 'ENCONTROS', 'T', 'PAL_1', 'PAL_2', 'FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1', 'FA_CHK_1'].forEach(baseId => {
         if (!st.unlocked.includes(baseId)) st.unlocked.push(baseId);
     });
     if (typeof EIDOS_MODULES !== 'undefined') {
         EIDOS_MODULES.filter(m => m.level === 'N1').forEach(m => {
             if (!st.unlocked.includes(m.id)) st.unlocked.push(m.id);
-        });
-    }
-    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
-        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
-            if (!st.unlocked.includes(pm.id)) st.unlocked.push(pm.id);
         });
     }
     st.customModules.forEach(cm => {
@@ -788,6 +806,163 @@ function getTaskConfig(modId) {
     return cfg;
 }
 
+/* MATRIZ DE CAPACIDADES DINÂMICAS DO MODAL DE CADA TAREFA */
+function getTaskCapabilities(modId) {
+    const idStr = String(modId || '');
+    const eMod = (typeof EIDOS_MODULES !== 'undefined') ? EIDOS_MODULES.find(m => m.id === idStr) : null;
+    const isSyl = getEffectiveSyllabaryOrder().includes(idStr) && !['VOGAIS', 'ENCONTROS'].includes(idStr);
+    const isPal = idStr.startsWith('PAL_');
+    const isPhon = idStr.startsWith('FA_');
+    const isCustom = idStr.startsWith('CUST_');
+    const hasVar = !!(typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[idStr] && DEFAULT_MODULE_VARIATIONS[idStr].editable) || isPal || isCustom;
+
+    const cap = {
+        canEditStimuli: hasVar,
+        canChangeFont: true,
+        canColorCV: true,
+        canSylBox: true,
+        canChangeOpts: true,
+        canUseDMTS: true,
+        canUseProbeMode: true,
+        cyclesLabels: [
+            { key: 'c1', label: 'Ciclo 1: Identidade Visual (C → C)' },
+            { key: 'c2', label: 'Ciclo 2: Discriminação Auditiva (A → C)' },
+            { key: 'c3', label: 'Ciclo 3: Leitura Oral (C → D)' }
+        ]
+    };
+
+    if (isPhon) {
+        cap.canEditStimuli = false;
+        cap.canColorCV = false;
+        cap.canSylBox = false;
+        cap.canUseDMTS = false;
+        if (idStr.startsWith('FA_CHK_')) {
+            cap.canChangeOpts = false;
+            cap.canUseProbeMode = false;
+            cap.cyclesLabels = [];
+        } else {
+            cap.cyclesLabels = [
+                { key: 'c1', label: 'C0 & C1: Sonda a Frio + Modelagem com Slide' },
+                { key: 'c2', label: 'C2: Discriminação Auditiva (Bocas e Letras)' },
+                { key: 'c3', label: 'C3: Produção Autônoma (Slide sem Modelo)' },
+                { key: 'c4', label: 'C4 & C5: Revisão Cumulativa + Fusão Silábica' }
+            ];
+        }
+        return cap;
+    }
+
+    if (isSyl) {
+        cap.canColorCV = false;
+        cap.canSylBox = false;
+        cap.cyclesLabels = [
+            { key: 'c1', label: 'Passo 1: Sílabas Estruturadas (CV)' },
+            { key: 'c2', label: 'Passo 2: Palavras Cumulativas Estruturadas' },
+            { key: 'c3', label: 'Passo 3: Desmame Tipográfico (Cor → Preto)' },
+            { key: 'c4', label: 'Passo 4: Sondagem de Leitura e Compreensão' }
+        ];
+        return cap;
+    }
+
+    if (isPal) {
+        cap.canColorCV = false;
+        cap.canSylBox = false;
+        cap.canUseDMTS = false;
+        cap.cyclesLabels = [
+            { key: 'c1', label: 'Etapa 1: Pareamento Composto (BC → C)' },
+            { key: 'c2', label: 'Etapa 2: Construção por Sílabas (CRMTS)' },
+            { key: 'c3', label: 'Etapa 3: Desmame para Texto Preto (3x3)' }
+        ];
+        return cap;
+    }
+
+    if (!eMod) return cap;
+
+    switch (eMod.subType) {
+        case 'TRACKING':
+            cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false; cap.canUseProbeMode = false; cap.cyclesLabels = [];
+            break;
+        case 'SYM_DISC':
+            cap.canColorCV = false; cap.canSylBox = false; cap.canUseProbeMode = false; cap.cyclesLabels = [];
+            break;
+        case 'MIRROR_GRAPH':
+            cap.canChangeFont = false; cap.canColorCV = false; cap.canSylBox = false; cap.canUseProbeMode = false; cap.cyclesLabels = [];
+            break;
+        case 'VOWELS_PURE':
+        case 'VOCAL_ENCOUNTERS':
+            cap.canColorCV = false; cap.canSylBox = false;
+            break;
+        case 'WORD_IDENT_MM':
+            cap.cyclesLabels = [
+                { key: 'c1', label: 'Ciclo 1: Pareamento Simples (1x3)' },
+                { key: 'c2', label: 'Ciclo 2: Pareamento Multimodelo (3x3)' }
+            ];
+            break;
+        case 'EQUIV_4STEPS_MM':
+            cap.canColorCV = false; cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false;
+            cap.cyclesLabels = [
+                { key: 'c1', label: 'Treino 1: Nomeação de Figuras (B → D)' },
+                { key: 'c2', label: 'Treino 2: Pareamento Composto (BC → C)' }
+            ];
+            break;
+        case 'SYL_BUILD_SLIDER':
+            cap.canColorCV = false; cap.canSylBox = false; cap.canUseDMTS = false;
+            cap.cyclesLabels = [
+                { key: 'c1', label: 'Ciclo 1: Fusão no Triplo Slider' },
+                { key: 'c2', label: 'Ciclo 2: Discriminação Auditiva (A → C)' },
+                { key: 'c3', label: 'Ciclo 3: Leitura Oral (C → D)' }
+            ];
+            break;
+        case 'SYL_WORD_BUILD':
+            cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false;
+            cap.cyclesLabels = [
+                { key: 'c1', label: 'Ciclo 1: Montagem por Sílabas (CRMTS)' },
+                { key: 'c2', label: 'Ciclo 2: Sondagem de Leitura Limpa (C → D)' }
+            ];
+            break;
+        case 'FADEOUT_COLOR_MM':
+            cap.canColorCV = false; cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false; cap.cyclesLabels = [];
+            break;
+        case 'CASE_GEN_MM':
+            cap.canChangeFont = false; cap.canChangeOpts = false; cap.canUseDMTS = false; cap.cyclesLabels = [];
+            break;
+        case 'COPY_CRMTS':
+            cap.canSylBox = false; cap.canChangeOpts = false; cap.cyclesLabels = [];
+            break;
+        case 'DICT_CRMTS':
+            cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false; cap.cyclesLabels = [];
+            break;
+        case 'RECOMB_STT':
+        case 'SPRINT_3S':
+        case 'SYNTACTIC_GROUP':
+            cap.canColorCV = false; cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false; cap.cyclesLabels = [];
+            break;
+        case 'WORD_SPACE':
+        case 'SENTENCE_BUILD':
+        case 'INTRUDER_WORD':
+        case 'CHRONO_SEQ':
+        case 'NARRATIVE_COHERENCE':
+            cap.canSylBox = false; cap.canChangeOpts = false; cap.canUseDMTS = false; cap.cyclesLabels = [];
+            break;
+        case 'SYNTACTIC_WH':
+            cap.canColorCV = false; cap.canSylBox = false; cap.cyclesLabels = [];
+            break;
+        case 'CLASS_VC':
+            cap.canColorCV = false; cap.canSylBox = false; cap.canChangeOpts = false;
+            cap.cyclesLabels = [
+                { key: 'c1', label: 'Ciclo 1: Classificação Visual' },
+                { key: 'c2', label: 'Ciclo 2: Classificação Auditiva' }
+            ];
+            break;
+        case 'MIN_PAIRS':
+            cap.canChangeOpts = false; cap.canUseDMTS = false; cap.cyclesLabels = [];
+            break;
+        case 'WORDS_EQ':
+            cap.cyclesLabels.push({ key: 'c4', label: 'Ciclos 4 e 5: Figura ↔ Palavra (B ↔ C)' });
+            break;
+    }
+    return cap;
+}
+
 function getEffectiveOptsForCurrentSession() {
     if (!session || !session.phase) return 3;
     if (getEffectiveSyllabaryOrder().includes(session.phase)) {
@@ -795,7 +970,7 @@ function getEffectiveOptsForCurrentSession() {
     }
     const tCfg = getTaskConfig(session.phase);
     if (tCfg && tCfg.opts >= 2) return parseInt(tCfg.opts);
-    return 3;
+    return parseInt(state.settings.opts) || 3;
 }
 
 function getEffectiveStagesForModule(modId, isSyllabary = false) {
@@ -886,7 +1061,7 @@ function registerMasteryAttempt(modId, accuracy, avgLatencySec, probeGateFailed 
     const wasMastered = (prog.status === 'mastered');
     const wasInProbe = (session && session.isProbeMode);
     const todayStr = new Date().toLocaleDateString('pt-BR');
-    const targetDays = state.settings.consecDays || 3;
+    const targetDays = state.settings.consecDays || 2;
     const crit = state.settings.crit || 90;
     const availKeys = getAvailableVariationKeys(modId);
 
@@ -1025,10 +1200,13 @@ let session = {
     eidosMod: null,
     activeVar: 1,
     isProbeMode: false,
+    isFastTrackEntryProbe: false,
     probeGateFailed: false,
     isStructuredSyllabary: false,
     isPalavrarioDrawer: false,
+    isPhonemeCheckpoint: false,
     sylData: null,
+    phonData: null,
     pool: [],
     trials: [],
     activeCycles: [],
@@ -1042,6 +1220,7 @@ let session = {
     isRepeating: false,
     latencies: [],
     stats: {
+        c0: { indep: 0, dica: 0, erro: 0, total: 0 },
         c1: { indep: 0, dica: 0, erro: 0, total: 0 },
         c2: { indep: 0, dica: 0, erro: 0, total: 0 },
         c3: { indep: 0, dica: 0, erro: 0, total: 0 },
@@ -1504,7 +1683,6 @@ function renderStudioTargetsMediaChips() {
     }
 
     [...new Set(items)].forEach(rawItem => {
-        // Registra automaticamente sílabas se tiver hífen (ex: XI-CRIN-HA)
         extractExplicitSyllables(rawItem);
         const cleanKey = getNormalizedWordKey(rawItem);
         const hasMedia = hasValidVisualRepresentation(rawItem);
@@ -1708,7 +1886,6 @@ function saveStudioCustomModule() {
         return;
     }
 
-    // Registra separação silábica explícita caso o analista tenha usado hífen (ex: XI-CRIN-HA)
     rawTargets.forEach(rt => extractExplicitSyllables(rt));
 
     if (!Array.isArray(state.customModules)) state.customModules = [];
@@ -2237,55 +2414,18 @@ function handleAddStudentFromModal() {
     }
 }
 
-/* BACKUP COMPLETO DO PERFIL EM JSON (EXPORTAR / IMPORTAR NA TELEMETRIA) */
+/* BACKUP COMPLETO DO PERFIL EM JSON */
 function openTelemetryOptionsModal() {
     playSound('click');
     const modal = document.getElementById('modal-telemetry-options');
-    if (!modal) return;
-
-    // Garante dinamicamente os botões de Exportar/Importar Backup JSON caso o HTML ainda não os tenha
-    const listBox = modal.querySelector('.modal-content > div:last-child');
-    if (listBox && !document.getElementById('btn-backup-export-json')) {
-        const expBtn = document.createElement('button');
-        expBtn.type = 'button';
-        expBtn.id = 'btn-backup-export-json';
-        expBtn.className = 'menu-option-row';
-        expBtn.onclick = exportStudentProfileJSON;
-        expBtn.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exportar Backup do Aluno (.json)
-        `;
-
-        const impBtn = document.createElement('button');
-        impBtn.type = 'button';
-        impBtn.id = 'btn-backup-import-json';
-        impBtn.className = 'menu-option-row';
-        impBtn.onclick = triggerImportStudentProfileJSON;
-        impBtn.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Importar Backup do Aluno (.json)
-        `;
-
-        const fileInp = document.createElement('input');
-        fileInp.type = 'file';
-        fileInp.id = 'backup-json-file-input';
-        fileInp.accept = '.json,application/json';
-        fileInp.style.display = 'none';
-        fileInp.onchange = (e) => handleImportStudentProfileFile(e.target.files);
-
-        listBox.appendChild(expBtn);
-        listBox.appendChild(impBtn);
-        listBox.appendChild(fileInp);
-    }
-
-    modal.style.display = 'flex';
+    if (modal) modal.style.display = 'flex';
 }
 
 function exportStudentProfileJSON() {
     closeModals();
     saveState();
     const payload = {
-        alfamtsBackupVersion: 2,
+        alfamtsBackupVersion: 3,
         exportedAt: new Date().toISOString(),
         studentProfile: state
     };
@@ -2358,7 +2498,7 @@ function handleImportStudentProfileFile(fileList) {
 }
 
 /* ============================================================================
-   8. CARROSSEL DE 10 GUIAS (N1-N5 + ALFABETO + SILABÁRIO + PALAVRÁRIO + EXTRAS + PERS)
+   8. CARROSSEL DE 10 GUIAS, PUSH-TO-VIEW (320ms) E TRAVA DE REVISÃO DO DIA
    ============================================================================ */
 const CAROUSEL_LEVELS = [
     { key: 'N1', title: 'Nível 1' },
@@ -2422,30 +2562,35 @@ function ensureHeaderConfigModeBtn() {
 }
 
 function renderDotsHTML(modId, hasVariations = false) {
-    if (String(modId).startsWith('FA_') || String(modId).startsWith('R_')) {
-        return '';
-    }
+    if (String(modId).startsWith('R_')) return '';
     const prog = getModuleProgress(modId);
-    const target = state.settings.consecDays || 3;
+    const target = state.settings.consecDays || 2;
     const activeV = getActiveVariationForModule(modId);
     const tCfg = getTaskConfig(modId);
     const inProbe = isModuleInProbeMode(modId);
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    const needsReviewToday = (prog.status !== 'mastered' && prog.streak > 0 && prog.streak < target && prog.lastDate && prog.lastDate !== todayStr);
 
     let dots = '';
     for (let i = 0; i < target; i++) {
         const filled = (prog.status === 'mastered' || i < prog.streak) ? 'filled' : '';
         dots += `<span class="day-dot ${filled}"></span>`;
     }
-    const probeBadge = inProbe
+    const reviewBadge = needsReviewToday
+        ? `<span class="var-pill-tag" style="background:#FEE2E2; color:#DC2626; font-weight:900;">REVISAR HOJE</span>`
+        : '';
+    const probeBadge = (!needsReviewToday && inProbe)
         ? `<span class="var-pill-tag" style="background:#EDE9FE; color:#6D28D9;">SONDA</span>`
         : '';
-    const dmtsBadge = (tCfg.dmtsDelay > 0) ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">${tCfg.dmtsDelay}s</span>` : '';
+    const dmtsBadge = (tCfg.dmtsDelay > 0 && getTaskCapabilities(modId).canUseDMTS)
+        ? `<span class="var-pill-tag" style="background:#FEF3C7; color:#92400E;">${tCfg.dmtsDelay}s</span>`
+        : '';
     const varBadge = hasVariations ? `<span class="var-pill-tag">Var ${activeV}</span>` : '';
     const statusText = prog.status === 'mastered'
         ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
         : `${Math.min(prog.streak, target)}/${target}`;
 
-    return `<div class="card-footer-mastery"><div class="days-dots">${dots}</div><span class="day-label">${probeBadge}${dmtsBadge}${varBadge} ${statusText}</span></div>`;
+    return `<div class="card-footer-mastery"><div class="days-dots">${dots}</div><span class="day-label">${reviewBadge}${probeBadge}${dmtsBadge}${varBadge} ${statusText}</span></div>`;
 }
 
 function scrollToLevelIndex(idx) {
@@ -2498,7 +2643,7 @@ function attachPushToViewEvents(cardEl, metaInfo) {
             document.getElementById('push-det-desc').innerText = metaInfo.desc;
             document.getElementById('push-det-method').innerText = metaInfo.methodText;
             document.getElementById('modal-push-details').style.display = 'flex';
-        }, 700);
+        }, 320);
     });
 
     cardEl.addEventListener('pointermove', (e) => {
@@ -2511,10 +2656,7 @@ function attachPushToViewEvents(cardEl, metaInfo) {
     });
 
     cardEl.addEventListener('touchmove', () => {
-        if (pushHoldTimer) {
-            clearTimeout(pushHoldTimer);
-            pushHoldTimer = null;
-        }
+        if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
     }, { passive: true });
 
     cardEl.addEventListener('wheel', clearHold, { passive: true });
@@ -2524,10 +2666,11 @@ function attachPushToViewEvents(cardEl, metaInfo) {
 }
 
 function getMethodExplanation(engine) {
+    if (engine === 'PHON_CHECKPOINT') return 'Check-point de Conjunto: avalia a retenção mista sem dica de todos os fonemas do conjunto. 100% libera o próximo conjunto; falhas iniciam retreino misto.';
     if (engine === 'PALAVRARIO_ENGINE') return 'Gaveta Lexical do Palavrário: integra Treino (Equivalência BC-C + Montagem Silábica + Desmame Tipográfico) e Sondagem Condicional (B-C → C-B → C-D → A-C).';
     if (engine === 'CUSTOM_STUDIO') return 'Tarefa personalizada configurada na Oficina de Tarefas.';
     if (engine === 'REWARD_PORTAL') return 'Portal de acesso rápido para desbloquear e abrir módulos nos Hubs e Extras.';
-    if (engine === 'PHON_MODEL') return 'Modelagem articulatória (Fase A) e sustentação sonora contínua (Fase B).';
+    if (engine === 'PHON_MODEL') return '5 Micro-Ciclos Fônicos: Sondagem a Frio → Boca+Slide → Discriminação Receptiva → Slide Autônomo → Revisão Cumulativa e Fusão CV.';
     if (engine === 'SYL_SLIDER') return 'Fusão silábica progressiva seguida de seleção auditiva e leitura.';
     if (engine === 'MULTIMTS') return 'Ensino direto em colunas com transição automática para Sondagem de Equivalência.';
     if (engine === 'CRMTS') return 'Construção ativa de unidades (sílabas, letras ou palavras) a partir do modelo.';
@@ -2556,8 +2699,8 @@ function executeRewardPortalAction(modId) {
             if (!state.unlocked.includes(p)) state.unlocked.push(p);
         });
     }
-    if (mod.targetTab === 'FONOLOGICO' && typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined') {
-        PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+    if (mod.targetTab === 'FONOLOGICO') {
+        getEffectivePhonologicalModules().filter(pm => pm.setNum === 1).forEach(pm => {
             if (!state.unlocked.includes(pm.id)) state.unlocked.push(pm.id);
         });
     }
@@ -2576,15 +2719,10 @@ function executeRewardPortalAction(modId) {
 }
 
 function buildCleanCardElement(itemData) {
-    const isPhon = String(itemData.id).startsWith('FA_');
     const isPortal = (itemData.engine === 'REWARD_PORTAL');
+    const isCheckpoint = (itemData.engine === 'PHON_CHECKPOINT');
     const card = document.createElement('div');
-    card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${(!isPhon && itemData.isMastered) ? 'mastered' : ''} ${isPortal ? 'reward-portal-card' : ''}`;
-
-    if (isPhon) {
-        card.style.minHeight = '92px';
-        card.style.justifyContent = 'center';
-    }
+    card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${itemData.isMastered ? 'mastered' : ''} ${isPortal || isCheckpoint ? 'reward-portal-card' : ''}`;
 
     if (isPortal) {
         const portalBtn = itemData.isUnlocked
@@ -2612,12 +2750,17 @@ function buildCleanCardElement(itemData) {
     }
 
     const playBtnHTML = itemData.isUnlocked
-        ? `<button type="button" class="card-play-btn" title="Iniciar Atividade" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos}, true)">
+        ? `<button type="button" class="card-play-btn" style="${isCheckpoint ? 'background:#6D28D9;' : ''}" title="Iniciar Atividade" onclick="event.stopPropagation(); triggerCardPlay('${itemData.id}', ${itemData.isEidos}, true)">
                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
            </button>`
         : '';
 
+    const chkHeader = isCheckpoint
+        ? `<span class="code-tag" style="background:#EDE9FE; color:#6D28D9; width:fit-content;">CHECK-POINT DE CONJUNTO</span>`
+        : '';
+
     card.innerHTML = `
+        ${chkHeader}
         <div class="clean-card-body">
             <h3 class="clean-card-title">${itemData.title}</h3>
             ${playBtnHTML}
@@ -2717,18 +2860,20 @@ function renderGrid() {
                 }));
             });
         } else if (lvl.key === 'FONOLOGICO') {
-            PHONOLOGICAL_ALPHABET_MODULES.forEach(pm => {
+            getEffectivePhonologicalModules().forEach(pm => {
                 const isUnlocked = state.unlocked.includes(pm.id);
+                const prog = getModuleProgress(pm.id);
+                const eng = pm.isCheckpoint ? 'PHON_CHECKPOINT' : 'PHON_MODEL';
                 page.appendChild(buildCleanCardElement({
                     id: pm.id,
                     title: pm.title,
                     desc: pm.desc,
-                    engine: 'PHON_MODEL',
-                    codeBadge: `FONEMA`,
-                    methodText: getMethodExplanation('PHON_MODEL'),
+                    engine: eng,
+                    codeBadge: `CONJUNTO ${pm.setNum || 1} • ${pm.isCheckpoint ? 'CHECK-POINT' : 'FONEMA'}`,
+                    methodText: getMethodExplanation(eng),
                     isUnlocked,
-                    isMastered: false,
-                    canConfigure: true,
+                    isMastered: prog.status === 'mastered',
+                    canConfigure: !pm.isCheckpoint,
                     hasVar: false,
                     isEidos: false
                 }));
@@ -2739,7 +2884,7 @@ function renderGrid() {
                 const prog = getModuleProgress(p);
                 let displayDesc = `${getSyllableSetLabel(p)}: Passos 1 a 4 (Sílabas → Palavras Estruturadas → Desmame Preto → Compreensão).`;
                 if (p === 'VOGAIS') displayDesc = "Identificação e leitura das vogais A, E, I, O, U.";
-                else if (p === 'ENCONTROS') displayDesc = "Encontros vocálicos AI, EI, OI, UI, AU, OU, ÃO.";
+                else if (p === 'ENCONTROS') displayDesc = "Encontros vocálicos AI, EI, OI, UI, AU, EU, OU, ÃO.";
 
                 page.appendChild(buildCleanCardElement({
                     id: p,
@@ -2862,7 +3007,7 @@ function renderGrid() {
 }
 
 /* ============================================================================
-   9. PAINEL DA TAREFA E SELETOR VISUAL DE MÍDIA COM BUSCA INSTANTÂNEA
+   9. PAINEL INTELIGENTE DA TAREFA E SELETOR VISUAL DE MÍDIA
    ============================================================================ */
 let editorSession = {
     modId: null,
@@ -2928,59 +3073,117 @@ function ensureProbeModeSelectorInTaskModal(modId) {
 function openStimuliEditor(modId) {
     const customMod = (state.customModules || []).find(m => m.id === modId);
     const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
+    const chkSet = getPhonemeSetsCatalog().find(s => s.id === modId);
     const mod = EIDOS_MODULES.find(m => m.id === modId)
-        || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId)
+        || getEffectivePhonologicalModules().find(m => m.id === modId)
+        || chkSet
         || palDrawer
         || customMod
         || { id: modId, title: String(modId), isAudioModel: false };
 
+    const cap = getTaskCapabilities(modId);
     const meta = (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId])
         ? DEFAULT_MODULE_VARIATIONS[modId]
         : ((customMod || palDrawer) ? { editable: true, min: 1, max: 20 } : null);
 
     editorSession.modId = modId;
-    editorSession.hasEditableStimuli = !!(meta && meta.editable);
+    editorSession.hasEditableStimuli = !!(cap.canEditStimuli && meta && meta.editable);
 
-    document.getElementById('tab-btn-topo').style.display = 'inline-flex';
+    const hasAnyPresentationControl = (cap.canChangeFont || cap.canColorCV || cap.canSylBox);
+    document.getElementById('tab-btn-topo').style.display = hasAnyPresentationControl ? 'inline-flex' : 'none';
     document.getElementById('tab-btn-aba').style.display = 'inline-flex';
 
     ensureProbeModeSelectorInTaskModal(modId);
 
-    const tCfg = getTaskConfig(modId);
-    document.getElementById('task-cfg-font').value = tCfg.font || 'GLOBAL';
+    const fontSel = document.getElementById('task-cfg-font');
     const chkCV = document.getElementById('task-cfg-color-cv');
     const chkBox = document.getElementById('task-cfg-syl-box');
-    if (chkCV) chkCV.checked = !!tCfg.colorCV;
-    if (chkBox) chkBox.checked = !!tCfg.sylBox;
+    if (fontSel && fontSel.closest('.compact-param-row')) {
+        fontSel.closest('.compact-param-row').style.display = cap.canChangeFont ? 'flex' : 'none';
+    }
+    if (chkCV && chkCV.closest('.compact-param-row')) {
+        chkCV.closest('.compact-param-row').style.display = cap.canColorCV ? 'flex' : 'none';
+    }
+    if (chkBox && chkBox.closest('.compact-param-row')) {
+        chkBox.closest('.compact-param-row').style.display = cap.canSylBox ? 'flex' : 'none';
+    }
+
+    const probeRow = document.getElementById('task-probe-mode-row');
+    if (probeRow) probeRow.style.display = cap.canUseProbeMode ? 'flex' : 'none';
 
     const optsSel = document.getElementById('task-cfg-opts');
-    if (optsSel) optsSel.value = String(tCfg.opts || 0);
+    if (optsSel && optsSel.closest('.compact-param-row')) {
+        optsSel.closest('.compact-param-row').style.display = cap.canChangeOpts ? 'flex' : 'none';
+    }
 
-    const stg = tCfg.stages || { c1: true, c2: true, c3: true, c4: true };
+    const dmtsBox = document.getElementById('dmts-config-box');
+    if (dmtsBox) dmtsBox.style.display = cap.canUseDMTS ? 'flex' : 'none';
+
+    let ftBtnBox = document.getElementById('task-fast-track-btn-box');
+    if (!ftBtnBox) {
+        const abaPane = document.getElementById('task-tab-content-aba');
+        if (abaPane) {
+            ftBtnBox = document.createElement('div');
+            ftBtnBox.id = 'task-fast-track-btn-box';
+            ftBtnBox.style.marginBottom = '10px';
+            abaPane.insertBefore(ftBtnBox, abaPane.firstChild);
+        }
+    }
+    if (ftBtnBox) {
+        ftBtnBox.style.display = cap.canUseProbeMode ? 'block' : 'none';
+        ftBtnBox.innerHTML = `
+            <button type="button" class="btn-action" style="width:100%; background:#6D28D9; padding:10px;" onclick="startFastTrackEntryProbe('${modId}')">
+                ${UI_SVGS.zap} Aplicar Sonda Rápida de Entrada Agora (100% Consolida / 1º Erro Treina)
+            </button>
+        `;
+    }
+
     const c1El = document.getElementById('task-cfg-c1');
     const c2El = document.getElementById('task-cfg-c2');
     const c3El = document.getElementById('task-cfg-c3');
     const c4El = document.getElementById('task-cfg-c4');
-    if (c1El) c1El.checked = stg.c1 !== false;
-    if (c2El) c2El.checked = stg.c2 !== false;
-    if (c3El) c3El.checked = stg.c3 !== false;
-    if (c4El) c4El.checked = stg.c4 !== false;
+    const cyclesWrapper = c1El ? c1El.closest('div[style*="background:#F8FAFC"]') : null;
+
+    if (cyclesWrapper) {
+        if (!cap.cyclesLabels || cap.cyclesLabels.length === 0) {
+            cyclesWrapper.style.display = 'none';
+        } else {
+            cyclesWrapper.style.display = 'block';
+            [
+                { el: c1El, key: 'c1' },
+                { el: c2El, key: 'c2' },
+                { el: c3El, key: 'c3' },
+                { el: c4El, key: 'c4' }
+            ].forEach(item => {
+                if (!item.el || !item.el.parentElement) return;
+                const match = cap.cyclesLabels.find(cl => cl.key === item.key);
+                if (match) {
+                    item.el.parentElement.style.display = 'flex';
+                    item.el.parentElement.innerHTML = `<input type="checkbox" id="task-cfg-${item.key}" checked style="width:18px; height:18px;"> <span>${match.label}</span>`;
+                } else {
+                    item.el.parentElement.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    const tCfg = getTaskConfig(modId);
+    if (fontSel) fontSel.value = tCfg.font || 'GLOBAL';
+    if (chkCV) chkCV.checked = !!tCfg.colorCV;
+    if (chkBox) chkBox.checked = !!tCfg.sylBox;
+    if (optsSel) optsSel.value = String(tCfg.opts || 0);
+
+    const stg = tCfg.stages || { c1: true, c2: true, c3: true, c4: true };
+    if (document.getElementById('task-cfg-c1')) document.getElementById('task-cfg-c1').checked = stg.c1 !== false;
+    if (document.getElementById('task-cfg-c2')) document.getElementById('task-cfg-c2').checked = stg.c2 !== false;
+    if (document.getElementById('task-cfg-c3')) document.getElementById('task-cfg-c3').checked = stg.c3 !== false;
+    if (document.getElementById('task-cfg-c4')) document.getElementById('task-cfg-c4').checked = stg.c4 !== false;
 
     document.getElementById('task-cfg-dmts').value = tCfg.dmtsDelay || 0;
     document.getElementById('dmts-val-label').innerText = (tCfg.dmtsDelay > 0) ? `${tCfg.dmtsDelay}s` : '0s';
     document.getElementById('task-cfg-timeout').value = tCfg.responseTimeout || 0;
     const tokInp = document.getElementById('task-cfg-tokens');
     if (tokInp) tokInp.value = (typeof tCfg.rewardTokens === 'number') ? tCfg.rewardTokens : -1;
-
-    const dmtsBox = document.getElementById('dmts-config-box');
-    if (mod.isAudioModel) {
-        dmtsBox.style.opacity = '0.45';
-        dmtsBox.style.pointerEvents = 'none';
-        document.getElementById('dmts-val-label').innerText = 'N/A';
-    } else {
-        dmtsBox.style.opacity = '1';
-        dmtsBox.style.pointerEvents = 'auto';
-    }
 
     document.getElementById('stim-editor-title').innerText = mod.title;
 
@@ -2999,7 +3202,7 @@ function openStimuliEditor(modId) {
     } else {
         document.getElementById('stim-editor-rules').innerHTML = '';
         document.getElementById('tab-btn-stim').style.display = 'none';
-        switchTaskEditorTab('TOPO');
+        switchTaskEditorTab(hasAnyPresentationControl ? 'TOPO' : 'ABA');
     }
 
     document.getElementById('modal-stimuli-editor').style.display = 'flex';
@@ -3174,17 +3377,6 @@ function openStimulusMediaAssignPicker(wordStr) {
     const emojiInp = document.getElementById('media-picker-emoji-input');
     if (emojiInp) emojiInp.value = (curMedia && curMedia.type === 'EMOJI') ? curMedia.val : '';
 
-    const gal = document.getElementById('media-picker-idb-grid');
-    if (gal && !document.getElementById('media-picker-search-input')) {
-        const searchBar = document.createElement('input');
-        searchBar.type = 'text';
-        searchBar.id = 'media-picker-search-input';
-        searchBar.placeholder = 'Buscar figura pelo nome...';
-        searchBar.style.cssText = 'width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; font-weight:700; font-size:0.9rem; margin-bottom:8px; outline:none; background:#F8FAFC;';
-        searchBar.oninput = () => renderMediaPickerUnifiedGallery(searchBar.value);
-        gal.parentNode.insertBefore(searchBar, gal);
-    }
-
     const searchInp = document.getElementById('media-picker-search-input');
     if (searchInp) searchInp.value = '';
     renderMediaPickerUnifiedGallery('');
@@ -3333,15 +3525,15 @@ function saveStimuliEditorChanges() {
         state.customCurriculum[modId] = JSON.parse(JSON.stringify(editorSession.tempMap));
     }
 
-    const mod = EIDOS_MODULES.find(m => m.id === modId);
+    const cap = getTaskCapabilities(modId);
     const chkCV = document.getElementById('task-cfg-color-cv');
     const chkBox = document.getElementById('task-cfg-syl-box');
     const tokInp = document.getElementById('task-cfg-tokens');
     const tokVal = tokInp ? parseInt(tokInp.value) : -1;
     const optsSel = document.getElementById('task-cfg-opts');
-    const optsVal = optsSel ? parseInt(optsSel.value) || 0 : 0;
+    const optsVal = (cap.canChangeOpts && optsSel) ? (parseInt(optsSel.value) || 0) : 0;
     const probeSel = document.getElementById('task-cfg-probe-mode');
-    const forceProbeMode = probeSel ? probeSel.value : 'AUTO';
+    const forceProbeMode = (cap.canUseProbeMode && probeSel) ? probeSel.value : 'AUTO';
 
     let c1 = document.getElementById('task-cfg-c1') ? document.getElementById('task-cfg-c1').checked : true;
     let c2 = document.getElementById('task-cfg-c2') ? document.getElementById('task-cfg-c2').checked : true;
@@ -3350,13 +3542,13 @@ function saveStimuliEditorChanges() {
     if (!c1 && !c2 && !c3 && !c4) c1 = true;
 
     state.taskSettings[modId] = {
-        font: document.getElementById('task-cfg-font').value || 'GLOBAL',
-        colorCV: chkCV ? chkCV.checked : false,
-        sylBox: chkBox ? chkBox.checked : false,
+        font: cap.canChangeFont ? (document.getElementById('task-cfg-font').value || 'GLOBAL') : 'GLOBAL',
+        colorCV: (cap.canColorCV && chkCV) ? chkCV.checked : false,
+        sylBox: (cap.canSylBox && chkBox) ? chkBox.checked : false,
         opts: optsVal,
         forceProbeMode,
         stages: { c1, c2, c3, c4 },
-        dmtsDelay: (mod && mod.isAudioModel) ? 0 : (parseInt(document.getElementById('task-cfg-dmts').value) || 0),
+        dmtsDelay: cap.canUseDMTS ? (parseInt(document.getElementById('task-cfg-dmts').value) || 0) : 0,
         responseTimeout: parseInt(document.getElementById('task-cfg-timeout').value) || 0,
         rewardTokens: isNaN(tokVal) ? -1 : tokVal
     };
@@ -3402,7 +3594,7 @@ function openQuickPeekModal() {
     } else if (typeof t === 'object') {
         if (t.letter && t.varIdx) {
             stimText = `Fonema ${t.title || t.letter}`;
-            ansText = session.currentCycle === 1 ? 'Observar articulação e repetir' : 'Sustentar o som deslizando';
+            ansText = `Emitir ou identificar o som de ${t.letter}`;
         } else if (t.target && t.match) {
             stimText = `Alvo: ${t.target}`;
             ansText = `Correto: ${t.match}`;
@@ -3466,6 +3658,10 @@ function hardResetAppCache() {
         true
     );
 }
+/* ============================================================================
+   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 2 DE 3: SEÇÕES 10 A 13)
+   GERADORES DE POOLS, INICIALIZADORES CLÍNICOS, 5 CICLOS FONÊMICOS E RENDERIZAÇÃO
+   ============================================================================ */
 
 /* ============================================================================
    10. GERADORES DE SÍLABAS PURAS, POOLS E GAVETAS DO PALAVRÁRIO
@@ -3528,8 +3724,15 @@ function getPhasePool(phaseId, specificVarKey = null) {
     if (palDrawer) {
         return getModuleVariationItems(phaseId, specificVarKey);
     }
-    const pMod = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId);
-    if (pMod) return [pMod.letter];
+    const pMod = getEffectivePhonologicalModules().find(m => m.id === phaseId);
+    if (pMod) {
+        if (pMod.isCheckpoint) {
+            return getEffectivePhonologicalModules()
+                .filter(m => !m.isCheckpoint && m.setNum === pMod.setNum)
+                .map(m => m.title);
+        }
+        return [pMod.letter];
+    }
     const eMod = EIDOS_MODULES.find(m => m.id === phaseId);
     if (eMod) {
         const activeV = specificVarKey || getActiveVariationForModule(phaseId);
@@ -3584,7 +3787,8 @@ function getCategory(item) {
 }
 
 /* ============================================================================
-   11. INICIALIZADOR UNIFICADO: TRILHA N1-N5, SILABÁRIO E PALAVRÁRIO
+   11. INICIALIZADOR UNIFICADO: SONDA FAST-TRACK, FONOLÓGICO (5 CICLOS),
+       SILABÁRIO CAP. 5, PALAVRÁRIO E TRILHA N1-N5
    ============================================================================ */
 function ensureSessionTimerStarted() {
     if (state.settings.timer.enabled) {
@@ -3609,6 +3813,7 @@ function ensureSessionTimerStarted() {
 
 function resetSessionStats(activeCycles, trialCount) {
     return {
+        c0: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(0) ? trialCount : 0 },
         c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? trialCount : 0 },
         c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? trialCount : 0 },
         c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? trialCount : 0 },
@@ -3621,13 +3826,34 @@ function resetSessionStats(activeCycles, trialCount) {
 function filterCyclesByTaskConfig(modId, candidateCycles, isSyllabary = false) {
     const stg = getEffectiveStagesForModule(modId, isSyllabary);
     const filtered = candidateCycles.filter(c => {
-        if (c === 1) return stg.c1 !== false;
+        if (c === 0 || c === 1) return stg.c1 !== false;
         if (c === 2) return stg.c2 !== false;
         if (c === 3) return stg.c3 !== false;
         if (c >= 4) return stg.c4 !== false;
         return true;
     });
     return filtered.length > 0 ? filtered : [candidateCycles[0] || 1];
+}
+
+/* SONDA RÁPIDA DE ENTRADA (FAST-TRACK PROBE) PARA ALUNOS AVANÇADOS */
+function startFastTrackEntryProbe(modId) {
+    closeModals();
+    const isEidos = EIDOS_MODULES.some(m => m.id === modId);
+    const prevForce = getTaskConfig(modId).forceProbeMode;
+    getTaskConfig(modId).forceProbeMode = 'PROBE';
+
+    if (String(modId).startsWith('FA_')) {
+        startPhonologicalModelingModule(modId, true);
+    } else if (String(modId).startsWith('PAL_')) {
+        startPalavrarioDrawer(modId);
+    } else if (isEidos) {
+        startEidosModule(modId);
+    } else {
+        startStructuredSyllabary(modId);
+    }
+
+    session.isFastTrackEntryProbe = true;
+    getTaskConfig(modId).forceProbeMode = prevForce;
 }
 
 function startCustomStudioModule(modId) {
@@ -3651,10 +3877,13 @@ function startCustomStudioModule(modId) {
         eidosMod: customMod,
         activeVar: 1,
         isProbeMode: inProbe,
+        isFastTrackEntryProbe: false,
         probeGateFailed: false,
         isStructuredSyllabary: false,
         isPalavrarioDrawer: false,
+        isPhonemeCheckpoint: false,
         sylData: null,
+        phonData: null,
         pool,
         trials: targets,
         activeCycles,
@@ -3673,7 +3902,7 @@ function startCustomStudioModule(modId) {
     renderTrial();
 }
 
-/* MOTOR DE GAVETAS DO PALAVRÁRIO (CAP. 4 & 5: TREINO INTEGRADO + SONDAGEM CONDICIONAL) */
+/* MOTOR DE GAVETAS DO PALAVRÁRIO (CAP. 4 & 5: TREINO + SONDAGEM CONDICIONAL) */
 function startPalavrarioDrawer(drawerId) {
     const drawer = getEffectivePalavrarioDrawers().find(d => d.id === drawerId);
     if (!drawer) return;
@@ -3683,20 +3912,9 @@ function startPalavrarioDrawer(drawerId) {
     const inProbe = isModuleInProbeMode(drawerId);
     const wordsPool = shuffleArray(getModuleVariationItems(drawerId, activeVar)).slice(0, 6);
 
-    // No Palavrário:
-    // - Modo Treino (TRAIN):
-    //   Ciclo 1: Pareamento Composto BC -> C com observação (grupos 3x3)
-    //   Ciclo 2: Montagem por Sílabas CRMTS com pista visual intrassilábica (palavras individuais)
-    //   Ciclo 3: Desmame Tipográfico 3x3 ([BO][LA] colorido -> BOLA preto puro)
-    // - Modo Sondagem (PROBE - Cap. 4):
-    //   Ciclo 3: Sonda Gatekeeper B -> C (Figura -> Palavra 3x3 sem dica, exige 100%)
-    //   Ciclo 4: Sonda Simetria C -> B (Palavra -> Figura 3x3)
-    //   Ciclo 5: Sonda Leitura Oral Pura C -> D (antes do áudio)
-    //   Ciclo 6: Sonda Auditiva A -> C (Ditado -> Palavra)
     const group3x3 = [wordsPool.slice(0, 3), wordsPool.slice(3, 6)].filter(g => g.length > 0);
     const activeCycles = inProbe ? [3, 4, 5, 6] : filterCyclesByTaskConfig(drawerId, [1, 2, 3], false);
     const firstCycle = activeCycles[0];
-
     const initialTrials = (!inProbe && firstCycle === 2) ? [...wordsPool] : group3x3;
 
     const modDescriptor = {
@@ -3716,13 +3934,16 @@ function startPalavrarioDrawer(drawerId) {
         eidosMod: modDescriptor,
         activeVar,
         isProbeMode: inProbe,
+        isFastTrackEntryProbe: false,
         probeGateFailed: false,
         isStructuredSyllabary: false,
         isPalavrarioDrawer: true,
+        isPhonemeCheckpoint: false,
         sylData: {
             words: wordsPool,
             groups: group3x3
         },
+        phonData: null,
         pool: wordsPool,
         trials: initialTrials,
         activeCycles,
@@ -3738,6 +3959,7 @@ function startPalavrarioDrawer(drawerId) {
         stats: inProbe
             ? resetSessionStats(activeCycles, group3x3.length)
             : {
+                c0: { indep: 0, dica: 0, erro: 0, total: 0 },
                 c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? group3x3.length : 0 },
                 c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? wordsPool.length : 0 },
                 c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? group3x3.length : 0 },
@@ -3750,7 +3972,7 @@ function startPalavrarioDrawer(drawerId) {
     renderTrial();
 }
 
-/* MOTOR ESTRUTURADO DO SILABÁRIO (CAP. 5 - CAMILA GOMES) */
+/* MOTOR ESTRUTURADO DO SILABÁRIO CUMULATIVO (CAP. 5) */
 function startStructuredSyllabary(phaseId) {
     if (phaseId === 'PALAVRAS') {
         document.getElementById('custom-words-input').value = state.customWords || '';
@@ -3776,10 +3998,13 @@ function startStructuredSyllabary(phaseId) {
             eidosMod: null,
             activeVar: 1,
             isProbeMode: inProbe,
+            isFastTrackEntryProbe: false,
             probeGateFailed: false,
             isStructuredSyllabary: false,
             isPalavrarioDrawer: false,
+            isPhonemeCheckpoint: false,
             sylData: null,
+            phonData: null,
             pool,
             trials: targets,
             activeCycles,
@@ -3815,14 +4040,17 @@ function startStructuredSyllabary(phaseId) {
         eidosMod: null,
         activeVar: 1,
         isProbeMode: inProbe,
+        isFastTrackEntryProbe: false,
         probeGateFailed: false,
         isStructuredSyllabary: true,
         isPalavrarioDrawer: false,
+        isPhonemeCheckpoint: false,
         sylData: {
             consonant: phaseId,
             syllables: familySyllables,
             words: cumulativeWords
         },
+        phonData: null,
         pool: [...familySyllables, ...cumulativeWords],
         trials: initialTrials,
         activeCycles,
@@ -3836,6 +4064,7 @@ function startStructuredSyllabary(phaseId) {
         isRepeating: false,
         latencies: [],
         stats: {
+            c0: { indep: 0, dica: 0, erro: 0, total: 0 },
             c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? familySyllables.length : 0 },
             c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? cumulativeWords.length : 0 },
             c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? 2 : 0 },
@@ -3850,10 +4079,47 @@ function startStructuredSyllabary(phaseId) {
 
 const startLegacyGame = startStructuredSyllabary;
 
-function startPhonologicalModelingModule(modId) {
+/* NOVO MOTOR DO ALFABETO FONOLÓGICO: 5 CICLOS INTERNOS + CHECK-POINT DE CONJUNTO (MÉTODO PROF. ALVES) */
+function startPhonologicalModelingModule(modId, forceColdProbe = false) {
     if (!ensureSessionTimerStarted()) return;
-    const pm = PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === modId);
+
+    const chkSet = getPhonemeSetsCatalog().find(s => s.id === modId);
+    if (chkSet) {
+        startPhonemeSetCheckpoint(chkSet);
+        return;
+    }
+
+    const allPhon = getEffectivePhonologicalModules().filter(m => !m.isCheckpoint);
+    const pm = allPhon.find(m => m.id === modId);
     if (!pm) return;
+
+    const isConsonant = !vowels.includes(pm.letter.toUpperCase());
+    const pmIdx = allPhon.findIndex(m => m.id === modId);
+    const priorPhonemes = allPhon.slice(0, Math.max(0, pmIdx));
+    const overlearningSample = shuffleArray(priorPhonemes.length > 0 ? priorPhonemes : [pm]).slice(0, 3);
+    const distractorsPool = shuffleArray(
+        allPhon.filter(m => m.letter !== pm.letter)
+    ).slice(0, 6);
+
+    const vowelsSet = getPhonemeSetsCatalog()[0];
+    const vowelsMastered = vowelsSet.members.every(vId => {
+        const p = getModuleProgress(vId);
+        return p.streak > 0 || p.status === 'mastered';
+    });
+
+    const stg = getEffectiveStagesForModule(modId, false);
+    const activeCycles = [];
+    if (stg.c1 !== false) {
+        activeCycles.push(0);
+        activeCycles.push(1);
+    }
+    if (stg.c2 !== false) activeCycles.push(2);
+    if (stg.c3 !== false) activeCycles.push(3);
+    if (stg.c4 !== false) {
+        if (overlearningSample.length > 0) activeCycles.push(4);
+        if (isConsonant && (vowelsMastered || pmIdx >= 5)) activeCycles.push(5);
+    }
+    if (activeCycles.length === 0) activeCycles.push(1);
 
     const modDescriptor = {
         id: pm.id,
@@ -3868,24 +4134,32 @@ function startPhonologicalModelingModule(modId) {
         isAudioModel: true
     };
 
-    const trials = [{ letter: pm.letter, varIdx: pm.varIdx, title: pm.title }];
-    const activeCycles = filterCyclesByTaskConfig(modId, [1, 2], false);
+    const firstCycle = activeCycles[0];
+    const initialTrials = getPhonemeCycleTrials(pm, firstCycle, overlearningSample);
 
     undoSnapshot = null;
     session = {
         phase: pm.id,
         eidosMod: modDescriptor,
         activeVar: 1,
-        isProbeMode: false,
+        isProbeMode: forceColdProbe,
+        isFastTrackEntryProbe: forceColdProbe,
         probeGateFailed: false,
         isStructuredSyllabary: false,
         isPalavrarioDrawer: false,
+        isPhonemeCheckpoint: false,
         sylData: null,
-        pool: [pm.letter],
-        trials,
+        phonData: {
+            targetPhoneme: pm,
+            overlearningList: overlearningSample,
+            distractors: distractorsPool,
+            failedInCheckpoint: []
+        },
+        pool: allPhon.map(m => m.letter),
+        trials: initialTrials,
         activeCycles,
         currentCycleIdx: 0,
-        currentCycle: activeCycles[0],
+        currentCycle: firstCycle,
         isOnlyCycle3: false,
         isPreReq: false,
         currentTrialIdx: 0,
@@ -3893,7 +4167,109 @@ function startPhonologicalModelingModule(modId) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
-        stats: resetSessionStats(activeCycles, trials.length)
+        stats: {
+            c0: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(0) ? 1 : 0 },
+            c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? 1 : 0 },
+            c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? 2 : 0 },
+            c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? 1 : 0 },
+            c4: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(4) ? overlearningSample.length : 0 },
+            c5: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(5) ? 5 : 0 },
+            c6: { indep: 0, dica: 0, erro: 0, total: 0 }
+        }
+    };
+    openGame();
+    renderTrial();
+}
+
+function getPhonemeCycleTrials(pm, cycleNum, overlearningSample) {
+    if (cycleNum === 0 || cycleNum === 1 || cycleNum === 3) {
+        return [{ letter: pm.letter, varIdx: pm.varIdx, title: pm.title, id: pm.id }];
+    }
+    if (cycleNum === 2) {
+        return [
+            { letter: pm.letter, varIdx: pm.varIdx, title: pm.title, discMode: 'MOUTH' },
+            { letter: pm.letter, varIdx: pm.varIdx, title: pm.title, discMode: 'LETTER' }
+        ];
+    }
+    if (cycleNum === 4) {
+        return overlearningSample.map(item => ({
+            letter: item.letter,
+            varIdx: item.varIdx,
+            title: item.title,
+            id: item.id
+        }));
+    }
+    if (cycleNum === 5) {
+        const cons = pm.letter.toUpperCase();
+        return vowels.map(v => `${cons}${v}`);
+    }
+    return [{ letter: pm.letter, varIdx: pm.varIdx, title: pm.title, id: pm.id }];
+}
+
+/* CARD DE CHECK-POINT DO CONJUNTO FONÊMICO (SONDA MISTA + RETREINO IMEDIATO DOS ERROS) */
+function startPhonemeSetCheckpoint(chkSetOrId) {
+    const chkSet = (typeof chkSetOrId === 'string')
+        ? getPhonemeSetsCatalog().find(s => s.id === chkSetOrId)
+        : chkSetOrId;
+    if (!chkSet) return;
+
+    const allPhon = getEffectivePhonologicalModules().filter(m => !m.isCheckpoint);
+    const currentSetItems = chkSet.members
+        .map(id => allPhon.find(m => m.id === id))
+        .filter(Boolean);
+
+    const priorSetsMembers = getPhonemeSetsCatalog()
+        .filter(s => s.setNum < chkSet.setNum)
+        .flatMap(s => s.members)
+        .map(id => allPhon.find(m => m.id === id))
+        .filter(Boolean);
+
+    const maintenanceCount = Math.max(0, Math.ceil(priorSetsMembers.length * 0.2));
+    const maintenanceSample = shuffleArray(priorSetsMembers).slice(0, maintenanceCount);
+    const fullProbeBattery = shuffleArray([...currentSetItems, ...maintenanceSample]);
+
+    const modDescriptor = {
+        id: chkSet.id,
+        code: `CONJ ${chkSet.setNum}`,
+        level: 'FONOLOGICO',
+        title: chkSet.title,
+        desc: 'Sondagem mista de retenção dos fonemas do conjunto.',
+        engine: 'PHON_MODEL',
+        subType: 'PHON_CHECKPOINT',
+        setNum: chkSet.setNum,
+        isAudioModel: false
+    };
+
+    undoSnapshot = null;
+    session = {
+        phase: chkSet.id,
+        eidosMod: modDescriptor,
+        activeVar: 1,
+        isProbeMode: true,
+        isFastTrackEntryProbe: false,
+        probeGateFailed: false,
+        isStructuredSyllabary: false,
+        isPalavrarioDrawer: false,
+        isPhonemeCheckpoint: true,
+        sylData: null,
+        phonData: {
+            setObj: chkSet,
+            failedPhonemes: [],
+            isRetrainingErrors: false
+        },
+        pool: fullProbeBattery.map(m => m.letter),
+        trials: fullProbeBattery,
+        activeCycles: [1],
+        currentCycleIdx: 0,
+        currentCycle: 1,
+        isOnlyCycle3: false,
+        isPreReq: false,
+        currentTrialIdx: 0,
+        attemptsOnCurrent: 0,
+        currentRenderedOptions: null,
+        isRepeating: false,
+        latencies: [],
+        stats: resetSessionStats([1], fullProbeBattery.length)
     };
     openGame();
     renderTrial();
@@ -4096,10 +4472,13 @@ function startEidosModule(modId) {
         eidosMod: mod,
         activeVar,
         isProbeMode: inProbe,
+        isFastTrackEntryProbe: false,
         probeGateFailed: false,
         isStructuredSyllabary: false,
         isPalavrarioDrawer: false,
+        isPhonemeCheckpoint: false,
         sylData: null,
+        phonData: null,
         pool,
         trials,
         activeCycles,
@@ -4131,13 +4510,10 @@ function getTopographicClasses() {
         return '';
     }
     return '';
-};
-/* ============================================================================
-   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 2 DE 2: SEÇÕES 12 A 19)
-   ============================================================================ */
+}
 
 /* ============================================================================
-   12. MOTOR DE RENDERIZAÇÃO, SILABÁRIO CAP. 5, PALAVRÁRIO, SONDAGEM CAP. 4 E DMTS
+   12. MOTOR DE RENDERIZAÇÃO, PRESERVAÇÃO DE CAIXA (b/d/p/q) E DMTS SEGURO
    ============================================================================ */
 function ensureLatencyCountdownPill() {
     let pill = document.getElementById('latency-countdown-pill');
@@ -4202,10 +4578,11 @@ function startResponseTimeoutIfConfigured(overrideTimeoutSec = null) {
 }
 
 function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel, overrideDmtsSec = null, overrideTimeoutSec = null) {
+    const cap = getTaskCapabilities(session.phase);
     const tCfg = getTaskConfig(session.phase);
     const delaySec = (overrideDmtsSec !== null && overrideDmtsSec !== undefined)
         ? parseInt(overrideDmtsSec)
-        : (tCfg && tCfg.dmtsDelay ? parseInt(tCfg.dmtsDelay) : 0);
+        : (cap.canUseDMTS && tCfg && tCfg.dmtsDelay ? parseInt(tCfg.dmtsDelay) : 0);
 
     if (!isVisualModel || !delaySec || delaySec <= 0) {
         setTimeout(() => {
@@ -4272,19 +4649,16 @@ function renderTrial(restoredOptions = null) {
     counterPill.innerText = `${session.currentTrialIdx + 1} / ${session.trials.length}`;
     const target = session.trials[session.currentTrialIdx];
 
-    // 1. TAREFAS PERSONALIZADAS DA OFICINA
     if (session.eidosMod && session.eidosMod.subType === 'CUSTOM_STUDIO') {
         renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock);
         return;
     }
 
-    // 2. SILABÁRIO CUMULATIVO EM 4 PASSOS (CAP. 5)
     if (session.isStructuredSyllabary && session.sylData) {
         renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaDock);
         return;
     }
 
-    // 3. MÓDULOS ESPECIALIZADOS E PALAVRÁRIO
     const stdSubTypes = ['VOWELS_PURE', 'VOCAL_ENCOUNTERS', 'SYL_RECOG_CV', 'CV_FUSION', 'WORDS_EQ', 'CG_ALL_SOUNDS', 'QU_GU_SOUNDS', 'CLASS_VC', 'CLASS_SP', 'RECOMB_STT'];
     if (session.eidosMod && !stdSubTypes.includes(session.eidosMod.subType)) {
         renderSpecializedEidosTrial(session.eidosMod.subType, target, modelArea, compArea, badge, abaDock, fluencyPill);
@@ -4807,22 +5181,24 @@ function isVowelChar(ch) {
     return /^[AEIOUÁÉÍÓÚÂÊÔÃÕÜ]$/i.test(ch);
 }
 
-/* FORMATAÇÃO VISUAL E MOLDURA SILÁBICA SEM REGEX (ESTRITAMENTE DICIONÁRIO OU HÍFEN) */
+/* FORMATAÇÃO VISUAL PRESERVANDO CAIXA ORIGINAL (b/d/p/q) E SEM REGEX */
 function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainBlack = false) {
     const rawStr = String(text || '').trim();
     if (!rawStr) return '';
 
-    const cleanDisplayStr = rawStr.includes(' ')
+    const isSingleCharLower = (rawStr.length === 1 && rawStr === rawStr.toLowerCase() && rawStr !== rawStr.toUpperCase());
+    const cleanDisplayStr = isSingleCharLower
         ? rawStr
-        : getNormalizedWordKey(rawStr);
+        : (rawStr.includes(' ') ? rawStr : rawStr.replace(/[;\/\-]+\s*/g, ''));
 
-    if (forcePlainBlack || (session && session.isProbeMode && !forceVisualCue)) {
+    if (forcePlainBlack || isSingleCharLower || (session && session.isProbeMode && !forceVisualCue)) {
         return cleanDisplayStr;
     }
 
+    const cap = getTaskCapabilities(modId || (session ? session.phase : ''));
     const tCfg = getTaskConfig(modId || (session ? session.phase : ''));
-    const useColorCV = forceVisualCue || (tCfg && tCfg.colorCV);
-    const useSylBox = forceVisualCue || (tCfg && tCfg.sylBox);
+    const useColorCV = forceVisualCue || (cap.canColorCV && tCfg && tCfg.colorCV);
+    const useSylBox = forceVisualCue || (cap.canSylBox && tCfg && tCfg.sylBox);
     if (!useColorCV && !useSylBox) return cleanDisplayStr;
 
     const colorizeSegment = (seg) => {
@@ -4849,19 +5225,253 @@ function getPhoneticAudioModel(target) {
 }
 
 /* ============================================================================
-   13. RENDERIZADORES ESPECIALIZADOS (N1-N5, PALAVRÁRIO, 3.2 E 3.3)
+   13. RENDERIZADORES ESPECIALIZADOS (5 CICLOS FONÊMICOS + CHECK-POINT + TRILHA)
    ============================================================================ */
+function showPhonemeCorrectivePopup(letter, varIdx, onDismissCallback) {
+    playPhonemeAudioFile(letter, varIdx, true);
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:9200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);';
+    overlay.innerHTML = `
+        <div style="background:#fff; border-radius:24px; padding:26px 32px; max-width:420px; width:90%; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.25); border:2px solid var(--warning);">
+            <span style="font-size:0.78rem; font-weight:900; color:#B45309; background:#FEF3C7; padding:4px 12px; border-radius:999px; text-transform:uppercase;">Modelagem Corretiva</span>
+            <h3 style="font-size:1.45rem; font-weight:900; color:var(--text); margin:12px 0 6px 0;">Observe a boca e repita o som:</h3>
+            <div class="mouth-articulatory-box" style="margin:14px auto; width:190px; height:190px;">
+                ${buildMouthImgTagWithFallback(letter, varIdx)}
+                <div style="display:none; flex-direction:column; align-items:center; justify-content:center; color:var(--primary-dark); font-weight:900;">
+                    <span style="font-size:4rem;">${letter}</span>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:14px;">
+                <button type="button" class="btn-action btn-cancel" id="btn-corr-replay" style="flex:1;">${UI_SVGS.volumeSm} Ouvir</button>
+                <button type="button" class="btn-action" id="btn-corr-continue" style="flex:1; background:var(--success);">Continuar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#btn-corr-replay').onclick = () => playPhonemeAudioFile(letter, varIdx, true);
+    overlay.querySelector('#btn-corr-continue').onclick = () => {
+        overlay.remove();
+        if (typeof onDismissCallback === 'function') onDismissCallback();
+    };
+}
+
 function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge, abaDock, fluencyPill) {
     const topoClass = getTopographicClasses();
     const numOpts = getEffectiveOptsForCurrentSession();
 
-    // TREINO INTEGRADO DAS GAVETAS DO PALAVRÁRIO (CAP. 4 & 5):
-    // Ciclo 1: Pareamento Composto BC -> C com observação
-    // Ciclo 2: Montagem Silábica CRMTS com pista intrassilábica e leitura
-    // Ciclo 3: Desmame de Pista Visual 3x3 ([BO][LA] colorido -> BOLA preto)
+    if (subType === 'PHON_CHECKPOINT') {
+        const letter = target.letter || 'A';
+        const varIdx = target.varIdx || '1';
+        const isRetrain = session.phonData && session.phonData.isRetrainingErrors;
+        badge.innerText = isRetrain
+            ? `${session.eidosMod.title} • Retreino de Sons com Dificuldade`
+            : `${session.eidosMod.title} • Sondagem de Retenção (${session.currentTrialIdx + 1}/${session.trials.length})`;
+
+        modelArea.style.minHeight = '160px';
+        modelArea.innerHTML = `
+            <div class="model-card ${topoClass}" style="font-size:5.2rem; min-width:210px; min-height:150px; border-style:solid;">
+                ${letter}
+            </div>
+        `;
+
+        compArea.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; width:100%;">
+                <p style="font-size:1rem; font-weight:800; color:var(--text-light);">Pergunte ao aluno: "Qual é o som desta letra?" (Sem dar dica sonora)</p>
+                <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+                    <button type="button" class="btn-action" id="chk-btn-fail" style="background:var(--danger); padding:16px 28px; font-size:1.1rem;">
+                        ✕ Precisa Reforçar
+                    </button>
+                    <button type="button" class="btn-action" id="chk-btn-pass" style="background:var(--success); padding:16px 28px; font-size:1.1rem;">
+                        ✓ Dominou o Som
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('chk-btn-pass').onclick = () => {
+            if (blockClicks) return;
+            blockClicks = true;
+            playSound('win');
+            if (!state.phonemeMastery) state.phonemeMastery = {};
+            state.phonemeMastery[target.id] = 'RETIDO_SEM_MODELO';
+            session.stats.c1.indep++;
+            advanceTrial();
+        };
+
+        document.getElementById('chk-btn-fail').onclick = () => {
+            if (blockClicks) return;
+            blockClicks = true;
+            playSound('click');
+            session.probeGateFailed = true;
+            session.stats.c1.erro++;
+            if (!state.reviewHighlights) state.reviewHighlights = {};
+            state.reviewHighlights[letter] = true;
+            if (!state.phonemeMastery) state.phonemeMastery = {};
+            state.phonemeMastery[target.id] = 'PRECISA_REFORCO';
+            if (session.phonData && !session.phonData.failedPhonemes.some(f => f.id === target.id)) {
+                session.phonData.failedPhonemes.push(target);
+            }
+            showPhonemeCorrectivePopup(letter, varIdx, () => {
+                advanceTrial();
+            });
+        };
+
+        setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+        return;
+    }
+
+    if (subType === 'PHON_MODELING') {
+        const cyc = session.currentCycle;
+
+        if (cyc === 5) {
+            renderSpecializedEidosTrial('SYL_BUILD_SLIDER', target, modelArea, compArea, badge, abaDock, fluencyPill);
+            badge.innerText = `Ciclo 5: Fusão Silábica (${target})`;
+            return;
+        }
+
+        const letter = target.letter || (session.eidosMod ? session.eidosMod.letter : 'A');
+        const varIdx = target.varIdx || (session.eidosMod ? session.eidosMod.varIdx : '1');
+        const titleLabel = target.title || letter;
+
+        if (cyc === 0) {
+            badge.innerText = `Ciclo 0: Sondagem a Frio (${titleLabel})`;
+            modelArea.style.minHeight = '160px';
+            modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:5rem; border-style:solid;">${letter}</div>`;
+            compArea.innerHTML = `
+                <div style="background:var(--primary-light); border:2px solid var(--primary); color:var(--primary-dark); padding:14px 24px; border-radius:18px; font-weight:900; font-size:1.05rem; max-width:620px; text-align:center;">
+                    Mostre a letra e pergunte: "Qual é o som desta letra?" (Não dê modelo sonoro).<br>
+                    <span style="font-size:0.84rem; opacity:0.85;">Se o aluno já souber de memória, marque Independente [✓] abaixo.</span>
+                </div>
+            `;
+            abaDock.style.display = 'flex';
+            setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+            return;
+        }
+
+        if (cyc === 1) {
+            badge.innerText = `Ciclo 1: Modelagem e Imitação (${titleLabel})`;
+            modelArea.style.minHeight = '210px';
+            modelArea.innerHTML = `
+                <div style="display:flex; align-items:center; justify-content:center; gap:22px; flex-wrap:wrap;">
+                    <div class="mouth-articulatory-box" style="width:190px; height:190px;">
+                        ${buildMouthImgTagWithFallback(letter, varIdx)}
+                        <div style="display:none; flex-direction:column; align-items:center; justify-content:center; color:var(--primary-dark); font-weight:900;">
+                            <span style="font-size:4rem;" class="${topoClass}">${letter}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+                        <div class="model-card ${topoClass}" style="min-width:130px; min-height:110px; font-size:3.8rem; padding:12px 24px;">${letter}</div>
+                        <button type="button" class="btn-action" id="btn-listen-train-phoneme" style="padding:10px 20px; font-size:0.95rem; border-radius:14px;">
+                            ${UI_SVGS.volumeSm} Ouvir Som (2x)
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            compArea.innerHTML = `
+                <div style="width:100%; max-width:660px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <span style="font-size:0.88rem; font-weight:800; color:var(--text-light);">Ouça o modelo e deslize a letra abaixo imitando o som:</span>
+                    <div id="phon-drag-track" class="drag-track">
+                        <div id="phon-drag-fill" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
+                        <div style="position:absolute; right:22px; display:flex; align-items:center; gap:6px; color:var(--text-light); font-weight:900; font-size:0.95rem; pointer-events:none;">
+                            <span>CHEGADA</span> ${UI_SVGS.checkCircle}
+                        </div>
+                        <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">${letter}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('btn-listen-train-phoneme').onclick = () => {
+                playSound('click');
+                playPhonemeAudioFile(letter, varIdx, true);
+            };
+
+            playPhonemeAudioFile(letter, varIdx, true);
+            abaDock.style.display = 'flex';
+            bindPhonemeSliderEvents('phon-drag-track', 'phon-drag-box', 'phon-drag-fill');
+            setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+            return;
+        }
+
+        if (cyc === 2) {
+            const isMouthMode = (target.discMode === 'MOUTH');
+            badge.innerText = isMouthMode
+                ? `Ciclo 2: Ouça o Som e Escolha a Boca (${titleLabel})`
+                : `Ciclo 2: Ouça o Som e Escolha a Letra (${titleLabel})`;
+
+            modelArea.style.minHeight = '135px';
+            modelArea.innerHTML = `<button type="button" class="model-audio-btn" id="btn-phon-disc-audio">${UI_SVGS.volume}</button>`;
+            document.getElementById('btn-phon-disc-audio').onclick = () => playPhonemeAudioFile(letter, varIdx, false);
+            playPhonemeAudioFile(letter, varIdx, false);
+
+            const allPhon = getEffectivePhonologicalModules().filter(m => !m.isCheckpoint);
+            const distItems = shuffleArray(
+                (session.phonData && session.phonData.distractors.length >= 2)
+                    ? session.phonData.distractors
+                    : allPhon.filter(m => m.letter !== letter)
+            ).slice(0, 2);
+
+            const choices = shuffleArray([
+                { letter, varIdx, isCorrect: true },
+                ...distItems.map(d => ({ letter: d.letter, varIdx: d.varIdx || '1', isCorrect: false }))
+            ]);
+
+            choices.forEach(ch => {
+                const btn = document.createElement('div');
+                btn.className = `comp-card ${topoClass}`;
+                if (isMouthMode) {
+                    btn.style.padding = '10px';
+                    btn.innerHTML = `
+                        <div style="width:115px; height:115px; display:flex; align-items:center; justify-content:center;">
+                            ${buildMouthImgTagWithFallback(ch.letter, ch.varIdx, 'width:110px; height:110px; object-fit:contain; border-radius:14px;')}
+                            <span style="display:none; font-size:2.4rem; font-weight:900;">${ch.letter}</span>
+                        </div>
+                    `;
+                } else {
+                    btn.innerHTML = ch.letter;
+                }
+                btn.dataset.correct = ch.isCorrect;
+                btn.onclick = () => handleAnswer(ch.isCorrect, btn);
+                compArea.appendChild(btn);
+            });
+
+            setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+            return;
+        }
+
+        const isOverlearning = (cyc === 4);
+        badge.innerText = isOverlearning
+            ? `Ciclo 4: Revisão Cumulativa (${titleLabel})`
+            : `Ciclo 3: Produção Autônoma sem Modelo (${titleLabel})`;
+
+        modelArea.style.minHeight = '65px';
+        modelArea.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                <h3 style="font-size:1.55rem; font-weight:900; color:var(--text);">Deslize emitindo o som de memória (sem ajuda)</h3>
+                <p style="font-size:0.88rem; font-weight:700; color:var(--text-light);">Se o aluno errar, registre [✕] ou [Dica] para abrir a correção articulatória</p>
+            </div>
+        `;
+
+        compArea.innerHTML = `
+            <div style="width:100%; max-width:680px; display:flex; flex-direction:column; align-items:center; gap:14px; padding:10px 0;">
+                <div id="phon-drag-track" class="drag-track">
+                    <div id="phon-drag-fill" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
+                    <div style="position:absolute; right:22px; display:flex; align-items:center; gap:6px; color:var(--text-light); font-weight:900; font-size:0.95rem; pointer-events:none;">
+                        <span>CHEGADA</span> ${UI_SVGS.checkCircle}
+                    </div>
+                    <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">${letter}</div>
+                </div>
+            </div>
+        `;
+
+        abaDock.style.display = 'flex';
+        bindPhonemeSliderEvents('phon-drag-track', 'phon-drag-box', 'phon-drag-fill');
+        setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
+        return;
+    }
+
     if (subType === 'PALAVRARIO_TRAIN') {
         if (session.currentCycle === 1) {
-            // Reutiliza o Ciclo 2 do EQUIV_4STEPS_MM (BC -> C com palavra coberta para observação)
             const prevCycle = session.currentCycle;
             session.currentCycle = 2;
             renderSpecializedEidosTrial('EQUIV_4STEPS_MM', target, modelArea, compArea, badge, abaDock, fluencyPill);
@@ -4884,7 +5494,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    // 3.2 NOVO: DESMAME DE PISTA VISUAL (COLORIDO + MOLDURA -> TEXTO PRETO PURO EM 3x3)
     if (subType === 'FADEOUT_COLOR_MM') {
         badge.innerText = `3.2 Desmame de Pista Visual (Cor → Preto)`;
         const groupWords = Array.isArray(target) ? target : ['BOLA', 'MALA', 'SAPO'];
@@ -4959,7 +5568,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.3 NOVO: GENERALIZAÇÃO MAIÚSCULA <-> minúscula (CAP. 6.1 - 3x3)
     if (subType === 'CASE_GEN_MM') {
         badge.innerText = `3.3 Generalização MAIÚSCULA ↔ minúscula`;
         const groupWords = Array.isArray(target) ? target : ['BOLA', 'GATO', 'SAPO'];
@@ -5034,7 +5642,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 5.6 UNIFICADO: COERÊNCIA E SEQUÊNCIA NARRATIVA (VAR 1 = INTRUSA | VAR 2 = SEQUÊNCIA 1º, 2º, 3º)
     if (subType === 'NARRATIVE_COHERENCE') {
         if (target && Array.isArray(target.steps)) {
             renderSpecializedEidosTrial('CHRONO_SEQ', target, modelArea, compArea, badge, abaDock, fluencyPill);
@@ -5045,149 +5652,14 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         }
     }
 
-    if (subType === 'PHON_MODELING') {
-        const letter = target.letter || (session.eidosMod ? session.eidosMod.letter : 'A');
-        const varIdx = target.varIdx || (session.eidosMod ? session.eidosMod.varIdx : '1');
-        const imgPath = getMouthImagePath(letter, varIdx);
-
-        if (session.currentCycle === 1) {
-            badge.innerText = `Fase A: Exposição e Modelagem (${target.title || letter})`;
-            modelArea.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;">
-                    <div class="mouth-articulatory-box">
-                        <img src="${imgPath}" alt="Boca ${letter}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div style="display:none; flex-direction:column; align-items:center; justify-content:center; color:var(--primary-dark); font-weight:900;">
-                            <span style="font-size:4.2rem;" class="${topoClass}">${formatStimulusTextHTML(letter)}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            compArea.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-                    <button type="button" class="btn-action" id="btn-listen-train-phoneme" style="padding:18px 34px; font-size:1.3rem; border-radius:22px;">
-                        ${UI_SVGS.volumeSm}
-                        Ouvir e Treinar
-                    </button>
-                    <span style="font-size:0.88rem; font-weight:800; color:var(--text-light);">Valide abaixo para avançar à Fase B.</span>
-                </div>
-            `;
-
-            const btnListen = document.getElementById('btn-listen-train-phoneme');
-            if (btnListen) {
-                btnListen.onclick = () => {
-                    playSound('click');
-                    playPhonemeAudioFile(letter, varIdx, true);
-                };
-            }
-
-            playPhonemeAudioFile(letter, varIdx, true);
-            abaDock.style.display = 'flex';
-            setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
-            return;
-        } else {
-            badge.innerText = `Fase B: Produção e Sustentação (${target.title || letter})`;
-            modelArea.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                    <h3 style="font-size:1.75rem; font-weight:900; color:var(--text); text-align:center;">Arraste e repita o som</h3>
-                    <p style="font-size:0.95rem; font-weight:700; color:var(--text-light);">Sustente a emissão vocal enquanto desliza a letra até o final</p>
-                </div>
-            `;
-
-            compArea.innerHTML = `
-                <div style="width:100%; max-width:680px; display:flex; flex-direction:column; align-items:center; gap:18px; padding:12px 0;">
-                    <div id="phon-drag-track" class="drag-track">
-                        <div id="phon-drag-fill" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); transition:none; pointer-events:none;"></div>
-                        <div style="position:absolute; right:22px; display:flex; align-items:center; gap:6px; color:var(--text-light); font-weight:900; font-size:0.95rem; pointer-events:none;">
-                            <span>CHEGADA</span>
-                            ${UI_SVGS.checkCircle}
-                        </div>
-                        <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">
-                            ${formatStimulusTextHTML(letter)}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            abaDock.style.display = 'flex';
-            const trackEl = document.getElementById('phon-drag-track');
-            const boxEl = document.getElementById('phon-drag-box');
-            const fillEl = document.getElementById('phon-drag-fill');
-
-            let isDragging = false;
-            let startX = 0;
-            let currentX = 0;
-            let maxSlide = 0;
-            let completedSlide = false;
-
-            const resetDragPosition = () => {
-                isDragging = false;
-                currentX = 0;
-                boxEl.style.transition = 'transform 0.25s ease';
-                fillEl.style.transition = 'width 0.25s ease';
-                boxEl.style.transform = 'translateX(0px)';
-                fillEl.style.width = '0px';
-            };
-
-            boxEl.onpointerdown = (e) => {
-                if (blockClicks || completedSlide) return;
-                isDragging = true;
-                boxEl.style.transition = 'none';
-                fillEl.style.transition = 'none';
-                maxSlide = Math.max(80, trackEl.clientWidth - boxEl.offsetWidth - 16);
-                startX = e.clientX - currentX;
-                if (boxEl.setPointerCapture) {
-                    try { boxEl.setPointerCapture(e.pointerId); } catch (err) {}
-                }
-            };
-
-            boxEl.onpointermove = (e) => {
-                if (!isDragging || completedSlide) return;
-                let delta = e.clientX - startX;
-                if (delta < 0) delta = 0;
-                if (delta > maxSlide) delta = maxSlide;
-                currentX = delta;
-                boxEl.style.transform = `translateX(${currentX}px)`;
-                fillEl.style.width = `${currentX + (boxEl.offsetWidth / 2)}px`;
-
-                if (currentX >= maxSlide * 0.94) {
-                    completedSlide = true;
-                    isDragging = false;
-                    boxEl.style.transform = `translateX(${maxSlide}px)`;
-                    fillEl.style.width = '100%';
-                    fillEl.style.background = 'var(--success-light)';
-                    boxEl.style.background = 'var(--success)';
-                    playSound('win');
-                    setTimeout(() => {
-                        completedSlide = false;
-                        fillEl.style.background = 'var(--primary-light)';
-                        boxEl.style.background = 'var(--primary)';
-                        resetDragPosition();
-                    }, 650);
-                }
-            };
-
-            const endDrag = () => {
-                if (!isDragging || completedSlide) return;
-                resetDragPosition();
-            };
-
-            boxEl.onpointerup = endDrag;
-            boxEl.onpointercancel = endDrag;
-
-            setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
-            return;
-        }
-    }
-
     if (subType === 'SYL_BUILD_SLIDER') {
         const sylStr = String(target || 'FA').trim().toUpperCase();
         const consChar = sylStr.charAt(0) || 'F';
         const vowChar = sylStr.slice(1) || 'A';
         const modTitle = session.eidosMod ? session.eidosMod.title : 'Fusão Silábica';
 
-        if (session.currentCycle === 1) {
-            badge.innerText = `${modTitle} • Ciclo 1: Fusão (${sylStr})`;
+        if (session.currentCycle === 1 || session.currentCycle === 5) {
+            badge.innerText = `${modTitle} • Fusão (${sylStr})`;
             modelArea.style.minHeight = '30px';
             modelArea.innerHTML = `<p style="font-weight:800; color:var(--text-light); font-size:0.95rem;">Deslize a Consoante, a Vogal e por fim a Sílaba formada:</p>`;
 
@@ -5489,7 +5961,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
     if (subType === 'MIRROR_GRAPH') {
         badge.innerText = `1.3 Orientação Espacial`;
-        modelArea.innerHTML = `<div class="model-card" style="font-size:4.4rem;">${formatStimulusTextHTML(target)}</div>`;
+        modelArea.innerHTML = `<div class="model-card" style="font-size:4.4rem;">${target}</div>`;
         const transforms = [
             { label: target, style: '', correct: true },
             { label: target, style: 'transform: scaleX(-1);', correct: false },
@@ -5499,7 +5971,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         shuffleArray(transforms).forEach(item => {
             const btn = document.createElement('div');
             btn.className = 'comp-card';
-            btn.innerHTML = `<span style="display:inline-block; ${item.style}">${formatStimulusTextHTML(item.label)}</span>`;
+            btn.innerHTML = `<span style="display:inline-block; ${item.style}">${item.label}</span>`;
             btn.dataset.correct = item.correct;
             btn.onclick = () => handleAnswer(item.correct, btn);
             compArea.appendChild(btn);
@@ -5533,7 +6005,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // CONTAGEM SILÁBICA SEM REGEX (ESTRITAMENTE DICIONÁRIO OU HÍFEN)
     if (subType === 'SYL_COUNT') {
         badge.innerText = `Segmentação Silábica`;
         const cleanWord = getNormalizedWordKey(target);
@@ -5570,7 +6041,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 3.1: CONSTRUÇÃO POR SÍLABAS SEM REGEX (ESTRITAMENTE DICIONÁRIO OU HÍFEN)
     if (subType === 'SYL_WORD_BUILD') {
         const cleanWord = getNormalizedWordKey(target || 'MALA');
         const syllables = extractExplicitSyllables(target || 'MALA');
@@ -5690,7 +6160,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    // 1.6 E SONDAGEM DO PALAVRÁRIO: CAPÍTULO 4 (CAMILA GOMES)
     if (subType === 'EQUIV_4STEPS_MM') {
         const rawWords = Array.isArray(target) ? target : ['BOLA', 'GATO', 'BOLO'];
         const words = rawWords.map(w => getNormalizedWordKey(w));
@@ -6326,8 +6795,66 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 }
 
+function bindPhonemeSliderEvents(trackId, boxId, fillId) {
+    const trackEl = document.getElementById(trackId);
+    const boxEl = document.getElementById(boxId);
+    const fillEl = document.getElementById(fillId);
+    if (!trackEl || !boxEl || !fillEl) return;
+
+    let isDragging = false, startX = 0, currentX = 0, maxSlide = 0, completedSlide = false;
+    const resetDragPosition = () => {
+        isDragging = false;
+        currentX = 0;
+        boxEl.style.transition = 'transform 0.25s ease';
+        fillEl.style.transition = 'width 0.25s ease';
+        boxEl.style.transform = 'translateX(0px)';
+        fillEl.style.width = '0px';
+    };
+
+    boxEl.onpointerdown = (e) => {
+        if (blockClicks || completedSlide) return;
+        isDragging = true;
+        boxEl.style.transition = 'none';
+        fillEl.style.transition = 'none';
+        maxSlide = Math.max(80, trackEl.clientWidth - boxEl.offsetWidth - 16);
+        startX = e.clientX - currentX;
+        if (boxEl.setPointerCapture) { try { boxEl.setPointerCapture(e.pointerId); } catch (err) {} }
+    };
+
+    boxEl.onpointermove = (e) => {
+        if (!isDragging || completedSlide) return;
+        let delta = Math.max(0, Math.min(maxSlide, e.clientX - startX));
+        currentX = delta;
+        boxEl.style.transform = `translateX(${currentX}px)`;
+        fillEl.style.width = `${currentX + (boxEl.offsetWidth / 2)}px`;
+
+        if (currentX >= maxSlide * 0.94) {
+            completedSlide = true;
+            isDragging = false;
+            boxEl.style.transform = `translateX(${maxSlide}px)`;
+            fillEl.style.width = '100%';
+            fillEl.style.background = 'var(--success-light)';
+            boxEl.style.background = 'var(--success)';
+            playSound('win');
+            setTimeout(() => {
+                completedSlide = false;
+                fillEl.style.background = 'var(--primary-light)';
+                boxEl.style.background = 'var(--primary)';
+                resetDragPosition();
+            }, 650);
+        }
+    };
+
+    boxEl.onpointerup = () => { if (isDragging && !completedSlide) resetDragPosition(); };
+    boxEl.onpointercancel = () => { if (isDragging && !completedSlide) resetDragPosition(); };
+}
 /* ============================================================================
-   14. RESPOSTAS, CONDIÇÃO DE EXTINÇÃO EM SONDA E SNAPSHOT DO UNDO
+   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 3 DE 3: SEÇÕES 14 A 19)
+   RESPOSTAS, SONDA FAST-TRACK, STT, FECHAMENTO, TELEMETRIA E ESTÚDIO A4
+   ============================================================================ */
+
+/* ============================================================================
+   14. RESPOSTAS, CORTE IMEDIATO FAST-TRACK, POP-UP CORRETIVO E UNDO
    ============================================================================ */
 function generateComparisons(target) {
     const desiredCount = getEffectiveOptsForCurrentSession();
@@ -6370,7 +6897,23 @@ function undoLastTrial() {
 }
 
 function getCurrentStatCat() {
-    return `c${session.currentCycle || 1}`;
+    const c = (session.currentCycle !== undefined && session.currentCycle !== null) ? session.currentCycle : 1;
+    return `c${c}`;
+}
+
+function abortFastTrackAndSwitchToTraining() {
+    const modId = session.phase;
+    getModuleProgress(modId).mode = 'TRAIN';
+    getTaskConfig(modId).forceProbeMode = 'TRAIN';
+    saveState();
+    customAlert(
+        "Sonda Interrompida → Iniciando Treino",
+        "Foi identificado erro na Sonda Rápida de Entrada. O módulo foi chaveado automaticamente para o Ciclo 1 do Modo Treino com dicas visuais ativas.",
+        () => {
+            getTaskConfig(modId).forceProbeMode = 'AUTO';
+            repeatLesson();
+        }
+    );
 }
 
 function handleAnswer(isCorrect, element) {
@@ -6385,7 +6928,16 @@ function handleAnswer(isCorrect, element) {
     const modelCard = document.querySelector('.model-card') || document.querySelector('.model-audio-btn');
     const compArea = document.getElementById('comparisons-area');
     const cat = getCurrentStatCat();
+    if (!session.stats[cat]) session.stats[cat] = { indep: 0, dica: 0, erro: 0, total: 1 };
+
     const isProbeNow = session.isProbeMode || (session.isStructuredSyllabary && session.currentCycle === 4);
+
+    if (session.isFastTrackEntryProbe && !isCorrect) {
+        blockClicks = true;
+        playSound('click');
+        abortFastTrackAndSwitchToTraining();
+        return;
+    }
 
     if (isProbeNow) {
         blockClicks = true;
@@ -6472,9 +7024,62 @@ function recordMediatedTrial(code) {
     const elapsedSec = Number(((Date.now() - trialStartTime) / 1000).toFixed(2));
     session.latencies.push(elapsedSec);
     const cat = getCurrentStatCat();
+    if (!session.stats[cat]) session.stats[cat] = { indep: 0, dica: 0, erro: 0, total: 1 };
 
     if (session.eidosMod && session.eidosMod.subType === 'SPRINT_3S' && code === 'I' && elapsedSec > 3.0) {
         code = 'D';
+    }
+
+    if (session.isFastTrackEntryProbe && code !== 'I') {
+        playSound('click');
+        abortFastTrackAndSwitchToTraining();
+        return;
+    }
+
+    if (session.eidosMod && session.eidosMod.subType === 'PHON_MODELING') {
+        const curTrial = session.trials[session.currentTrialIdx] || {};
+        const letter = curTrial.letter || session.eidosMod.letter || 'A';
+        const varIdx = curTrial.varIdx || session.eidosMod.varIdx || '1';
+        const prog = getModuleProgress(session.phase);
+
+        if (!state.phonemeMastery) state.phonemeMastery = {};
+
+        if (session.currentCycle === 0 && code === 'I' && (prog.streak >= 1 || session.isFastTrackEntryProbe)) {
+            playSound('win');
+            session.stats.c0.indep++;
+            state.phonemeMastery[session.phase] = 'RETIDO_SEM_MODELO';
+
+            if (session.stats.c1) session.stats.c1.total = 0;
+            if (session.stats.c2) session.stats.c2.total = 0;
+            if (session.stats.c3) session.stats.c3.total = 0;
+
+            const jumpIdx = session.activeCycles.findIndex(c => c >= 4);
+            if (jumpIdx >= 0) {
+                session.currentCycleIdx = jumpIdx - 1;
+                finishCycle();
+                return;
+            } else {
+                checkBlockMastery();
+                return;
+            }
+        }
+
+        if ((session.currentCycle === 3 || session.currentCycle === 4) && code !== 'I' && session.attemptsOnCurrent === 0) {
+            session.attemptsOnCurrent++;
+            playSound('click');
+            state.phonemeMastery[session.phase] = 'DOMINADO_COM_MODELO';
+            showPhonemeCorrectivePopup(letter, varIdx, () => {
+                blockClicks = false;
+                renderTrial();
+            });
+            return;
+        }
+
+        if (code === 'I') {
+            if (session.currentCycle === 5) state.phonemeMastery[session.phase] = 'FUNDIDO_EM_SILABAS';
+            else if (session.currentCycle >= 3) state.phonemeMastery[session.phase] = 'RETIDO_SEM_MODELO';
+            else state.phonemeMastery[session.phase] = 'DOMINADO_COM_MODELO';
+        }
     }
 
     if (!session.isRepeating && session.stats[cat]) {
@@ -6641,16 +7246,29 @@ function processSpeech(transcript) {
 window.receberTextoDoKodular = function(transcript) { processSpeech(transcript); };
 
 /* ============================================================================
-   16. FECHAMENTO DE CICLO, GATEKEEPER B->C CAP. 4 E TRANSIÇÃO AUTOMÁTICA
+   16. FECHAMENTO DE CICLO, RETREINO DE CHECK-POINT E JANELA DIÁRIA
    ============================================================================ */
 function finishCycle() {
+    if (session.isPhonemeCheckpoint && session.phonData && !session.phonData.isRetrainingErrors) {
+        const failed = session.phonData.failedPhonemes || [];
+        if (failed.length > 0) {
+            session.phonData.isRetrainingErrors = true;
+            const allPhon = getEffectivePhonologicalModules().filter(m => !m.isCheckpoint);
+            const strongDistractor = allPhon.find(m => !failed.some(f => f.id === m.id)) || failed[0];
+            session.trials = shuffleArray([...failed, strongDistractor]);
+            session.currentTrialIdx = 0;
+            renderTrial();
+            return;
+        }
+    }
+
     if (session.isProbeMode && session.eidosMod && session.eidosMod.subType === 'EQUIV_4STEPS_MM' && session.currentCycle === 3) {
         const c3Stats = session.stats.c3 || { indep: 0, total: 0, erro: 0, dica: 0 };
         if (session.probeGateFailed || c3Stats.erro > 0 || c3Stats.dica > 0 || c3Stats.indep < c3Stats.total) {
             session.probeGateFailed = true;
-            session.stats.c4.total = 0;
-            session.stats.c5.total = 0;
-            session.stats.c6.total = 0;
+            if (session.stats.c4) session.stats.c4.total = 0;
+            if (session.stats.c5) session.stats.c5.total = 0;
+            if (session.stats.c6) session.stats.c6.total = 0;
             checkBlockMastery();
             return;
         }
@@ -6662,7 +7280,14 @@ function finishCycle() {
         checkBlockMastery();
     } else {
         session.currentCycle = session.activeCycles[session.currentCycleIdx];
-        if (session.isStructuredSyllabary && session.sylData) {
+
+        if (session.eidosMod && session.eidosMod.subType === 'PHON_MODELING' && session.phonData) {
+            session.trials = getPhonemeCycleTrials(
+                session.phonData.targetPhoneme,
+                session.currentCycle,
+                session.phonData.overlearningList
+            );
+        } else if (session.isStructuredSyllabary && session.sylData) {
             if (session.currentCycle === 1) {
                 session.trials = [...session.sylData.syllables];
             } else if (session.currentCycle === 2 || session.currentCycle === 4) {
@@ -6683,15 +7308,50 @@ function finishCycle() {
     }
 }
 
+function getPendingDailyReviewsList() {
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    const targetDays = state.settings.consecDays || 2;
+    const pending = [];
+
+    Object.keys(state.moduleProgress || {}).forEach(modId => {
+        if (String(modId).startsWith('R_') || String(modId).startsWith('FA_')) return;
+        const p = state.moduleProgress[modId];
+        if (p && p.status !== 'mastered' && p.streak > 0 && p.streak < targetDays && p.lastDate && p.lastDate !== todayStr) {
+            pending.push(modId);
+        }
+    });
+    return pending;
+}
+
+function canUnlockNewModuleToday() {
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    if (!state.dailyUnlocksTracker || state.dailyUnlocksTracker.date !== todayStr) {
+        state.dailyUnlocksTracker = { date: todayStr, count: 0 };
+    }
+    const pendingRevs = getPendingDailyReviewsList();
+    if (pendingRevs.length > 0) return false;
+    const dailyCap = parseInt(state.settings.dailyNewUnlocksCap) || 3;
+    return state.dailyUnlocksTracker.count < dailyCap;
+}
+
+function recordDailyNewUnlock() {
+    const todayStr = new Date().toLocaleDateString('pt-BR');
+    if (!state.dailyUnlocksTracker || state.dailyUnlocksTracker.date !== todayStr) {
+        state.dailyUnlocksTracker = { date: todayStr, count: 0 };
+    }
+    state.dailyUnlocksTracker.count++;
+}
+
 function checkBlockMastery() {
     clearAllTrialTimers();
 
     const s = session.stats;
+    const c0 = s.c0 || { indep: 0, dica: 0, erro: 0, total: 0 };
     const c6 = s.c6 || { indep: 0, dica: 0, erro: 0, total: 0 };
-    const totalTrials = s.c1.total + s.c2.total + s.c3.total + s.c4.total + s.c5.total + c6.total;
-    const totalIndep = s.c1.indep + s.c2.indep + s.c3.indep + s.c4.indep + s.c5.indep + c6.indep;
-    const totalDica = s.c1.dica + s.c2.dica + s.c3.dica + s.c4.dica + s.c5.dica + c6.dica;
-    const totalErro = s.c1.erro + s.c2.erro + s.c3.erro + s.c4.erro + s.c5.erro + c6.erro;
+    const totalTrials = c0.total + s.c1.total + s.c2.total + s.c3.total + s.c4.total + s.c5.total + c6.total;
+    const totalIndep = c0.indep + s.c1.indep + s.c2.indep + s.c3.indep + s.c4.indep + s.c5.indep + c6.indep;
+    const totalDica = c0.dica + s.c1.dica + s.c2.dica + s.c3.dica + s.c4.dica + s.c5.dica + c6.dica;
+    const totalErro = c0.erro + s.c1.erro + s.c2.erro + s.c3.erro + s.c4.erro + s.c5.erro + c6.erro;
 
     const accuracy = totalTrials > 0 ? Math.round((totalIndep / totalTrials) * 100) : 0;
     const avgLatency = session.latencies.length > 0
@@ -6702,10 +7362,45 @@ function checkBlockMastery() {
     const usedVar = session.activeVar || 1;
 
     if (!session.isRepeating) {
-        prog = registerMasteryAttempt(session.phase, accuracy, avgLatency, session.probeGateFailed);
+        if (session.isFastTrackEntryProbe && accuracy === 100 && !session.probeGateFailed) {
+            prog.streak = state.settings.consecDays || 2;
+            prog.status = 'mastered';
+            prog.mode = 'PROBE';
+            prog.bestAcc = 100;
+            prog.lastDate = new Date().toLocaleDateString('pt-BR');
+            if (!state.manualProgressionOverride) unlockNextInSequence(session.phase);
+            saveState();
+        } else {
+            const prevStreak = prog.streak || 0;
+            prog = registerMasteryAttempt(session.phase, accuracy, avgLatency, session.probeGateFailed);
+
+            if (accuracy >= state.settings.crit && !session.probeGateFailed && prevStreak === 0 && prog.streak === 1) {
+                if (!state.manualProgressionOverride && canUnlockNewModuleToday()) {
+                    unlockNextInSequence(session.phase);
+                    recordDailyNewUnlock();
+                }
+            }
+
+            if (session.isPhonemeCheckpoint && accuracy === 100 && !session.probeGateFailed && session.phonData && session.phonData.setObj) {
+                const curSet = session.phonData.setObj;
+                curSet.members.forEach(mId => {
+                    const mp = getModuleProgress(mId);
+                    mp.status = 'mastered';
+                    if (!state.unlocked.includes(mId)) state.unlocked.push(mId);
+                });
+                const nextSet = getPhonemeSetsCatalog().find(st => st.setNum === curSet.setNum + 1);
+                if (nextSet) {
+                    if (!state.unlocked.includes(nextSet.id)) state.unlocked.push(nextSet.id);
+                    nextSet.members.forEach(mId => {
+                        if (!state.unlocked.includes(mId)) state.unlocked.push(mId);
+                    });
+                }
+                saveState();
+            }
+        }
 
         const modTitle = session.eidosMod ? `${session.eidosMod.code} ${session.eidosMod.title}` : session.phase;
-        const modeTag = session.isProbeMode ? ' [SONDA]' : ' [TREINO]';
+        const modeTag = session.isFastTrackEntryProbe ? ' [SONDA ENTRADA]' : (session.isProbeMode ? ' [SONDA]' : ' [TREINO]');
         const dataObj = {
             n: state.student || "ALUNO",
             d: new Date().toLocaleDateString('pt-BR'),
@@ -6744,9 +7439,16 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
     const desc = document.getElementById('result-desc');
     const banner = document.getElementById('result-streak-banner');
     const actions = document.getElementById('result-actions');
-    const targetDays = state.settings.consecDays || 3;
+    const targetDays = state.settings.consecDays || 2;
 
-    if (prog.revertedToTrain) {
+    if (session.isPhonemeCheckpoint && session.probeGateFailed) {
+        const failedNames = (session.phonData && session.phonData.failedPhonemes)
+            ? session.phonData.failedPhonemes.map(f => f.letter).join(', ')
+            : '';
+        iconBox.innerHTML = `<div style="background:var(--warning-light); padding:18px; border-radius:50%; display:inline-flex;">${UI_SVGS.target}</div>`;
+        title.innerText = "Fonemas Marcados para Reforço";
+        desc.innerText = `Sons que precisam de consolidação antes de avançar: ${failedNames}`;
+    } else if (prog.revertedToTrain) {
         iconBox.innerHTML = `<div style="background:var(--warning-light); padding:18px; border-radius:50%; display:inline-flex;">${UI_SVGS.target}</div>`;
         title.innerText = "Retorno ao Modo Treino";
         desc.innerText = session.probeGateFailed
@@ -6754,9 +7456,9 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
             : `Desempenho na sondagem (${accuracy}%) abaixo da meta (${state.settings.crit}%).`;
     } else if (isSuccess) {
         iconBox.innerHTML = `<div style="background:var(--success-light); padding:18px; border-radius:50%; display:inline-flex;">${UI_SVGS.trophy}</div>`;
-        title.innerText = prog.promotedToProbe
-            ? "Sondagem Liberada!"
-            : (prog.status === 'mastered' ? "Habilidade Consolidada!" : "Meta Atingida!");
+        title.innerText = session.isFastTrackEntryProbe
+            ? "Consolidado por Sondagem!"
+            : (prog.promotedToProbe ? "Sondagem Liberada!" : (prog.status === 'mastered' ? "Habilidade Consolidada!" : "Meta do Dia Atingida!"));
         desc.innerText = `Precisão Independente: ${accuracy}% | Latência Média: ${avgLatency}s`;
     } else {
         iconBox.innerHTML = `<div style="background:var(--warning-light); padding:18px; border-radius:50%; display:inline-flex;">${UI_SVGS.target}</div>`;
@@ -6774,11 +7476,11 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
 
     const nextVarInfo = (!state.settings.strictDay && isSuccess)
         ? ` | Próxima repetição: Variação ${prog.activeVar}`
-        : (state.settings.strictDay && prog.pendingVar ? ` | Variação ${prog.pendingVar} agendada para amanhã` : '');
+        : (state.settings.strictDay && prog.pendingVar ? ` | Revisão agendada para amanhã (Var ${prog.pendingVar})` : '');
 
     banner.innerHTML = (prog.status === 'mastered'
         ? `<div>Critério de ${targetDays}/${targetDays} concluído!${nextVarInfo}</div>`
-        : `<div>Progresso: <strong>${prog.streak} de ${targetDays}</strong>${nextVarInfo}</div>`) + probeStatusInfo + earnedNow;
+        : `<div>Retenção Multi-Dias: <strong>${prog.streak} de ${targetDays}</strong>${nextVarInfo}</div>`) + probeStatusInfo + earnedNow;
 
     const immEnabled = isSuccess && state.tokens && state.tokens.rules && state.tokens.rules.enableImmediateMiniReward;
     const immSec = (state.tokens && state.tokens.rules && state.tokens.rules.immediateMiniRewardDurationSec) || 20;
@@ -6793,21 +7495,6 @@ function showResultModal(isSuccess, accuracy, avgLatency, prog) {
         ${immEnabled ? `<button type="button" class="btn-action" style="width:100%; background:var(--success);" onclick="closeResult(); openGrid(); redeemArcadeGame('baloes', true, ${immSec})">Abrir Jogo de Reforço (${immSec}s)</button>` : ''}
     `;
     document.getElementById('modal-result').style.display = 'flex';
-
-    if (isSuccess && session.eidosMod && session.eidosMod.promptSylComplex && !state.settings.sylComplex.ccv) {
-        setTimeout(() => {
-            customAlert(
-                "Habilitar Sílabas Complexas?",
-                "O aluno atingiu o critério em Encontros Consonantais! Deseja pré-ativar automaticamente Sílabas Complexas para treino no Silabário?",
-                () => {
-                    state.settings.sylComplex = { ccv: true, cvcL: true, cvcS: true, cvcM: true };
-                    saveState();
-                    playSound('win');
-                },
-                true
-            );
-        }, 400);
-    }
 }
 
 function closeResult() {
@@ -6963,7 +7650,7 @@ function copyWhatsAppSummary() {
     listToUse.forEach(item => {
         const statusMark = item.acc >= item.crit ? '[META ATINGIDA]' : '[EM TREINO]';
         const vInfo = item.variacao ? ` (Var ${item.variacao})` : '';
-        text += `- *${item.fase}${vInfo}:* ${item.acc}% Independente | ${item.streak || '1/3'} ${statusMark}\n`;
+        text += `- *${item.fase}${vInfo}:* ${item.acc}% Independente | ${item.streak || '1/2'} ${statusMark}\n`;
     });
 
     document.getElementById('report-modal-title').innerText = "Resumo em Texto";
@@ -7066,7 +7753,7 @@ function exportEidosChecklistPDF() {
 }
 
 /* ============================================================================
-   18. CONFIGURAÇÕES GLOBAIS
+   18. CONFIGURAÇÕES GLOBAIS E PRESETS CLÍNICOS DE RITMO
    ============================================================================ */
 function togglePasswordField() {
     const chk = document.getElementById('set-sec-enable');
@@ -7092,15 +7779,69 @@ function toggleTimerField() {
     }
 }
 
+function applyClinicalPresetToSettingsUI(presetKey) {
+    if (presetKey === 'INTENSIVO') {
+        document.getElementById('set-consec-days').value = '3';
+        document.getElementById('set-opts').value = '2';
+        document.getElementById('set-errorless').checked = true;
+        document.getElementById('set-strict-day').checked = true;
+        if (document.getElementById('set-daily-cap')) document.getElementById('set-daily-cap').value = '2';
+    } else if (presetKey === 'REGULAR') {
+        document.getElementById('set-consec-days').value = '2';
+        document.getElementById('set-opts').value = '3';
+        document.getElementById('set-errorless').checked = true;
+        document.getElementById('set-strict-day').checked = true;
+        if (document.getElementById('set-daily-cap')) document.getElementById('set-daily-cap').value = '3';
+    } else if (presetKey === 'AVANCADO') {
+        document.getElementById('set-consec-days').value = '1';
+        document.getElementById('set-opts').value = '4';
+        document.getElementById('set-errorless').checked = false;
+        document.getElementById('set-strict-day').checked = false;
+        if (document.getElementById('set-daily-cap')) document.getElementById('set-daily-cap').value = '5';
+    }
+}
+
+function ensureClinicalPresetAndDailyCapFields() {
+    const topoSel = document.getElementById('set-topo-mode');
+    if (!topoSel) return;
+    const parentGrid = topoSel.parentElement.parentElement;
+    if (parentGrid && !document.getElementById('set-clinical-preset')) {
+        const presetDiv = document.createElement('div');
+        presetDiv.innerHTML = `
+            <label>Preset Clínico de Ritmo:</label>
+            <select id="set-clinical-preset" onchange="applyClinicalPresetToSettingsUI(this.value)">
+                <option value="REGULAR">Regular / Escolar (Cap. 5)</option>
+                <option value="INTENSIVO">Intensivo / TEA Inicial</option>
+                <option value="AVANCADO">Avançado / Alta Velocidade</option>
+            </select>
+        `;
+        const capDiv = document.createElement('div');
+        capDiv.innerHTML = `
+            <label>Limite de Avanços Novos/Dia:</label>
+            <input type="number" id="set-daily-cap" min="1" max="15" value="3">
+        `;
+        parentGrid.appendChild(presetDiv);
+        parentGrid.appendChild(capDiv);
+    }
+}
+
 function openSettings() {
+    ensureClinicalPresetAndDailyCapFields();
     document.getElementById('set-name').value = getActiveFirstName();
     document.getElementById('set-crit').value = state.settings.crit;
-    document.getElementById('set-consec-days').value = state.settings.consecDays || 3;
+    document.getElementById('set-consec-days').value = state.settings.consecDays || 2;
     document.getElementById('set-strict-day').checked = state.settings.strictDay !== false;
     document.getElementById('set-errorless').checked = state.settings.errorless !== false;
     document.getElementById('set-topo-mode').value = state.settings.topoMode || 'AUTO';
     document.getElementById('set-opts').value = state.settings.opts || 3;
     document.getElementById('set-latency').value = state.settings.latency;
+
+    if (document.getElementById('set-clinical-preset')) {
+        document.getElementById('set-clinical-preset').value = state.settings.clinicalPreset || 'REGULAR';
+    }
+    if (document.getElementById('set-daily-cap')) {
+        document.getElementById('set-daily-cap').value = state.settings.dailyNewUnlocksCap || 3;
+    }
 
     const colorInp = document.getElementById('set-theme-color');
     if (colorInp) colorInp.value = state.settings.themeColor || '#3B82F6';
@@ -7174,11 +7915,14 @@ function saveSettings() {
     const firstName = String(document.getElementById('set-name').value || "ALUNO").trim().split(/\s+/)[0].toUpperCase() || "ALUNO";
     state.student = firstName;
     state.settings.crit = parseInt(document.getElementById('set-crit').value) || 90;
-    state.settings.consecDays = parseInt(document.getElementById('set-consec-days').value) || 3;
+    state.settings.consecDays = parseInt(document.getElementById('set-consec-days').value) || 2;
     state.settings.strictDay = document.getElementById('set-strict-day').checked;
     state.settings.errorless = document.getElementById('set-errorless').checked;
     state.settings.topoMode = document.getElementById('set-topo-mode').value || 'AUTO';
     state.settings.opts = parseInt(document.getElementById('set-opts').value) || 3;
+    state.settings.clinicalPreset = document.getElementById('set-clinical-preset') ? document.getElementById('set-clinical-preset').value : 'REGULAR';
+    state.settings.dailyNewUnlocksCap = document.getElementById('set-daily-cap') ? (parseInt(document.getElementById('set-daily-cap').value) || 3) : 3;
+
     state.settings.sylComplex = {
         ccv: document.getElementById('set-syl-ccv').checked,
         cvcL: document.getElementById('set-syl-cvcl').checked,
@@ -7241,7 +7985,7 @@ function openReview(phaseId) {
         pool = [...generateSyllables(phaseId), ...getCumulativeWordsForSyllableFamily(phaseId)];
     }
     const mod = EIDOS_MODULES.find(m => m.id === phaseId)
-        || PHONOLOGICAL_ALPHABET_MODULES.find(m => m.id === phaseId)
+        || getEffectivePhonologicalModules().find(m => m.id === phaseId)
         || getEffectivePalavrarioDrawers().find(d => d.id === phaseId)
         || (state.customModules || []).find(m => m.id === phaseId);
     document.getElementById('review-title').innerText = mod ? `Revisão: ${mod.title}` : `Revisão: ${phaseId}`;
@@ -7280,7 +8024,7 @@ function openModulesManager() {
         ...EIDOS_MODULES.map(m => ({ id: m.id, label: `${m.code} - ${m.title}` })),
         ...getEffectivePalavrarioDrawers().map(d => ({ id: d.id, label: `Palavrário: ${d.title}` })),
         ...(state.customModules || []).map(cm => ({ id: cm.id, label: `Personalizado: ${cm.title}` })),
-        ...PHONOLOGICAL_ALPHABET_MODULES.map(pm => ({ id: pm.id, label: `Fonológico: ${pm.title}` })),
+        ...getEffectivePhonologicalModules().map(pm => ({ id: pm.id, label: `Fonológico: ${pm.title}` })),
         ...getEffectiveSyllabaryOrder().map(c => ({ id: c, label: `Silabário: ${c}` })),
         ...extraModules.map(e => ({ id: e, label: `Extra: ${e}` }))
     ];
@@ -7357,10 +8101,13 @@ function startCustomWords() {
         eidosMod: null,
         activeVar: 1,
         isProbeMode: isModuleInProbeMode('PALAVRAS'),
+        isFastTrackEntryProbe: false,
         probeGateFailed: false,
         isStructuredSyllabary: false,
         isPalavrarioDrawer: false,
+        isPhonemeCheckpoint: false,
         sylData: null,
+        phonData: null,
         pool,
         trials: targets,
         activeCycles,
@@ -7423,14 +8170,43 @@ function resetApp() {
 }
 
 /* ============================================================================
-   19. ESTÚDIO DE MATERIAIS CONCRETOS (COM SUPORTE AO PALAVRÁRIO E ZERO REGEX)
+   19. ESTÚDIO DE MATERIAIS CONCRETOS (ESQUEMA DE REFORÇAMENTO DETALHADO A4)
    ============================================================================ */
 let printStudioExcludedCards = new Set();
 
+function ensureDetailedReinforcementControlsInSidebar() {
+    const reinfModeSel = document.getElementById('pk-reinf-mode');
+    if (!reinfModeSel) return;
+    const section3 = reinfModeSel.closest('.print-sidebar-section');
+    if (section3 && !document.getElementById('pk-reinf-social-input')) {
+        const extraDiv = document.createElement('div');
+        extraDiv.style.cssText = 'display:flex; flex-direction:column; gap:8px; margin-top:6px; border-top:1px dashed var(--border); padding-top:8px;';
+        extraDiv.innerHTML = `
+            <div class="input-group" style="margin-bottom:0;">
+                <label style="font-size:0.78rem;">Reforço Contínuo (Social / Imediato):</label>
+                <input type="text" id="pk-reinf-social-input" value="Elogio social descritivo ('Muito bem!')" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.82rem;">
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+                <label style="font-size:0.78rem;">Intermitente (Frequência e Duração):</label>
+                <input type="text" id="pk-reinf-interm-input" value="VR-3 (1 ficha a cada 3 acertos) | 45s de jogo" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.82rem;">
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+                <label style="font-size:0.78rem;">Momento de Entrega:</label>
+                <select id="pk-reinf-moment-select" class="compact-select" style="width:100%; padding:8px; font-size:0.82rem;" onchange="renderLivePrintStudioPreview()">
+                    <option value="ITEM">A cada item / tentativa correta</option>
+                    <option value="CYCLE" selected>Ao final de cada ciclo concluído</option>
+                    <option value="TASK">Ao concluir a tarefa completa</option>
+                </select>
+            </div>
+        `;
+        section3.appendChild(extraDiv);
+    }
+}
+
 function initPrintStudioCascades() {
+    ensureDetailedReinforcementControlsInSidebar();
     const catSel = document.getElementById('pk-cat-select');
     if (!catSel) return;
-    // Garante que a opção PALAVRARIO exista no select de categorias
     if (!Array.from(catSel.options).some(o => o.value === 'PALAVRARIO')) {
         const palOpt = document.createElement('option');
         palOpt.value = 'PALAVRARIO';
@@ -7618,10 +8394,10 @@ function extractModuleFormulasForStudent(modId) {
             list.push({ idx: 1, formula: 'C → D', sdCode: 'C', rCode: 'D' });
             break;
         case 'FADEOUT_COLOR_MM':
-            list.push({ idx: 1, formula: 'C(Cor) → C(Preto)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor 3 palavras estruturadas (consoante preta, vogal vermelha e moldura azul) e solicitar o pareamento com as palavras em texto preto puro.' });
+            list.push({ idx: 1, formula: 'C(Cor) → C(Preto)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor 3 palavras estruturadas e solicitar o pareamento com as palavras em texto preto puro.' });
             break;
         case 'CASE_GEN_MM':
-            list.push({ idx: 1, formula: 'C(MAIÚSC) → C(minúsc)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor 3 palavras em letra de imprensa MAIÚSCULA e solicitar o pareamento com suas correspondentes em imprensa minúscula.' });
+            list.push({ idx: 1, formula: 'C(MAIÚSC) → C(minúsc)', sdCode: 'C', rCode: 'C', customCommand: 'Dispor 3 palavras em CAIXA ALTA e solicitar o pareamento com suas correspondentes em minúscula.' });
             break;
         case 'COPY_CRMTS':
         case 'WORD_SPACE':
@@ -7651,7 +8427,7 @@ function extractModuleFormulasForStudent(modId) {
         case 'EQUIV_4STEPS_MM':
             list.push({ idx: 1, formula: 'Treino: B → D / BC → C', sdCode: 'BC', rCode: 'C', customCommand: 'Ensino direto: solicitar nomeação da figura (B → D), revelar palavra modelo para observação e parear com a palavra igual (BC → C).' });
             list.push({ idx: 2, formula: 'Sonda Gate: B → C', sdCode: 'B', rCode: 'C', customCommand: 'Porta de entrada da Sondagem (exige 100% sem ajuda): parear Figura com Palavra escrita.' });
-            list.push({ idx: 3, formula: 'Sondas: C→B | C→D | A→C', sdCode: 'C', rCode: 'D', customCommand: 'Se B → C = 100%, aplicar em ordem: Simetria (C → B), Leitura Oral pura (C → D, antes do áudio) e Ditado (A → C).' });
+            list.push({ idx: 3, formula: 'Sondas: C→B | C→D | A→C', sdCode: 'C', rCode: 'D', customCommand: 'Se B → C = 100%, aplicar em ordem: Simetria (C → B), Leitura Oral pura (C → D) e Ditado (A → C).' });
             break;
         case 'SYL_BUILD_SLIDER':
             if (stg.c1 !== false) list.push({ idx: 1, formula: 'C → E', sdCode: 'C', rCode: 'E' });
@@ -7740,7 +8516,9 @@ function renderLivePrintStudioPreview() {
 
     const customSD = (document.getElementById('pk-custom-sd')?.value || '').trim();
     const waitSec = parseInt(document.getElementById('pk-wait-sec')?.value) || 5;
-    const reinfMode = document.getElementById('pk-reinf-mode')?.value || 'TOKEN';
+    const reinfSocial = (document.getElementById('pk-reinf-social-input')?.value || "Elogio social descritivo ('Muito bem!')").trim();
+    const reinfInterm = (document.getElementById('pk-reinf-interm-input')?.value || "VR-3 (1 ficha a cada 3 acertos) | 45s de jogo").trim();
+    const reinfMoment = document.getElementById('pk-reinf-moment-select')?.value || 'CYCLE';
 
     const selectedTips = [];
     if (document.getElementById('pk-tip-gestural')?.checked) selectedTips.push('Dica Gestual (Apontar)');
@@ -7774,7 +8552,6 @@ function renderLivePrintStudioPreview() {
 
     const formulas = extractModuleFormulasForStudent(modId);
 
-    // ================= PÁGINA 1: PROTOCOLO DE INSTRUÇÃO =================
     if (showProto) {
         const page1 = document.createElement('div');
         page1.className = 'a4-sheet';
@@ -7803,10 +8580,6 @@ function renderLivePrintStudioPreview() {
                 </div>
             `).join('')
             : `<div style="font-size:0.8rem; font-weight:700; color:#475569;">Apenas Resposta Independente (Sondagem sem dicas)</div>`;
-
-        const reinfLabel = reinfMode === 'CRF'
-            ? 'Esquema Contínuo (Reforçar a cada resposta correta)'
-            : `Economia de Fichas (+${state.tokens?.rules?.pointsPerMasteryBlock || 2} fichas por bloco concluído)`;
 
         page1.innerHTML = `
             <div>
@@ -7844,24 +8617,42 @@ function renderLivePrintStudioPreview() {
 
                 <div class="doc-box-grid">
                     <div class="doc-panel">
-                        <h4>Parâmetros de Resposta e Reforçamento</h4>
+                        <h4>Parâmetros da Tentativa</h4>
                         <div class="print-chk-line">
                             <span class="print-square filled"></span>
                             <span contenteditable="true">Tempo de Espera (Latência): ${waitSec} segundos</span>
                         </div>
                         <div class="print-chk-line">
                             <span class="print-square filled"></span>
-                            <span contenteditable="true">${reinfLabel}</span>
+                            <span contenteditable="true">Alternativas dispostas na mesa: ${numOpts} opções</span>
                         </div>
                         <div class="print-chk-line" style="margin-bottom:0;">
                             <span class="print-square"></span>
-                            <span contenteditable="true">Alternativas por tentativa: ${numOpts} opções</span>
+                            <span contenteditable="true">Em Sonda: registrar de forma neutra sem dica</span>
                         </div>
                     </div>
 
                     <div class="doc-panel">
-                        <h4>Dicas Autorizadas para a Sessão</h4>
+                        <h4>Hierarquia de Dicas Autorizadas</h4>
                         ${tipsHTML}
+                    </div>
+                </div>
+
+                <div class="doc-panel" style="margin-bottom:12px;">
+                    <h4>Esquema de Reforçamento (Contínuo, Intermitente e Momento de Entrega)</h4>
+                    <div class="print-chk-line">
+                        <span class="print-square filled"></span>
+                        <span contenteditable="true"><strong>Contínuo (CRF / Social):</strong> ${reinfSocial}</span>
+                    </div>
+                    <div class="print-chk-line">
+                        <span class="print-square filled"></span>
+                        <span contenteditable="true"><strong>Intermitente / Tangível (Frequência e Duração):</strong> ${reinfInterm}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:6px; padding-top:6px; border-top:1px dashed #CBD5E1; font-size:0.78rem; font-weight:800;">
+                        <span>Entregar Fichas / Acesso ao Reforçador:</span>
+                        <span style="display:inline-flex; align-items:center; gap:5px;"><span class="print-square ${reinfMoment === 'ITEM' ? 'filled' : ''}"></span> Por item/tentativa</span>
+                        <span style="display:inline-flex; align-items:center; gap:5px;"><span class="print-square ${reinfMoment === 'CYCLE' ? 'filled' : ''}"></span> Ao final de cada ciclo</span>
+                        <span style="display:inline-flex; align-items:center; gap:5px;"><span class="print-square ${reinfMoment === 'TASK' ? 'filled' : ''}"></span> Ao fim da tarefa completa</span>
                     </div>
                 </div>
 
@@ -7881,7 +8672,6 @@ function renderLivePrintStudioPreview() {
         printRoot.appendChild(page1);
     }
 
-    // ================= PÁGINA 2: FOLHA DE REGISTRO ISOLADA (DATA SHEET) =================
     if (showSheet) {
         const page2 = document.createElement('div');
         page2.className = 'a4-sheet';
@@ -7959,7 +8749,6 @@ function renderLivePrintStudioPreview() {
         printRoot.appendChild(page2);
     }
 
-    // ================= PÁGINA 3: PRANCHA DE TRABALHO (MESA) =================
     if (showBoard) {
         const page3 = document.createElement('div');
         page3.className = 'a4-sheet';
@@ -8004,7 +8793,6 @@ function renderLivePrintStudioPreview() {
         printRoot.appendChild(page3);
     }
 
-    // ================= PÁGINAS 4+: CARTÕES DE ESTÍMULOS E FICHAS MÓVEIS (ZERO REGEX) =================
     if (showCards) {
         const allCards = [];
         const uniqueStimuli = [...new Set(cleanPool)];
@@ -8155,7 +8943,8 @@ function renderLivePrintStudioPreview() {
 }
 
 window.handleAndroidBack = function() {
-    if (document.getElementById('modal-reward-arcade') && document.getElementById('modal-reward-arcade').style.display === 'flex') {
+    const arcadeModal = document.getElementById('modal-reward-arcade');
+    if (arcadeModal && arcadeModal.style.display === 'flex') {
         closeArcadeSandbox();
         return;
     }
