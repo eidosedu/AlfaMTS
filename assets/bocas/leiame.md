@@ -1,0 +1,1 @@
+as bocas do game
