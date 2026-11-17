@@ -1814,7 +1814,7 @@ textarea {
 }
 
 .print-studio-sidebar {
-    width: 335px;
+    width: 345px;
     flex-shrink: 0;
     background: #FFFFFF;
     border: 1.5px solid var(--border);
