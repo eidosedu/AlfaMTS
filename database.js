@@ -1,10 +1,8 @@
 /* ============================================================================
    ALFAMTS - BANCO DE DADOS E CURRÍCULO CLÍNICO ESTRUTURADO (database.js)
    100% OFFLINE • DICIONÁRIO SILÁBICO EXPLÍCITO (ZERO REGEX) • ZERO EMOJIS
-   TRILHA N1-N5 (1.1 A 5.6) • ALFABETO EM 7 CONJUNTOS + CHECK-POINTS • PALAVRÁRIO
    ============================================================================ */
 
-/* 1. BASES VOCÁLICAS E ORDEM CUMULATIVA DOS 6 CONJUNTOS SILÁBICOS (CAP. 5) */
 const vowels = ['A', 'E', 'I', 'O', 'U'];
 const encounters = ['AI', 'EI', 'OI', 'UI', 'AU', 'EU', 'OU', 'ÃO'];
 
@@ -21,35 +19,49 @@ const syllabaryOrder = [
 const extraModules = ['PSEUDOPALAVRAS', 'PALAVRAS'];
 const curriculumOrder = [...syllabaryOrder, ...extraModules];
 
-/* 2. CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO (assets/img/palavras/[slug].webp) */
+/* CATÁLOGO EXPANDIDO DE SLUGS .WEBP (INVENTÁRIO COMPLETO + NOVAS PALAVRAS) */
 const REPO_WORDS_CATALOG = [
-    'abacaxi', 'abelha', 'aquario', 'arvore', 'aviao', 'azeite', 'banana', 'barco',
-    'batata', 'bebe', 'bico', 'blusa', 'boca', 'bola', 'bolo', 'boneca',
-    'bota', 'bote', 'bruxa', 'bule', 'buzina', 'cabide', 'cachorro', 'caixa',
-    'caju', 'cama', 'caneca', 'caqui', 'carro', 'carta', 'casa', 'cavalo',
-    'cebola', 'cenoura', 'chave', 'chuva', 'cinto', 'cobra', 'cola', 'copo',
-    'coruja', 'dado', 'dedo', 'dente', 'dez', 'dia', 'doce', 'escada',
-    'escova', 'espada', 'estrela', 'faca', 'fada', 'fala', 'familia', 'figo',
-    'fila', 'fita', 'flauta', 'flor', 'foca', 'fofo', 'fogo', 'foguete',
-    'folha', 'formiga', 'galinha', 'galo', 'garfo', 'gato', 'gelo', 'gema',
-    'girafa', 'gola', 'gota', 'guitarra', 'ilha', 'jacare', 'janela', 'jiboia',
-    'joaninha', 'jogo', 'laco', 'lago', 'lama', 'lata', 'leao', 'leite',
-    'leque', 'limao', 'livro', 'lixo', 'lobo', 'lote', 'lua', 'luta',
-    'luva', 'maca', 'macaco', 'mala', 'mamadeira', 'mao', 'martelo', 'mato',
-    'meia', 'melao', 'menina', 'menino', 'mesa', 'milho', 'mola', 'moto',
-    'muleta', 'navio', 'ninho', 'noite', 'nuvem', 'olho', 'osso', 'ovelha',
-    'ovo', 'panela', 'pao', 'passaro', 'pasta', 'pata', 'pato', 'paz',
-    'pe', 'pedra', 'peixe', 'pente', 'peteca', 'pipa', 'pirulito', 'placa',
-    'planta', 'ponte', 'porta', 'pote', 'prato', 'prego', 'quatro', 'queijo',
-    'quiabo', 'rato', 'rede', 'rei', 'relogio', 'rio', 'roda', 'rosa',
-    'roupa', 'rua', 'sabonete', 'sacola', 'salada', 'sapato', 'sapo', 'sino',
-    'sofa', 'sol', 'suco', 'tambor', 'tapete', 'tatu', 'taxi', 'teia',
-    'tela', 'telefone', 'teto', 'tia', 'tigre', 'tijolo', 'tio', 'tomate',
-    'trator', 'trem', 'tucano', 'tudo', 'urso', 'uva', 'vaca', 'vassoura',
-    'vela', 'vila', 'violao', 'xale', 'xicara', 'zebra', 'zero'
+    'abacaxi', 'abelha', 'abobora', 'abobrinha', 'acelga', 'aguia', 'alface', 'alhoporo',
+    'alho', 'alicate', 'andorinha', 'apontador', 'aquario', 'arroz', 'arvore', 'aviao',
+    'azeite', 'banana', 'barco', 'bateria', 'batata', 'bebe', 'bife', 'bico',
+    'blusa', 'boca', 'bola', 'bolo', 'boneca', 'bota', 'bote', 'brocolis',
+    'bruxa', 'bule', 'buzina', 'cabide', 'cachorro', 'caixa', 'caju', 'cama',
+    'camaleao', 'camera', 'camisa', 'camarao', 'caneca', 'caneta', 'caqui', 'carne',
+    'carro', 'carta', 'casa', 'castor', 'cavalo', 'cebola', 'cebolinha', 'cebola',
+    'celular', 'cenoura', 'chave', 'chiclete', 'chuva', 'cinto', 'cinco', 'cobra',
+    'codorna', 'coelho', 'coentro', 'cola', 'computador', 'copo', 'coruja', 'corvo',
+    'couve', 'couveflor', 'cuscuz', 'dado', 'dedo', 'dente', 'dez', 'dia',
+    'doce', 'dois', 'elefante', 'ervilha', 'escada', 'escova', 'esparAD', 'esponja',
+    'esquilo', 'estojo', 'estrela', 'faca', 'fada', 'fala', 'falcao', 'familia',
+    'figo', 'fila', 'fita', 'flauta', 'flamingo', 'flor', 'foca', 'fofo',
+    'fogo', 'foguete', 'folha', 'fone', 'formiga', 'frango', 'furadeira', 'furao',
+    'gaivota', 'galinha', 'galo', 'garfo', 'gato', 'gaviao', 'gelo', 'gema',
+    'gizdecera', 'girafa', 'gola', 'golfinho', 'gota', 'guitarra', 'hamster', 'hipopotamo',
+    'ilha', 'iguana', 'inhame', 'jacare', 'janela', 'javali', 'jiboia', 'joaninha',
+    'jogo', 'laco', 'lago', 'lagosta', 'lama', 'lapis', 'lapiseira', 'lata',
+    'leao', 'leite', 'leque', 'lentilha', 'linguica', 'limao', 'livro', 'lixo',
+    'lobo', 'lontra', 'lote', 'lua', 'lula', 'luta', 'luva', 'maca',
+    'macaco', 'macarrao', 'mala', 'mamadeira', 'mandioca', 'mao', 'marcador', 'martelo',
+    'mato', 'mause', 'meia', 'melao', 'menina', 'menino', 'mesa', 'microfone',
+    'milho', 'mola', 'moto', 'muleta', 'navio', 'ninho', 'noite', 'notebook',
+    'nove', 'nuvem', 'numero', 'oito', 'olho', 'ostra', 'ouriço', 'osso',
+    'ostra', 'ovelha', 'ovo', 'mae', 'pai', 'panela', 'pao', 'pandador', 'pandero',
+    'parafuso', 'pardal', 'passaro', 'pasta', 'pata', 'pato', 'paz', 'pe',
+    'pedra', 'peixe', 'pelicano', 'pente', 'pepino', 'peteca', 'piano', 'pimentao',
+    'pinguim', 'pipa', 'pirulito', 'pizza', 'placa', 'planta', 'pneu', 'polvo',
+    'pombo', 'ponte', 'porta', 'pote', 'prato', 'prego', 'quatro', 'queijo',
+    'quiabo', 'rabanete', 'raposa', 'rato', 'rebuçado', 'rede', 'rei', 'relogio',
+    'relógio', 'repolho', 'rinoceronte', 'rio', 'roda', 'rosa', 'roupa', 'rua',
+    'rucuela', 'sabonete', 'sacola', 'salamandra', 'salada', 'salsa', 'sapato', 'sapo',
+    'saxofone', 'seis', 'serrote', 'sete', 'sino', 'sofa', 'sol', 'sopa',
+    'suco', 'tablet', 'tambor', 'tapete', 'tatu', 'taxi', 'teclado', 'teia',
+    'tela', 'telefone', 'telhado', 'tenis', 'teto', 'texugo', 'tia', 'tigre',
+    'tijolo', 'tio', 'tomate', 'toupeira', 'trator', 'trena', 'trem', 'triangulo',
+    'tucano', 'tubarao', 'tudo', 'um', 'urso', 'uva', 'vaca', 'vagem',
+    'vassoura', 'vela', 'vila', 'violino', 'violao', 'xale', 'xicara', 'zebra', 'zero'
 ];
 
-/* 3. MATRIZ DE PALAVRAS CUMULATIVAS POR FAMÍLIA SILÁBICA (CAP. 5 - CAMILA GOMES) */
+/* MATRIZ DE PALAVRAS CUMULATIVAS POR FAMÍLIA SILÁBICA (CAP. 5) */
 const SYLLABARY_CUMULATIVE_WORDS = {
     'T': ['TATU', 'TETO', 'TIA', 'TIO', 'TEIA', 'TUDO'],
     'L': ['LATA', 'LUTA', 'TELA', 'LUA', 'LEITE', 'LOTE'],
@@ -70,91 +82,19 @@ const SYLLABARY_CUMULATIVE_WORDS = {
     'Q': ['QUEIJO', 'QUIABO', 'QUATRO', 'AQUÁRIO', 'LEQUE', 'CAQUI']
 };
 
-/* 4. AS 8 GAVETAS LEXICAIS DO PALAVRÁRIO (CAP. 4 & 5) */
+/* AS 8 GAVETAS LEXICAIS DO PALAVRÁRIO */
 const PALAVRARIO_DRAWERS = [
-    {
-        id: 'PAL_1',
-        code: 'GAVETA 1',
-        title: 'Dissílabas CV (Conj. 1 e 2)',
-        desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.',
-        variations: {
-            1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'],
-            2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA']
-        }
-    },
-    {
-        id: 'PAL_2',
-        code: 'GAVETA 2',
-        title: 'Dissílabas CV (Conj. 3 a 6)',
-        desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.',
-        variations: {
-            1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'],
-            2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO']
-        }
-    },
-    {
-        id: 'PAL_3',
-        code: 'GAVETA 3',
-        title: 'Trissílabas Simples',
-        desc: 'Palavras de 3 sílabas abertas controladas por extensão.',
-        variations: {
-            1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'],
-            2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO']
-        }
-    },
-    {
-        id: 'PAL_4',
-        code: 'GAVETA 4',
-        title: 'Encontros Vocálicos e Nasais',
-        desc: 'Vocábulos com ditongos orais e vogais ou ditongos nasais.',
-        variations: {
-            1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'],
-            2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO']
-        }
-    },
-    {
-        id: 'PAL_5',
-        code: 'GAVETA 5',
-        title: 'Sílabas Travadas (CVC)',
-        desc: 'Palavras com coda silábica em R, S, L, M, N.',
-        variations: {
-            1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'],
-            2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM']
-        }
-    },
-    {
-        id: 'PAL_6',
-        code: 'GAVETA 6',
-        title: 'Encontros Consonantais (CCV)',
-        desc: 'Sílabas complexas com grupos consonantais em R e L.',
-        variations: {
-            1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'],
-            2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA']
-        }
-    },
-    {
-        id: 'PAL_7',
-        code: 'GAVETA 7',
-        title: 'Dígrafos',
-        desc: 'Palavras com CH, LH, NH, RR, SS, QU e GU.',
-        variations: {
-            1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'],
-            2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE']
-        }
-    },
-    {
-        id: 'PAL_8',
-        code: 'GAVETA 8',
-        title: 'Irregulares e Contextuais',
-        desc: 'Casos de CE/CI, GE/GI, Ç, S com som de Z e valores do X.',
-        variations: {
-            1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'],
-            2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA']
-        }
-    }
+    { id: 'PAL_1', code: 'GAVETA 1', title: 'Dissílabas CV (Conj. 1 e 2)', desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.', variations: { 1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'], 2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA'] } },
+    { id: 'PAL_2', code: 'GAVETA 2', title: 'Dissílabas CV (Conj. 3 a 6)', desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.', variations: { 1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'], 2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO'] } },
+    { id: 'PAL_3', code: 'GAVETA 3', title: 'Trissílabas Simples', desc: 'Palavras de 3 sílabas abertas controladas por extensão.', variations: { 1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'], 2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO'] } },
+    { id: 'PAL_4', code: 'GAVETA 4', title: 'Encontros Vocálicos e Nasais', desc: 'Vocábulos com ditongos orais e vogais ou ditongos nasais.', variations: { 1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'], 2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO'] } },
+    { id: 'PAL_5', code: 'GAVETA 5', title: 'Sílabas Travadas (CVC)', desc: 'Palavras com coda silábica em R, S, L, M, N.', variations: { 1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'], 2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM'] } },
+    { id: 'PAL_6', code: 'GAVETA 6', title: 'Encontros Consonantais (CCV)', desc: 'Sílabas complexas com grupos consonantais em R e L.', variations: { 1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'], 2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA'] } },
+    { id: 'PAL_7', code: 'GAVETA 7', title: 'Dígrafos', desc: 'Palavras com CH, LH, NH, RR, SS, QU e GU.', variations: { 1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'], 2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE'] } },
+    { id: 'PAL_8', code: 'GAVETA 8', title: 'Irregulares e Contextuais', desc: 'Casos de CE/CI, GE/GI, Ç, S com som de Z e valores do X.', variations: { 1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'], 2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA'] } }
 ];
 
-/* 5. MAPEAMENTO DE ÁUDIOS FONÊMICOS E OS 7 CONJUNTOS + CHECK-POINTS (MÉTODO PROF. ALVES) */
+/* MAPEAMENTO DE ÁUDIOS FONÊMICOS E OS 7 CONJUNTOS FONÊMICOS + CHECK-POINTS */
 const FONEMAS_AUDIO_MAP = {
     'A': { '1': 'v-a-1.ogg', '2': 'v-a-2.ogg' },
     'E': { '1': 'v-e-1.ogg', '2': 'v-e-2.ogg' },
@@ -184,66 +124,28 @@ const FONEMAS_AUDIO_MAP = {
 };
 
 const PHONEME_SETS = [
-    {
-        setNum: 1,
-        id: 'FA_CHK_1',
-        title: '★ Check-point Conjunto 1 (Vogais Orais)',
-        members: ['FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1']
-    },
-    {
-        setNum: 2,
-        id: 'FA_CHK_2',
-        title: '★ Check-point Conjunto 2 (Fechadas e Nasais)',
-        members: ['FA_A_2', 'FA_E_2', 'FA_O_2']
-    },
-    {
-        setNum: 3,
-        id: 'FA_CHK_3',
-        title: '★ Check-point Conjunto 3 (D, T, Z, M, N)',
-        members: ['FA_D_1', 'FA_T_1', 'FA_Z_1', 'FA_M_1', 'FA_N_1']
-    },
-    {
-        setNum: 4,
-        id: 'FA_CHK_4',
-        title: '★ Check-point Conjunto 4 (P, B, K)',
-        members: ['FA_P_1', 'FA_B_1', 'FA_K_1']
-    },
-    {
-        setNum: 5,
-        id: 'FA_CHK_5',
-        title: '★ Check-point Conjunto 5 (L, V, X)',
-        members: ['FA_L_1', 'FA_L_2', 'FA_V_1', 'FA_X_1']
-    },
-    {
-        setNum: 6,
-        id: 'FA_CHK_6',
-        title: '★ Check-point Conjunto 6 (C, G, F, J)',
-        members: ['FA_C_1', 'FA_C_2', 'FA_G_1', 'FA_G_2', 'FA_F_1', 'FA_J_1']
-    },
-    {
-        setNum: 7,
-        id: 'FA_CHK_7',
-        title: '★ Check-point Conjunto 7 (R, S, Q, W)',
-        members: ['FA_R_1', 'FA_R_2', 'FA_S_1', 'FA_S_2', 'FA_Q_1', 'FA_W_1']
-    }
+    { setNum: 1, id: 'FA_CHK_1', title: '★ Check-point Conjunto 1 (Vogais Orais)', members: ['FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1'] },
+    { setNum: 2, id: 'FA_CHK_2', title: '★ Check-point Conjunto 2 (Fechadas e Nasais)', members: ['FA_A_2', 'FA_E_2', 'FA_O_2'] },
+    { setNum: 3, id: 'FA_CHK_3', title: '★ Check-point Conjunto 3 (D, T, Z, M, N)', members: ['FA_D_1', 'FA_T_1', 'FA_Z_1', 'FA_M_1', 'FA_N_1'] },
+    { setNum: 4, id: 'FA_CHK_4', title: '★ Check-point Conjunto 4 (P, B, K)', members: ['FA_P_1', 'FA_B_1', 'FA_K_1'] },
+    { setNum: 5, id: 'FA_CHK_5', title: '★ Check-point Conjunto 5 (L, V, X)', members: ['FA_L_1', 'FA_L_2', 'FA_V_1', 'FA_X_1'] },
+    { setNum: 6, id: 'FA_CHK_6', title: '★ Check-point Conjunto 6 (C, G, F, J)', members: ['FA_C_1', 'FA_C_2', 'FA_G_1', 'FA_G_2', 'FA_F_1', 'FA_J_1'] },
+    { setNum: 7, id: 'FA_CHK_7', title: '★ Check-point Conjunto 7 (R, S, Q, W)', members: ['FA_R_1', 'FA_R_2', 'FA_S_1', 'FA_S_2', 'FA_Q_1', 'FA_W_1'] }
 ];
 
 const PHONOLOGICAL_ALPHABET_MODULES = [
-    // CONJUNTO 1: VOGAIS ORAIS PURAS
-    { id: 'FA_A_1', setNum: 1, letter: 'A', varIdx: '1', title: 'A (Oral /a/)',   desc: 'Conjunto 1 • Vogal oral central aberta /a/.' },
-    { id: 'FA_I_1', setNum: 1, letter: 'I', varIdx: '1', title: 'I (Oral /i/)',   desc: 'Conjunto 1 • Vogal oral anterior alta /i/.' },
-    { id: 'FA_O_1', setNum: 1, letter: 'O', varIdx: '1', title: 'O (Aberto /ɔ/)', desc: 'Conjunto 1 • Vogal oral posterior aberta /ɔ/.' },
-    { id: 'FA_E_1', setNum: 1, letter: 'E', varIdx: '1', title: 'E (Aberto /ɛ/)', desc: 'Conjunto 1 • Vogal oral anterior aberta /ɛ/.' },
-    { id: 'FA_U_1', setNum: 1, letter: 'U', varIdx: '1', title: 'U (Oral /u/)',   desc: 'Conjunto 1 • Vogal oral posterior alta /u/.' },
-    { id: 'FA_CHK_1', setNum: 1, letter: 'A', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 1 (Vogais)', desc: 'Sondagem mista sem modelo das 5 vogais orais.' },
+    { id: 'FA_A_1', setNum: 1, letter: 'A', varIdx: '1', title: 'A (Oral /a/)', desc: 'Conjunto 1 • Vogal oral aberta /a/.' },
+    { id: 'FA_I_1', setNum: 1, letter: 'I', varIdx: '1', title: 'I (Oral /i/)', desc: 'Conjunto 1 • Vogal oral anterior /i/.' },
+    { id: 'FA_O_1', setNum: 1, letter: 'O', varIdx: '1', title: 'O (Aberto /ɔ/)', desc: 'Conjunto 1 • Vogal oral aberta /ɔ/.' },
+    { id: 'FA_E_1', setNum: 1, letter: 'E', varIdx: '1', title: 'E (Aberto /ɛ/)', desc: 'Conjunto 1 • Vogal oral aberta /ɛ/.' },
+    { id: 'FA_U_1', setNum: 1, letter: 'U', varIdx: '1', title: 'U (Oral /u/)', desc: 'Conjunto 1 • Vogal oral posterior /u/.' },
+    { id: 'FA_CHK_1', setNum: 1, letter: 'A', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 1 (Vogais)', desc: 'Sondagem mista sem modelo das Vogais Orais.' },
 
-    // CONJUNTO 2: VARIAÇÕES VOCÁLICAS (FECHADAS E NASAIS)
-    { id: 'FA_A_2', setNum: 2, letter: 'A', varIdx: '2', title: 'A (Nasal /ã/)',   desc: 'Conjunto 2 • Vogal nasalizada /ã/ (ex: AN, AM, Ã).' },
-    { id: 'FA_E_2', setNum: 2, letter: 'E', varIdx: '2', title: 'E (Fechado /e/)', desc: 'Conjunto 2 • Vogal oral fechada /e/ (ex: Ê).' },
-    { id: 'FA_O_2', setNum: 2, letter: 'O', varIdx: '2', title: 'O (Fechado /o/)', desc: 'Conjunto 2 • Vogal oral fechada /o/ (ex: Ô).' },
+    { id: 'FA_A_2', setNum: 2, letter: 'A', varIdx: '2', title: 'A (Nasal /ã/)', desc: 'Conjunto 2 • Vogal nasalizada /ã/.' },
+    { id: 'FA_E_2', setNum: 2, letter: 'E', varIdx: '2', title: 'E (Fechado /e/)', desc: 'Conjunto 2 • Vogal fechada /e/.' },
+    { id: 'FA_O_2', setNum: 2, letter: 'O', varIdx: '2', title: 'O (Fechado /o/)', desc: 'Conjunto 2 • Vogal fechada /o/.' },
     { id: 'FA_CHK_2', setNum: 2, letter: 'E', varIdx: '2', isCheckpoint: true, title: '★ Avaliar Conjunto 2 (Variações)', desc: 'Sondagem cumulativa dos Conjuntos 1 e 2.' },
 
-    // CONJUNTO 3: DENTAIS E BILABIAIS NASAIS (D, T, Z, M, N)
     { id: 'FA_D_1', setNum: 3, letter: 'D', varIdx: '1', title: 'D (/d/)', desc: 'Conjunto 3 • Oclusiva dental sonora /d/.' },
     { id: 'FA_T_1', setNum: 3, letter: 'T', varIdx: '1', title: 'T (/t/)', desc: 'Conjunto 3 • Oclusiva dental surda /t/.' },
     { id: 'FA_Z_1', setNum: 3, letter: 'Z', varIdx: '1', title: 'Z (/z/)', desc: 'Conjunto 3 • Fricativa alveolar sonora /z/.' },
@@ -251,41 +153,36 @@ const PHONOLOGICAL_ALPHABET_MODULES = [
     { id: 'FA_N_1', setNum: 3, letter: 'N', varIdx: '1', title: 'N (/n/)', desc: 'Conjunto 3 • Nasal alveolar /n/.' },
     { id: 'FA_CHK_3', setNum: 3, letter: 'D', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 3 (D, T, Z, M, N)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 3.' },
 
-    // CONJUNTO 4: OCLUSIVAS BILABIAIS E VELARES (P, B, K)
     { id: 'FA_P_1', setNum: 4, letter: 'P', varIdx: '1', title: 'P (/p/)', desc: 'Conjunto 4 • Oclusiva bilabial surda /p/.' },
     { id: 'FA_B_1', setNum: 4, letter: 'B', varIdx: '1', title: 'B (/b/)', desc: 'Conjunto 4 • Oclusiva bilabial sonora /b/.' },
     { id: 'FA_K_1', setNum: 4, letter: 'K', varIdx: '1', title: 'K (/k/)', desc: 'Conjunto 4 • Oclusiva velar surda /k/.' },
     { id: 'FA_CHK_4', setNum: 4, letter: 'P', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 4 (P, B, K)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 4.' },
 
-    // CONJUNTO 5: LATERAIS, LABIODENTAIS E PALATAIS (L, V, X)
-    { id: 'FA_L_1', setNum: 5, letter: 'L', varIdx: '1', title: 'L (Inicial /l/)', desc: 'Conjunto 5 • Lateral alveolar em início de sílaba /l/.' },
-    { id: 'FA_L_2', setNum: 5, letter: 'L', varIdx: '2', title: 'L (Final /w/)',   desc: 'Conjunto 5 • L em final de sílaba com som de /w/ (ex: SOL).' },
-    { id: 'FA_V_1', setNum: 5, letter: 'V', varIdx: '1', title: 'V (/v/)',         desc: 'Conjunto 5 • Fricativa labiodental sonora /v/.' },
-    { id: 'FA_X_1', setNum: 5, letter: 'X', varIdx: '1', title: 'X (/ʃ/)',         desc: 'Conjunto 5 • Fricativa palatal surda /ʃ/ (ex: XÍCARA).' },
+    { id: 'FA_L_1', setNum: 5, letter: 'L', varIdx: '1', title: 'L (Inicial /l/)', desc: 'Conjunto 5 • Lateral alveolar /l/.' },
+    { id: 'FA_L_2', setNum: 5, letter: 'L', varIdx: '2', title: 'L (Final /w/)', desc: 'Conjunto 5 • L em coda silábica /w/.' },
+    { id: 'FA_V_1', setNum: 5, letter: 'V', varIdx: '1', title: 'V (/v/)', desc: 'Conjunto 5 • Fricativa labiodental sonora /v/.' },
+    { id: 'FA_X_1', setNum: 5, letter: 'X', varIdx: '1', title: 'X (/ʃ/)', desc: 'Conjunto 5 • Fricativa pós-alveolar surda /ʃ/.' },
     { id: 'FA_CHK_5', setNum: 5, letter: 'L', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 5 (L, V, X)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 5.' },
 
-    // CONJUNTO 6: VELARES E FRICATIVAS (C, G, F, J)
-    { id: 'FA_C_1', setNum: 6, letter: 'C', varIdx: '1', title: 'C (Forte /k/)',  desc: 'Conjunto 6 • Oclusiva velar /k/ antes de A, O, U.' },
-    { id: 'FA_C_2', setNum: 6, letter: 'C', varIdx: '2', title: 'C (Brando /s/)', desc: 'Conjunto 6 • Fricativa /s/ antes de E, I.' },
-    { id: 'FA_G_1', setNum: 6, letter: 'G', varIdx: '1', title: 'G (Forte /g/)',  desc: 'Conjunto 6 • Oclusiva velar /g/ antes de A, O, U.' },
-    { id: 'FA_G_2', setNum: 6, letter: 'G', varIdx: '2', title: 'G (Brando /ʒ/)', desc: 'Conjunto 6 • Fricativa /ʒ/ antes de E, I.' },
-    { id: 'FA_F_1', setNum: 6, letter: 'F', varIdx: '1', title: 'F (/f/)',        desc: 'Conjunto 6 • Fricativa labiodental surda /f/.' },
-    { id: 'FA_J_1', setNum: 6, letter: 'J', varIdx: '1', title: 'J (/ʒ/)',        desc: 'Conjunto 6 • Fricativa palatal sonora /ʒ/.' },
+    { id: 'FA_C_1', setNum: 6, letter: 'C', varIdx: '1', title: 'C (Forte /k/)', desc: 'Conjunto 6 • Oclusiva velar surda /k/.' },
+    { id: 'FA_C_2', setNum: 6, letter: 'C', varIdx: '2', title: 'C (Brando /s/)', desc: 'Conjunto 6 • Fricativa surda /s/ antes de E, I.' },
+    { id: 'FA_G_1', setNum: 6, letter: 'G', varIdx: '1', title: 'G (Forte /g/)', desc: 'Conjunto 6 • Oclusiva velar sonora /g/.' },
+    { id: 'FA_G_2', setNum: 6, letter: 'G', varIdx: '2', title: 'G (Brando /ʒ/)', desc: 'Conjunto 6 • Fricativa sonora /ʒ/ antes de E, I.' },
+    { id: 'FA_F_1', setNum: 6, letter: 'F', varIdx: '1', title: 'F (/f/)', desc: 'Conjunto 6 • Fricativa labiodental surda /f/.' },
+    { id: 'FA_J_1', setNum: 6, letter: 'J', varIdx: '1', title: 'J (/ʒ/)', desc: 'Conjunto 6 • Fricativa pós-alveolar sonora /ʒ/.' },
     { id: 'FA_CHK_6', setNum: 6, letter: 'C', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 6 (C, G, F, J)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 6.' },
 
-    // CONJUNTO 7: VIBRANTES, SIBILANTES E APROXIMANTES (R, S, Q, W)
-    { id: 'FA_R_1', setNum: 7, letter: 'R', varIdx: '1', title: 'R (Forte /x/)',        desc: 'Conjunto 7 • R inicial ou duplo forte /x/ (ex: RATO, CARRO).' },
-    { id: 'FA_R_2', setNum: 7, letter: 'R', varIdx: '2', title: 'R (Brando /ɾ/)',       desc: 'Conjunto 7 • Tepe alveolar intervocálico /ɾ/ (ex: ARARA).' },
-    { id: 'FA_S_1', setNum: 7, letter: 'S', varIdx: '1', title: 'S (Surdo /s/)',        desc: 'Conjunto 7 • Fricativa alveolar surda /s/ (ex: SAPO).' },
-    { id: 'FA_S_2', setNum: 7, letter: 'S', varIdx: '2', title: 'S (Intervocálico /z/)',desc: 'Conjunto 7 • S entre vogais com som de /z/ (ex: CASA).' },
-    { id: 'FA_Q_1', setNum: 7, letter: 'Q', varIdx: '1', title: 'Q (/k/)',              desc: 'Conjunto 7 • Oclusiva velar /k/ nos grupos QUA, QUE, QUI.' },
-    { id: 'FA_W_1', setNum: 7, letter: 'W', varIdx: '1', title: 'W (/w/)',              desc: 'Conjunto 7 • Semivogal labial /w/.' },
-    { id: 'FA_CHK_7', setNum: 7, letter: 'R', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 7 (Domínio Total)', desc: 'Sondagem final de retenção de todos os 7 Conjuntos Fonêmicos.' }
+    { id: 'FA_R_1', setNum: 7, letter: 'R', varIdx: '1', title: 'R (Forte /x/)', desc: 'Conjunto 7 • R inicial ou duplo forte /x/.' },
+    { id: 'FA_R_2', setNum: 7, letter: 'R', varIdx: '2', title: 'R (Brando /ɾ/)', desc: 'Conjunto 7 • Tepe alveolar intervocálico /ɾ/.' },
+    { id: 'FA_S_1', setNum: 7, letter: 'S', varIdx: '1', title: 'S (Surdo /s/)', desc: 'Conjunto 7 • Fricativa alveolar surda /s/.' },
+    { id: 'FA_S_2', setNum: 7, letter: 'S', varIdx: '2', title: 'S (Intervocálico /z/)', desc: 'Conjunto 7 • S intervocálico sonoro /z/.' },
+    { id: 'FA_Q_1', setNum: 7, letter: 'Q', varIdx: '1', title: 'Q (/k/)', desc: 'Conjunto 7 • Oclusiva velar /k/.' },
+    { id: 'FA_W_1', setNum: 7, letter: 'W', varIdx: '1', title: 'W (/w/)', desc: 'Conjunto 7 • Aproximante labiovelar /w/.' },
+    { id: 'FA_CHK_7', setNum: 7, letter: 'R', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 7 (Domínio Total)', desc: 'Sondagem final de todos os 7 Conjuntos Fonêmicos.' }
 ];
 
-/* 6. DICIONÁRIO SILÁBICO EXPLÍCITO (WORD_BANK • ZERO REGEX • ZERO EMOJIS) */
+/* DICIONÁRIO SILÁBICO EXPLÍCITO (WORD_BANK • ZERO REGEX • ZERO EMOJIS) */
 const WORD_BANK = {
-    // Conjunto 1: T, L, M
     'TATU':      { word: 'TATU',      syllables: ['TA', 'TU'],               count: 2, struct: 'CV_SIMPLE',   cat: 'ANIMAL',    img: 'assets/img/palavras/tatu.webp' },
     'TETO':      { word: 'TETO',      syllables: ['TE', 'TO'],               count: 2, struct: 'CV_SIMPLE',   cat: 'CASA',      img: 'assets/img/palavras/teto.webp' },
     'TIA':       { word: 'TIA',       syllables: ['TI', 'A'],                count: 2, struct: 'CV_SIMPLE',   cat: 'PESSOA',    img: 'assets/img/palavras/tia.webp' },
@@ -316,7 +213,6 @@ const WORD_BANK = {
     'MENINA':    { word: 'MENINA',    syllables: ['ME', 'NI', 'NA'],         count: 3, struct: 'CV_SIMPLE',   cat: 'PESSOA',    img: 'assets/img/palavras/menina.webp' },
     'MAMADEIRA': { word: 'MAMADEIRA', syllables: ['MA', 'MA', 'DEI', 'RA'],  count: 4, struct: 'CV_SIMPLE',   cat: 'OBJETO',    img: 'assets/img/palavras/mamadeira.webp' },
 
-    // Conjunto 2: F, B, R
     'FACA':      { word: 'FACA',      syllables: ['FA', 'CA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'OBJETO',    img: 'assets/img/palavras/faca.webp' },
     'FADA':      { word: 'FADA',      syllables: ['FA', 'DA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'PERSONAGEM',img: 'assets/img/palavras/fada.webp' },
     'FITA':      { word: 'FITA',      syllables: ['FI', 'TA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'OBJETO',    img: 'assets/img/palavras/fita.webp' },
@@ -347,7 +243,6 @@ const WORD_BANK = {
     'REI':       { word: 'REI',       syllables: ['REI'],                    count: 1, struct: 'CV_SIMPLE',   cat: 'PESSOA',    img: 'assets/img/palavras/rei.webp' },
     'ROUPA':     { word: 'ROUPA',     syllables: ['ROU', 'PA'],              count: 2, struct: 'CV_SIMPLE',   cat: 'ROUPA',     img: 'assets/img/palavras/roupa.webp' },
 
-    // Conjunto 3: P, N, V
     'PATO':      { word: 'PATO',      syllables: ['PA', 'TO'],               count: 2, struct: 'CV_SIMPLE',   cat: 'ANIMAL',    img: 'assets/img/palavras/pato.webp' },
     'PATA':      { word: 'PATA',      syllables: ['PA', 'TA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'ANIMAL',    img: 'assets/img/palavras/pata.webp' },
     'PIPA':      { word: 'PIPA',      syllables: ['PI', 'PA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'BRINQUEDO', img: 'assets/img/palavras/pipa.webp' },
@@ -364,7 +259,6 @@ const WORD_BANK = {
     'OVO':       { word: 'OVO',       syllables: ['O', 'VO'],                count: 2, struct: 'CV_SIMPLE',   cat: 'ALIMENTO',  img: 'assets/img/palavras/ovo.webp' },
     'UVA':       { word: 'UVA',       syllables: ['U', 'VA'],                count: 2, struct: 'CV_SIMPLE',   cat: 'ALIMENTO',  img: 'assets/img/palavras/uva.webp' },
 
-    // Conjunto 4: S, D, J
     'SAPO':      { word: 'SAPO',      syllables: ['SA', 'PO'],               count: 2, struct: 'CV_SIMPLE',   cat: 'ANIMAL',    img: 'assets/img/palavras/sapo.webp' },
     'SUCO':      { word: 'SUCO',      syllables: ['SU', 'CO'],               count: 2, struct: 'CV_SIMPLE',   cat: 'ALIMENTO',  img: 'assets/img/palavras/suco.webp' },
     'SOFÁ':      { word: 'SOFÁ',      syllables: ['SO', 'FÁ'],               count: 2, struct: 'CV_SIMPLE',   cat: 'MÓVEL',     img: 'assets/img/palavras/sofa.webp' },
@@ -385,7 +279,6 @@ const WORD_BANK = {
     'JIBOIA':    { word: 'JIBOIA',    syllables: ['JI', 'BOI', 'A'],         count: 3, struct: 'CV_SIMPLE',   cat: 'ANIMAL',    img: 'assets/img/palavras/jiboia.webp' },
     'CORUJA':    { word: 'CORUJA',    syllables: ['CO', 'RU', 'JA'],         count: 3, struct: 'CV_SIMPLE',   cat: 'ANIMAL',    img: 'assets/img/palavras/coruja.webp' },
 
-    // Conjunto 5: X, Z e Casos de Ç / S com som de Z (4.4)
     'LIXO':      { word: 'LIXO',      syllables: ['LI', 'XO'],               count: 2, struct: 'S_Z_X_C',     cat: 'OBJETO',    img: 'assets/img/palavras/lixo.webp' },
     'XÍCARA':    { word: 'XÍCARA',    syllables: ['XÍ', 'CA', 'RA'],         count: 3, struct: 'S_Z_X_C',     cat: 'OBJETO',    img: 'assets/img/palavras/xicara.webp' },
     'XALE':      { word: 'XALE',      syllables: ['XA', 'LE'],               count: 2, struct: 'S_Z_X_C',     cat: 'ROUPA',     img: 'assets/img/palavras/xale.webp' },
@@ -404,7 +297,6 @@ const WORD_BANK = {
     'DEZ':       { word: 'DEZ',       syllables: ['DEZ'],                    count: 1, struct: 'CVC',         cat: 'NÚMERO',    img: 'assets/img/palavras/dez.webp' },
     'PAZ':       { word: 'PAZ',       syllables: ['PAZ'],                    count: 1, struct: 'CVC',         cat: 'CONCEITO',  img: 'assets/img/palavras/paz.webp' },
 
-    // Conjunto 6: C, G, Q e Mudança Sonora CE/CI, GE/GI (4.1 e 4.2)
     'CAMA':      { word: 'CAMA',      syllables: ['CA', 'MA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'MÓVEL',     img: 'assets/img/palavras/cama.webp' },
     'COPO':      { word: 'COPO',      syllables: ['CO', 'PO'],               count: 2, struct: 'CV_SIMPLE',   cat: 'OBJETO',    img: 'assets/img/palavras/copo.webp' },
     'COLA':      { word: 'COLA',      syllables: ['CO', 'LA'],               count: 2, struct: 'CV_SIMPLE',   cat: 'OBJETO',    img: 'assets/img/palavras/cola.webp' },
@@ -432,7 +324,6 @@ const WORD_BANK = {
     'FOGUETE':   { word: 'FOGUETE',   syllables: ['FO', 'GUE', 'TE'],        count: 3, struct: 'QU_GU',       cat: 'VEÍCULO',   img: 'assets/img/palavras/foguete.webp' },
     'GUITARRA':  { word: 'GUITARRA',  syllables: ['GUI', 'TAR', 'RA'],       count: 3, struct: 'QU_GU',       cat: 'OBJETO',    img: 'assets/img/palavras/guitarra.webp' },
 
-    // Dígrafos Palatais e Fricativos: CH, LH, NH, RR, SS (4.3 e Gaveta 7)
     'CHAVE':     { word: 'CHAVE',     syllables: ['CHA', 'VE'],              count: 2, struct: 'DIGRAPH',     cat: 'OBJETO',    img: 'assets/img/palavras/chave.webp' },
     'CHUVA':     { word: 'CHUVA',     syllables: ['CHU', 'VA'],              count: 2, struct: 'DIGRAPH',     cat: 'NATUREZA',  img: 'assets/img/palavras/chuva.webp' },
     'CACHORRO':  { word: 'CACHORRO',  syllables: ['CA', 'CHOR', 'RO'],       count: 3, struct: 'DIGRAPH',     cat: 'ANIMAL',    img: 'assets/img/palavras/cachorro.webp' },
@@ -450,7 +341,6 @@ const WORD_BANK = {
     'PÁSSARO':   { word: 'PÁSSARO',   syllables: ['PÁS', 'SA', 'RO'],        count: 3, struct: 'DIGRAPH',     cat: 'ANIMAL',    img: 'assets/img/palavras/passaro.webp' },
     'VASSOURA':  { word: 'VASSOURA',  syllables: ['VAS', 'SOU', 'RA'],       count: 3, struct: 'DIGRAPH',     cat: 'OBJETO',    img: 'assets/img/palavras/vassoura.webp' },
 
-    // Encontros Vocálicos e Nasais (Gaveta 4)
     'MÃO':       { word: 'MÃO',       syllables: ['MÃO'],                    count: 1, struct: 'CVM_NASAL',   cat: 'CORPO',     img: 'assets/img/palavras/mao.webp' },
     'PÃO':       { word: 'PÃO',       syllables: ['PÃO'],                    count: 1, struct: 'CVM_NASAL',   cat: 'ALIMENTO',  img: 'assets/img/palavras/pao.webp' },
     'LEÃO':      { word: 'LEÃO',      syllables: ['LE', 'ÃO'],               count: 2, struct: 'CVM_NASAL',   cat: 'ANIMAL',    img: 'assets/img/palavras/leao.webp' },
@@ -459,7 +349,6 @@ const WORD_BANK = {
     'VIOLÃO':    { word: 'VIOLÃO',    syllables: ['VI', 'O', 'LÃO'],         count: 3, struct: 'CVM_NASAL',   cat: 'OBJETO',    img: 'assets/img/palavras/violao.webp' },
     'AVIÃO':     { word: 'AVIÃO',     syllables: ['A', 'VI', 'ÃO'],          count: 3, struct: 'CVM_NASAL',   cat: 'VEÍCULO',   img: 'assets/img/palavras/aviao.webp' },
 
-    // Sílabas Fechadas / Travadas CVC (4.5 e Gaveta 5)
     'SOL':       { word: 'SOL',       syllables: ['SOL'],                    count: 1, struct: 'CVC',         cat: 'NATUREZA',  img: 'assets/img/palavras/sol.webp' },
     'PORTA':     { word: 'PORTA',     syllables: ['POR', 'TA'],              count: 2, struct: 'CVC',         cat: 'CASA',      img: 'assets/img/palavras/porta.webp' },
     'BARCO':     { word: 'BARCO',     syllables: ['BAR', 'CO'],              count: 2, struct: 'CVC',         cat: 'VEÍCULO',   img: 'assets/img/palavras/barco.webp' },
@@ -479,7 +368,6 @@ const WORD_BANK = {
     'ÁRVORE':    { word: 'ÁRVORE',    syllables: ['ÁR', 'VO', 'RE'],         count: 3, struct: 'CVC',         cat: 'NATUREZA',  img: 'assets/img/palavras/arvore.webp' },
     'MARTELO':   { word: 'MARTELO',   syllables: ['MAR', 'TE', 'LO'],        count: 3, struct: 'CVC',         cat: 'OBJETO',    img: 'assets/img/palavras/martelo.webp' },
 
-    // Encontros Consonantais CCV (4.6 e Gaveta 6)
     'PRATO':     { word: 'PRATO',     syllables: ['PRA', 'TO'],              count: 2, struct: 'CCV',         cat: 'OBJETO',    img: 'assets/img/palavras/prato.webp' },
     'PREGO':     { word: 'PREGO',     syllables: ['PRE', 'GO'],              count: 2, struct: 'CCV',         cat: 'OBJETO',    img: 'assets/img/palavras/prego.webp' },
     'BRUXA':     { word: 'BRUXA',     syllables: ['BRU', 'XA'],              count: 2, struct: 'CCV',         cat: 'PERSONAGEM',img: 'assets/img/palavras/bruxa.webp' },
@@ -497,9 +385,8 @@ const WORD_BANK = {
     'ESTRELA':   { word: 'ESTRELA',   syllables: ['ES', 'TRE', 'LA'],        count: 3, struct: 'CCV',         cat: 'NATUREZA',  img: 'assets/img/palavras/estrela.webp' }
 };
 
-/* 7. VARIAÇÕES PADRÃO CONTROLADAS POR EXTENSÃO E SEM REDUNDÂNCIA (N1-N5 + PALAVRÁRIO + EXTRAS) */
+/* 7. VARIAÇÕES PADRÃO CONTROLADAS POR EXTENSÃO E SEM REDUNDÂNCIA */
 const DEFAULT_MODULE_VARIATIONS = {
-    // NÍVEL 1: PRÉ-REQUISITOS E LEITURA RUDIMENTAR (CAP. 3 E 4)
     'E1_1': {
         editable: true, min: 3, max: 10,
         variations: {
@@ -521,8 +408,6 @@ const DEFAULT_MODULE_VARIATIONS = {
             2: ['SAPATO', 'CAVALO', 'PANELA', 'TOMATE', 'JACARÉ', 'BATATA']
         }
     },
-
-    // NÍVEL 2: DO FONEMA À SÍLABA SIMPLES (CAP. 5)
     'E2_1': {
         editable: true, min: 4, max: 10,
         variations: {
@@ -551,8 +436,6 @@ const DEFAULT_MODULE_VARIATIONS = {
             2: ['VA', 'SA', 'DA', 'JA', 'XA', 'ZA', 'CA', 'GA']
         }
     },
-
-    // NÍVEL 3: CONSTRUÇÃO LEXICAL, ESCRITA E RECOMBINAÇÃO
     'E3_1': {
         editable: true, min: 4, max: 10,
         variations: {
@@ -595,8 +478,6 @@ const DEFAULT_MODULE_VARIATIONS = {
             2: ['SACOLA', 'CORUJA', 'SABONETE', 'TELEFONE', 'PIRULITO', 'MAMADEIRA']
         }
     },
-
-    // NÍVEL 4: DIFICULDADES DA LÍNGUA E SÍLABAS COMPLEXAS (CAP. 6.2)
     'E4_1': {
         editable: true, min: 3, max: 12,
         variations: {
@@ -639,8 +520,6 @@ const DEFAULT_MODULE_VARIATIONS = {
             2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA']
         }
     },
-
-    // NÍVEL 5: FLUÊNCIA, SINTAXE E INTERPRETAÇÃO (CAP. 6.3 E 6.4)
     'E5_1': {
         editable: true, min: 4, max: 12,
         variations: {
@@ -669,87 +548,17 @@ const DEFAULT_MODULE_VARIATIONS = {
             2: ['O PATO NADA NO LAGO', 'O RATO ROEU A ROUPA', 'A BOLA CAIU NO MATO', 'O SOL BRILHA NO CÉU', 'JOÃO ABRIU A PORTA']
         }
     },
-
-    // ESPELHO DAS 8 GAVETAS DO PALAVRÁRIO PARA EDIÇÃO NA INTERFACE
-    'PAL_1': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'],
-            2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA']
-        }
-    },
-    'PAL_2': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'],
-            2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO']
-        }
-    },
-    'PAL_3': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'],
-            2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO']
-        }
-    },
-    'PAL_4': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'],
-            2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO']
-        }
-    },
-    'PAL_5': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'],
-            2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM']
-        }
-    },
-    'PAL_6': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'],
-            2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA']
-        }
-    },
-    'PAL_7': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'],
-            2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE']
-        }
-    },
-    'PAL_8': {
-        editable: true, min: 3, max: 12,
-        variations: {
-            1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'],
-            2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA']
-        }
-    },
-
-    // EXTRAS
-    'EX_SYL_COUNT': {
-        editable: true, min: 4, max: 12,
-        variations: {
-            1: ['SOL', 'PÉ', 'BOLA', 'GATO', 'SAPATO', 'PANELA', 'PIRULITO'],
-            2: ['MÃO', 'TREM', 'FACA', 'MALA', 'CAVALO', 'TOMATE', 'ABACAXI']
-        }
-    },
-    'EX_FIG_WORD': {
-        editable: true, min: 3, max: 10,
-        variations: {
-            1: ['BOLA', 'GATO', 'BOLO', 'FACA', 'SAPO', 'PATO'],
-            2: ['VACA', 'MALA', 'RATO', 'PIPA', 'LATA', 'CASA']
-        }
-    },
-    'EX_SEM_CAT': {
-        editable: true, min: 3, max: 10,
-        variations: {
-            1: ['GATO', 'BOLO', 'BOLA', 'VACA', 'MAÇÃ', 'PIPA'],
-            2: ['SAPO', 'UVA', 'DADO', 'PATO', 'OVO', 'MALA']
-        }
-    }
+    'PAL_1': { editable: true, min: 3, max: 12, variations: { 1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'], 2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA'] } },
+    'PAL_2': { editable: true, min: 3, max: 12, variations: { 1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'], 2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO'] } },
+    'PAL_3': { editable: true, min: 3, max: 12, variations: { 1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'], 2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO'] } },
+    'PAL_4': { editable: true, min: 3, max: 12, variations: { 1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'], 2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO'] } },
+    'PAL_5': { editable: true, min: 3, max: 12, variations: { 1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'], 2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM'] } },
+    'PAL_6': { editable: true, min: 3, max: 12, variations: { 1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'], 2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA'] } },
+    'PAL_7': { editable: true, min: 3, max: 12, variations: { 1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'], 2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE'] } },
+    'PAL_8': { editable: true, min: 3, max: 12, variations: { 1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'], 2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA'] } },
+    'EX_SYL_COUNT': { editable: true, min: 4, max: 12, variations: { 1: ['SOL', 'PÉ', 'BOLA', 'GATO', 'SAPO', 'PANELA'], 2: ['MÃO', 'TREM', 'FACA', 'MALA', 'CAVALO', 'ABACAXI'] } },
+    'EX_FIG_WORD': { editable: true, min: 3, max: 10, variations: { 1: ['BOLA', 'GATO', 'BOLO', 'FACA', 'SAPO', 'PATO'], 2: ['VACA', 'MALA', 'RATO', 'PIPA', 'LATA', 'CASA'] } },
+    'EX_SEM_CAT': { editable: true, min: 3, max: 10, variations: { 1: ['GATO', 'BOLO', 'BOLA', 'VACA', 'MAÇÃ', 'PIPA'], 2: ['SAPO', 'UVA', 'DADO', 'PATO', 'OVO', 'MALA'] } }
 };
 
 /* 8. RIMAS, ALITERAÇÃO, PARES MÍNIMOS E NARRATIVAS */
@@ -800,117 +609,45 @@ const NARRATIVES_DB = [
         intruderWord: 'PEDRA',
         correctReplacement: 'MAÇÃ',
         distractorReplacements: ['PORTA', 'SAPATO'],
-        steps: [
-            '1º: O menino pegou a maçã na cesta.',
-            '2º: Ele lavou a fruta na torneira.',
-            '3º: Ele comeu a maçã toda.'
-        ]
+        steps: ['1º: O menino pegou a maçã na cesta.', '2º: Ele lavou a fruta na torneira.', '3º: Ele comeu a maçã toda.']
     },
     {
         intruderSentence: ['A', 'MENINA', 'VESTIU', 'A', 'PANELA', 'NO', 'PÉ'],
         intruderWord: 'PANELA',
         correctReplacement: 'MEIA',
         distractorReplacements: ['COLHER', 'JANELA'],
-        steps: [
-            '1º: A menina calçou a meia e o tênis.',
-            '2º: Ela pegou sua bola no quarto.',
-            '3º: Ela foi brincar no quintal.'
-        ]
+        steps: ['1º: A menina calçou a meia e o tênis.', '2º: Ela pegou sua bola no quarto.', '3º: Ela foi brincar no quintal.']
     },
     {
         intruderSentence: ['O', 'GATO', 'BEBEU', 'O', 'SAPATO', 'NO', 'PIRES'],
         intruderWord: 'SAPATO',
         correctReplacement: 'LEITE',
         distractorReplacements: ['CADERNO', 'TIJOLO'],
-        steps: [
-            '1º: O gato sentiu sede na sala.',
-            '2º: Ele caminhou até o pires branco.',
-            '3º: Ele bebeu todo o leite.'
-        ]
+        steps: ['1º: O gato sentiu sede na sala.', '2º: Ele caminhou até o pires branco.', '3º: Ele bebeu todo o leite.']
     }
 ];
 
 function generateLogicalSentenceTrial() {
     const scenarios = [
-        {
-            sentence: 'O MENINO COMEU O BOLO NA COZINHA.',
-            question: 'QUEM COMEU O BOLO?',
-            correct: 'O MENINO',
-            distractors: ['O GATO', 'A MENINA', 'O PATO']
-        },
-        {
-            sentence: 'A MENINA CHUTOU A BOLA NO PARQUE.',
-            question: 'O QUE A MENINA CHUTOU?',
-            correct: 'A BOLA',
-            distractors: ['A PANELA', 'O SAPATO', 'A CAMA']
-        },
-        {
-            sentence: 'O GATO DORMIU NO SOFÁ DA SALA.',
-            question: 'ONDE O GATO DORMIU?',
-            correct: 'NO SOFÁ',
-            distractors: ['NA LAGOA', 'NA ÁRVORE', 'NO TELHADO']
-        },
-        {
-            sentence: 'MARIA BEBEU O SUCO DE UVA.',
-            question: 'O QUE MARIA BEBEU?',
-            correct: 'O SUCO',
-            distractors: ['A BOLA', 'O LÁPIS', 'O PRATO']
-        },
-        {
-            sentence: 'O SAPO PULOU NA LAGOA AZUL.',
-            question: 'QUEM PULOU NA LAGOA?',
-            correct: 'O SAPO',
-            distractors: ['O LEÃO', 'A VACA', 'O CAVALO']
-        }
+        { sentence: 'O MENINO COMEU O BOLO NA COZINHA.', question: 'QUEM COMEU O BOLO?', correct: 'O MENINO', distractors: ['O GATO', 'A MENINA', 'O PATO'] },
+        { sentence: 'A MENINA CHUTOU A BOLA NO PARQUE.', question: 'O QUE A MENINA CHUTOU?', correct: 'A BOLA', distractors: ['A PANELA', 'O SAPATO', 'A CAMA'] },
+        { sentence: 'O GATO DORMIU NO SOFÁ DA SALA.', question: 'ONDE O GATO DORMIU?', correct: 'NO SOFÁ', distractors: ['NA LAGOA', 'NA ÁRVORE', 'NO TELHADO'] },
+        { sentence: 'MARIA BEBEU O SUCO DE UVA.', question: 'O QUE MARIA BEBEU?', correct: 'O SUCO', distractors: ['A BOLA', 'O LÁPIS', 'O PRATO'] },
+        { sentence: 'O SAPO PULOU NA LAGOA AZUL.', question: 'QUEM PULOU NA LAGOA?', correct: 'O SAPO', distractors: ['O LEÃO', 'A VACA', 'O CAVALO'] }
     ];
     return scenarios[Math.floor(Math.random() * scenarios.length)];
 }
 
-/* 9. DICIONÁRIOS FONÉTICOS PARA RECONHECIMENTO DE VOZ (STT) */
-const phoneticsMap = {
-    'A': ['A', 'AH', 'Á'],
-    'E': ['E', 'EH', 'É', 'Ê'],
-    'I': ['I', 'IH', 'Í'],
-    'O': ['O', 'OH', 'Ó', 'Ô'],
-    'U': ['U', 'UH', 'Ú'],
-    'F': ['EFE', 'F', 'FFF', 'FE'],
-    'V': ['VE', 'VÊ', 'V', 'VVV'],
-    'M': ['EME', 'M', 'MMM', 'ME'],
-    'N': ['ENE', 'N', 'NNN', 'NE'],
-    'S': ['ESSE', 'S', 'SSS', 'SE'],
-    'Z': ['ZE', 'ZÊ', 'Z', 'ZZZ'],
-    'L': ['ELE', 'L', 'LLL', 'LE'],
-    'R': ['ERRE', 'R', 'RRR', 'RE'],
-    'X': ['XIS', 'X', 'CH', 'XE'],
-    'J': ['JOTA', 'J', 'JJJ', 'JE'],
-    'P': ['PE', 'PÊ', 'P'],
-    'B': ['BE', 'BÊ', 'B'],
-    'T': ['TE', 'TÊ', 'T'],
-    'D': ['DE', 'DÊ', 'D'],
-    'C': ['CE', 'CÊ', 'C', 'CA'],
-    'G': ['GE', 'GÊ', 'G', 'GA'],
-    'Q': ['QUE', 'QUÊ', 'Q']
-};
-
-const preReqTerms = {
-    'VOGAL': ['VOGAL', 'VOGAIS'],
-    'CONSOANTE': ['CONSOANTE', 'CONSOANTES'],
-    'SÍLABA': ['SILABA', 'SÍLABA', 'SILABAS'],
-    'PALAVRA': ['PALAVRA', 'PALAVRAS']
-};
-
-/* 10. CURRÍCULO DETALHADO DA TRILHA PRINCIPAL (1.1 AO 5.6 + PORTAIS + EXTRAS) */
+/* 9. CURRÍCULO DETALHADO DA TRILHA PRINCIPAL */
 const EIDOS_MODULES = [
-    // NÍVEL 1: PRÉ-REQUISITOS VISUAIS E LEITURA RUDIMENTAR (CAP. 3 E 4)
     { id: 'E1_1', code: '1.1', level: 'N1', title: 'Rastreio Visual', desc: 'Rastreamento ocular esquerda-direita em linhas com marcadores visuais.', engine: 'DTT', subType: 'TRACKING', isAudioModel: false },
     { id: 'E1_2', code: '1.2', level: 'N1', title: 'Discriminação de Símbolos', desc: 'Diferenciação entre letras, números e formas gráficas.', engine: 'MTS', subType: 'SYM_DISC', isAudioModel: false },
     { id: 'E1_3', code: '1.3', level: 'N1', title: 'Orientação Espacial (b/d, p/q)', desc: 'Identidade fina de grafemas espelhados.', engine: 'MTS', subType: 'MIRROR_GRAPH', isAudioModel: false },
-    { id: 'E1_4', code: '1.4', level: 'N1', title: 'Vogais Puras', desc: 'Identidade visual, discriminação auditiva e nomeação de vogais (C-C, A-C, C-D).', engine: 'MTS', subType: 'VOWELS_PURE', isAudioModel: false },
+    { id: 'E1_4', code: '1.4', level: 'N1', title: 'Vogais Puras', desc: 'Identidade visual, discriminação auditiva e nomeação de vogais.', engine: 'MTS', subType: 'VOWELS_PURE', isAudioModel: false },
     { id: 'E1_5', code: '1.5', level: 'N1', title: 'Identidade de Palavras', desc: 'Ciclo 1: Pareamento Simples (1x3) | Ciclo 2: Multimodelo (3x3).', engine: 'MULTIMTS', subType: 'WORD_IDENT_MM', isAudioModel: false },
     { id: 'E1_6', code: '1.6', level: 'N1', title: 'Leitura Rudimentar (Equivalência)', desc: 'Treino direto (B-D e BC-C) e Sondagem condicional (B-C → C-B → C-D → A-C).', engine: 'MULTIMTS', subType: 'EQUIV_4STEPS_MM', isAudioModel: false },
     { id: 'R_N1_EXTRA', code: '★ PORTAL', level: 'N1', title: 'Portal Extra N1', desc: 'Desbloqueia nos Extras: Classificação Vogal vs. Consoante e avança ao Nível 2.', engine: 'REWARD_PORTAL', targetTab: 'EXTRAS', unlockTargets: ['EX_VC', 'R_N2_FON', 'E2_1'] },
 
-    // NÍVEL 2: DO FONEMA À SÍLABA SIMPLES (A ENGENHARIA DO CAP. 5)
     { id: 'R_N2_FON', code: '★ PORTAL', level: 'N2', title: 'Portal: Alfabeto Fonológico', desc: 'Modelagem articulatória nos 7 Conjuntos Fonêmicos com Check-points.', engine: 'REWARD_PORTAL', targetTab: 'FONOLOGICO', unlockTargets: ['E2_1', 'E2_2'] },
     { id: 'E2_1', code: '2.1', level: 'N2', title: 'Encontros Vocálicos', desc: 'Fusão e leitura de AI, EI, OI, UI, AU, EU, OU, ÃO.', engine: 'MTS', subType: 'VOCAL_ENCOUNTERS', isAudioModel: false },
     { id: 'E2_2', code: '2.2', level: 'N2', title: 'Fusão Silábica: Contínuas', desc: 'Triplo Slider ([F] + [A] → [FA]) com consoantes prolongáveis, audição e leitura.', engine: 'SYL_SLIDER', subType: 'SYL_BUILD_SLIDER', isAudioModel: false },
@@ -918,7 +655,6 @@ const EIDOS_MODULES = [
     { id: 'E2_4', code: '2.4', level: 'N2', title: 'Reconhecimento de Sílabas (CV)', desc: 'Pareamento e leitura de sílabas canônicas com suporte intrassilábico.', engine: 'MTS', subType: 'SYL_RECOG_CV', isAudioModel: false, unlockSyl: ['T', 'L', 'M'] },
     { id: 'R_N2_SIL', code: '★ PORTAL', level: 'N2', title: 'Portal: Silabário & Extras Fonológicos', desc: 'Abre os 6 Conjuntos do Silabário e libera Rimas, Aliteração e Segmentação nos Extras.', engine: 'REWARD_PORTAL', targetTab: 'SILABARIO', unlockTargets: ['T', 'L', 'M', 'F', 'B', 'R', 'EX_RHYME', 'EX_ALLIT', 'EX_SYL_COUNT', 'E3_1'] },
 
-    // NÍVEL 3: CONSTRUÇÃO LEXICAL, ESCRITA E RECOMBINAÇÃO
     { id: 'E3_1', code: '3.1', level: 'N3', title: 'Construção por Sílabas (CRMTS)', desc: 'Montagem ativa de sílabas com Figura/Áudio seguida de sondagem de leitura limpa.', engine: 'CRMTS', subType: 'SYL_WORD_BUILD', isAudioModel: true },
     { id: 'E3_2', code: '3.2', level: 'N3', title: 'Desmame de Pista Visual (Cor → Preto)', desc: 'Multimodelo 3x3 pareando palavra estruturada ([TE][LA] colorido) com texto preto puro (TELA).', engine: 'MULTIMTS', subType: 'FADEOUT_COLOR_MM', isAudioModel: false },
     { id: 'E3_3', code: '3.3', level: 'N3', title: 'Generalização MAIÚSCULA ↔ minúscula', desc: 'Multimodelo 3x3 pareando palavras em CAIXA ALTA com imprensa minúscula.', engine: 'MULTIMTS', subType: 'CASE_GEN_MM', isAudioModel: false },
@@ -927,7 +663,6 @@ const EIDOS_MODULES = [
     { id: 'E3_6', code: '3.6', level: 'N3', title: 'Leitura Recombinativa Simples', desc: 'Sondagem oral (C → D) de vocábulos inéditos formados por sílabas já dominadas.', engine: 'DTT', subType: 'RECOMB_STT', isAudioModel: false },
     { id: 'R_N3_PAL', code: '★ PORTAL', level: 'N3', title: 'Portal: Palavrário & Extras de Estrutura', desc: 'Abre as Gavetas Simples do Palavrário e desbloqueia Sílaba vs. Palavra, Estrutura Total e Categorização.', engine: 'REWARD_PORTAL', targetTab: 'PALAVRARIO', unlockTargets: ['PAL_1', 'PAL_2', 'PAL_3', 'PAL_4', 'EX_CLASS_SP', 'EX_TOTAL_MM', 'EX_FIG_WORD', 'EX_SEM_CAT', 'E4_1'] },
 
-    // NÍVEL 4: DIFICULDADES DA LÍNGUA E SÍLABAS COMPLEXAS (CAP. 6.2)
     { id: 'E4_1', code: '4.1', level: 'N4', title: 'Mudança Sonora do C e G (CE/CI, GE/GI)', desc: 'Contraste entre CA/CO/CU vs. CE/CI e GA/GO/GU vs. GE/GI.', engine: 'MTS', subType: 'CG_ALL_SOUNDS', isAudioModel: false },
     { id: 'E4_2', code: '4.2', level: 'N4', title: 'Dígrafos QU e GU', desc: 'Leitura e pareamento de vocábulos com QUA, QUE, QUI e GUA, GUE, GUI.', engine: 'MTS', subType: 'QU_GU_SOUNDS', isAudioModel: false },
     { id: 'E4_3', code: '4.3', level: 'N4', title: 'Dígrafos Palatais e Fricativos (CH, LH, NH, RR, SS)', desc: 'Equivalência completa com CHAVE, ABELHA, NINHO, CARRO e PÁSSARO.', engine: 'MTS', subType: 'WORDS_EQ', filterStruct: 'DIGRAPH', isAudioModel: false },
@@ -936,7 +671,6 @@ const EIDOS_MODULES = [
     { id: 'E4_6', code: '4.6', level: 'N4', title: 'Encontros Consonantais (CCV)', desc: 'Equivalência completa com PR, BR, TR, CR, FL, PL, BL (PRATO, BRUXA, LIVRO, PLANTA).', engine: 'MTS', subType: 'WORDS_EQ', filterStruct: 'CCV', promptSylComplex: true, isAudioModel: false },
     { id: 'R_N4_PAL', code: '★ PORTAL', level: 'N4', title: 'Portal: Palavrário Complexo & Pares Mínimos', desc: 'Libera as Gavetas 5 a 8 no Palavrário e desbloqueia Pares Mínimos e Pseudopalavras nos Extras.', engine: 'REWARD_PORTAL', targetTab: 'PALAVRARIO', unlockTargets: ['PAL_5', 'PAL_6', 'PAL_7', 'PAL_8', 'EX_MIN_PAIRS', 'PSEUDOPALAVRAS', 'PALAVRAS', 'E5_1'] },
 
-    // NÍVEL 5: FLUÊNCIA, SINTAXE E INTERPRETAÇÃO (CAP. 6.3 E 6.4)
     { id: 'E5_1', code: '5.1', level: 'N5', title: 'Fluência de Palavras (< 3s)', desc: 'Leitura cronometrada de palavras simples e complexas sob controle de latência.', engine: 'FLUENCY', subType: 'SPRINT_3S', isAudioModel: false },
     { id: 'E5_2', code: '5.2', level: 'N5', title: 'Segmentação Lexical (Espaço na Frase)', desc: 'Delimitação das fronteiras entre palavras em frases aglutinadas.', engine: 'CRMTS', subType: 'WORD_SPACE', isAudioModel: false },
     { id: 'E5_3', code: '5.3', level: 'N5', title: 'Agrupamento Sintático', desc: 'Leitura de frases em blocos prosódicos de sentido.', engine: 'DTT', subType: 'SYNTACTIC_GROUP', isAudioModel: false },
@@ -944,7 +678,6 @@ const EIDOS_MODULES = [
     { id: 'E5_5', code: '5.5', level: 'N5', title: 'Compreensão de Frases (Quem / O quê / Onde)', desc: 'Leitura da frase seguida de pergunta WH com alternativas.', engine: 'MTS', subType: 'SYNTACTIC_WH', isAudioModel: false },
     { id: 'E5_6', code: '5.6', level: 'N5', title: 'Coerência e Sequência Narrativa', desc: 'Var 1: Substituição de Palavra Intrusa | Var 2: Ordem Cronológica 1º, 2º, 3º.', engine: 'CRMTS', subType: 'NARRATIVE_COHERENCE', isAudioModel: false },
 
-    // GUIA EXTRAS: CONSCIÊNCIA FONOLÓGICA, CLASSIFICAÇÃO E CATEGORIZAÇÃO
     { id: 'EX_VC',        code: 'EX.1', level: 'EXTRAS', title: 'Vogal vs. Consoante',       desc: 'Classificação estrutural entre vogais e consoantes.',                         engine: 'MTS',      subType: 'CLASS_VC',        isAudioModel: false },
     { id: 'EX_RHYME',     code: 'EX.2', level: 'EXTRAS', title: 'Rimas',                     desc: 'Identificação auditiva de palavras que terminam com o mesmo som.',           engine: 'MTS',      subType: 'RHYME',           isAudioModel: true },
     { id: 'EX_ALLIT',     code: 'EX.3', level: 'EXTRAS', title: 'Aliteração',                desc: 'Identificação auditiva de palavras que começam com o mesmo fonema.',         engine: 'MTS',      subType: 'ALLITERATION',    isAudioModel: true },
@@ -976,36 +709,8 @@ const DEFAULT_TOKEN_STATE = {
 };
 
 const DEFAULT_ARCADE_MANIFEST = [
-    {
-        id: 'baloes',
-        title: 'Estourar Balões',
-        desc: 'Toque nos balões coloridos que sobem pela tela antes que escapem!',
-        cost: 3,
-        durationSec: 45,
-        entry: 'arcade/baloes/index.html'
-    },
-    {
-        id: 'superchef',
-        title: 'Super Chef: Esteira Maluca',
-        desc: 'Monte os lanches tocando nos ingredientes certos na esteira em movimento!',
-        cost: 4,
-        durationSec: 60,
-        entry: 'arcade/superchef/index.html'
-    },
-    {
-        id: 'cosmojump',
-        title: 'Cosmo Jump',
-        desc: 'Pule pelos asteroides no espaço! Toque nas laterais da tela para guiar o astronauta.',
-        cost: 4,
-        durationSec: 60,
-        entry: 'arcade/cosmojump/index.html'
-    },
-    {
-        id: 'guardiao',
-        title: 'Guardião da Orb',
-        desc: 'Gire o escudo 360° arrastando o dedo para proteger o núcleo de energia!',
-        cost: 4,
-        durationSec: 60,
-        entry: 'arcade/guardiao/index.html'
-    }
+    { id: 'baloes', title: 'Estourar Balões', desc: 'Toque nos balões coloridos que sobem pela tela antes que escapem!', cost: 3, durationSec: 45, entry: 'arcade/baloes/index.html' },
+    { id: 'superchef', title: 'Super Chef: Esteira Maluca', desc: 'Monte os lanches tocando nos ingredientes certos na esteira em movimento!', cost: 4, durationSec: 60, entry: 'arcade/superchef/index.html' },
+    { id: 'cosmojump', title: 'Cosmo Jump', desc: 'Pule pelos asteroides no espaço! Toque nas laterais da tela para guiar o astronauta.', cost: 4, durationSec: 60, entry: 'arcade/cosmojump/index.html' },
+    { id: 'guardiao', title: 'Guardião da Orb', desc: 'Gire o escudo 360° arrastando o dedo para proteger o núcleo de energia!', cost: 4, durationSec: 60, entry: 'arcade/guardiao/index.html' }
 ];
