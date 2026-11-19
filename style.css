@@ -38,10 +38,18 @@
     padding: 0;
     font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     user-select: none;
 }
 
-body {
+input, textarea, [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+}
+
+html, body {
     background: var(--bg);
     color: var(--text);
     overflow: hidden;
@@ -49,6 +57,22 @@ body {
     flex-direction: column;
     height: 100vh;
     width: 100vw;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* BLINDAGEM GLOBAL DE IMAGENS INTERNAS (ANTI-CONTEXTMENU E ANTI-DRAG NATIVO) */
+.comp-card img,
+.model-card img,
+.mm-card img,
+.letter-tile img,
+.mouth-articulatory-box img {
+    pointer-events: none !important;
+    -webkit-user-drag: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
 }
 
 /* ================= 0. ECRÃ DE ABERTURA / SPLASH OFICIAL ================= */
@@ -133,6 +157,9 @@ body {
     overflow-y: auto;
     height: 100%;
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .screen.active {
@@ -285,7 +312,7 @@ body {
 }
 .token-balance-pill:active { transform: scale(0.95); }
 
-/* ================= 3. TELA HOME DO ANALISTA (4 COLUNAS) ================= */
+/* ================= 3. TELA HOME DO ANALISTA (GRID 2x2 MODERNO) ================= */
 #screen-splash {
     align-items: center;
     justify-content: center;
@@ -306,12 +333,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 34px;
+    margin-bottom: 30px;
     text-align: center;
 }
 
 .home-logo-box {
-    width: 185px;
+    width: 170px;
     height: auto;
     aspect-ratio: 2423 / 1691;
     margin: 0 auto 10px auto;
@@ -322,7 +349,7 @@ body {
 }
 
 .home-brand-title {
-    font-size: 2.75rem;
+    font-size: 2.65rem;
     font-weight: 900;
     letter-spacing: -1.5px;
     color: var(--text);
@@ -331,10 +358,15 @@ body {
 
 .splash-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 18px;
     width: 100%;
-    max-width: 920px;
+    max-width: 720px;
+}
+
+.splash-buttons.splash-grid-2x2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 720px;
 }
 
 .splash-btn {
@@ -342,22 +374,30 @@ body {
     color: var(--text);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 26px 16px;
-    font-size: 1.02rem;
+    padding: 22px 24px;
+    min-height: 92px;
+    font-size: 1.08rem;
     font-weight: 800;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 14px;
     cursor: pointer;
     transition: all 0.18s ease;
     box-shadow: var(--shadow-card);
-    text-align: center;
+    text-align: left;
+}
+
+.splash-btn-label {
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.3px;
 }
 
 .splash-btn:hover {
-    border-color: #CBD5E1;
+    border-color: var(--primary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-soft);
 }
@@ -368,12 +408,13 @@ body {
     background: #F8FAFC;
     border: 1.5px solid var(--border);
     color: var(--text);
-    width: 54px;
-    height: 54px;
+    width: 52px;
+    height: 52px;
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     transition: 0.18s;
 }
 
@@ -570,7 +611,7 @@ body {
     display: block;
 }
 
-/* ================= 6. TELA DE JOGOS / TRILHA (TÍTULO CENTRALIZADO AO CONTAINER) ================= */
+/* ================= 6. TELA DE JOGOS / TRILHA ================= */
 #screen-home {
     overflow: hidden !important;
     padding: 16px 32px 14px 32px !important;
@@ -831,7 +872,7 @@ body {
     border-radius: 6px;
 }
 
-/* ================= 7. ARENA DE INTERVENÇÃO & TOPOGRAFIAS ================= */
+/* ================= 7. ARENA DE INTERVENÇÃO, HOLD-TO-SELECT & DRAG-TO-MODEL ================= */
 #screen-game {
     background: #FFFFFF;
     padding: 16px 24px;
@@ -1026,9 +1067,44 @@ body {
     box-shadow: var(--shadow-card);
     text-align: center;
     position: relative;
+    overflow: hidden;
 }
 .comp-card:active { transform: scale(0.96); border-color: var(--primary); }
 .comp-card.img-only { font-size: 4rem; }
+
+/* BARRA DE PROGRESSO DO HOLD-TO-SELECT */
+.hold-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    background: var(--primary-light);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: inherit;
+}
+
+.comp-card > *:not(.hold-progress-fill),
+.mm-card > *:not(.hold-progress-fill),
+.letter-tile > *:not(.hold-progress-fill) {
+    position: relative;
+    z-index: 1;
+}
+
+/* ESTADOS DO ARRASTE FÍSICO (DRAG-TO-MODEL) */
+.draggable-card {
+    cursor: grab;
+    touch-action: none;
+    will-change: transform;
+}
+.draggable-card.dragging-active {
+    cursor: grabbing;
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18) !important;
+    border-color: var(--primary) !important;
+    opacity: 0.96;
+}
 
 .errorless-prompt {
     border-color: var(--warning) !important;
@@ -1042,14 +1118,31 @@ body {
     50% { transform: scale(1.07); }
 }
 
-/* MULTIMODELO & CRMTS */
+/* MULTIMODELO ESTRITAMENTE HORIZONTAL (LINHA SUPERIOR MODELOS + LINHA INFERIOR COMPARAÇÕES) */
 .multimodel-board {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     width: 100%;
-    max-width: 840px;
+    max-width: 880px;
     align-items: center;
+}
+.multimodel-board.horizontal-mm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 880px;
+    align-items: center;
+}
+.mm-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: 16px;
+    width: 100%;
+    flex-wrap: nowrap;
 }
 .mm-column { display: flex; flex-direction: column; gap: 12px; }
 .mm-card {
@@ -1066,6 +1159,20 @@ body {
     cursor: pointer;
     transition: 0.16s;
     box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+}
+.mm-card.mm-square-card {
+    flex: 1;
+    min-width: 130px;
+    max-width: 240px;
+    min-height: 126px;
+    padding: 14px 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.75rem;
 }
 .mm-card.selected { border-color: var(--primary); background: var(--primary-light); }
 .mm-card.paired {
@@ -1126,6 +1233,8 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: 0.15s;
+    position: relative;
+    overflow: hidden;
 }
 .letter-tile:active { transform: translateY(2px); }
 .letter-tile.used { opacity: 0.25; pointer-events: none; }
@@ -2207,13 +2316,24 @@ textarea {
 }
 
 @media (max-width: 960px) {
-    .splash-buttons { grid-template-columns: repeat(2, 1fr); max-width: 520px; }
+    .splash-buttons,
+    .splash-buttons.splash-grid-2x2 {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 560px;
+    }
     .complements-cards-grid { grid-template-columns: repeat(2, 1fr); }
     .profile-cards-grid { grid-template-columns: 1fr; max-width: 440px; }
     .dash-kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .screen { padding: 16px; }
     .carousel-page { padding: 12px 36px 24px 36px; }
-    .multimodel-board { grid-template-columns: 1fr; gap: 14px; }
+    .multimodel-board.horizontal-mm { gap: 14px; }
+    .mm-row { gap: 10px; }
+    .mm-card.mm-square-card {
+        min-width: 95px;
+        min-height: 100px;
+        padding: 10px;
+        font-size: 1.35rem;
+    }
     .print-studio-workspace { flex-direction: column; height: auto; overflow: visible; }
     .print-studio-sidebar { width: 100%; }
 }
