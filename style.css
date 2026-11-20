@@ -1,10 +1,7 @@
 /* ================= FONTES LOCAIS OFFLINE ================= */
 @font-face {
-    font-family: 'EscolarCursiva';
-    src: url('assets/fonts/mamae-que-nos-faz.ttf') format('truetype'),
-         url('assets/fonts/MamaeQueNosFaz.ttf') format('truetype'),
-         url('assets/fonts/mamaequenosfaz.ttf') format('truetype'),
-         url('assets/fonts/mamae-que-nos-faz.woff2') format('woff2');
+    font-family: 'MamaeQueNosFaz';
+    src: url('./assets/fontes/MamaeQueNosFaz.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -276,6 +273,10 @@ html, body {
     height: 40px;
 }
 
+.student-switcher-pill.icon-right-pill {
+    padding: 7px 10px 7px 16px;
+}
+
 .student-switcher-pill:hover { background: #E2E8F0; }
 .student-switcher-pill:active { transform: scale(0.96); }
 
@@ -312,7 +313,7 @@ html, body {
 }
 .token-balance-pill:active { transform: scale(0.95); }
 
-/* ================= 3. TELA HOME DO ANALISTA (GRID 2x2 MODERNO) ================= */
+/* ================= 3. TELA HOME DO ANALISTA (GRID 2x2 • ÍCONES À DIREITA) ================= */
 #screen-splash {
     align-items: center;
     justify-content: center;
@@ -356,16 +357,12 @@ html, body {
     line-height: 1.1;
 }
 
-.splash-buttons {
+.splash-buttons,
+.splash-buttons.splash-grid-2x2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
     width: 100%;
-    max-width: 720px;
-}
-
-.splash-buttons.splash-grid-2x2 {
-    grid-template-columns: repeat(2, 1fr);
     max-width: 720px;
 }
 
@@ -872,7 +869,7 @@ html, body {
     border-radius: 6px;
 }
 
-/* ================= 7. ARENA DE INTERVENÇÃO, HOLD-TO-SELECT & DRAG-TO-MODEL ================= */
+/* ================= 7. ARENA DE INTERVENÇÃO, HOLD-TO-SELECT & DRAG REVERSÍVEL ================= */
 #screen-game {
     background: #FFFFFF;
     padding: 16px 24px;
@@ -1010,12 +1007,15 @@ html, body {
     vertical-align: middle;
 }
 
-/* CLASSES TOPOGRÁFICAS NEUTRAS */
+/* CLASSES TOPOGRÁFICAS (CURSIVA MAMÃE QUE NOS FAZ CALIBRADA) */
 .topo-serif { font-family: Georgia, 'Times New Roman', serif !important; }
 .topo-school {
-    font-family: 'EscolarCursiva', cursive, sans-serif !important;
+    font-family: 'MamaeQueNosFaz', cursive !important;
+    text-transform: none !important;
     font-weight: normal !important;
-    letter-spacing: 1px;
+    font-size: 1.25em;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
 }
 .topo-lower { text-transform: lowercase !important; }
 
@@ -1072,7 +1072,7 @@ html, body {
 .comp-card:active { transform: scale(0.96); border-color: var(--primary); }
 .comp-card.img-only { font-size: 4rem; }
 
-/* BARRA DE PROGRESSO DO HOLD-TO-SELECT */
+/* BARRA DE PROGRESSO DO HOLD-TO-SELECT (APENAS NA RESPOSTA) */
 .hold-progress-fill {
     position: absolute;
     top: 0;
@@ -1118,15 +1118,8 @@ html, body {
     50% { transform: scale(1.07); }
 }
 
-/* MULTIMODELO ESTRITAMENTE HORIZONTAL (LINHA SUPERIOR MODELOS + LINHA INFERIOR COMPARAÇÕES) */
-.multimodel-board {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    max-width: 880px;
-    align-items: center;
-}
+/* MULTIMODELO ESTRITAMENTE HORIZONTAL + ENCAIXE REVERSÍVEL */
+.multimodel-board,
 .multimodel-board.horizontal-mm {
     display: flex;
     flex-direction: column;
@@ -1181,6 +1174,56 @@ html, body {
     color: #065F46;
     pointer-events: none;
     opacity: 0.85;
+}
+.mm-card.mm-has-docked {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+    gap: 8px;
+}
+.mm-docked-pair-slot {
+    width: 100%;
+    margin-top: 6px;
+    padding: 6px 10px;
+    background: #FFFFFF;
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-shadow: var(--shadow-card);
+}
+.mm-docked-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--text);
+}
+.mm-docked-content img {
+    width: 46px !important;
+    height: 46px !important;
+}
+.mm-undock-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: #F8FAFC;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.mm-undock-btn:hover {
+    background: var(--danger-light);
+    border-color: var(--danger);
+    color: var(--danger);
 }
 
 .crmts-slots {
@@ -1438,41 +1481,239 @@ html, body {
 }
 .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
-/* ================= 8. TELEMETRIA, CONFIGURAÇÕES E MODAIS ================= */
+/* ================= 8. NOVA TELEMETRIA (3 ABAS: DTT EM COLUNAS, LEXICAL E HISTÓRICO) ================= */
 .dash-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1.5px solid var(--border);
+    max-width: 1020px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
-.dash-kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+.telemetry-shell {
+    max-width: 1020px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 42px;
+}
+
+.telemetry-main-tabs {
+    margin-bottom: 4px;
+}
+
+.tel-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 14px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
 }
-.kpi-card {
-    background: white;
+
+.tel-task-select {
+    flex: 1;
+    min-width: 240px;
+    padding: 11px 14px;
     border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 16px 18px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    background: #FFFFFF;
+    color: var(--text);
+    outline: none;
     box-shadow: var(--shadow-card);
 }
-.kpi-card span {
-    font-size: 0.78rem;
+.tel-task-select:focus { border-color: var(--primary); }
+
+.tel-mode-toggle {
+    min-width: 230px;
+}
+
+.tel-dtt-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 14px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.dtt-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dtt-matrix-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.86rem;
+}
+
+.dtt-matrix-table th,
+.dtt-matrix-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #F1F5F9;
+    border-right: 1px solid #F1F5F9;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dtt-matrix-table thead th {
+    background: #F8FAFC;
+    border-bottom: 2px solid var(--border);
+}
+
+.dtt-metric-sticky {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background: #F8FAFC !important;
+    text-align: left !important;
+    font-weight: 900;
+    color: var(--text);
+    min-width: 125px;
+    border-right: 2px solid var(--border) !important;
+}
+
+.dtt-date-col {
+    min-width: 112px;
+}
+
+.tel-status-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+.tel-status-pill.ok { background: var(--success-light); color: #065F46; }
+.tel-status-pill.warn { background: var(--warning-light); color: #92400E; }
+.tel-status-pill.err { background: var(--danger-light); color: #991B1B; }
+
+.tel-lex-summary-pill {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 900;
+}
+
+.tel-lexical-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+}
+
+.lex-word-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-left: 5px solid var(--primary);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lex-word-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+}
+.lex-word-card.status-mastered { border-left-color: var(--success); }
+.lex-word-card.status-learning { border-left-color: var(--warning); }
+.lex-word-card.status-attention { border-left-color: var(--danger); }
+
+.lex-word-title {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.lex-acc-badge {
+    font-size: 0.84rem;
+    font-weight: 900;
+    color: var(--primary-dark);
+}
+
+.lex-progress-bar {
+    width: 100%;
+    height: 7px;
+    border-radius: 999px;
+    background: #F1F5F9;
+    overflow: hidden;
+}
+
+.lex-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--primary);
+}
+.lex-word-card.status-mastered .lex-progress-fill { background: var(--success); }
+.lex-word-card.status-learning .lex-progress-fill { background: var(--warning); }
+.lex-word-card.status-attention .lex-progress-fill { background: var(--danger); }
+
+/* MODAL DETALHES DA PALAVRA */
+.wt-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.wt-kpi-box {
+    background: #F8FAFC;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 8px;
+    text-align: center;
+}
+.wt-kpi-box span {
+    display: block;
+    font-size: 0.7rem;
     font-weight: 800;
     color: var(--text-light);
     text-transform: uppercase;
 }
-.kpi-card strong {
+.wt-kpi-box strong {
     display: block;
-    font-size: 1.85rem;
+    font-size: 1.45rem;
     font-weight: 900;
     color: var(--text);
-    margin-top: 4px;
+    margin-top: 2px;
 }
+.wt-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+.wt-history-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
 .chart-box {
     background: white;
     border: 1.5px solid var(--border);
@@ -1506,6 +1747,7 @@ html, body {
     font-size: 0.85rem;
 }
 
+/* CONFIGURAÇÕES E MODAIS */
 .settings-header {
     display: flex;
     justify-content: space-between;
@@ -2157,7 +2399,7 @@ textarea {
     background: #FFFFFF;
 }
 
-/* CARTÕES DE ESTÍMULOS (FLEX WRAP + BREAK-INSIDE AVOID) */
+/* CARTÕES DE ESTÍMULOS */
 .cutout-cards-flex {
     display: flex;
     flex-wrap: wrap;
@@ -2323,7 +2565,7 @@ textarea {
     }
     .complements-cards-grid { grid-template-columns: repeat(2, 1fr); }
     .profile-cards-grid { grid-template-columns: 1fr; max-width: 440px; }
-    .dash-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .wt-kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .screen { padding: 16px; }
     .carousel-page { padding: 12px 36px 24px 36px; }
     .multimodel-board.horizontal-mm { gap: 14px; }
