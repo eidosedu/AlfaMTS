@@ -113,7 +113,7 @@
     </div>
 </div>
 
-<!-- ================= TELA HOME DO ANALISTA (GRID 2x2 SEM MOEDA) ================= -->
+<!-- ================= TELA HOME DO ANALISTA (GRID 2x2 • ÍCONES À DIREITA) ================= -->
 <div id="screen-splash" class="screen">
     <div class="analyst-top-bar">
         <button type="button" class="icon-circle-btn" onclick="openGatekeeper()" title="Trocar Perfil">
@@ -121,11 +121,11 @@
         </button>
 
         <div style="display:flex; align-items:center; gap:10px;">
-            <button type="button" class="student-switcher-pill" id="analyst-home-switcher" onclick="openStudentSwitcherModal()">
+            <button type="button" class="student-switcher-pill icon-right-pill" id="analyst-home-switcher" onclick="openStudentSwitcherModal()">
+                <span class="student-first-name-label">ALUNO</span>
                 <span class="avatar-mini">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </span>
-                <span class="student-first-name-label">ALUNO</span>
             </button>
         </div>
     </div>
@@ -185,9 +185,9 @@
                 <span class="token-balance-count">0</span>
             </button>
 
-            <button type="button" class="student-switcher-pill" id="applicator-grid-switcher" onclick="openStudentSwitcherModal()" style="display:none;">
-                <span class="avatar-mini"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            <button type="button" class="student-switcher-pill icon-right-pill" id="applicator-grid-switcher" onclick="openStudentSwitcherModal()" style="display:none;">
                 <span class="student-first-name-label">ALUNO</span>
+                <span class="avatar-mini"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
             </button>
 
             <button type="button" class="icon-circle-btn" id="btn-review-mode" onclick="toggleReviewMode()" title="Modo Revisão">
@@ -636,14 +636,16 @@
                     <label>Tempo de Pressão na Resposta (Hold-to-Select):</label>
                     <select id="set-hold-ms">
                         <option value="0" selected>Desativado (Toque imediato - 0ms)</option>
-                        <option value="300">Leve (300ms)</option>
+                        <option value="300">Rápido (300ms)</option>
+                        <option value="450">Leve (450ms)</option>
                         <option value="600">Moderado (600ms)</option>
-                        <option value="1000">Intenso (1000ms)</option>
+                        <option value="1000">Firme (1000ms)</option>
+                        <option value="1500">Intenso (1500ms)</option>
                     </select>
                 </div>
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-bottom:14px;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
                 <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
                     <input type="checkbox" id="set-drag-mts" style="width:20px; height:20px;">
                     <span>Arrastar até o Modelo (MTS Simples)</span>
@@ -651,6 +653,10 @@
                 <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
                     <input type="checkbox" id="set-drag-multimts" style="width:20px; height:20px;">
                     <span>Arrastar até o Modelo (Multi-MTS)</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
+                    <input type="checkbox" id="set-drag-crmts" style="width:20px; height:20px;">
+                    <span>Arrastar Sílabas/Letras (CRMTS)</span>
                 </label>
             </div>
 
@@ -756,8 +762,9 @@
     </div>
 </div>
 
-<!-- ================= TELA DE DASHBOARD E TELEMETRIA ================= -->
+<!-- ================= TELA DE TELEMETRIA (3 ABAS FIXAS) ================= -->
 <div id="screen-dashboard" class="screen">
+    <!-- A. CABEÇALHO E BARRA DE ABAS PRINCIPAIS -->
     <div class="dash-header">
         <button type="button" class="icon-circle-btn" onclick="goSplash()" title="Voltar">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
@@ -770,34 +777,57 @@
         </button>
     </div>
 
-    <div class="dash-kpi-grid">
-        <div class="kpi-card">
-            <span>Sessões Realizadas</span>
-            <strong id="kpi-total-sessions">0</strong>
+    <div class="telemetry-shell">
+        <div class="segmented-control telemetry-main-tabs">
+            <button type="button" class="seg-btn active" id="tel-tab-btn-dtt" onclick="switchTelemetryTab('DTT')">Por Tarefa (DTT)</button>
+            <button type="button" class="seg-btn" id="tel-tab-btn-lexical" onclick="switchTelemetryTab('LEXICAL')">Repertório Lexical</button>
+            <button type="button" class="seg-btn" id="tel-tab-btn-history" onclick="switchTelemetryTab('HISTORY')">Histórico</button>
         </div>
-        <div class="kpi-card">
-            <span>Precisão Média</span>
-            <strong id="kpi-avg-acc" style="color:var(--primary-dark);">0%</strong>
+
+        <!-- B. ABA 1: POR TAREFA (DTT) -->
+        <div id="tel-pane-dtt">
+            <div class="tel-controls-bar">
+                <select id="tel-task-select" class="tel-task-select" onchange="onTelemetryTaskSelectChange(this.value)"></select>
+                <div class="segmented-control tel-mode-toggle" style="margin:0;">
+                    <button type="button" class="seg-btn active" id="tel-mode-train" onclick="setTelemetryDttMode('TRAIN')">Treino</button>
+                    <button type="button" class="seg-btn" id="tel-mode-probe" onclick="setTelemetryDttMode('PROBE')">Sondagem</button>
+                </div>
+            </div>
+
+            <!-- BLOCO 1: TABELA DTT EVOLUTIVA (DATAS NAS COLUNAS) -->
+            <div id="tel-dtt-table-wrap" class="tel-dtt-card"></div>
+
+            <!-- BLOCO 2: GRÁFICO DE EVOLUÇÃO DA TAREFA FILTRADA -->
+            <div class="chart-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <strong style="font-size:0.95rem; color:var(--text);">Curva de Evolução da Tarefa</strong>
+                    <span id="chart-crit-label" style="font-size:0.82rem; font-weight:800; color:var(--danger);">--- Meta: 90%</span>
+                </div>
+                <canvas id="aba-progress-chart" height="170" style="width:100%; display:block;"></canvas>
+            </div>
         </div>
-        <div class="kpi-card">
-            <span>Módulos Consolidados</span>
-            <strong id="kpi-mastered-count" style="color:var(--success);">0</strong>
+
+        <!-- C. ABA 2: REPERTÓRIO LEXICAL (WORD_BANK) -->
+        <div id="tel-pane-lexical" style="display:none;">
+            <div class="tel-controls-bar">
+                <span id="tel-lex-count" class="tel-lex-summary-pill">0 palavras trabalhadas</span>
+                <select id="tel-lex-sort" class="compact-select" onchange="onTelemetryLexSortChange(this.value)">
+                    <option value="APPEARANCE">Ordem de aparição</option>
+                    <option value="ACC_DESC">Maior % acerto</option>
+                    <option value="ERR_DESC">Mais erros</option>
+                </select>
+            </div>
+            <div id="tel-lexical-grid" class="tel-lexical-grid"></div>
         </div>
-        <div class="kpi-card">
-            <span>Latência Média</span>
-            <strong id="kpi-avg-latency">0.0s</strong>
+
+        <!-- D. ABA 3: HISTÓRICO ENXUTO -->
+        <div id="tel-pane-history" style="display:none;">
+            <div style="margin-bottom:14px;">
+                <input type="text" id="tel-history-filter" placeholder="Filtrar por tarefa ou data..." oninput="renderTelemetryHistoryView()" style="width:100%; padding:11px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:700; font-size:0.92rem; background:#FFFFFF; outline:none;">
+            </div>
+            <div class="dash-list" id="dashboard-content"></div>
         </div>
     </div>
-
-    <div class="chart-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <strong style="font-size:0.95rem; color:var(--text);">Curva de Evolução Independente</strong>
-            <span id="chart-crit-label" style="font-size:0.82rem; font-weight:800; color:var(--danger);">--- Meta: 90%</span>
-        </div>
-        <canvas id="aba-progress-chart" height="170" style="width:100%; display:block;"></canvas>
-    </div>
-
-    <div class="dash-list" id="dashboard-content"></div>
 </div>
 
 <!-- ================= TELA DA ARENA DE INTERVENÇÃO ================= -->
@@ -845,6 +875,44 @@
 
 <!-- ================= MODAIS DO SISTEMA ================= -->
 
+<!-- MODAL DE DETALHES DA PALAVRA (REPERTÓRIO LEXICAL) -->
+<div id="modal-word-telemetry" class="modal-overlay" data-backdrop-close="true" style="z-index: 390;">
+    <div class="modal-content" style="max-width: 560px; text-align: left; padding: 24px;">
+        <div class="modal-clean-header">
+            <h2 class="modal-title" id="wt-word-title" style="margin:0; font-size:1.55rem;">PALAVRA</h2>
+            <button type="button" class="icon-circle-btn" onclick="closeModals()" title="Fechar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div class="wt-kpi-grid">
+            <div class="wt-kpi-box">
+                <span>Vezes como Alvo</span>
+                <strong id="wt-kpi-total">0</strong>
+            </div>
+            <div class="wt-kpi-box">
+                <span>Acertos (I)</span>
+                <strong id="wt-kpi-i" style="color:var(--success);">0</strong>
+            </div>
+            <div class="wt-kpi-box">
+                <span>Dicas (D)</span>
+                <strong id="wt-kpi-d" style="color:#D97706;">0</strong>
+            </div>
+            <div class="wt-kpi-box">
+                <span>Erros (N)</span>
+                <strong id="wt-kpi-n" style="color:var(--danger);">0</strong>
+            </div>
+        </div>
+
+        <strong style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; display:block; margin-bottom:8px;">Histórico e Curva da Palavra</strong>
+        <div id="wt-history-list" class="wt-history-list"></div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+            <button type="button" class="btn-action btn-cancel" onclick="closeModals()">Fechar</button>
+        </div>
+    </div>
+</div>
+
 <!-- PAINEL DE CONFIGURAÇÃO INDIVIDUAL DA TAREFA -->
 <div id="modal-stimuli-editor" class="modal-overlay" data-backdrop-close="true" style="z-index: 280;">
     <div class="modal-content" style="text-align: left; max-width: 680px; padding: 24px;" onclick="closeAllTooltips(event)">
@@ -890,7 +958,7 @@
                     <option value="GLOBAL">CAIXA ALTA</option>
                     <option value="LOWER">minúsculas</option>
                     <option value="SERIF">Serifada</option>
-                    <option value="SCHOOL">Cursiva Escolar</option>
+                    <option value="SCHOOL">Cursiva (Mamãe Que Nos Faz)</option>
                     <option value="MIX">Alternar Automaticamente</option>
                 </select>
             </div>
