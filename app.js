@@ -1,11 +1,46 @@
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 3: SEÇÕES 5.0 A 9)
-   ARQUITETURA CLÍNICA • MULTI-TENANT • MODAL INTELIGENTE GUIADO POR CAPACIDADES
+   CATÁLOGO DE FONTES • HOLD-TO-SELECT • MULTI-TENANT • MODAL INTELIGENTE
    ============================================================================ */
 
 /* ============================================================================
-   5.0 CATÁLOGO DE SVGS INLINE, ÁUDIO FONÊMICO E MOTOR DE MÍDIA DESACOPLADO
+   5.0 CATÁLOGO DE FONTES, SVGS INLINE, ÁUDIO FONÊMICO E MOTOR DE MÍDIA
    ============================================================================ */
+const CUSTOM_FONTS_CATALOG = [
+    { id: 'GLOBAL', label: 'CAIXA ALTA', cssClass: '', casing: 'UPPER' },
+    { id: 'LOWER',  label: 'minúsculas', cssClass: 'topo-lower', casing: 'LOWER' },
+    { id: 'SERIF',  label: 'Serifada', cssClass: 'topo-serif', casing: 'ORIGINAL' },
+    { id: 'SCHOOL', label: 'Cursiva (Mamãe Que Nos Faz)', cssClass: 'topo-school', casing: 'TITLE_CASE' },
+    { id: 'MIX',    label: 'Alternar Automaticamente', cssClass: '', casing: 'MIX' }
+];
+
+function formatTextForFontCase(rawText, fontKey = 'GLOBAL') {
+    const str = String(rawText || '').trim();
+    if (!str) return '';
+
+    const isSingleChar = (str.length === 1);
+    const isSingleCharLower = (isSingleChar && str === str.toLowerCase() && str !== str.toUpperCase());
+
+    if (fontKey === 'SCHOOL') {
+        if (isSingleChar) {
+            return isSingleCharLower ? str : str.toLowerCase();
+        }
+        // Sílabas ou encontros curtos isolados (<= 2 letras sem espaço) em minúscula cursiva
+        if (!str.includes(' ') && str.length <= 2) {
+            return str.toLowerCase();
+        }
+        // Palavras de 3+ letras ou frases: Inicial maiúscula + restante em minúsculas
+        const lower = str.toLowerCase();
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }
+
+    if (fontKey === 'LOWER') {
+        return str.toLowerCase();
+    }
+
+    return str;
+}
+
 const UI_SVGS = {
     volume: `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
     volumeSm: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
@@ -15,6 +50,7 @@ const UI_SVGS = {
     arrowRight: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
     checkCircle: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
     check: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    undoMini: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`,
     touch: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>`,
     spaceBar: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17v1c0 .5-.5 1-1 1H3c-.5 0-1-.5-1-1v-1"/></svg>`,
     backspace: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>`,
@@ -27,7 +63,7 @@ const UI_SVGS = {
     zap: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`
 };
 
-/* CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO (INCLUINDO NOVOS ITENS EXPANDIDOS) */
+/* CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO (~400 IMAGENS DESACOPLADAS) */
 const DEFAULT_REPO_WORDS_CATALOG = [
     'abacaxi', 'abelha', 'aquario', 'arvore', 'aviao', 'azeite', 'banana', 'barco',
     'batata', 'bebe', 'bico', 'blusa', 'boca', 'bola', 'bolo', 'boneca', 'bota',
@@ -63,12 +99,12 @@ const DEFAULT_REPO_WORDS_CATALOG = [
     'alho', 'berinjela', 'cebolinha', 'coentro', 'inhame', 'mandioca', 'pimentao', 'repolho', 'salsa',
     'arroz', 'bife', 'camaleao', 'codorna', 'linguica', 'macarrao', 'salamandra', 'sopa', 'falcao',
     'apontador', 'caneta', 'estojo', 'gizdecera', 'lapisdecor', 'marcador', 'parafuso', 'triangulo', 'alpaca',
-    'pneu', 'agua', 'tartaruga', 'telhado', 'lapis', 'caderno', 'colher', 'maca'
+    'pneu', 'agua', 'tartaruga', 'telhado', 'lapis', 'caderno', 'colher', 'pires', 'tenis'
 ];
 
 let repoWordsCatalog = (typeof REPO_WORDS_CATALOG !== 'undefined' && Array.isArray(REPO_WORDS_CATALOG))
-    ? [...REPO_WORDS_CATALOG]
-    : [...DEFAULT_REPO_WORDS_CATALOG];
+    ? [...new Set([...REPO_WORDS_CATALOG, ...DEFAULT_REPO_WORDS_CATALOG])]
+    : [...new Set(DEFAULT_REPO_WORDS_CATALOG)];
 
 function toCleanSlug(rawStr) {
     return String(rawStr || '')
@@ -123,7 +159,7 @@ function getMouthFallbackPath(letter, varIdx = '1') {
 function buildMouthImgTagWithFallback(letter, varIdx = '1', styleStr = 'width:100%; height:100%; object-fit:contain;') {
     const primarySrc = getMouthImagePath(letter, varIdx);
     const fallbackSrc = getMouthFallbackPath(letter, varIdx);
-    return `<img src="${primarySrc}" alt="Boca ${letter}" style="${styleStr}" onerror="if(this.src.indexOf('/bocas/')!==-1){this.src='${fallbackSrc}';}else{this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';}">`;
+    return `<img src="${primarySrc}" alt="Boca ${letter}" draggable="false" style="${styleStr}" onerror="if(this.src.indexOf('/bocas/')!==-1){this.src='${fallbackSrc}';}else{this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';}">`;
 }
 
 let activePhonemeAudioObj = null;
@@ -357,11 +393,11 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
     if (customMedia) {
         if (customMedia.type === 'IDB' && customImagesCache[customMedia.val]) {
             const src = customImagesCache[customMedia.val].dataUrl;
-            return `<img src="${src}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
+            return `<img src="${src}" alt="${cleanKey}" draggable="false" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
         }
         if (customMedia.type === 'REPO' && customMedia.val) {
             const repoSrc = getRepoWordWebpPath(customMedia.val);
-            return `<div style="display:flex; align-items:center; justify-content:center;"><img src="${repoSrc}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span style="display:none; align-items:center; justify-content:center;">${fallbackSvg}</span></div>`;
+            return `<div style="display:flex; align-items:center; justify-content:center;"><img src="${repoSrc}" alt="${cleanKey}" draggable="false" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span style="display:none; align-items:center; justify-content:center;">${fallbackSvg}</span></div>`;
         }
         if (customMedia.type === 'EMOJI' && customMedia.val) {
             return `<span style="font-size:${sizeRem}rem; line-height:1;">${customMedia.val}</span>`;
@@ -372,13 +408,13 @@ function getWordVisualRepresentationHTML(wordKey, sizeRem = 3.6) {
         item.name === cleanKey || item.name === rawUpper || toCleanSlug(item.name) === slug
     );
     if (matchedByName) {
-        return `<img src="${matchedByName.dataUrl}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
+        return `<img src="${matchedByName.dataUrl}" alt="${cleanKey}" draggable="false" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;">`;
     }
 
     const wObj = (typeof WORD_BANK !== 'undefined') ? (WORD_BANK[cleanKey] || WORD_BANK[rawUpper]) : null;
     const targetSrc = (wObj && wObj.img) ? wObj.img : getRepoWordWebpPath(slug);
 
-    return `<div style="display:flex; align-items:center; justify-content:center;"><img src="${targetSrc}" alt="${cleanKey}" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span style="display:none; align-items:center; justify-content:center;">${fallbackSvg}</span></div>`;
+    return `<div style="display:flex; align-items:center; justify-content:center;"><img src="${targetSrc}" alt="${cleanKey}" draggable="false" style="width:${px}px; height:${px}px; object-fit:contain; border-radius:14px; display:block; margin:0 auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span style="display:none; align-items:center; justify-content:center;">${fallbackSvg}</span></div>`;
 }
 
 function hasValidVisualRepresentation(wordKey) {
@@ -390,11 +426,11 @@ function hasValidVisualRepresentation(wordKey) {
     if (Object.values(customImagesCache).some(item => item.name === cleanKey || item.name === rawUpper || toCleanSlug(item.name) === slug)) return true;
     if (repoWordsCatalog.includes(slug)) return true;
     if (typeof WORD_BANK !== 'undefined' && (WORD_BANK[cleanKey] || WORD_BANK[rawUpper])) return true;
-    return true; // Desacoplamento universal: aceita qualquer slug pelo padrão assets/img/palavras/[slug].webp
+    return true;
 }
 
 /* ============================================================================
-   5. ESTADO GLOBAL, PRESETS CLÍNICOS E MULTI-TENANT
+   5. ESTADO GLOBAL, FALLBACKS CURRICULARES E MULTI-TENANT
    ============================================================================ */
 let activeRole = 'ANALYST';
 
@@ -407,7 +443,7 @@ const STRUCTURED_SYLLABARY_ORDER = [
     'X', 'Z',
     'C', 'G', 'Q'
 ];
-/* === BLOCO DE RESGATE DOS CATÁLOGOS (COLAR LOGO APÓS STRUCTURED_SYLLABARY_ORDER) === */
+
 const DEFAULT_PHONEME_SETS = [
     { setNum: 1, id: 'FA_CHK_1', title: '★ Check-point Conjunto 1 (Vogais Orais)', members: ['FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1'] },
     { setNum: 2, id: 'FA_CHK_2', title: '★ Check-point Conjunto 2 (Fechadas e Nasais)', members: ['FA_A_2', 'FA_E_2', 'FA_O_2'] },
@@ -418,6 +454,11 @@ const DEFAULT_PHONEME_SETS = [
     { setNum: 7, id: 'FA_CHK_7', title: '★ Check-point Conjunto 7 (R, S, Q, W)', members: ['FA_R_1', 'FA_R_2', 'FA_S_1', 'FA_S_2', 'FA_Q_1', 'FA_W_1'] }
 ];
 
+function getPhonemeSetsCatalog() {
+    if (typeof PHONEME_SETS !== 'undefined' && Array.isArray(PHONEME_SETS)) return PHONEME_SETS;
+    return DEFAULT_PHONEME_SETS;
+}
+
 const DEFAULT_PHONEME_SETS_MODULES = [
     { id: 'FA_A_1', setNum: 1, letter: 'A', varIdx: '1', title: 'A (Oral /a/)', desc: 'Conjunto 1 • Vogal oral aberta /a/.' },
     { id: 'FA_I_1', setNum: 1, letter: 'I', varIdx: '1', title: 'I (Oral /i/)', desc: 'Conjunto 1 • Vogal oral anterior /i/.' },
@@ -425,25 +466,30 @@ const DEFAULT_PHONEME_SETS_MODULES = [
     { id: 'FA_E_1', setNum: 1, letter: 'E', varIdx: '1', title: 'E (Aberto /ɛ/)', desc: 'Conjunto 1 • Vogal oral aberta /ɛ/.' },
     { id: 'FA_U_1', setNum: 1, letter: 'U', varIdx: '1', title: 'U (Oral /u/)', desc: 'Conjunto 1 • Vogal oral posterior /u/.' },
     { id: 'FA_CHK_1', setNum: 1, letter: 'A', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 1 (Vogais)', desc: 'Sondagem mista sem modelo das Vogais Orais.' },
+
     { id: 'FA_A_2', setNum: 2, letter: 'A', varIdx: '2', title: 'A (Nasal /ã/)', desc: 'Conjunto 2 • Vogal nasalizada /ã/.' },
     { id: 'FA_E_2', setNum: 2, letter: 'E', varIdx: '2', title: 'E (Fechado /e/)', desc: 'Conjunto 2 • Vogal fechada /e/.' },
     { id: 'FA_O_2', setNum: 2, letter: 'O', varIdx: '2', title: 'O (Fechado /o/)', desc: 'Conjunto 2 • Vogal fechada /o/.' },
     { id: 'FA_CHK_2', setNum: 2, letter: 'E', varIdx: '2', isCheckpoint: true, title: '★ Avaliar Conjunto 2 (Variações)', desc: 'Sondagem cumulativa dos Conjuntos 1 e 2.' },
+
     { id: 'FA_D_1', setNum: 3, letter: 'D', varIdx: '1', title: 'D (/d/)', desc: 'Conjunto 3 • Oclusiva dental sonora /d/.' },
     { id: 'FA_T_1', setNum: 3, letter: 'T', varIdx: '1', title: 'T (/t/)', desc: 'Conjunto 3 • Oclusiva dental surda /t/.' },
     { id: 'FA_Z_1', setNum: 3, letter: 'Z', varIdx: '1', title: 'Z (/z/)', desc: 'Conjunto 3 • Fricativa alveolar sonora /z/.' },
     { id: 'FA_M_1', setNum: 3, letter: 'M', varIdx: '1', title: 'M (/m/)', desc: 'Conjunto 3 • Nasal bilabial /m/.' },
     { id: 'FA_N_1', setNum: 3, letter: 'N', varIdx: '1', title: 'N (/n/)', desc: 'Conjunto 3 • Nasal alveolar /n/.' },
     { id: 'FA_CHK_3', setNum: 3, letter: 'D', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 3 (D, T, Z, M, N)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 3.' },
+
     { id: 'FA_P_1', setNum: 4, letter: 'P', varIdx: '1', title: 'P (/p/)', desc: 'Conjunto 4 • Oclusiva bilabial surda /p/.' },
     { id: 'FA_B_1', setNum: 4, letter: 'B', varIdx: '1', title: 'B (/b/)', desc: 'Conjunto 4 • Oclusiva bilabial sonora /b/.' },
     { id: 'FA_K_1', setNum: 4, letter: 'K', varIdx: '1', title: 'K (/k/)', desc: 'Conjunto 4 • Oclusiva velar surda /k/.' },
     { id: 'FA_CHK_4', setNum: 4, letter: 'P', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 4 (P, B, K)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 4.' },
+
     { id: 'FA_L_1', setNum: 5, letter: 'L', varIdx: '1', title: 'L (Inicial /l/)', desc: 'Conjunto 5 • Lateral alveolar /l/.' },
     { id: 'FA_L_2', setNum: 5, letter: 'L', varIdx: '2', title: 'L (Final /w/)', desc: 'Conjunto 5 • L em coda silábica /w/.' },
     { id: 'FA_V_1', setNum: 5, letter: 'V', varIdx: '1', title: 'V (/v/)', desc: 'Conjunto 5 • Fricativa labiodental sonora /v/.' },
     { id: 'FA_X_1', setNum: 5, letter: 'X', varIdx: '1', title: 'X (/ʃ/)', desc: 'Conjunto 5 • Fricativa pós-alveolar surda /ʃ/.' },
     { id: 'FA_CHK_5', setNum: 5, letter: 'L', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 5 (L, V, X)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 5.' },
+
     { id: 'FA_C_1', setNum: 6, letter: 'C', varIdx: '1', title: 'C (Forte /k/)', desc: 'Conjunto 6 • Oclusiva velar surda /k/.' },
     { id: 'FA_C_2', setNum: 6, letter: 'C', varIdx: '2', title: 'C (Brando /s/)', desc: 'Conjunto 6 • Fricativa surda /s/ antes de E, I.' },
     { id: 'FA_G_1', setNum: 6, letter: 'G', varIdx: '1', title: 'G (Forte /g/)', desc: 'Conjunto 6 • Oclusiva velar sonora /g/.' },
@@ -451,6 +497,7 @@ const DEFAULT_PHONEME_SETS_MODULES = [
     { id: 'FA_F_1', setNum: 6, letter: 'F', varIdx: '1', title: 'F (/f/)', desc: 'Conjunto 6 • Fricativa labiodental surda /f/.' },
     { id: 'FA_J_1', setNum: 6, letter: 'J', varIdx: '1', title: 'J (/ʒ/)', desc: 'Conjunto 6 • Fricativa pós-alveolar sonora /ʒ/.' },
     { id: 'FA_CHK_6', setNum: 6, letter: 'C', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 6 (C, G, F, J)', desc: 'Sondagem mista e retenção cumulativa até o Conjunto 6.' },
+
     { id: 'FA_R_1', setNum: 7, letter: 'R', varIdx: '1', title: 'R (Forte /x/)', desc: 'Conjunto 7 • R inicial ou duplo forte /x/.' },
     { id: 'FA_R_2', setNum: 7, letter: 'R', varIdx: '2', title: 'R (Brando /ɾ/)', desc: 'Conjunto 7 • Tepe alveolar intervocálico /ɾ/.' },
     { id: 'FA_S_1', setNum: 7, letter: 'S', varIdx: '1', title: 'S (Surdo /s/)', desc: 'Conjunto 7 • Fricativa alveolar surda /s/.' },
@@ -460,19 +507,51 @@ const DEFAULT_PHONEME_SETS_MODULES = [
     { id: 'FA_CHK_7', setNum: 7, letter: 'R', varIdx: '1', isCheckpoint: true, title: '★ Avaliar Conjunto 7 (Domínio Total)', desc: 'Sondagem final de todos os 7 Conjuntos Fonêmicos.' }
 ];
 
-function getPhonemeSetsCatalog() {
-    return (typeof PHONEME_SETS !== 'undefined' && Array.isArray(PHONEME_SETS)) ? PHONEME_SETS : DEFAULT_PHONEME_SETS;
-}
-
 function getEffectivePhonologicalModules() {
-    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined' && Array.isArray(PHONOLOGICAL_ALPHABET_MODULES) && PHONOLOGICAL_ALPHABET_MODULES.some(m => m.isCheckpoint)) {
+    if (typeof PHONOLOGICAL_ALPHABET_MODULES !== 'undefined' &&
+        Array.isArray(PHONOLOGICAL_ALPHABET_MODULES) &&
+        PHONOLOGICAL_ALPHABET_MODULES.some(m => m.isCheckpoint)) {
         return PHONOLOGICAL_ALPHABET_MODULES;
     }
     return DEFAULT_PHONEME_SETS_MODULES;
 }
 
+const FALLBACK_CUMULATIVE_SYL_WORDS = {
+    'T': ['TATU', 'TETO', 'TIA', 'TIO', 'TEIA', 'TUDO'],
+    'L': ['LATA', 'LUTA', 'TELA', 'LUA', 'LEITE', 'LOTE'],
+    'M': ['MALA', 'MATO', 'MOLA', 'TOMATE', 'MULETA', 'LAMA'],
+    'F': ['FACA', 'FITA', 'FOGO', 'FAMÍLIA', 'FALA', 'FOFO'],
+    'B': ['BOLA', 'BOLO', 'BOTA', 'BULE', 'LOBO', 'BEBÊ'],
+    'R': ['RATO', 'RODA', 'REDE', 'RUA', 'REI', 'ROUPA'],
+    'P': ['PATO', 'PIPA', 'PANELA', 'PETECA', 'POTE', 'PÉ'],
+    'N': ['NAVIO', 'BONECA', 'CANECA', 'MENINO', 'MENINA', 'NUVEM'],
+    'V': ['VACA', 'VELA', 'LUVA', 'VIOLÃO', 'OVO', 'AVIÃO'],
+    'S': ['SAPO', 'SUCO', 'SOFÁ', 'SALADA', 'SAPATO', 'SINO'],
+    'D': ['DADO', 'DEDO', 'DENTE', 'CABIDE', 'DOCE', 'DIA'],
+    'J': ['JACARÉ', 'JANELA', 'TIJOLO', 'CAJU', 'JOGO', 'JIBOIA'],
+    'X': ['LIXO', 'XÍCARA', 'XALE', 'ABACAXI', 'CAIXA', 'PEIXE'],
+    'Z': ['ZEBRA', 'ZERO', 'BUZINA', 'AZEITE', 'DEZ', 'PAZ'],
+    'C': ['CASA', 'CAMA', 'COPO', 'CAVALO', 'MACACO', 'TUCANO'],
+    'G': ['GATO', 'GALO', 'FOGO', 'GOTA', 'LAGO', 'FIGO'],
+    'Q': ['QUEIJO', 'QUIABO', 'QUATRO', 'AQUÁRIO', 'LEQUE', 'CAQUI']
+};
+
+const DEFAULT_PALAVRARIO_DRAWERS = [
+    { id: 'PAL_1', code: 'GAVETA 1', title: 'Dissílabas CV (Conj. 1 e 2)', desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.', variations: { 1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'], 2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA'] } },
+    { id: 'PAL_2', code: 'GAVETA 2', title: 'Dissílabas CV (Conj. 3 a 6)', desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.', variations: { 1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'], 2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO'] } },
+    { id: 'PAL_3', code: 'GAVETA 3', title: 'Trissílabas Simples', desc: 'Palavras de 3 sílabas abertas controladas por extensão.', variations: { 1: ['TOMATE', 'PANELA', 'CAVALO', 'MACACO', 'SAPATO', 'BONECA'], 2: ['JANELA', 'TAPETE', 'BATATA', 'SALADA', 'CANECA', 'TUCANO'] } },
+    { id: 'PAL_4', code: 'GAVETA 4', title: 'Encontros Vocálicos e Nasais', desc: 'Vocábulos com ditongos orais e vogais ou ditongos nasais.', variations: { 1: ['MÃO', 'PÃO', 'LEÃO', 'AVIÃO', 'VIOLÃO', 'LIMÃO'], 2: ['MEIA', 'TEIA', 'LEITE', 'CAIXA', 'PEIXE', 'MELÃO'] } },
+    { id: 'PAL_5', code: 'GAVETA 5', title: 'Sílabas Travadas (CVC)', desc: 'Palavras com coda silábica em R, S, L, M, N.', variations: { 1: ['PORTA', 'BARCO', 'GARFO', 'URSO', 'SOL', 'PASTA'], 2: ['ESCOVA', 'FORMIGA', 'TAMBOR', 'PENTE', 'PONTE', 'NUVEM'] } },
+    { id: 'PAL_6', code: 'GAVETA 6', title: 'Encontros Consonantais (CCV)', desc: 'Sílabas complexas com grupos consonantais em R e L.', variations: { 1: ['PRATO', 'BRUXA', 'LIVRO', 'PLANTA', 'BLUSA', 'ZEBRA'], 2: ['TREM', 'TRATOR', 'TIGRE', 'COBRA', 'FLOR', 'FLAUTA'] } },
+    { id: 'PAL_7', code: 'GAVETA 7', title: 'Dígrafos', desc: 'Palavras com CH, LH, NH, RR, SS, QU e GU.', variations: { 1: ['CHAVE', 'ABELHA', 'NINHO', 'CARRO', 'OSSO', 'QUEIJO'], 2: ['CHUVA', 'MILHO', 'GALINHA', 'VASSOURA', 'PÁSSARO', 'FOGUETE'] } },
+    { id: 'PAL_8', code: 'GAVETA 8', title: 'Irregulares e Contextuais', desc: 'Casos de CE/CI, GE/GI, Ç, S com som de Z e valores do X.', variations: { 1: ['MAÇÃ', 'LAÇO', 'GELO', 'GIRAFA', 'XÍCARA', 'CASA'], 2: ['DOCE', 'CEBOLA', 'RELÓGIO', 'PEIXE', 'TÁXI', 'ROSA'] } }
+];
+
 function getEffectivePalavrarioDrawers() {
-    return (typeof PALAVRARIO_DRAWERS !== 'undefined' && Array.isArray(PALAVRARIO_DRAWERS)) ? PALAVRARIO_DRAWERS : [];
+    if (typeof PALAVRARIO_DRAWERS !== 'undefined' && Array.isArray(PALAVRARIO_DRAWERS) && PALAVRARIO_DRAWERS.length > 0) {
+        return PALAVRARIO_DRAWERS;
+    }
+    return DEFAULT_PALAVRARIO_DRAWERS;
 }
 
 function getEffectiveSyllabaryOrder() {
@@ -483,6 +562,9 @@ function getCumulativeWordsForSyllableFamily(cons) {
     const k = String(cons || '').toUpperCase().trim();
     if (typeof SYLLABARY_CUMULATIVE_WORDS !== 'undefined' && SYLLABARY_CUMULATIVE_WORDS[k]) {
         return [...SYLLABARY_CUMULATIVE_WORDS[k]];
+    }
+    if (FALLBACK_CUMULATIVE_SYL_WORDS[k]) {
+        return FALLBACK_CUMULATIVE_SYL_WORDS[k].map(w => w.trim().toUpperCase());
     }
     return ['BOLA', 'MALA', 'PATO', 'GATO', 'SAPO', 'TATU'];
 }
@@ -549,6 +631,7 @@ function createFreshStudentState(firstName = 'ALUNO') {
             opts: 3,
             dragToModelMTS: false,
             dragToModelMultiMTS: false,
+            dragToModelCRMTS: false,
             holdToSelectMs: 0,
             sylComplex: { ccv: false, cvcL: false, cvcS: false, cvcM: false },
             themeColor: '#3B82F6',
@@ -612,6 +695,13 @@ function normalizeStudentState(st) {
     if (!Array.isArray(st.customModules)) st.customModules = [];
     if (!st.tokens || typeof st.tokens !== 'object') {
         st.tokens = getDefaultTokensClone();
+    } else {
+        const defTok = getDefaultTokensClone();
+        if (typeof st.tokens.balance !== 'number') st.tokens.balance = 0;
+        if (typeof st.tokens.totalEarned !== 'number') st.tokens.totalEarned = 0;
+        if (!st.tokens.rules) st.tokens.rules = defTok.rules;
+        if (!Array.isArray(st.tokens.catalog)) st.tokens.catalog = defTok.catalog;
+        if (!Array.isArray(st.tokens.ledger)) st.tokens.ledger = [];
     }
     if (!st.taskSettings) st.taskSettings = {};
     if (!st.minimalPairSwaps) st.minimalPairSwaps = { 'F/V': 0, 'P/B': 0, 'T/D': 0, 'C/G': 0 };
@@ -620,6 +710,7 @@ function normalizeStudentState(st) {
     if (typeof st.settings.autoEntryProbe !== 'boolean') st.settings.autoEntryProbe = false;
     if (typeof st.settings.dragToModelMTS !== 'boolean') st.settings.dragToModelMTS = false;
     if (typeof st.settings.dragToModelMultiMTS !== 'boolean') st.settings.dragToModelMultiMTS = false;
+    if (typeof st.settings.dragToModelCRMTS !== 'boolean') st.settings.dragToModelCRMTS = false;
     if (typeof st.settings.holdToSelectMs !== 'number') st.settings.holdToSelectMs = 0;
     if (!st.settings.consecDays) st.settings.consecDays = 2;
     if (typeof st.settings.strictDay !== 'boolean') st.settings.strictDay = true;
@@ -1073,7 +1164,6 @@ function registerMasteryAttempt(modId, accuracy, avgLatencySec, probeGateFailed 
             earnedTokensNow += blockReward;
         }
 
-        // TRAVA ESTRITA: SÓ DESBLOQUEIA QUANDO ATINGE A MAESTRIA COMPLETA (STREAK >= TARGET DAYS)
         if (prog.streak >= targetDays) {
             if (prog.mode === 'TRAIN' && !wasInProbe) {
                 prog.mode = 'PROBE';
@@ -1179,6 +1269,7 @@ let session = {
     currentRenderedOptions: null,
     isRepeating: false,
     latencies: [],
+    itemsLog: [],
     stats: {
         c0: { indep: 0, dica: 0, erro: 0, total: 0 },
         c1: { indep: 0, dica: 0, erro: 0, total: 0 },
@@ -1301,7 +1392,7 @@ function awardTokensToActiveStudent(amount, reason = '') {
     updateTokenBalanceUI();
 }
 
-/* MOTOR DE PRESSÃO SUSTENTADA (HOLD-TO-SELECT) COM TOLERÂNCIA DE 24PX */
+/* MOTOR DE PRESSÃO SUSTENTADA (HOLD-TO-SELECT — APENAS NA RESPOSTA, TOLERÂNCIA 24PX) */
 function attachHoldToSelectBehavior(cardEl, onSelectCallback) {
     const holdMs = (state.settings && typeof state.settings.holdToSelectMs === 'number') ? state.settings.holdToSelectMs : 0;
     if (!holdMs || holdMs <= 0) {
@@ -1325,7 +1416,7 @@ function attachHoldToSelectBehavior(cardEl, onSelectCallback) {
 
     const clearPress = () => {
         if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-        fillLayer.style.transition = 'width 0.15s ease';
+        fillLayer.style.transition = 'width 0.14s ease';
         fillLayer.style.width = '0%';
     };
 
@@ -1356,7 +1447,7 @@ function attachHoldToSelectBehavior(cardEl, onSelectCallback) {
 }
 
 /* ============================================================================
-   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, COMPLEMENTOS E ARCADE
+   7. SPLASH, GATEKEEPER, NAVEGAÇÃO, COMPLEMENTOS, BACKUP JSON E ARCADE
    ============================================================================ */
 let authCallback = null;
 let expectedAuthPin = '';
@@ -2328,7 +2419,7 @@ function updateLobbyButton() {
     const clock = document.getElementById('header-timer-icon');
     if (!btn) return;
     if (state.settings.timer.enabled && state.session.expired) {
-        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Sessão Finalizada`;
+        btn.innerHTML = `<span class="splash-btn-label">Sessão Finalizada</span><div class="icon-wrapper"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>`;
         btn.onclick = () => {
             requireAuth(() => {
                 state.session.expired = false;
@@ -2343,7 +2434,7 @@ function updateLobbyButton() {
         };
         if (clock) clock.style.display = 'none';
     } else {
-        btn.innerHTML = `<div class="icon-wrapper"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>Iniciar Sessão`;
+        btn.innerHTML = `<span class="splash-btn-label">Iniciar Sessão</span><div class="icon-wrapper"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>`;
         btn.onclick = openGrid;
         if (clock) {
             clock.style.display = (state.settings.timer.enabled && state.session.endTime && !state.session.expired) ? 'flex' : 'none';
@@ -2510,7 +2601,7 @@ function handleImportStudentProfileFile(fileList) {
 }
 
 /* ============================================================================
-   8. CARROSSEL DE GUIAS, PUSH-TO-VIEW E TRAVA DE REVISÃO DO DIA
+   8. CARROSSEL DE 10 GUIAS E PUSH-TO-VIEW (320ms)
    ============================================================================ */
 const CAROUSEL_LEVELS = [
     { key: 'N1', title: 'Nível 1' },
@@ -2679,7 +2770,7 @@ function getMethodExplanation(engine) {
     if (engine === 'REWARD_PORTAL') return 'Portal de acesso rápido para desbloquear e abrir módulos nos Hubs e Extras.';
     if (engine === 'PHON_MODEL') return '5 Micro-Ciclos Fônicos: Sondagem a Frio → Boca+Slide → Discriminação Receptiva → Slide Autônomo → Revisão Cumulativa e Fusão CV.';
     if (engine === 'SYL_SLIDER') return 'Fusão silábica progressiva seguida de seleção auditiva e leitura.';
-    if (engine === 'MULTIMTS') return 'Ensino direto em colunas horizontais com transição automática para Sondagem de Equivalência.';
+    if (engine === 'MULTIMTS') return 'Ensino direto em linhas horizontais com transição automática para Sondagem de Equivalência.';
     if (engine === 'CRMTS') return 'Construção ativa de unidades (sílabas, letras ou palavras) a partir do modelo.';
     if (engine === 'FLUENCY') return 'Leitura ágil sob controle de latência (< 3s).';
     if (engine === 'DTT') return 'Apresentação direta com registro imediato pelo aplicador.';
@@ -3014,7 +3105,7 @@ function renderGrid() {
 }
 
 /* ============================================================================
-   9. PAINEL INTELIGENTE DA TAREFA E SELETOR VISUAL DE MÍDIA
+   9. PAINEL INTELIGENTE DA TAREFA, CATÁLOGO DE FONTES E SELETOR DE MÍDIA
    ============================================================================ */
 let editorSession = {
     modId: null,
@@ -3052,6 +3143,18 @@ function closeAllTooltips(e) {
     }
 }
 
+function syncFontCatalogSelectorUI() {
+    const fontSel = document.getElementById('task-cfg-font');
+    if (!fontSel) return;
+    const prev = fontSel.value;
+    fontSel.innerHTML = CUSTOM_FONTS_CATALOG.map(f =>
+        `<option value="${f.id}">${f.label}</option>`
+    ).join('');
+    if (prev && CUSTOM_FONTS_CATALOG.some(f => f.id === prev)) {
+        fontSel.value = prev;
+    }
+}
+
 function ensureProbeModeSelectorInTaskModal(modId) {
     const abaTab = document.getElementById('task-tab-content-aba');
     if (!abaTab) return;
@@ -3065,9 +3168,9 @@ function ensureProbeModeSelectorInTaskModal(modId) {
                 <span>Modo de Execução</span>
             </div>
             <select id="task-cfg-probe-mode" class="compact-select">
-                <option value="AUTO">Automático (Sonda após Maestria)</option>
+                <option value="AUTO">Automático (Pré-Teste em Cadeia / Sonda)</option>
                 <option value="TRAIN">Forçar Modo Treino</option>
-                <option value="PROBE">Forçar Modo Sondagem</option>
+                <option value="PROBE">Forçar Pré-Teste / Sondagem</option>
             </select>
         `;
         abaTab.insertBefore(probeRow, abaTab.firstChild);
@@ -3100,6 +3203,7 @@ function openStimuliEditor(modId) {
     document.getElementById('tab-btn-topo').style.display = hasAnyPresentationControl ? 'inline-flex' : 'none';
     document.getElementById('tab-btn-aba').style.display = 'inline-flex';
 
+    syncFontCatalogSelectorUI();
     ensureProbeModeSelectorInTaskModal(modId);
 
     const fontSel = document.getElementById('task-cfg-font');
@@ -3140,7 +3244,7 @@ function openStimuliEditor(modId) {
         ftBtnBox.style.display = cap.canUseProbeMode ? 'block' : 'none';
         ftBtnBox.innerHTML = `
             <button type="button" class="btn-action" style="width:100%; background:#6D28D9; padding:10px;" onclick="startFastTrackEntryProbe('${modId}')">
-                ${UI_SVGS.zap} Aplicar Sonda Rápida de Entrada Agora (100% Consolida / 1º Erro Treina)
+                ${UI_SVGS.zap} Aplicar Pré-Teste / Sonda Rápida Agora
             </button>
         `;
     }
@@ -3260,6 +3364,7 @@ function renderStimuliEditorUI() {
 
     const items = editorSession.tempMap[editorSession.activeVarKey] || [];
     const canDelete = items.length > meta.min;
+    let hasUnhyphenatedUnknown = false;
 
     items.forEach((itemVal, idx) => {
         const row = document.createElement('div');
@@ -3272,7 +3377,12 @@ function renderStimuliEditorUI() {
             editorSession.tempMap[editorSession.activeVarKey][idx] = e.target.value;
         };
 
-        const cleanKey = getNormalizedWordKey(itemVal);
+        const rawStr = String(itemVal || '').trim();
+        const cleanKey = getNormalizedWordKey(rawStr);
+        if (cleanKey.length >= 4 && !rawStr.includes(' ') && !rawStr.includes('-') && !rawStr.includes('/') && (typeof WORD_BANK === 'undefined' || !WORD_BANK[cleanKey])) {
+            hasUnhyphenatedUnknown = true;
+        }
+
         const mediaBtn = document.createElement('button');
         mediaBtn.type = 'button';
         mediaBtn.className = 'icon-circle-btn';
@@ -3309,6 +3419,23 @@ function renderStimuliEditorUI() {
         row.appendChild(delBtn);
         listContainer.appendChild(row);
     });
+
+    // Aviso discreto não-bloqueante para palavras novas sem hífen
+    let hintEl = document.getElementById('stim-hyphen-hint');
+    if (!hintEl && listContainer.parentNode) {
+        hintEl = document.createElement('div');
+        hintEl.id = 'stim-hyphen-hint';
+        hintEl.style.cssText = 'font-size:0.76rem; font-weight:700; color:#B45309; background:#FEF3C7; padding:6px 10px; border-radius:8px; margin-bottom:10px; display:none;';
+        listContainer.parentNode.insertBefore(hintEl, listContainer.nextSibling);
+    }
+    if (hintEl) {
+        if (hasUnhyphenatedUnknown) {
+            hintEl.style.display = 'block';
+            hintEl.innerText = 'Dica: use hífen (ex: RI-NO-CE-RON-TE) se desejar divisão silábica automática para palavras novas.';
+        } else {
+            hintEl.style.display = 'none';
+        }
+    }
 
     const addBtn = document.getElementById('stim-btn-add');
     if (addBtn) addBtn.disabled = items.length >= meta.max;
@@ -3667,7 +3794,7 @@ function hardResetAppCache() {
 }
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 2 DE 3: SEÇÕES 10 A 13)
-   POOLS, PRÉ-TESTE EM CADEIA, DRAG-TO-MODEL, MULTI-MTS HORIZONTAL E ARENA LIMPA
+   POOLS • PRÉ-TESTE EM CADEIA • DRAG REVERSÍVEL • MULTI-MTS HORIZONTAL • CURSIVA
    ============================================================================ */
 
 /* ============================================================================
@@ -3849,11 +3976,9 @@ function isModuleEligibleForDefaultPreTestChain(modId) {
     if (tCfg && tCfg.forceProbeMode === 'TRAIN') return false;
     if (tCfg && tCfg.forceProbeMode === 'PROBE') return true;
 
-    // Oculto / Não aplicável: N1 (1.1-1.6), N5 (5.1-5.6) e 3.2, 3.3, 3.6
     if (/^E1_/.test(idStr) || /^E5_/.test(idStr) || ['E3_2', 'E3_3', 'E3_6', 'VOGAIS', 'ENCONTROS'].includes(idStr)) {
         return false;
     }
-    // Habilitado por padrão na 1ª entrada: Silabário (Conj 1-6), Palavrário (Gavetas 1-8) e Nível 4 (4.1-4.6)
     const isSylCons = getEffectiveSyllabaryOrder().includes(idStr) && !['VOGAIS', 'ENCONTROS'].includes(idStr);
     const isPal = idStr.startsWith('PAL_');
     const isN4 = /^E4_/.test(idStr);
@@ -3936,6 +4061,7 @@ function startCustomStudioModule(modId) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: resetSessionStats(activeCycles, targets.length)
     };
     openGame();
@@ -3954,7 +4080,6 @@ function startPalavrarioDrawer(drawerId, forcePreTest = false) {
     const wordsPool = shuffleArray(getModuleVariationItems(drawerId, activeVar)).slice(0, 6);
 
     const group3x3 = [wordsPool.slice(0, 3), wordsPool.slice(3, 6)].filter(g => g.length > 0);
-    // No Pré-Teste em Cadeia, aplica diretamente a resposta terminal C -> D (Leitura Oral Pura)
     const activeCycles = autoPreTest
         ? [5]
         : (inProbe ? [3, 4, 5, 6] : filterCyclesByTaskConfig(drawerId, [1, 2, 3], false));
@@ -4004,6 +4129,7 @@ function startPalavrarioDrawer(drawerId, forcePreTest = false) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: inProbe
             ? resetSessionStats(activeCycles, initialTrials.length)
             : {
@@ -4068,6 +4194,7 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
             currentRenderedOptions: null,
             isRepeating: false,
             latencies: [],
+            itemsLog: [],
             stats: resetSessionStats(activeCycles, targets.length)
         };
         openGame();
@@ -4116,6 +4243,7 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: {
             c0: { indep: 0, dica: 0, erro: 0, total: 0 },
             c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? familySyllables.length : 0 },
@@ -4222,8 +4350,9 @@ function startPhonologicalModelingModule(modId, forceColdProbe = false) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: {
-            c0: { indep: 0, dica: 0, erro: 0, total: 0 }, // Isolamento estatístico do Ciclo 0
+            c0: { indep: 0, dica: 0, erro: 0, total: 0 },
             c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? 1 : 0 },
             c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? 2 : 0 },
             c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? 1 : 0 },
@@ -4325,6 +4454,7 @@ function startPhonemeSetCheckpoint(chkSetOrId) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: resetSessionStats([1], fullProbeBattery.length)
     };
     openGame();
@@ -4552,29 +4682,33 @@ function startEidosModule(modId, forcePreTest = false) {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: resetSessionStats(activeCycles, trials.length)
     };
     openGame();
     renderTrial();
 }
 
-function getTopographicClasses() {
-    const tCfg = getTaskConfig(session.phase);
-    if (tCfg && tCfg.font && tCfg.font !== 'GLOBAL') {
-        if (tCfg.font === 'LOWER') return 'topo-lower';
-        if (tCfg.font === 'SERIF') return 'topo-serif';
-        if (tCfg.font === 'SCHOOL') return 'topo-school';
-        if (tCfg.font === 'MIX') {
-            const classes = ['', 'topo-serif', 'topo-school', 'topo-lower'];
-            return classes[Math.floor(Math.random() * classes.length)];
-        }
-        return '';
+function getActiveFontKeyForModule(modId = null) {
+    const id = modId || (session ? session.phase : '');
+    if (!id) return 'GLOBAL';
+    const tCfg = getTaskConfig(id);
+    if (!tCfg || !tCfg.font || tCfg.font === 'GLOBAL') return 'GLOBAL';
+    return tCfg.font;
+}
+
+function getTopographicClasses(modId = null) {
+    const fontKey = getActiveFontKeyForModule(modId);
+    if (fontKey === 'MIX') {
+        const mixPool = CUSTOM_FONTS_CATALOG.filter(f => f.id !== 'MIX').map(f => f.cssClass);
+        return mixPool[Math.floor(Math.random() * mixPool.length)] || '';
     }
-    return '';
+    const found = CUSTOM_FONTS_CATALOG.find(f => f.id === fontKey);
+    return found ? (found.cssClass || '') : '';
 }
 
 /* ============================================================================
-   12. MOTOR DE RENDERIZAÇÃO, DRAG-TO-MODEL, MULTI-MTS HORIZONTAL E DMTS
+   12. MOTOR DE RENDERIZAÇÃO, DRAG REVERSÍVEL (SEM ERRO DE ESQUADRO) E DMTS
    ============================================================================ */
 function ensureLatencyCountdownPill() {
     let pill = document.getElementById('latency-countdown-pill');
@@ -4631,6 +4765,7 @@ function startResponseTimeoutIfConfigured(overrideTimeoutSec = null) {
         playSound('click');
         const cat = getCurrentStatCat();
         if (!session.isRepeating && session.stats[cat]) session.stats[cat].erro++;
+        if (typeof logCurrentTrialOutcome === 'function') logCurrentTrialOutcome('N');
         if (session.isProbeMode && session.eidosMod && session.eidosMod.subType === 'EQUIV_4STEPS_MM' && session.currentCycle === 3) {
             session.probeGateFailed = true;
         }
@@ -4681,21 +4816,41 @@ function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel, overrideD
     }
 }
 
-/* MOTOR FÍSICO DE ARRASTE E COLISÃO (DRAG-TO-MODEL / VELCRO VIRTUAL) */
-function rectsOverlap(r1, r2) {
-    return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+/* DETECÇÃO PRECISA POR MAIOR ÁREA DE INTERSEÇÃO (SEM ERRO DE ESQUADRO DIAGONAL) */
+function getIntersectionArea(r1, r2) {
+    const xOverlap = Math.max(0, Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left));
+    const yOverlap = Math.max(0, Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top));
+    return xOverlap * yOverlap;
 }
 
-function attachDragToTargetBehavior(cardEl, getDropZonesFn, onDropOnZoneFn) {
+function findBestDropZone(cardRect, zones) {
+    let bestZone = null;
+    let bestArea = 0;
+
+    for (const z of (zones || [])) {
+        if (!z || !z.el) continue;
+        const zRect = z.el.getBoundingClientRect();
+        const area = getIntersectionArea(cardRect, zRect);
+        if (area > bestArea) {
+            bestArea = area;
+            bestZone = z;
+        }
+    }
+    return bestArea > 0 ? bestZone : null;
+}
+
+function attachDragToTargetBehavior(cardEl, getDropZonesFn, onDropOnZoneFn, allowTapFallback = false, onTapFallbackFn = null) {
     let dragging = false;
+    let movedEnough = false;
     let startX = 0, startY = 0;
 
     cardEl.style.touchAction = 'none';
     cardEl.classList.add('draggable-card');
 
     cardEl.addEventListener('pointerdown', (e) => {
-        if (blockClicks || cardEl.classList.contains('paired')) return;
+        if (blockClicks || cardEl.classList.contains('paired') || cardEl.classList.contains('docked-hidden') || cardEl.classList.contains('used')) return;
         dragging = true;
+        movedEnough = false;
         startX = e.clientX;
         startY = e.clientY;
         cardEl.style.transition = 'none';
@@ -4708,6 +4863,7 @@ function attachDragToTargetBehavior(cardEl, getDropZonesFn, onDropOnZoneFn) {
         if (!dragging) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
+        if (Math.hypot(dx, dy) > 8) movedEnough = true;
         cardEl.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.04)`;
     });
 
@@ -4716,34 +4872,32 @@ function attachDragToTargetBehavior(cardEl, getDropZonesFn, onDropOnZoneFn) {
         dragging = false;
         cardEl.classList.remove('dragging-active');
 
+        if (!movedEnough && allowTapFallback && typeof onTapFallbackFn === 'function') {
+            cardEl.style.transform = 'translate3d(0, 0, 0)';
+            cardEl.style.zIndex = '';
+            onTapFallbackFn(e);
+            return;
+        }
+
         const cardRect = cardEl.getBoundingClientRect();
         const zones = getDropZonesFn() || [];
-        let matchedZone = null;
-
-        for (const z of zones) {
-            if (!z.el || z.el.classList.contains('paired')) continue;
-            const zRect = z.el.getBoundingClientRect();
-            if (rectsOverlap(cardRect, zRect)) {
-                matchedZone = z;
-                break;
-            }
-        }
+        const matchedZone = findBestDropZone(cardRect, zones);
 
         if (matchedZone) {
             const accepted = onDropOnZoneFn(matchedZone, cardEl);
             if (!accepted) {
-                cardEl.style.transition = 'transform 0.26s cubic-bezier(0.22, 1, 0.36, 1)';
+                cardEl.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1)';
                 cardEl.style.transform = 'translate3d(0, 0, 0)';
-                setTimeout(() => { cardEl.style.zIndex = ''; }, 260);
+                setTimeout(() => { cardEl.style.zIndex = ''; }, 240);
             } else {
-                cardEl.style.transition = 'transform 0.2s ease';
+                cardEl.style.transition = 'transform 0.18s ease';
                 cardEl.style.transform = 'translate3d(0, 0, 0)';
                 cardEl.style.zIndex = '';
             }
         } else {
-            cardEl.style.transition = 'transform 0.26s cubic-bezier(0.22, 1, 0.36, 1)';
+            cardEl.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1)';
             cardEl.style.transform = 'translate3d(0, 0, 0)';
-            setTimeout(() => { cardEl.style.zIndex = ''; }, 260);
+            setTimeout(() => { cardEl.style.zIndex = ''; }, 240);
         }
     };
 
@@ -4777,7 +4931,32 @@ function bindMTSCardInteraction(btn, isCorrect, onBeforeAnswer = null) {
     }
 }
 
-/* MOTOR UNIFICADO DO MULTI-MTS ESTRITAMENTE HORIZONTAL (LINHA SUPERIOR MODELOS + LINHA INFERIOR COMPARAÇÕES) */
+/* LIGAÇÃO UNIFICADA PARA PEÇAS MÓVEIS DO CRMTS (DRAG OPCIONAL PARA SLOTS OU HOLD-TO-SELECT) */
+function attachCRMTSUnitInteraction(tileBtn, getSlotsTargetElFn, onSelectFn) {
+    const useDrag = !!(state.settings && state.settings.dragToModelCRMTS);
+    if (useDrag) {
+        attachDragToTargetBehavior(
+            tileBtn,
+            () => {
+                const el = typeof getSlotsTargetElFn === 'function' ? getSlotsTargetElFn() : null;
+                return el ? [{ el }] : [];
+            },
+            () => {
+                onSelectFn();
+                return true;
+            },
+            true,
+            () => onSelectFn()
+        );
+    } else {
+        attachHoldToSelectBehavior(tileBtn, onSelectFn);
+    }
+}
+
+/* MOTOR UNIFICADO DO MULTI-MTS ESTRITAMENTE HORIZONTAL:
+   - MODO TOQUE: Modelo aceita toque simples rápido; Comparação usa Hold-to-Select.
+   - MODO DRAG: Arrasta e encaixa formando par visual com botão de desfazer/retornar (↺),
+     SEM validação automática item a item — aplicador valida pelo dock inferior. */
 function renderHorizontalMultiMTSBoard(compArea, pairs, options = {}) {
     const {
         topoClass = '',
@@ -4792,7 +4971,7 @@ function renderHorizontalMultiMTSBoard(compArea, pairs, options = {}) {
 
     const board = document.createElement('div');
     board.className = 'multimodel-board horizontal-mm';
-    board.style.cssText = 'display:flex; flex-direction:column; gap:20px; width:100%; max-width:860px; align-items:center;';
+    board.style.cssText = 'display:flex; flex-direction:column; gap:20px; width:100%; max-width:880px; align-items:center;';
 
     const rowModels = document.createElement('div');
     rowModels.className = 'mm-row mm-row-models';
@@ -4805,38 +4984,76 @@ function renderHorizontalMultiMTSBoard(compArea, pairs, options = {}) {
     let selectedModel = null;
     let completedCount = 0;
     const modelZoneObjs = [];
+    const dockedPairs = new Map(); // modelZoneObj -> { compData, compCardEl }
 
     const shuffledModels = shuffleArray(pairs);
     const shuffledComps = shuffleArray(pairs);
 
+    const undockModelZone = (zoneObj) => {
+        const existing = dockedPairs.get(zoneObj);
+        if (!existing) return;
+        dockedPairs.delete(zoneObj);
+        existing.compCardEl.classList.remove('docked-hidden');
+        existing.compCardEl.style.visibility = 'visible';
+        existing.compCardEl.style.opacity = '1';
+        existing.compCardEl.style.pointerEvents = 'auto';
+
+        zoneObj.el.classList.remove('mm-has-docked');
+        const dockSlot = zoneObj.el.querySelector('.mm-docked-pair-slot');
+        if (dockSlot) dockSlot.remove();
+        playSound('click');
+    };
+
+    const dockCompIntoModel = (zoneObj, compData, cardC) => {
+        if (dockedPairs.has(zoneObj)) {
+            undockModelZone(zoneObj);
+        }
+        dockedPairs.set(zoneObj, { compData, compCardEl: cardC });
+        cardC.classList.add('docked-hidden');
+        cardC.style.visibility = 'hidden';
+        cardC.style.pointerEvents = 'none';
+
+        zoneObj.el.classList.add('mm-has-docked');
+        const dockSlot = document.createElement('div');
+        dockSlot.className = 'mm-docked-pair-slot';
+        dockSlot.innerHTML = `
+            <div class="mm-docked-content ${compData.rightExtraClass || topoClass}">${compData.rightHTML}</div>
+            <button type="button" class="mm-undock-btn" title="Devolver carta">${UI_SVGS.undoMini}</button>
+        `;
+        dockSlot.querySelector('.mm-undock-btn').onclick = (e) => {
+            e.stopPropagation();
+            if (blockClicks) return;
+            undockModelZone(zoneObj);
+        };
+        zoneObj.el.appendChild(dockSlot);
+        playSound('click');
+        return true;
+    };
+
     shuffledModels.forEach(p => {
         const cardM = document.createElement('div');
         cardM.className = `mm-card mm-square-card ${topoClass}`;
-        cardM.style.cssText = 'flex:1; min-width:130px; min-height:115px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative;';
+        cardM.style.cssText = 'flex:1; min-width:130px; min-height:126px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative;';
         cardM.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; width:100%;">${p.leftHTML}</div>`;
 
         const zoneObj = { data: p, el: cardM };
         modelZoneObjs.push(zoneObj);
 
-        if (!useDrag) {
-            attachHoldToSelectBehavior(cardM, () => {
-                if (blockClicks || cardM.classList.contains('paired')) return;
+        // Modelo SEMPRE aceita toque simples/rápido (sem Hold-to-Select no modelo)
+        cardM.onclick = () => {
+            if (blockClicks || cardM.classList.contains('paired')) return;
+            if (!useDrag) {
                 playSound('click');
-                if (typeof onModelTap === 'function') onModelTap(p, cardM);
                 rowModels.querySelectorAll('.mm-card').forEach(c => c.classList.remove('selected'));
                 cardM.classList.add('selected');
                 selectedModel = zoneObj;
-            });
-        } else {
-            cardM.onclick = () => {
-                if (blockClicks || cardM.classList.contains('paired')) return;
-                if (typeof onModelTap === 'function') onModelTap(p, cardM);
-            };
-        }
+            }
+            if (typeof onModelTap === 'function') onModelTap(p, cardM);
+        };
         rowModels.appendChild(cardM);
     });
 
-    const processMatchAttempt = (mObj, compData, cardC) => {
+    const processTouchMatchAttempt = (mObj, compData, cardC) => {
         if (isMatchFn(mObj.data, compData)) {
             playSound(session.isProbeMode ? 'click' : 'win');
             mObj.el.classList.remove('selected');
@@ -4871,19 +5088,20 @@ function renderHorizontalMultiMTSBoard(compArea, pairs, options = {}) {
     shuffledComps.forEach(p => {
         const cardC = document.createElement('div');
         cardC.className = `mm-card mm-square-card ${p.rightExtraClass || topoClass}`;
-        cardC.style.cssText = 'flex:1; min-width:130px; min-height:115px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative;';
+        cardC.style.cssText = 'flex:1; min-width:130px; min-height:126px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative;';
         cardC.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; width:100%;">${p.rightHTML}</div><span class="chk-icon" style="position:absolute; top:8px; right:8px; color:var(--border);">${UI_SVGS.checkCircle}</span>`;
 
         if (useDrag) {
             attachDragToTargetBehavior(
                 cardC,
                 () => modelZoneObjs,
-                (matchedZone) => processMatchAttempt(matchedZone, p, cardC)
+                (matchedZone) => dockCompIntoModel(matchedZone, p, cardC)
             );
         } else {
+            // Hold-to-Select aplicado APENAS nos cartões de resposta (comparações)
             attachHoldToSelectBehavior(cardC, () => {
                 if (blockClicks || cardC.classList.contains('paired') || !selectedModel) return;
-                processMatchAttempt(selectedModel, p, cardC);
+                processTouchMatchAttempt(selectedModel, p, cardC);
             });
         }
         rowComps.appendChild(cardC);
@@ -5156,7 +5374,7 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
     setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
 }
 
-/* RENDERIZADOR UNIVERSAL DE TAREFAS DA OFICINA (ARENA LIMPA) */
+/* RENDERIZADOR UNIVERSAL DE TAREFAS DA OFICINA (ARENA LIMPA + DRAG CRMTS) */
 function renderStudioChannelStimulusHTML(itemStr, channelType, topoClass, sizeRem = 3.2) {
     const raw = String(itemStr || '').trim().toUpperCase();
     const clean = getNormalizedWordKey(raw);
@@ -5273,7 +5491,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
             t.className = `letter-tile ${topoClass}`;
             t.innerHTML = formatStimulusTextHTML(ch);
             t.dataset.rawUnit = ch;
-            attachHoldToSelectBehavior(t, () => {
+            attachCRMTSUnitInteraction(t, () => slotsDiv, () => {
                 if (blockClicks || built.length >= units.length) return;
                 const expectedUnit = units[built.length];
                 if (ch === expectedUnit) {
@@ -5340,22 +5558,29 @@ function isVowelChar(ch) {
     return /^[AEIOUÁÉÍÓÚÂÊÔÃÕÜ]$/i.test(ch);
 }
 
-/* FORMATAÇÃO VISUAL PRESERVANDO CAIXA ORIGINAL (b/d/p/q) E SEM REGEX */
+/* FORMATAÇÃO VISUAL COM CAPITALIZAÇÃO CURSIVA (MAMÃE QUE NOS FAZ), PRESERVAÇÃO DE b/d/p/q E ZERO REGEX */
 function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainBlack = false) {
     const rawStr = String(text || '').trim();
     if (!rawStr) return '';
 
+    const activeModId = modId || (session ? session.phase : '');
+    const fontKey = getActiveFontKeyForModule(activeModId);
+
     const isSingleCharLower = (rawStr.length === 1 && rawStr === rawStr.toLowerCase() && rawStr !== rawStr.toUpperCase());
-    const cleanDisplayStr = isSingleCharLower
+    const strippedStr = isSingleCharLower
         ? rawStr
         : (rawStr.includes(' ') ? rawStr : rawStr.replace(/[;\/\-]+\s*/g, ''));
+
+    const cleanDisplayStr = isSingleCharLower
+        ? strippedStr
+        : formatTextForFontCase(strippedStr, fontKey);
 
     if (forcePlainBlack || isSingleCharLower || (session && (session.isProbeMode || session.isPreTestChain) && !forceVisualCue)) {
         return cleanDisplayStr;
     }
 
-    const cap = getTaskCapabilities(modId || (session ? session.phase : ''));
-    const tCfg = getTaskConfig(modId || (session ? session.phase : ''));
+    const cap = getTaskCapabilities(activeModId);
+    const tCfg = getTaskConfig(activeModId);
     const useColorCV = forceVisualCue || (cap.canColorCV && tCfg && tCfg.colorCV);
     const useSylBox = forceVisualCue || (cap.canSylBox && tCfg && tCfg.sylBox);
     if (!useColorCV && !useSylBox) return cleanDisplayStr;
@@ -5373,7 +5598,20 @@ function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainB
 
     if (useSylBox && !rawStr.includes(' ')) {
         const explicitSyls = extractExplicitSyllables(rawStr);
-        return explicitSyls.map(s => `<span style="${boxStyle}">${colorizeSegment(s)}</span>`).join('');
+        return explicitSyls.map((s, idx) => {
+            let displaySyl = s;
+            if (fontKey === 'SCHOOL') {
+                if (explicitSyls.length > 1 && idx === 0 && strippedStr.length >= 3) {
+                    const low = s.toLowerCase();
+                    displaySyl = low.charAt(0).toUpperCase() + low.slice(1);
+                } else {
+                    displaySyl = s.toLowerCase();
+                }
+            } else if (fontKey === 'LOWER') {
+                displaySyl = s.toLowerCase();
+            }
+            return `<span style="${boxStyle}">${colorizeSegment(displaySyl)}</span>`;
+        }).join('');
     }
 
     return colorizeSegment(cleanDisplayStr);
@@ -5419,6 +5657,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     if (subType === 'PHON_CHECKPOINT') {
         const letter = target.letter || 'A';
         const varIdx = target.varIdx || '1';
+        const displayLetter = formatStimulusTextHTML(letter, session.phase, false, true);
         const isRetrain = session.phonData && session.phonData.isRetrainingErrors;
         badge.innerText = isRetrain
             ? `${session.eidosMod.title} • Retreino`
@@ -5427,7 +5666,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         modelArea.style.minHeight = '160px';
         modelArea.innerHTML = `
             <div class="model-card ${topoClass}" style="font-size:5.2rem; min-width:210px; min-height:150px; border-style:solid;">
-                ${letter}
+                ${displayLetter}
             </div>
         `;
 
@@ -5449,6 +5688,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             if (!state.phonemeMastery) state.phonemeMastery = {};
             state.phonemeMastery[target.id] = 'RETIDO_SEM_MODELO';
             session.stats.c1.indep++;
+            if (typeof logCurrentTrialOutcome === 'function') logCurrentTrialOutcome('I');
             advanceTrial();
         };
 
@@ -5458,6 +5698,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             playSound('click');
             session.probeGateFailed = true;
             session.stats.c1.erro++;
+            if (typeof logCurrentTrialOutcome === 'function') logCurrentTrialOutcome('N');
             if (!state.reviewHighlights) state.reviewHighlights = {};
             state.reviewHighlights[letter] = true;
             if (!state.phonemeMastery) state.phonemeMastery = {};
@@ -5486,11 +5727,12 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const letter = target.letter || (session.eidosMod ? session.eidosMod.letter : 'A');
         const varIdx = target.varIdx || (session.eidosMod ? session.eidosMod.varIdx : '1');
         const titleLabel = target.title || letter;
+        const displayLetter = formatStimulusTextHTML(letter, session.phase, false, true);
 
         if (cyc === 0) {
             badge.innerText = `Pré-Teste: ${titleLabel}`;
             modelArea.style.minHeight = '160px';
-            modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:5rem; border-style:solid;">${letter}</div>`;
+            modelArea.innerHTML = `<div class="model-card ${topoClass}" style="font-size:5rem; border-style:solid;">${displayLetter}</div>`;
             abaDock.style.display = 'flex';
             setTimeout(() => { blockClicks = false; startResponseTimeoutIfConfigured(); }, state.settings.latency);
             return;
@@ -5504,11 +5746,11 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     <div class="mouth-articulatory-box" style="width:190px; height:190px;">
                         ${buildMouthImgTagWithFallback(letter, varIdx)}
                         <div style="display:none; flex-direction:column; align-items:center; justify-content:center; color:var(--primary-dark); font-weight:900;">
-                            <span style="font-size:4rem;" class="${topoClass}">${letter}</span>
+                            <span style="font-size:4rem;" class="${topoClass}">${displayLetter}</span>
                         </div>
                     </div>
                     <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-                        <div class="model-card ${topoClass}" style="min-width:130px; min-height:110px; font-size:3.8rem; padding:12px 24px;">${letter}</div>
+                        <div class="model-card ${topoClass}" style="min-width:130px; min-height:110px; font-size:3.8rem; padding:12px 24px;">${displayLetter}</div>
                         <button type="button" class="btn-action" id="btn-listen-train-phoneme" style="padding:10px 20px; font-size:0.95rem; border-radius:14px;">
                             ${UI_SVGS.volumeSm} Ouvir
                         </button>
@@ -5523,7 +5765,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                         <div style="position:absolute; right:22px; display:flex; align-items:center; gap:6px; color:var(--text-light); font-weight:900; font-size:0.95rem; pointer-events:none;">
                             ${UI_SVGS.checkCircle}
                         </div>
-                        <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">${letter}</div>
+                        <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">${displayLetter}</div>
                     </div>
                 </div>
             `;
@@ -5566,16 +5808,17 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             choices.forEach(ch => {
                 const btn = document.createElement('div');
                 btn.className = `comp-card ${topoClass}`;
+                const chDisp = formatStimulusTextHTML(ch.letter, session.phase, false, true);
                 if (isMouthMode) {
                     btn.style.padding = '10px';
                     btn.innerHTML = `
                         <div style="width:115px; height:115px; display:flex; align-items:center; justify-content:center;">
                             ${buildMouthImgTagWithFallback(ch.letter, ch.varIdx, 'width:110px; height:110px; object-fit:contain; border-radius:14px;')}
-                            <span style="display:none; font-size:2.4rem; font-weight:900;">${ch.letter}</span>
+                            <span style="display:none; font-size:2.4rem; font-weight:900;">${chDisp}</span>
                         </div>
                     `;
                 } else {
-                    btn.innerHTML = ch.letter;
+                    btn.innerHTML = chDisp;
                 }
                 btn.dataset.correct = ch.isCorrect;
                 bindMTSCardInteraction(btn, ch.isCorrect);
@@ -5600,7 +5843,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     <div style="position:absolute; right:22px; display:flex; align-items:center; gap:6px; color:var(--text-light); font-weight:900; font-size:0.95rem; pointer-events:none;">
                         ${UI_SVGS.checkCircle}
                     </div>
-                    <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">${letter}</div>
+                    <div id="phon-drag-box" class="drag-box ${topoClass}" style="transform:translateX(0px);">${displayLetter}</div>
                 </div>
             </div>
         `;
@@ -5698,6 +5941,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const sylStr = String(target || 'FA').trim().toUpperCase();
         const consChar = sylStr.charAt(0) || 'F';
         const vowChar = sylStr.slice(1) || 'A';
+        const dispCons = formatStimulusTextHTML(consChar, session.phase, false, true);
+        const dispVow = formatStimulusTextHTML(vowChar, session.phase, false, true);
+        const dispSyl = formatStimulusTextHTML(sylStr, session.phase, false, true);
         const modTitle = session.eidosMod ? session.eidosMod.title : 'Fusão Silábica';
 
         if (session.currentCycle === 1 || session.currentCycle === 5) {
@@ -5708,15 +5954,15 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                 <div style="width:100%; max-width:660px; display:flex; flex-direction:column; gap:12px;">
                     <div id="tri-track-1" class="drag-track" style="height:68px;">
                         <div id="tri-fill-1" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
-                        <div id="tri-box-1" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem; background:#0F172A;">${consChar}</div>
+                        <div id="tri-box-1" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem; background:#0F172A;">${dispCons}</div>
                     </div>
                     <div id="tri-track-2" class="drag-track" style="height:68px; opacity:0.45; pointer-events:none;">
                         <div id="tri-fill-2" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--primary-light); pointer-events:none;"></div>
-                        <div id="tri-box-2" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem; background:#EF4444;">${vowChar}</div>
+                        <div id="tri-box-2" class="drag-box ${topoClass}" style="width:86px; height:52px; font-size:1.85rem; background:#EF4444;">${dispVow}</div>
                     </div>
                     <div id="tri-track-3" class="drag-track" style="height:82px; margin-top:10px; border-color:var(--primary); opacity:0.45; pointer-events:none;">
                         <div id="tri-fill-3" style="position:absolute; left:0; top:0; bottom:0; width:0px; background:var(--success-light); pointer-events:none;"></div>
-                        <div id="tri-box-3" class="drag-box ${topoClass}" style="width:110px; height:64px; font-size:2.2rem; background:var(--primary-dark);">${sylStr}</div>
+                        <div id="tri-box-3" class="drag-box ${topoClass}" style="width:110px; height:64px; font-size:2.2rem; background:var(--primary-dark);">${dispSyl}</div>
                     </div>
                 </div>
             `;
@@ -6085,7 +6331,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             t.className = `letter-tile ${topoClass}`;
             t.innerHTML = formatStimulusTextHTML(syl, session.phase, true, false);
             t.dataset.rawSyl = syl;
-            attachHoldToSelectBehavior(t, () => {
+            attachCRMTSUnitInteraction(t, () => slotsDiv, () => {
                 if (blockClicks || built.length >= syllables.length) return;
                 const expectedSyl = syllables[built.length];
                 if (syl === expectedSyl) {
@@ -6309,7 +6555,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             t.className = `letter-tile ${topoClass}`;
             t.innerHTML = formatStimulusTextHTML(ch);
             t.dataset.rawChar = ch;
-            attachHoldToSelectBehavior(t, () => {
+            attachCRMTSUnitInteraction(t, () => slotsDiv, () => {
                 if (blockClicks || built.length >= letters.length) return;
                 const expectedChar = letters[built.length];
 
@@ -6461,7 +6707,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         modelArea.innerHTML = `
             <div style="display:flex; align-items:center; gap:16px; width:100%; justify-content:center;">
                 <button type="button" class="model-audio-btn" style="width:84px; height:84px; flex-shrink:0;" onclick="speakTTS('${spokenPhrase}')">${UI_SVGS.volumeSm}</button>
-                <div class="model-card sentence-mode ${topoClass}" style="font-size:1.6rem; flex:1; max-width:680px;">
+                <div class="model-card sentence-mode ${topoClass}" id="sentence-drop-zone" style="font-size:1.6rem; flex:1; max-width:680px;">
                     <span id="built-sentence-preview" style="color:var(--primary-dark); font-size:2rem; min-height:42px; display:block;"></span>
                 </div>
             </div>
@@ -6504,7 +6750,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
             btn.style.fontSize = '1.35rem';
             btn.innerHTML = formatStimulusTextHTML(w);
             btn.dataset.rawWord = w;
-            attachHoldToSelectBehavior(btn, () => {
+            attachCRMTSUnitInteraction(btn, () => document.getElementById('sentence-drop-zone'), () => {
                 if (blockClicks || builtWords.length >= target.wordsArray.length) return;
                 const expectedWord = target.wordsArray[builtWords.length];
 
@@ -6772,11 +7018,11 @@ function bindPhonemeSliderEvents(trackId, boxId, fillId) {
 }
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 3 DE 3: SEÇÕES 14 A 19)
-   RESPOSTAS, PRÉ-TESTE EM CADEIA, CICLO 0 ISOLADO, MAESTRIA ESTRITA E PDF A4
+   RESPOSTAS • TELEMETRIA DTT (DATAS EM COLUNAS) • REPERTÓRIO LEXICAL • A4
    ============================================================================ */
 
 /* ============================================================================
-   14. RESPOSTAS, CORTE DE 3 ERROS NO PRÉ-TESTE, CICLO 0 FONOLÓGICO E UNDO
+   14. RESPOSTAS, LOG GRANULAR (itemsLog), PRÉ-TESTE, CICLO 0 ISOLADO E UNDO
    ============================================================================ */
 function generateComparisons(target) {
     const desiredCount = getEffectiveOptsForCurrentSession();
@@ -6794,6 +7040,46 @@ function generateComparisons(target) {
     return shuffleArray(opts);
 }
 
+function extractStimulusKeysFromTrial(trialVal) {
+    if (trialVal === undefined || trialVal === null) return [];
+    if (Array.isArray(trialVal)) {
+        return trialVal.map(it => getNormalizedWordKey(typeof it === 'object' ? (it.target || it.word || it.letter || '') : it)).filter(Boolean);
+    }
+    if (typeof trialVal === 'object') {
+        const raw = trialVal.target || trialVal.word || trialVal.letter || trialVal.shortSpoken || '';
+        const k = getNormalizedWordKey(raw);
+        return k ? [k] : [];
+    }
+    const str = String(trialVal).trim();
+    if (!str) return [];
+    if (str.includes(' ')) {
+        // Para frases, registra as palavras individuais que existem no WORD_BANK ou a própria frase
+        const tokens = str.replace(/[.!?,;:\/]/g, '').split(/\s+/).map(w => getNormalizedWordKey(w)).filter(Boolean);
+        const bankMatches = tokens.filter(w => typeof WORD_BANK !== 'undefined' && WORD_BANK[w]);
+        return bankMatches.length > 0 ? bankMatches : [getNormalizedWordKey(str)];
+    }
+    const clean = getNormalizedWordKey(str);
+    return clean ? [clean] : [];
+}
+
+function logCurrentTrialOutcome(outcomeCode) {
+    if (session.isRepeating) return;
+    if (!Array.isArray(session.itemsLog)) session.itemsLog = [];
+    const curTrial = session.trials[session.currentTrialIdx];
+    const keys = extractStimulusKeysFromTrial(curTrial);
+    const isProbeFlag = !!(session.isProbeMode || session.isPreTestChain || session.isFastTrackEntryProbe || session.isPhonemeCheckpoint);
+    const cyc = (session.currentCycle !== undefined && session.currentCycle !== null) ? session.currentCycle : 1;
+
+    keys.forEach(itemKey => {
+        session.itemsLog.push({
+            item: itemKey,
+            cycle: cyc,
+            outcome: outcomeCode,
+            isProbe: isProbeFlag
+        });
+    });
+}
+
 function saveUndoSnapshot() {
     undoSnapshot = JSON.parse(JSON.stringify({
         currentTrialIdx: session.currentTrialIdx,
@@ -6802,7 +7088,8 @@ function saveUndoSnapshot() {
         currentRenderedOptions: session.currentRenderedOptions,
         stats: session.stats,
         latencies: session.latencies,
-        preTestErrorsCount: session.preTestErrorsCount || 0
+        preTestErrorsCount: session.preTestErrorsCount || 0,
+        itemsLogLength: Array.isArray(session.itemsLog) ? session.itemsLog.length : 0
     }));
 }
 
@@ -6815,6 +7102,9 @@ function undoLastTrial() {
     session.stats = undoSnapshot.stats;
     session.latencies = undoSnapshot.latencies;
     session.preTestErrorsCount = undoSnapshot.preTestErrorsCount || 0;
+    if (Array.isArray(session.itemsLog) && typeof undoSnapshot.itemsLogLength === 'number') {
+        session.itemsLog = session.itemsLog.slice(0, undoSnapshot.itemsLogLength);
+    }
     const restoredOpts = undoSnapshot.currentRenderedOptions;
     undoSnapshot = null;
     renderTrial(restoredOpts);
@@ -6828,19 +7118,10 @@ function getCurrentStatCat() {
 function highlightCurrentTrialStimulusForReview() {
     if (!state.reviewHighlights) state.reviewHighlights = {};
     const cur = session.trials[session.currentTrialIdx];
-    if (!cur) return;
-    if (Array.isArray(cur)) {
-        cur.forEach(item => {
-            const k = getNormalizedWordKey(item);
-            if (k) state.reviewHighlights[k] = true;
-        });
-    } else if (typeof cur === 'object') {
-        const k = getNormalizedWordKey(cur.target || cur.letter || cur.word || '');
+    const keys = extractStimulusKeysFromTrial(cur);
+    keys.forEach(k => {
         if (k) state.reviewHighlights[k] = true;
-    } else {
-        const k = getNormalizedWordKey(cur);
-        if (k) state.reviewHighlights[k] = true;
-    }
+    });
 }
 
 function abortPreTestChainAndSwitchToTraining() {
@@ -6893,10 +7174,12 @@ function handleAnswer(isCorrect, element) {
         if (isCorrect) {
             session.preTestErrorsCount = 0;
             if (!session.isRepeating && session.stats[cat]) session.stats[cat].indep++;
+            logCurrentTrialOutcome('I');
         } else {
             session.preTestErrorsCount = (session.preTestErrorsCount || 0) + 1;
             highlightCurrentTrialStimulusForReview();
             if (!session.isRepeating && session.stats[cat]) session.stats[cat].erro++;
+            logCurrentTrialOutcome('N');
             saveState();
 
             if (session.preTestErrorsCount >= 3) {
@@ -6919,8 +7202,10 @@ function handleAnswer(isCorrect, element) {
         if (!session.isRepeating && session.stats[cat]) {
             if (isCorrect) {
                 session.stats[cat].indep++;
+                logCurrentTrialOutcome('I');
             } else {
                 session.stats[cat].erro++;
+                logCurrentTrialOutcome('N');
                 if (session.eidosMod && session.eidosMod.subType === 'EQUIV_4STEPS_MM' && session.currentCycle === 3) {
                     session.probeGateFailed = true;
                 }
@@ -6939,10 +7224,12 @@ function handleAnswer(isCorrect, element) {
         if (element) element.classList.add('feedback-success');
         if (modelCard) modelCard.classList.add('feedback-success');
 
+        const outcome = session.attemptsOnCurrent === 0 ? 'I' : 'D';
         if (!session.isRepeating && session.stats[cat]) {
-            if (session.attemptsOnCurrent === 0) session.stats[cat].indep++;
+            if (outcome === 'I') session.stats[cat].indep++;
             else session.stats[cat].dica++;
         }
+        logCurrentTrialOutcome(outcome);
         advanceTrial();
     } else {
         session.attemptsOnCurrent++;
@@ -6972,6 +7259,7 @@ function handleAnswer(isCorrect, element) {
         if (session.attemptsOnCurrent >= 2) {
             saveUndoSnapshot();
             if (!session.isRepeating && session.stats[cat]) session.stats[cat].erro++;
+            logCurrentTrialOutcome('N');
             advanceTrial();
         } else {
             setTimeout(() => {
@@ -7010,7 +7298,6 @@ function recordMediatedTrial(code) {
 
         if (session.currentCycle === 0) {
             if (code === 'I') {
-                // Acertou de primeira (mesmo com streak === 0): salta C1, C2 e C3!
                 playSound('win');
                 state.phonemeMastery[session.phase] = 'RETIDO_SEM_MODELO';
 
@@ -7029,7 +7316,6 @@ function recordMediatedTrial(code) {
                     return;
                 }
             } else {
-                // Errou ou precisou de dica no Ciclo 0: descarta o erro (não penaliza a nota) e abre imediatamente o Ciclo 1!
                 playSound('click');
                 state.phonemeMastery[session.phase] = 'EM_MODELAGEM';
                 finishCycle();
@@ -7037,7 +7323,6 @@ function recordMediatedTrial(code) {
             }
         }
 
-        // CICLO 3 (SLIDE AUTÔNOMO) OU CICLO 4 (OVERLEARNING): POP-UP CORRETIVO IMEDIATO SE ERRAR
         if ((session.currentCycle === 3 || session.currentCycle === 4) && code !== 'I' && session.attemptsOnCurrent === 0) {
             session.attemptsOnCurrent++;
             playSound('click');
@@ -7062,6 +7347,7 @@ function recordMediatedTrial(code) {
             playSound('click');
             session.preTestErrorsCount = 0;
             if (!session.isRepeating && session.stats[cat]) session.stats[cat].indep++;
+            logCurrentTrialOutcome('I');
         } else {
             playSound('click');
             session.preTestErrorsCount = (session.preTestErrorsCount || 0) + 1;
@@ -7070,6 +7356,7 @@ function recordMediatedTrial(code) {
                 if (code === 'D') session.stats[cat].dica++;
                 else session.stats[cat].erro++;
             }
+            logCurrentTrialOutcome(code === 'D' ? 'D' : 'N');
             saveState();
 
             if (session.preTestErrorsCount >= 3) {
@@ -7085,15 +7372,18 @@ function recordMediatedTrial(code) {
         if (code === 'I') {
             playSound(session.isProbeMode ? 'click' : 'win');
             session.stats[cat].indep++;
+            logCurrentTrialOutcome('I');
         } else if (code === 'D') {
             playSound('click');
             session.stats[cat].dica++;
+            logCurrentTrialOutcome('D');
             if (session.isProbeMode && session.eidosMod && session.eidosMod.subType === 'EQUIV_4STEPS_MM' && session.currentCycle === 3) {
                 session.probeGateFailed = true;
             }
         } else {
             playSound('click');
             session.stats[cat].erro++;
+            logCurrentTrialOutcome('N');
             if (session.isProbeMode && session.eidosMod && session.eidosMod.subType === 'EQUIV_4STEPS_MM' && session.currentCycle === 3) {
                 session.probeGateFailed = true;
             }
@@ -7209,6 +7499,7 @@ function processSpeech(transcript) {
         session.attemptsOnCurrent++;
         const cat = getCurrentStatCat();
         if (session.isProbeMode || session.isPreTestChain || session.attemptsOnCurrent >= 2) {
+            logCurrentTrialOutcome('N');
             if (session.isPreTestChain) {
                 session.preTestErrorsCount = (session.preTestErrorsCount || 0) + 1;
                 highlightCurrentTrialStimulusForReview();
@@ -7291,7 +7582,7 @@ function finishCycle() {
 function checkBlockMastery() {
     clearAllTrialTimers();
 
-    // ISOLAMENTO ESTATÍSTICO DO CICLO 0: c0 NUNCA entra na soma de tentativas ou acertos
+    // ISOLAMENTO ESTATÍSTICO DO CICLO 0: c0 NUNCA entra no denominador ou numerador
     const s = session.stats;
     const c6 = s.c6 || { indep: 0, dica: 0, erro: 0, total: 0 };
     const totalTrials = s.c1.total + s.c2.total + s.c3.total + s.c4.total + s.c5.total + c6.total;
@@ -7311,9 +7602,9 @@ function checkBlockMastery() {
     let prog = getModuleProgress(session.phase);
     const usedVar = session.activeVar || 1;
     const availVars = getAvailableVariationKeys(session.phase);
+    const isProbeSession = !!(session.isProbeMode || session.isPreTestChain || session.isFastTrackEntryProbe || session.isPhonemeCheckpoint || session.phonemePreTestMastered);
 
     if (!session.isRepeating) {
-        // 1. ENCADEAMENTO SEQUENCIAL DO PRÉ-TESTE POR VARIAÇÃO (VAR 1 -> VAR 2 -> ... -> VAR N)
         if (session.isPreTestChain || session.isFastTrackEntryProbe) {
             if (accuracy === 100 && !session.probeGateFailed) {
                 if (!prog.preTestCompletedVars.includes(usedVar)) {
@@ -7323,7 +7614,6 @@ function checkBlockMastery() {
                 const nextVar = (curVarIdx >= 0 && curVarIdx < availVars.length - 1) ? availVars[curVarIdx + 1] : null;
 
                 if (nextVar !== null && !String(session.phase).startsWith('FA_') && !session.isStructuredSyllabary) {
-                    // Engata automaticamente o Pré-Teste da próxima variação!
                     prog.activeVar = nextVar;
                     saveState();
                     playSound('win');
@@ -7331,7 +7621,6 @@ function checkBlockMastery() {
                     return;
                 }
 
-                // Gabaritou até a última variação (Var N): consolida imediatamente e desbloqueia o próximo módulo!
                 prog.streak = state.settings.consecDays || 2;
                 prog.status = 'mastered';
                 prog.mode = 'PROBE';
@@ -7340,19 +7629,16 @@ function checkBlockMastery() {
                 if (!state.manualProgressionOverride) unlockNextInSequence(session.phase);
                 saveState();
             } else {
-                // Errou na variação atual do pré-teste (< 100%): fixa activeVar e chaveia para o Ciclo 1 do Modo Treino!
                 abortPreTestChainAndSwitchToTraining();
                 return;
             }
         } else if (session.phonemePreTestMastered) {
-            // Fonema gabaritado no Pré-Teste a frio (Ciclo 0) sem ciclos posteriores pendentes
             prog.streak = state.settings.consecDays || 2;
             prog.status = 'mastered';
             prog.bestAcc = 100;
             prog.lastDate = new Date().toLocaleDateString('pt-BR');
             saveState();
         } else {
-            // Fluxo regular com TRAVA ESTRITA: só desbloqueia o próximo módulo após atingir Maestria completa
             prog = registerMasteryAttempt(session.phase, accuracy, avgLatency, session.probeGateFailed);
 
             if (session.isPhonemeCheckpoint && accuracy === 100 && !session.probeGateFailed && session.phonData && session.phonData.setObj) {
@@ -7383,8 +7669,11 @@ function checkBlockMastery() {
             h: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
             tipo: session.eidosMod ? session.eidosMod.engine : (session.isPreReq ? "PRE_REQUISITO" : "SILABARIO"),
             modId: session.phase,
+            modLabel: modTitle,
             eidosCode: session.eidosMod ? session.eidosMod.code : null,
             fase: modTitle + modeTag,
+            isProbe: isProbeSession,
+            itemsLog: Array.isArray(session.itemsLog) ? [...session.itemsLog] : [],
             variacao: usedVar,
             nv: session.eidosMod ? session.eidosMod.level : "SILABARIO",
             crit: state.settings.crit,
@@ -7492,34 +7781,396 @@ function repeatLesson() {
 }
 
 /* ============================================================================
-   17. DASHBOARD, GRÁFICO NATIVO <CANVAS>, RESUMO E LAUDO PDF
+   17. NOVA TELEMETRIA (3 ABAS: POR TAREFA DTT COM DATAS EM COLUNAS,
+       REPERTÓRIO LEXICAL WORD_BANK COM MODAL DE CURVA E HISTÓRICO)
    ============================================================================ */
+let telemetryActiveTab = 'DTT';       // 'DTT' | 'LEXICAL' | 'HISTORY'
+let telemetryDttMode = 'TRAIN';       // 'TRAIN' | 'PROBE'
+let telemetrySelectedTaskId = '';
+let telemetryLexSort = 'APPEARANCE';  // 'APPEARANCE' | 'ACC_DESC' | 'ERR_DESC'
+
+function normalizeLogEntryForTelemetry(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+    const rawFase = String(entry.fase || entry.modId || 'Atividade');
+    const cleanLabel = entry.modLabel
+        ? String(entry.modLabel)
+        : rawFase.replace(/\s*\[(TREINO|SONDA|SONDA ENTRADA|PRÉ-TESTE)\]\s*/gi, '').trim();
+
+    let isProbe = false;
+    if (typeof entry.isProbe === 'boolean') {
+        isProbe = entry.isProbe;
+    } else {
+        isProbe = /\[(SONDA|SONDA ENTRADA|PRÉ-TESTE)\]|CHECK-POINT/i.test(rawFase) || String(entry.modId || '').startsWith('FA_CHK_');
+    }
+
+    const r = entry.resumoABA || { I: 0, D: 0, N: 0, T: 0 };
+    const total = r.T || (r.I + r.D + r.N) || 0;
+    const itemsLog = Array.isArray(entry.itemsLog) ? entry.itemsLog : [];
+
+    return {
+        ...entry,
+        modId: entry.modId || cleanLabel,
+        modLabel: cleanLabel,
+        isProbe,
+        itemsLog,
+        resumoABA: { I: r.I || 0, D: r.D || 0, N: r.N || 0, T: total }
+    };
+}
+
+function getNormalizedTelemetryLogs() {
+    return (state.log || []).map(normalizeLogEntryForTelemetry).filter(Boolean);
+}
+
+function switchTelemetryTab(tabKey) {
+    playSound('click');
+    telemetryActiveTab = tabKey;
+    ['DTT', 'LEXICAL', 'HISTORY'].forEach(t => {
+        const btn = document.getElementById(`tel-tab-btn-${t.toLowerCase()}`);
+        const pane = document.getElementById(`tel-pane-${t.toLowerCase()}`);
+        if (btn) btn.classList.toggle('active', tabKey === t);
+        if (pane) pane.style.display = (tabKey === t) ? 'block' : 'none';
+    });
+
+    if (tabKey === 'DTT') renderTelemetryDttView();
+    else if (tabKey === 'LEXICAL') renderTelemetryLexicalView();
+    else renderTelemetryHistoryView();
+}
+
+function setTelemetryDttMode(mode) {
+    playSound('click');
+    telemetryDttMode = (mode === 'PROBE') ? 'PROBE' : 'TRAIN';
+    const bTrain = document.getElementById('tel-mode-train');
+    const bProbe = document.getElementById('tel-mode-probe');
+    if (bTrain) bTrain.classList.toggle('active', telemetryDttMode === 'TRAIN');
+    if (bProbe) bProbe.classList.toggle('active', telemetryDttMode === 'PROBE');
+    renderTelemetryDttView();
+}
+
+function onTelemetryTaskSelectChange(modId) {
+    telemetrySelectedTaskId = modId;
+    renderTelemetryDttView();
+}
+
+function onTelemetryLexSortChange(sortKey) {
+    telemetryLexSort = sortKey || 'APPEARANCE';
+    renderTelemetryLexicalView();
+}
+
 function renderDashboard() {
-    const container = document.getElementById('dashboard-content');
-    container.innerHTML = '';
+    const logs = getNormalizedTelemetryLogs();
+    const taskSel = document.getElementById('tel-task-select');
 
-    const totalSessions = state.log.length;
-    const avgAcc = totalSessions > 0 ? Math.round(state.log.reduce((a, b) => a + (b.acc || 0), 0) / totalSessions) : 0;
-    const masteredCount = Object.values(state.moduleProgress).filter(p => p.status === 'mastered').length;
-    const logsWithLat = state.log.filter(l => l.lat > 0);
-    const avgLat = logsWithLat.length > 0 ? (logsWithLat.reduce((a, b) => a + b.lat, 0) / logsWithLat.length).toFixed(1) : '0.0';
+    // Popula seletor de tarefas contendo apenas módulos com pelo menos 1 registro
+    if (taskSel) {
+        const taskMap = new Map();
+        logs.forEach(l => {
+            if (!taskMap.has(l.modId)) {
+                taskMap.set(l.modId, l.modLabel);
+            }
+        });
 
-    document.getElementById('kpi-total-sessions').innerText = totalSessions;
-    document.getElementById('kpi-avg-acc').innerText = `${avgAcc}%`;
-    document.getElementById('kpi-mastered-count').innerText = masteredCount;
-    document.getElementById('kpi-avg-latency').innerText = `${avgLat}s`;
-    document.getElementById('chart-crit-label').innerText = `--- Meta: ${state.settings.crit}%`;
+        taskSel.innerHTML = '';
+        if (taskMap.size === 0) {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.innerText = 'Nenhuma tarefa registrada ainda';
+            taskSel.appendChild(opt);
+            telemetrySelectedTaskId = '';
+        } else {
+            taskMap.forEach((label, id) => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.innerText = label;
+                taskSel.appendChild(opt);
+            });
+            if (!telemetrySelectedTaskId || !taskMap.has(telemetrySelectedTaskId)) {
+                // Seleciona a tarefa da sessão mais recente por padrão
+                telemetrySelectedTaskId = logs[logs.length - 1].modId;
+            }
+            taskSel.value = telemetrySelectedTaskId;
+        }
+    }
 
-    drawProgressChart();
+    const bTrain = document.getElementById('tel-mode-train');
+    const bProbe = document.getElementById('tel-mode-probe');
+    if (bTrain) bTrain.classList.toggle('active', telemetryDttMode === 'TRAIN');
+    if (bProbe) bProbe.classList.toggle('active', telemetryDttMode === 'PROBE');
 
-    if (totalSessions === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:50px 0; color:var(--text-light); font-weight:800;">Nenhuma sessão registrada ainda.</div>`;
+    switchTelemetryTab(telemetryActiveTab || 'DTT');
+}
+
+/* ABA 1: POR TAREFA (DTT) — TABELA EVOLUTIVA COM DATAS NAS COLUNAS + GRÁFICO FILTRADO */
+function renderTelemetryDttView() {
+    const tableWrap = document.getElementById('tel-dtt-table-wrap');
+    const critLabel = document.getElementById('chart-crit-label');
+    if (critLabel) critLabel.innerText = `--- Meta: ${state.settings.crit}%`;
+    if (!tableWrap) return;
+
+    const logs = getNormalizedTelemetryLogs();
+    const wantProbe = (telemetryDttMode === 'PROBE');
+    const filtered = logs.filter(l => l.modId === telemetrySelectedTaskId && l.isProbe === wantProbe);
+
+    if (!telemetrySelectedTaskId || filtered.length === 0) {
+        tableWrap.innerHTML = `
+            <div style="text-align:center; padding:34px 16px; color:var(--text-light); font-weight:800; font-size:0.92rem;">
+                Nenhum registro de <strong>${wantProbe ? 'Sondagem' : 'Treino'}</strong> para esta tarefa ainda.
+            </div>
+        `;
+        drawProgressChart([]);
         return;
     }
 
-    [...state.log].reverse().forEach(entry => {
+    const pct = (part, tot) => (tot > 0 ? Math.round((part / tot) * 100) : 0);
+
+    const colHeadersHTML = filtered.map((e, idx) => `
+        <th class="dtt-date-col">
+            <div style="font-size:0.78rem; font-weight:900; color:var(--text);">${e.d}</div>
+            <div style="font-size:0.68rem; font-weight:700; color:var(--text-light);">S${idx + 1} ${e.h || ''}</div>
+        </th>
+    `).join('');
+
+    let rowsHTML = '';
+    if (!wantProbe) {
+        // MODO TREINO: Variação, Tentativas, Indep. (I), Dica (D), Erro (N), Status
+        rowsHTML = `
+            <tr>
+                <th class="dtt-metric-sticky">Var</th>
+                ${filtered.map(e => `<td>Var ${e.variacao || 1}</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky">Tentativas</th>
+                ${filtered.map(e => `<td><strong>${e.resumoABA.T}</strong></td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky" style="color:var(--success);">Indep. (I)</th>
+                ${filtered.map(e => `<td style="color:#065F46; font-weight:800;">${e.resumoABA.I} (${pct(e.resumoABA.I, e.resumoABA.T)}%)</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky" style="color:#B45309;">Dica (D)</th>
+                ${filtered.map(e => `<td style="color:#B45309; font-weight:800;">${e.resumoABA.D} (${pct(e.resumoABA.D, e.resumoABA.T)}%)</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky" style="color:var(--danger);">Erro (N)</th>
+                ${filtered.map(e => `<td style="color:#B91C1C; font-weight:800;">${e.resumoABA.N} (${pct(e.resumoABA.N, e.resumoABA.T)}%)</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky">Status</th>
+                ${filtered.map(e => {
+                    const ok = e.acc >= (e.crit || state.settings.crit);
+                    return `<td><span class="tel-status-pill ${ok ? 'ok' : 'warn'}">${e.status || (ok ? 'Meta Atingida' : 'Em Treino')}</span></td>`;
+                }).join('')}
+            </tr>
+        `;
+    } else {
+        // MODO SONDAGEM: Sem Dica (D) — Variação, Tentativas, Acerto (I), Erro (N), Precisão (%), Resultado
+        rowsHTML = `
+            <tr>
+                <th class="dtt-metric-sticky">Var</th>
+                ${filtered.map(e => `<td>Var ${e.variacao || 1}</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky">Tentativas</th>
+                ${filtered.map(e => `<td><strong>${e.resumoABA.T}</strong></td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky" style="color:var(--success);">Acerto (I)</th>
+                ${filtered.map(e => `<td style="color:#065F46; font-weight:800;">${e.resumoABA.I}</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky" style="color:var(--danger);">Erro (N)</th>
+                ${filtered.map(e => `<td style="color:#B91C1C; font-weight:800;">${e.resumoABA.N}</td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky">Precisão (%)</th>
+                ${filtered.map(e => `<td><strong>${e.acc}%</strong></td>`).join('')}
+            </tr>
+            <tr>
+                <th class="dtt-metric-sticky">Resultado</th>
+                ${filtered.map(e => {
+                    const isRev = (e.status === 'Retorno ao Treino');
+                    const isPass = !isRev && e.acc >= (e.crit || state.settings.crit);
+                    const label = isRev ? 'Retorno ao Treino' : (isPass ? 'Aprovado' : 'Reprovado');
+                    return `<td><span class="tel-status-pill ${isPass ? 'ok' : 'err'}">${label}</span></td>`;
+                }).join('')}
+            </tr>
+        `;
+    }
+
+    tableWrap.innerHTML = `
+        <div class="dtt-table-scroll">
+            <table class="dtt-matrix-table">
+                <thead>
+                    <tr>
+                        <th class="dtt-metric-sticky">Data / Sessão</th>
+                        ${colHeadersHTML}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHTML}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    drawProgressChart(filtered);
+}
+
+/* ABA 2: REPERTÓRIO LEXICAL (APENAS PALAVRAS DO WORD_BANK QUE JÁ OCORRERAM) */
+function buildLexicalTelemetryMap() {
+    const logs = getNormalizedTelemetryLogs();
+    const wordStats = new Map();
+    let appearanceCounter = 0;
+
+    logs.forEach(entry => {
+        (entry.itemsLog || []).forEach(rec => {
+            const key = getNormalizedWordKey(rec.item);
+            if (!key || typeof WORD_BANK === 'undefined' || !WORD_BANK[key]) return;
+            if (!wordStats.has(key)) {
+                wordStats.set(key, {
+                    word: key,
+                    firstOrder: appearanceCounter++,
+                    total: 0,
+                    I: 0,
+                    D: 0,
+                    N: 0,
+                    history: []
+                });
+            }
+            const st = wordStats.get(key);
+            st.total++;
+            if (rec.outcome === 'I') st.I++;
+            else if (rec.outcome === 'D') st.D++;
+            else st.N++;
+
+            st.history.push({
+                date: entry.d,
+                hour: entry.h || '',
+                task: entry.modLabel,
+                cycle: rec.cycle || 1,
+                outcome: rec.outcome,
+                isProbe: !!rec.isProbe
+            });
+        });
+    });
+
+    return wordStats;
+}
+
+function renderTelemetryLexicalView() {
+    const countEl = document.getElementById('tel-lex-count');
+    const gridEl = document.getElementById('tel-lexical-grid');
+    const sortSel = document.getElementById('tel-lex-sort');
+    if (sortSel) sortSel.value = telemetryLexSort;
+    if (!gridEl) return;
+
+    const map = buildLexicalTelemetryMap();
+    const list = Array.from(map.values()).map(item => ({
+        ...item,
+        acc: item.total > 0 ? Math.round((item.I / item.total) * 100) : 0
+    }));
+
+    if (countEl) {
+        countEl.innerText = `${list.length} ${list.length === 1 ? 'palavra trabalhada' : 'palavras trabalhadas'}`;
+    }
+
+    if (list.length === 0) {
+        gridEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:42px 16px; color:var(--text-light); font-weight:800;">Nenhuma palavra do banco lexical foi apresentada ao aluno ainda.</div>`;
+        return;
+    }
+
+    if (telemetryLexSort === 'ACC_DESC') {
+        list.sort((a, b) => (b.acc - a.acc) || (b.total - a.total));
+    } else if (telemetryLexSort === 'ERR_DESC') {
+        list.sort((a, b) => (b.N - a.N) || (a.acc - b.acc));
+    } else {
+        list.sort((a, b) => a.firstOrder - b.firstOrder);
+    }
+
+    const crit = state.settings.crit || 90;
+    gridEl.innerHTML = '';
+
+    list.forEach(item => {
+        const statusClass = item.acc >= crit ? 'status-mastered' : (item.acc >= 60 ? 'status-learning' : 'status-attention');
+        const statusText = item.acc >= crit ? 'Consolidada' : (item.acc >= 60 ? 'Em Aquisição' : 'Atenção');
+
         const card = document.createElement('div');
-        const isSuccess = entry.acc >= entry.crit;
+        card.className = `lex-word-card ${statusClass}`;
+        card.onclick = () => openWordTelemetryModal(item.word);
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                <strong class="lex-word-title">${item.word}</strong>
+                <span class="lex-acc-badge">${item.acc}%</span>
+            </div>
+            <div class="lex-progress-bar">
+                <div class="lex-progress-fill" style="width:${item.acc}%;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:0.72rem; font-weight:800; color:var(--text-light);">
+                <span>${statusText}</span>
+                <span>${item.total}x</span>
+            </div>
+        `;
+        gridEl.appendChild(card);
+    });
+}
+
+function openWordTelemetryModal(wordKey) {
+    playSound('click');
+    const map = buildLexicalTelemetryMap();
+    const item = map.get(wordKey);
+    if (!item) return;
+
+    const modal = document.getElementById('modal-word-telemetry');
+    if (!modal) return;
+
+    document.getElementById('wt-word-title').innerText = item.word;
+    document.getElementById('wt-kpi-total').innerText = item.total;
+    document.getElementById('wt-kpi-i').innerText = item.I;
+    document.getElementById('wt-kpi-d').innerText = item.D;
+    document.getElementById('wt-kpi-n').innerText = item.N;
+
+    const listEl = document.getElementById('wt-history-list');
+    if (listEl) {
+        listEl.innerHTML = '';
+        [...item.history].reverse().forEach(h => {
+            const pillColor = h.outcome === 'I' ? 'var(--success)' : (h.outcome === 'D' ? 'var(--warning)' : 'var(--danger)');
+            const outcomeLabel = h.outcome === 'I' ? 'Independente (I)' : (h.outcome === 'D' ? 'Com Dica (D)' : 'Erro (N)');
+            const row = document.createElement('div');
+            row.className = 'wt-history-row';
+            row.innerHTML = `
+                <div style="text-align:left;">
+                    <strong style="font-size:0.88rem; color:var(--text); display:block;">${h.task} • Ciclo ${h.cycle}${h.isProbe ? ' (Sonda)' : ''}</strong>
+                    <span style="font-size:0.74rem; color:var(--text-light); font-weight:700;">${h.date} ${h.hour}</span>
+                </div>
+                <span class="log-badge" style="background:${pillColor}; font-size:0.74rem; padding:4px 10px;">${outcomeLabel}</span>
+            `;
+            listEl.appendChild(row);
+        });
+    }
+
+    modal.style.display = 'flex';
+}
+
+/* ABA 3: HISTÓRICO ENXUTO */
+function renderTelemetryHistoryView() {
+    const container = document.getElementById('dashboard-content');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const queryEl = document.getElementById('tel-history-filter');
+    const q = queryEl ? queryEl.value.trim().toLowerCase() : '';
+    const logs = getNormalizedTelemetryLogs().filter(e => {
+        if (!q) return true;
+        return String(e.fase || '').toLowerCase().includes(q) || String(e.d || '').toLowerCase().includes(q);
+    });
+
+    if (logs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:44px 0; color:var(--text-light); font-weight:800;">Nenhuma sessão encontrada.</div>`;
+        return;
+    }
+
+    [...logs].reverse().forEach(entry => {
+        const card = document.createElement('div');
+        const isSuccess = entry.acc >= (entry.crit || state.settings.crit);
         card.className = 'log-card';
         card.style.borderLeftColor = isSuccess ? 'var(--success)' : 'var(--danger)';
 
@@ -7528,36 +8179,35 @@ function renderDashboard() {
         card.innerHTML = `
             <div class="log-card-top">
                 <div>
-                    <h3 style="font-size:1.15rem; font-weight:900;">${entry.fase}${varLabel}</h3>
-                    <span style="font-size:0.85rem; color:var(--text-light); font-weight:700;">Data: ${entry.d} ${entry.h || ''} | Aluno: ${entry.n} | Latência: ${entry.lat || 0}s</span>
+                    <h3 style="font-size:1.08rem; font-weight:900;">${entry.fase}${varLabel}</h3>
+                    <span style="font-size:0.82rem; color:var(--text-light); font-weight:700;">Data: ${entry.d} ${entry.h || ''} | Latência: ${entry.lat || 0}s</span>
                 </div>
                 <span class="log-badge" style="background:${isSuccess ? 'var(--success)' : 'var(--danger)'}">${entry.acc}%</span>
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:0.9rem; font-weight:800;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:0.86rem; font-weight:800;">
                 <div>
-                    <span style="color:var(--success);">[I] Independente: ${r.I}</span> &nbsp;|&nbsp;
-                    <span style="color:#D97706;">[D] Dica: ${r.D}</span> &nbsp;|&nbsp;
-                    <span style="color:var(--danger);">[N] Erro: ${r.N}</span>
+                    <span style="color:var(--success);">[I] ${r.I}</span> &nbsp;|&nbsp;
+                    ${entry.isProbe ? '' : `<span style="color:#D97706;">[D] ${r.D}</span> &nbsp;|&nbsp;`}
+                    <span style="color:var(--danger);">[N] ${r.N}</span>
                 </div>
-                <div style="color:var(--primary-dark);">Progresso: ${entry.streak || '-'} (${entry.status || '-'})</div>
+                <div style="color:var(--primary-dark);">${entry.streak || '-'} (${entry.status || '-'})</div>
             </div>
         `;
         container.appendChild(card);
     });
 }
 
-function drawProgressChart() {
+function drawProgressChart(filteredSeries = null) {
     const canvas = document.getElementById('aba-progress-chart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    canvas.width = (rect.width || 700) * dpr;
-    canvas.height = 170 * dpr;
-    ctx.scale(dpr, dpr);
-
     const w = rect.width || 700;
     const h = 170;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, w, h);
 
     const padL = 40, padR = 20, padT = 18, padB = 28;
@@ -7577,7 +8227,8 @@ function drawProgressChart() {
         ctx.fillText(`${val}%`, 6, y + 4);
     });
 
-    const critY = padT + plotH - ((state.settings.crit || 90) / 100) * plotH;
+    const crit = state.settings.crit || 90;
+    const critY = padT + plotH - (crit / 100) * plotH;
     ctx.save();
     ctx.strokeStyle = '#EF4444';
     ctx.setLineDash([6, 4]);
@@ -7588,27 +8239,33 @@ function drawProgressChart() {
     ctx.stroke();
     ctx.restore();
 
-    const recent = state.log.slice(-15);
-    if (recent.length === 0) return;
+    const series = Array.isArray(filteredSeries) ? filteredSeries : state.log.slice(-15);
+    if (series.length === 0) return;
 
     ctx.strokeStyle = state.settings.themeColor || '#3B82F6';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    recent.forEach((item, idx) => {
-        const x = padL + (recent.length === 1 ? plotW / 2 : (idx / (recent.length - 1)) * plotW);
+    series.forEach((item, idx) => {
+        const x = padL + (series.length === 1 ? plotW / 2 : (idx / (series.length - 1)) * plotW);
         const y = padT + plotH - ((item.acc || 0) / 100) * plotH;
         if (idx === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
     });
     ctx.stroke();
 
-    recent.forEach((item, idx) => {
-        const x = padL + (recent.length === 1 ? plotW / 2 : (idx / (recent.length - 1)) * plotW);
+    series.forEach((item, idx) => {
+        const x = padL + (series.length === 1 ? plotW / 2 : (idx / (series.length - 1)) * plotW);
         const y = padT + plotH - ((item.acc || 0) / 100) * plotH;
-        ctx.fillStyle = item.acc >= state.settings.crit ? '#10B981' : '#EF4444';
+        ctx.fillStyle = item.acc >= crit ? '#10B981' : '#EF4444';
         ctx.beginPath();
         ctx.arc(x, y, 5, 0, Math.PI * 2);
         ctx.fill();
+
+        // Rótulo curto da data abaixo do ponto
+        ctx.fillStyle = '#64748B';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        const shortDate = String(item.d || '').slice(0, 5);
+        ctx.fillText(shortDate, x - 14, h - 8);
     });
 }
 
@@ -7729,7 +8386,7 @@ function exportEidosChecklistPDF() {
 }
 
 /* ============================================================================
-   18. CONFIGURAÇÕES GLOBAIS (HOLD-TO-SELECT + DRAG-TO-MODEL) E MODAIS
+   18. CONFIGURAÇÕES GLOBAIS (HOLD-TO-SELECT + DRAG MTS/MULTI-MTS/CRMTS)
    ============================================================================ */
 function togglePasswordField() {
     const chk = document.getElementById('set-sec-enable');
@@ -7780,41 +8437,32 @@ function ensureTactileControlsInSettingsUI() {
     const parentCard = topoSel.closest('.settings-card');
     if (!parentCard) return;
 
-    // Remove campo legado de limite diário se existir no HTML antigo
     const oldDailyCap = document.getElementById('set-daily-cap');
     if (oldDailyCap && oldDailyCap.parentElement) {
         oldDailyCap.parentElement.style.display = 'none';
     }
 
-    if (!document.getElementById('set-hold-ms')) {
-        const holdGroup = document.createElement('div');
-        holdGroup.className = 'input-group';
-        holdGroup.innerHTML = `
-            <label>Tempo de Pressão na Resposta (Anti-Impulsividade):</label>
-            <select id="set-hold-ms">
-                <option value="0">Desativado (Toque imediato - 0ms)</option>
-                <option value="600">Leve (600ms)</option>
-                <option value="1000">Moderado (1000ms)</option>
-                <option value="1500">Intenso (1500ms)</option>
-            </select>
+    const holdSel = document.getElementById('set-hold-ms');
+    if (holdSel) {
+        holdSel.innerHTML = `
+            <option value="0">Desativado (Toque imediato - 0ms)</option>
+            <option value="300">Rápido (300ms)</option>
+            <option value="450">Leve (450ms)</option>
+            <option value="600">Moderado (600ms)</option>
+            <option value="1000">Firme (1000ms)</option>
+            <option value="1500">Intenso (1500ms)</option>
         `;
-        parentCard.appendChild(holdGroup);
     }
 
-    if (!document.getElementById('set-drag-mts')) {
-        const dragWrap = document.createElement('div');
-        dragWrap.style.cssText = 'display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:10px;';
-        dragWrap.innerHTML = `
-            <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
-                <input type="checkbox" id="set-drag-mts" style="width:20px; height:20px;">
-                <span>Arrastar até o Modelo (MTS Simples)</span>
-            </label>
-            <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
-                <input type="checkbox" id="set-drag-multimts" style="width:20px; height:20px;">
-                <span>Arrastar até o Modelo (Multi-MTS)</span>
-            </label>
-        `;
-        parentCard.appendChild(dragWrap);
+    if (!document.getElementById('set-drag-crmts')) {
+        const dragMtsEl = document.getElementById('set-drag-mts');
+        const dragContainer = dragMtsEl ? dragMtsEl.closest('div') : null;
+        if (dragContainer) {
+            const crmtsLbl = document.createElement('label');
+            crmtsLbl.style.cssText = 'display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;';
+            crmtsLbl.innerHTML = `<input type="checkbox" id="set-drag-crmts" style="width:20px; height:20px;"><span>Arrastar Sílabas/Letras (CRMTS)</span>`;
+            dragContainer.appendChild(crmtsLbl);
+        }
     }
 }
 
@@ -7840,6 +8488,9 @@ function openSettings() {
     }
     if (document.getElementById('set-drag-multimts')) {
         document.getElementById('set-drag-multimts').checked = !!state.settings.dragToModelMultiMTS;
+    }
+    if (document.getElementById('set-drag-crmts')) {
+        document.getElementById('set-drag-crmts').checked = !!state.settings.dragToModelCRMTS;
     }
 
     const colorInp = document.getElementById('set-theme-color');
@@ -7923,6 +8574,7 @@ function saveSettings() {
     state.settings.holdToSelectMs = document.getElementById('set-hold-ms') ? (parseInt(document.getElementById('set-hold-ms').value) || 0) : 0;
     state.settings.dragToModelMTS = document.getElementById('set-drag-mts') ? document.getElementById('set-drag-mts').checked : false;
     state.settings.dragToModelMultiMTS = document.getElementById('set-drag-multimts') ? document.getElementById('set-drag-multimts').checked : false;
+    state.settings.dragToModelCRMTS = document.getElementById('set-drag-crmts') ? document.getElementById('set-drag-crmts').checked : false;
 
     state.settings.sylComplex = {
         ccv: document.getElementById('set-syl-ccv').checked,
@@ -8123,6 +8775,7 @@ function startCustomWords() {
         currentRenderedOptions: null,
         isRepeating: false,
         latencies: [],
+        itemsLog: [],
         stats: resetSessionStats(activeCycles, targets.length)
     };
     openGame();
@@ -8924,7 +9577,7 @@ function renderLivePrintStudioPreview() {
                         ${bucket.map(c => `
                             <div class="cutout-card ${c.sizeClass}">
                                 <button type="button" class="card-remove-preview-btn" title="Remover este cartão" onclick="removeCardFromPrintPreview('${c.key}')">×</button>
-                                <div class="cutout-card-main ${getTopographicClasses()}">
+                                <div class="cutout-card-main ${getTopographicClasses(modId)}">
                                     ${c.html}
                                 </div>
                                 <div class="cutout-card-footer">
