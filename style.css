@@ -64,7 +64,8 @@ html, body {
 .model-card img,
 .mm-card img,
 .letter-tile img,
-.mouth-articulatory-box img {
+.mouth-articulatory-box img,
+.md-figure img {
     pointer-events: none !important;
     -webkit-user-drag: none !important;
     -webkit-touch-callout: none !important;
@@ -421,7 +422,7 @@ html, body {
     color: var(--primary-dark);
 }
 
-/* ================= 4. TELA DE COMPLEMENTOS (HUB DE 4 CARDS) & OFICINA ================= */
+/* ================= 4. TELA DE COMPLEMENTOS, OFICINA & MANUAIS .MD ================= */
 .complements-container {
     max-width: 1120px;
     width: 100%;
@@ -434,7 +435,7 @@ html, body {
 
 .complements-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 20px;
     width: 100%;
     margin-top: 12px;
@@ -485,6 +486,121 @@ html, body {
     font-weight: 600;
     color: var(--text-light);
     line-height: 1.4;
+}
+
+/* LEITOR DE MANUAIS EM MARKDOWN (.MD) */
+.manual-reader-panel {
+    display: none;
+    flex-direction: column;
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.manual-reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 22px;
+    background: #F8FAFC;
+    border-bottom: 1.5px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.manual-reader-body {
+    padding: 28px 34px;
+    text-align: left;
+    color: var(--text);
+    line-height: 1.65;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.md-h1 {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--text);
+    margin: 0 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+}
+.md-h2 {
+    font-size: 1.32rem;
+    font-weight: 900;
+    color: var(--primary-dark);
+    margin: 22px 0 10px 0;
+}
+.md-h3 {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 16px 0 8px 0;
+}
+.md-p {
+    font-size: 0.96rem;
+    font-weight: 500;
+    color: #1E293B;
+    margin-bottom: 12px;
+}
+.md-ul, .md-ol {
+    margin: 0 0 14px 22px;
+    font-size: 0.95rem;
+    color: #1E293B;
+}
+.md-ul li, .md-ol li {
+    margin-bottom: 6px;
+}
+.md-quote {
+    border-left: 4px solid var(--primary);
+    background: var(--primary-light);
+    padding: 12px 16px;
+    border-radius: 0 12px 12px 0;
+    margin: 14px 0;
+    font-weight: 700;
+    color: #1E293B;
+}
+.md-inline-code {
+    background: #F1F5F9;
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.88em;
+    color: var(--primary-dark);
+}
+.md-hr {
+    border: none;
+    border-top: 1.5px solid var(--border);
+    margin: 20px 0;
+}
+.md-figure {
+    margin: 16px auto;
+    text-align: center;
+    background: #F8FAFC;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 12px;
+    max-width: 100%;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.md-figure img {
+    max-width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+}
+.md-figure figcaption {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-top: 8px;
 }
 
 .studio-cycle-card {
@@ -869,7 +985,7 @@ html, body {
     border-radius: 6px;
 }
 
-/* ================= 7. ARENA DE INTERVENÇÃO, HOLD-TO-SELECT & DRAG REVERSÍVEL ================= */
+/* ================= 7. ARENA DE INTERVENÇÃO, SLIDE DE FUSÃO E DOCK COM TRAVA ================= */
 #screen-game {
     background: #FFFFFF;
     padding: 16px 24px;
@@ -1366,7 +1482,7 @@ html, body {
     font-weight: 900;
 }
 
-/* SLIDER HORIZONTAL DO ALFABETO FONOLÓGICO */
+/* SLIDER HORIZONTAL DO ALFABETO FONOLÓGICO & SLIDE SILÁBICO DE FUSÃO (C -> V -> CV) */
 .mouth-articulatory-box {
     width: 220px;
     height: 220px;
@@ -1414,7 +1530,90 @@ html, body {
 }
 .drag-box:active { cursor: grabbing; }
 
-/* BARRA DO MEDIADOR (DOCK) */
+.syl-fusion-wrapper {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.syl-fusion-track {
+    height: 112px;
+    border-radius: 28px;
+    padding: 10px 14px;
+    justify-content: space-between;
+    transition: border-color 0.22s ease, background 0.22s ease;
+}
+.syl-fusion-track.fused-state {
+    border-color: var(--success);
+    background: var(--success-light);
+    justify-content: center;
+}
+.syl-fusion-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0px;
+    background: var(--primary-light);
+    pointer-events: none;
+    z-index: 1;
+}
+.syl-fusion-track.fused-state .syl-fusion-fill {
+    background: var(--success-light);
+}
+.syl-fusion-cons {
+    width: 106px;
+    height: 88px;
+    font-size: 3rem;
+    background: #0F172A;
+    color: #FFFFFF;
+    border-radius: 22px;
+    z-index: 6;
+}
+.syl-fusion-vow {
+    width: 106px;
+    height: 88px;
+    border-radius: 22px;
+    background: #FFFFFF;
+    border: 3px dashed #EF4444;
+    color: #EF4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 900;
+    z-index: 4;
+    pointer-events: none;
+}
+.syl-fusion-result {
+    position: relative;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 3.6rem;
+    font-weight: 900;
+    color: #065F46;
+    animation: fadeIn 0.2s ease;
+}
+.syl-fusion-replay-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--success);
+    background: #FFFFFF;
+    color: #065F46;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-card);
+}
+.syl-fusion-replay-btn:active { transform: scale(0.92); }
+
+/* BARRA DO MEDIADOR (DOCK) + TRAVA DE SEGURANÇA (200ms + PUXAR PARA BAIXO) */
 .aba-mediation-dock {
     width: 100%;
     max-width: 660px;
@@ -1428,6 +1627,11 @@ html, body {
     justify-content: space-between;
     gap: 14px;
     flex-shrink: 0;
+}
+.aba-mediation-dock.dock-locked-mode {
+    padding-bottom: 18px;
+    border-style: dashed;
+    border-color: #CBD5E1;
 }
 .dock-label { font-size: 0.9rem; font-weight: 800; color: var(--text-light); }
 .dock-buttons { display: flex; gap: 10px; align-items: center; }
@@ -1444,12 +1648,17 @@ html, body {
     align-items: center;
     justify-content: center;
     transition: 0.15s;
+    touch-action: none;
 }
 .btn-aba:active { transform: scale(0.93); }
 .btn-aba.indep { background: var(--success); }
 .btn-aba.dica { background: var(--warning); color: #1E293B; }
 .btn-aba.erro { background: var(--danger); }
 .btn-aba.undo { background: #E2E8F0; color: var(--text); width: 50px; }
+.btn-aba.dock-btn-armed {
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.35);
+    filter: brightness(1.06);
+}
 
 /* STT MICROPHONE */
 .stt-area { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; position: relative; }
@@ -1783,6 +1992,14 @@ html, body {
     margin-bottom: 16px;
     border-bottom: 1px solid #F1F5F9;
     padding-bottom: 10px;
+}
+.settings-sublabel {
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-light);
+    margin: 14px 0 8px 0;
 }
 
 .color-picker-row {
@@ -2500,25 +2717,61 @@ textarea {
     body * {
         visibility: hidden !important;
     }
-    #screen-complements,
-    #comp-section-printkit,
-    .print-studio-workspace,
-    .print-studio-preview-stage,
-    #print-root,
-    #print-root * {
+    /* IMPRESSÃO DO ESTÚDIO A4 (MATERIAIS CONCRETOS) */
+    body:not(.printing-manual) #screen-complements,
+    body:not(.printing-manual) #comp-section-printkit,
+    body:not(.printing-manual) .print-studio-workspace,
+    body:not(.printing-manual) .print-studio-preview-stage,
+    body:not(.printing-manual) #print-root,
+    body:not(.printing-manual) #print-root * {
         visibility: visible !important;
     }
+    /* IMPRESSÃO ISOLADA DOS MANUAIS EM MARKDOWN */
+    body.printing-manual #screen-complements,
+    body.printing-manual #comp-section-manuals,
+    body.printing-manual #manual-reader-panel,
+    body.printing-manual #manual-reader-body,
+    body.printing-manual #manual-reader-body * {
+        visibility: visible !important;
+    }
+    body.printing-manual .manual-reader-header,
+    body.printing-manual #manuals-list-grid,
+    body.printing-manual .settings-header,
+    body.printing-manual #header-timer-icon {
+        display: none !important;
+    }
+    body.printing-manual #screen-complements,
+    body.printing-manual .complements-container,
+    body.printing-manual #comp-section-manuals,
+    body.printing-manual #manual-reader-panel {
+        position: static !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #FFFFFF !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+    body.printing-manual #manual-reader-body {
+        padding: 14mm 16mm !important;
+        max-width: none !important;
+    }
+
     .settings-header,
     .print-studio-sidebar,
     .card-remove-preview-btn,
     #header-timer-icon {
         display: none !important;
     }
-    #screen-complements,
-    .complements-container,
-    #comp-section-printkit,
-    .print-studio-workspace,
-    .print-studio-preview-stage {
+    body:not(.printing-manual) #screen-complements,
+    body:not(.printing-manual) .complements-container,
+    body:not(.printing-manual) #comp-section-printkit,
+    body:not(.printing-manual) .print-studio-workspace,
+    body:not(.printing-manual) .print-studio-preview-stage {
         position: static !important;
         padding: 0 !important;
         margin: 0 !important;
@@ -2576,6 +2829,13 @@ textarea {
         padding: 10px;
         font-size: 1.35rem;
     }
+    .syl-fusion-cons,
+    .syl-fusion-vow {
+        width: 88px;
+        height: 76px;
+        font-size: 2.4rem;
+    }
+    .manual-reader-body { padding: 18px; }
     .print-studio-workspace { flex-direction: column; height: auto; overflow: visible; }
     .print-studio-sidebar { width: 100%; }
 }
