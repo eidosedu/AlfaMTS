@@ -45,7 +45,7 @@ O projeto foi construído em Vanilla JavaScript (ES6+), HTML5 e CSS3 sem depend�
         └── fonemas/        # Pronúncias isoladas de vogais e consoantes (.ogg)
         
 🚀 Como Executar LocalmentePor utilizar Service Workers, fetch de manifestos e IndexedDB, recomenda-se servir os arquivos através de um servidor HTTP local (evitando abrir via file://):# 1. Clone o repositório
-git clone https://github.com/SEU-USUARIO/AlfaMTS.git
+git clone https://github.com/eidosedu/AlfaMTS.git
 
 # 2. Acesse o diretório do projeto
 cd AlfaMTS
