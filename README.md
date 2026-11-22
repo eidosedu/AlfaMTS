@@ -29,15 +29,15 @@ Painel analítico completo para tomada de decisão baseada em dados:Por Tarefa (
 
 O projeto foi construído em Vanilla JavaScript (ES6+), HTML5 e CSS3 sem dependência de frameworks pesados, garantindo carregamento instantâneo, máxima compatibilidade com WebViews móveis e operação 100% offline via Service Worker e IndexedDB.AlfaMTS/
 
-├── index.html        .       Estrutura SPA, telas, dock de mediação e modais
-├── style.css         .       Design system responsivo, tipografia cursiva e layout @media print A4
-├── app.js            .       Motor principal (estados, renderizadores, telemetria, estúdio A4)
-├── database.js       .       Currículo EIDOS, banco lexical (WORD_BANK), pares mínimos e narrativas
-├── sw.js             .       Service Worker para cache offline de assets e fontes
-├── manifest.json     .       Manifesto PWA instalável
-├── arcade/           .       Mini-jogos reforçadores em sandbox isolado
-└── assets/
-
+    
+    ├── index.html        .       Estrutura SPA, telas, dock de mediação e modais
+    ├── style.css         .       Design system responsivo, tipografia cursiva e layout @media print A4
+    ├── app.js            .       Motor principal (estados, renderizadores, telemetria, estúdio A4)
+    ├── database.js       .       Currículo EIDOS, banco lexical (WORD_BANK), pares mínimos e narrativas
+    ├── sw.js             .       Service Worker para cache offline de assets e fontes
+    ├── manifest.json     .       Manifesto PWA instalável
+    ├── arcade/                  Mini-jogos reforçadores em sandbox isolado/
+    └── assets/
     ├── fontes/
     │   └── MamaeQueNosFaz.ttf
     ├── img/
@@ -45,6 +45,7 @@ O projeto foi construído em Vanilla JavaScript (ES6+), HTML5 e CSS3 sem depend�
     │   └── bocas/           Referências articulatórias por fonema (.webp)
     └── audio/
         └── fonemas/         Pronúncias isoladas de vogais e consoantes (.ogg)
+        
         
 # 🚀 Como Executar Localmente
 
