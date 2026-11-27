@@ -275,7 +275,7 @@
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                 </div>
                 <h3>Manuais de Uso</h3>
-                <p>Guias do Analista, do Aplicador e de uso do aplicativo com leitura offline e impressão em PDF.</p>
+                <p>Guias do Analista, Aplicador e instruções do app para leitura offline e impressão em PDF.</p>
             </div>
         </div>
 
@@ -440,7 +440,7 @@
             </div>
         </div>
 
-        <!-- PAINEL 3: ARCADE -->
+        <!-- PAINEL 3: ARCADE (TESTE LIVRE + EDIÇÃO DE DURAÇÃO E CUSTO DOS JOGOS) -->
         <div id="comp-section-arcade" style="display:none;">
             <div class="settings-card">
                 <div class="settings-card-title">Jogos do Arcade — Duração, Custo e Teste</div>
@@ -449,7 +449,7 @@
             </div>
         </div>
 
-        <!-- PAINEL 4: ESTÚDIO DE MATERIAIS CONCRETOS -->
+        <!-- PAINEL 4: ESTÚDIO DE MATERIAIS CONCRETOS (SPLIT-SCREEN + LIVE PREVIEW A4) -->
         <div id="comp-section-printkit" style="display:none;">
             <div class="print-studio-workspace">
                 <div class="print-studio-sidebar">
@@ -507,7 +507,7 @@
                         </div>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <div class="input-group" style="margin-bottom:0;">
-                                <label style="font-size:0.78rem;">Espera em segundos:</label>
+                                <label style="font-size:0.78rem;">Espera (s):</label>
                                 <input type="number" id="pk-wait-sec" min="1" max="60" value="5" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.86rem;">
                             </div>
                             <div class="input-group" style="margin-bottom:0;">
@@ -520,11 +520,11 @@
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px; border-top:1px dashed var(--border); padding-top:8px;">
                             <div class="input-group" style="margin-bottom:0;">
-                                <label style="font-size:0.78rem;">Reforço Contínuo:</label>
+                                <label style="font-size:0.78rem;">Reforço Contínuo (Social / Imediato):</label>
                                 <input type="text" id="pk-reinf-social-input" value="Elogio social descritivo ('Muito bem!')" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.82rem;">
                             </div>
                             <div class="input-group" style="margin-bottom:0;">
-                                <label style="font-size:0.78rem;">Reforço Intermitente:</label>
+                                <label style="font-size:0.78rem;">Intermitente (Frequência e Duração):</label>
                                 <input type="text" id="pk-reinf-interm-input" value="VR-3 (1 ficha a cada 3 acertos) | 45s de jogo" oninput="renderLivePrintStudioPreview()" style="padding:8px 10px; font-size:0.82rem;">
                             </div>
                             <div class="input-group" style="margin-bottom:0;">
@@ -570,23 +570,24 @@
             </div>
         </div>
 
-        <!-- PAINEL 5: MANUAIS DE USO (.MD OFFLINE) -->
+        <!-- PAINEL 5: MANUAIS DE USO EM MARKDOWN (.MD) -->
         <div id="comp-section-manuals" style="display:none;">
             <div id="manuals-list-grid" class="complements-cards-grid"></div>
 
-            <div id="manual-reader-panel" class="manual-reader-panel" style="display:none;">
+            <div id="manual-reader-panel" class="manual-reader-panel">
                 <div class="manual-reader-header">
-                    <button type="button" class="btn-action btn-cancel" onclick="closeManualReader()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                        Manuais
-                    </button>
-                    <h3 id="manual-reader-title" class="manual-reader-title">Manual</h3>
-                    <button type="button" class="btn-action" onclick="printActiveManual()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                        Imprimir / PDF
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button type="button" class="icon-circle-btn" onclick="closeManualReader()" title="Voltar aos Manuais">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                        </button>
+                        <strong id="manual-reader-title" style="font-size:1.12rem; color:var(--text);">Manual</strong>
+                    </div>
+                    <button type="button" class="btn-action" style="padding:9px 16px; font-size:0.88rem;" onclick="printActiveManual()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Imprimir / Salvar PDF
                     </button>
                 </div>
-                <article id="manual-reader-body" class="manual-reader-body"></article>
+                <div id="manual-reader-body" class="manual-reader-body"></div>
             </div>
         </div>
     </div>
@@ -607,7 +608,7 @@
     </div>
     
     <div class="settings-single-col">
-        <!-- CARD 1: PARÂMETROS GERAIS -->
+        <!-- CARD 1: PARÂMETROS GERAIS E RITMO -->
         <div class="settings-card">
             <div class="settings-card-title">Parâmetros Gerais e Ritmo Clínico</div>
             <div class="input-group">
@@ -630,7 +631,7 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Latência de Bloqueio em ms:</label>
+                    <label>Latência de Bloqueio (ms):</label>
                     <input type="number" id="set-latency" min="0" step="100" value="400">
                 </div>
                 <div class="input-group">
@@ -652,11 +653,11 @@
                     </select>
                 </div>
                 <div>
-                    <label>Ritmo Clínico:</label>
+                    <label>Preset Clínico:</label>
                     <select id="set-clinical-preset" onchange="applyClinicalPresetToSettingsUI(this.value)">
-                        <option value="REGULAR" selected>Regular Escolar</option>
-                        <option value="INTENSIVO">Intensivo TEA Inicial</option>
-                        <option value="AVANCADO">Avançado Alta Velocidade</option>
+                        <option value="REGULAR" selected>Regular / Escolar</option>
+                        <option value="INTENSIVO">Intensivo / TEA Inicial</option>
+                        <option value="AVANCADO">Avançado / Alta Velocidade</option>
                     </select>
                 </div>
             </div>
@@ -675,74 +676,54 @@
             </div>
         </div>
 
-        <!-- CARD 2: CONTROLE MOTOR E COMPORTAMENTO IMPULSIVO -->
+        <!-- CARD 2: CONTROLE MOTOR E IMPULSIVIDADE (LIMPO E ORGANIZADO) -->
         <div class="settings-card">
-            <div class="settings-card-title">Controle Motor e Comportamento Impulsivo</div>
+            <div class="settings-card-title">Controle Motor e Impulsividade</div>
 
-            <div class="motor-control-group">
-                <div class="motor-group-label">Tempo de Pressão na Resposta</div>
-                <div class="input-group" style="margin-bottom:10px;">
-                    <select id="set-hold-ms" onchange="syncHoldCRMTSVisibility()">
-                        <option value="0" selected>Desativado — Toque imediato</option>
-                        <option value="300">Rápido — 300ms</option>
-                        <option value="450">Leve — 450ms</option>
-                        <option value="600">Moderado — 600ms</option>
-                        <option value="1000">Firme — 1000ms</option>
-                        <option value="1500">Intenso — 1500ms</option>
-                    </select>
-                </div>
-                <label id="set-hold-crmts-wrap" class="motor-check-row" style="display:none; background:#FFFBEB; border-color:#FCD34D;">
-                    <input type="checkbox" id="set-hold-crmts" style="width:20px; height:20px;">
-                    <span>Aplicar tempo de pressão também na montagem de CRMTS</span>
+            <div class="input-group" style="margin-bottom:12px;">
+                <label>Tempo de Pressão na Resposta:</label>
+                <select id="set-hold-ms" onchange="syncHoldCRMTSVisibility()">
+                    <option value="0" selected>Desativado — Toque imediato</option>
+                    <option value="300">Rápido — 300ms</option>
+                    <option value="450">Leve — 450ms</option>
+                    <option value="600">Moderado — 600ms</option>
+                    <option value="1000">Firme — 1000ms</option>
+                    <option value="1500">Intenso — 1500ms</option>
+                </select>
+            </div>
+
+            <div id="set-hold-crmts-wrap" style="display:none; align-items:center; gap:10px; background:#EFF6FF; padding:12px 14px; border-radius:14px; border:1px solid var(--primary); margin-bottom:14px;">
+                <input type="checkbox" id="set-hold-crmts" style="width:20px; height:20px;">
+                <label for="set-hold-crmts" style="margin:0; font-weight:700; font-size:0.9rem; color:var(--primary-dark); cursor:pointer;">Aplicar tempo de pressão também na construção CRMTS</label>
+            </div>
+
+            <div class="settings-sublabel">Modo Tátil — Arrastar até o Modelo</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:12px; margin-bottom:14px;">
+                <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
+                    <input type="checkbox" id="set-drag-mts" style="width:20px; height:20px;">
+                    <span>MTS Simples</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
+                    <input type="checkbox" id="set-drag-multimts" style="width:20px; height:20px;">
+                    <span>Multi-MTS</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F8FAFC; padding:12px 14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
+                    <input type="checkbox" id="set-drag-crmts" style="width:20px; height:20px;">
+                    <span>Construção CRMTS</span>
                 </label>
             </div>
 
-            <div class="motor-control-group">
-                <div class="motor-group-label">Modo Tátil de Arraste</div>
-                <div class="motor-check-grid">
-                    <label class="motor-check-row">
-                        <input type="checkbox" id="set-drag-mts" style="width:20px; height:20px;">
-                        <span>Arrastar até o modelo no MTS Simples</span>
-                    </label>
-                    <label class="motor-check-row">
-                        <input type="checkbox" id="set-drag-multimts" style="width:20px; height:20px;">
-                        <span>Arrastar até o modelo no Multi-MTS</span>
-                    </label>
-                    <label class="motor-check-row">
-                        <input type="checkbox" id="set-drag-crmts" style="width:20px; height:20px;">
-                        <span>Arrastar sílabas e letras no CRMTS</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="motor-control-group" style="margin-bottom:0;">
-                <div class="motor-group-label">Proteção do Painel do Aplicador</div>
-                <label class="motor-check-row">
-                    <input type="checkbox" id="set-dock-lock" style="width:20px; height:20px;">
-                    <span>Exigir segurar e puxar para baixo para confirmar registros no painel</span>
-                </label>
-            </div>
+            <div class="settings-sublabel">Proteção do Aplicador</div>
+            <label style="display:flex; align-items:center; gap:12px; background:#F8FAFC; padding:14px; border-radius:14px; border:1px solid var(--border); font-weight:700; cursor:pointer;">
+                <input type="checkbox" id="set-dock-lock" style="width:22px; height:22px;">
+                <span>Trava de segurança no dock — segurar e puxar para baixo</span>
+            </label>
         </div>
 
-        <!-- CARD 3: SILABÁRIO -->
+        <!-- CARD 3: PADRONIZAÇÃO DO SILABÁRIO -->
         <div class="settings-card">
-            <div class="settings-card-title">Padronização do Silabário Cumulativo</div>
-            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">Padroniza os passos e estruturas para todas as famílias do Silabário.</p>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
-                <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-ccv" style="width:22px; height:22px;"> Encontros Consonantais
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-cvcl" style="width:22px; height:22px;"> Fechado em L
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-cvcs" style="width:22px; height:22px;"> Fechado em S
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid var(--border);">
-                    <input type="checkbox" id="set-syl-cvcm" style="width:22px; height:22px;"> Fechado em M
-                </label>
-            </div>
+            <div class="settings-card-title">Padronização do Silabário</div>
+            <p style="font-size:0.84rem; color:var(--text-light); font-weight:600; margin-bottom:14px;">As estruturas silábicas e vocabulários são alternados pelas Gears tocando no título da aba Silabário.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 10px; font-weight:700; cursor:pointer;">
@@ -802,10 +783,14 @@
             </div>
         </div>
 
-        <!-- CARD 5: SISTEMA -->
+        <!-- CARD 5: SISTEMA, ATUALIZAÇÃO PWA E MEMÓRIA LOCAL -->
         <div class="settings-card">
             <div class="settings-card-title">Sistema e Memória Local</div>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button type="button" id="btn-check-pwa-updates" class="btn-action" style="flex:1;" onclick="checkAppUpdatesWithoutDataLoss()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    Verificar Atualizações
+                </button>
                 <button type="button" class="btn-action" style="background:var(--danger); flex:1;" onclick="hardResetAppCache()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     Limpar Todo Cache e Resetar App
@@ -941,15 +926,15 @@
                 <strong id="wt-kpi-total">0</strong>
             </div>
             <div class="wt-kpi-box">
-                <span>Acertos</span>
+                <span>Acertos (I)</span>
                 <strong id="wt-kpi-i" style="color:var(--success);">0</strong>
             </div>
             <div class="wt-kpi-box">
-                <span>Dicas</span>
+                <span>Dicas (D)</span>
                 <strong id="wt-kpi-d" style="color:#D97706;">0</strong>
             </div>
             <div class="wt-kpi-box">
-                <span>Erros</span>
+                <span>Erros (N)</span>
                 <strong id="wt-kpi-n" style="color:var(--danger);">0</strong>
             </div>
         </div>
@@ -988,7 +973,7 @@
             </div>
             <div class="stim-editor-list" id="stim-items-list"></div>
             <div id="stim-add-bar" style="display:flex; gap:8px; margin-bottom:14px;">
-                <input type="text" id="stim-new-input" placeholder="Adicionar estímulo..." style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:700; outline:none;">
+                <input type="text" id="stim-new-input" placeholder="Adicionar estímulo (ex: ri-no-ce-ron-te)..." style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:12px; font-weight:700; outline:none;">
                 <button type="button" class="btn-action" id="stim-btn-add" style="padding:10px 18px;" onclick="addStimulusItemToEditor()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Adicionar
@@ -1095,9 +1080,9 @@
 
             <div class="compact-param-row">
                 <div class="param-label-group">
-                    <span>Tempo Limite de Resposta</span>
+                    <span>Tempo Limite de Resposta (s)</span>
                     <button type="button" class="help-tip-btn" onclick="toggleTooltip(event, 'tip-lat')">?</button>
-                    <div id="tip-lat" class="floating-popover">Exibe contador regressivo em segundos e avança se o tempo esgotar.</div>
+                    <div id="tip-lat" class="floating-popover">Exibe contador regressivo na tarefa e avança se o tempo esgotar.</div>
                 </div>
                 <input type="number" id="task-cfg-timeout" class="compact-input-num" min="0" max="60" value="0" placeholder="0">
             </div>
@@ -1201,7 +1186,7 @@
     <iframe id="arcade-game-frame" sandbox="allow-scripts allow-same-origin" src="about:blank"></iframe>
 </div>
 
-<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO -->
+<!-- MODAL SELETOR DE MÍDIA POR ESTÍMULO (BUSCA INSTANTÂNEA + REPOSITÓRIO + ENVIADAS) -->
 <div id="modal-media-picker" class="modal-overlay" data-backdrop-close="true" style="z-index: 340;">
     <div class="modal-content" style="max-width: 560px; text-align: left; padding: 24px;">
         <div class="modal-clean-header">
@@ -1245,7 +1230,7 @@
     </div>
 </div>
 
-<!-- MODAL OPÇÕES DE TELEMETRIA E BACKUP COMPLETO -->
+<!-- MODAL OPÇÕES DE TELEMETRIA E BACKUP COMPLETO (.JSON) -->
 <div id="modal-telemetry-options" class="modal-overlay" data-backdrop-close="true" style="z-index: 380;">
     <div class="modal-content" style="max-width: 420px; padding: 24px;">
         <div class="modal-clean-header">
@@ -1255,17 +1240,17 @@
             </button>
         </div>
         <div style="display:flex; flex-direction:column; gap:10px;">
-            <button type="button" class="menu-option-row" onclick="exportSessionLogPDF()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Exportar Tela Atual em PDF
+            <button type="button" class="menu-option-row" onclick="copyWhatsAppSummary()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Resumo em Texto
             </button>
             <button type="button" class="menu-option-row" onclick="exportEidosChecklistPDF()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 Protocolo de Linha de Base PDF
             </button>
-            <button type="button" class="menu-option-row" onclick="copyWhatsAppSummary()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Resumo em Texto
+            <button type="button" class="menu-option-row" onclick="exportSessionLogPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Exportar Aba Atual em PDF
             </button>
             <button type="button" class="menu-option-row" onclick="openReport()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
@@ -1273,11 +1258,11 @@
             </button>
             <button type="button" id="btn-backup-export-json" class="menu-option-row" onclick="exportStudentProfileJSON()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exportar Backup do Aluno
+                Exportar Backup do Aluno (.json)
             </button>
             <button type="button" id="btn-backup-import-json" class="menu-option-row" onclick="triggerImportStudentProfileJSON()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                Importar Backup do Aluno
+                Importar Backup do Aluno (.json)
             </button>
             <input type="file" id="backup-json-file-input" accept=".json,application/json" style="display:none;" onchange="handleImportStudentProfileFile(this.files)">
         </div>
