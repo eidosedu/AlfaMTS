@@ -1,6 +1,6 @@
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 3: SEÇÕES 5.0 A 9)
-   CATÁLOGO DE FONTES • HOLD-TO-SELECT • MANUAIS .MD • MULTI-TENANT • MODAL
+   GEARS DO SILABÁRIO (SNAPSHOTS) • FONTES • HOLD • MANUAIS .MD • UPDATE PWA
    ============================================================================ */
 
 /* ============================================================================
@@ -25,11 +25,9 @@ function formatTextForFontCase(rawText, fontKey = 'GLOBAL') {
         if (isSingleChar) {
             return isSingleCharLower ? str : str.toLowerCase();
         }
-        // Sílabas ou encontros curtos isolados (<= 2 letras sem espaço) em minúscula cursiva
         if (!str.includes(' ') && str.length <= 2) {
             return str.toLowerCase();
         }
-        // Palavras de 3+ letras ou frases: Inicial maiúscula + restante em minúsculas
         const lower = str.toLowerCase();
         return lower.charAt(0).toUpperCase() + lower.slice(1);
     }
@@ -61,7 +59,9 @@ const UI_SVGS = {
     coin: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>`,
     imageMini: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
     zap: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-    bookOpen: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`
+    bookOpen: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+    chevronDown: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
+    layers: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`
 };
 
 /* CATÁLOGO DE SLUGS .WEBP DO REPOSITÓRIO (~400 IMAGENS DESACOPLADAS) */
@@ -431,7 +431,7 @@ function hasValidVisualRepresentation(wordKey) {
 }
 
 /* ============================================================================
-   5. ESTADO GLOBAL, FALLBACKS CURRICULARES (INCL. EX_TYPO_GEN) E MULTI-TENANT
+   5. ESTADO GLOBAL, 4 GEARS DO SILABÁRIO (DISJUNÇÃO EXCLUSIVA) E MULTI-TENANT
    ============================================================================ */
 let activeRole = 'ANALYST';
 
@@ -453,7 +453,7 @@ function getEffectiveEidosModules() {
     return base;
 }
 
-const STRUCTURED_SYLLABARY_ORDER = [
+const ALL_SYLLABARY_KEYS = [
     'VOGAIS', 'ENCONTROS',
     'T', 'L', 'M',
     'F', 'B', 'R',
@@ -462,6 +462,155 @@ const STRUCTURED_SYLLABARY_ORDER = [
     'X', 'Z',
     'C', 'G', 'Q'
 ];
+
+const STRUCTURED_SYLLABARY_ORDER = [...ALL_SYLLABARY_KEYS];
+
+const FALLBACK_CUMULATIVE_SYL_WORDS = {
+    'T': ['TATU', 'TETO', 'TIA', 'TIO', 'TEIA', 'TUDO'],
+    'L': ['LATA', 'LUTA', 'TELA', 'LUA', 'LEITE', 'LOTE'],
+    'M': ['MALA', 'MATO', 'MOLA', 'TOMATE', 'MULETA', 'LAMA'],
+    'F': ['FACA', 'FITA', 'FOGO', 'FAMÍLIA', 'FALA', 'FOFO'],
+    'B': ['BOLA', 'BOLO', 'BOTA', 'BULE', 'LOBO', 'BEBÊ'],
+    'R': ['RATO', 'RODA', 'REDE', 'RUA', 'REI', 'ROUPA'],
+    'P': ['PATO', 'PIPA', 'PANELA', 'PETECA', 'POTE', 'PÉ'],
+    'N': ['NAVIO', 'BONECA', 'CANECA', 'MENINO', 'MENINA', 'NUVEM'],
+    'V': ['VACA', 'VELA', 'LUVA', 'VIOLÃO', 'OVO', 'AVIÃO'],
+    'S': ['SAPO', 'SUCO', 'SOFÁ', 'SALADA', 'SAPATO', 'SINO'],
+    'D': ['DADO', 'DEDO', 'DENTE', 'CABIDE', 'DOCE', 'DIA'],
+    'J': ['JACARÉ', 'JANELA', 'TIJOLO', 'CAJU', 'JOGO', 'JIBOIA'],
+    'X': ['LIXO', 'XÍCARA', 'XALE', 'ABACAXI', 'CAIXA', 'PEIXE'],
+    'Z': ['ZEBRA', 'ZERO', 'BUZINA', 'AZEITE', 'DEZ', 'PAZ'],
+    'C': ['CASA', 'CAMA', 'COPO', 'CAVALO', 'MACACO', 'TUCANO'],
+    'G': ['GATO', 'GALO', 'FOGO', 'GOTA', 'LAGO', 'FIGO'],
+    'Q': ['QUEIJO', 'QUIABO', 'QUATRO', 'AQUÁRIO', 'LEQUE', 'CAQUI']
+};
+
+/* CATÁLOGO DAS 4 GEARS DO SILABÁRIO (DISJUNÇÃO EXCLUSIVA + PIVÔS DE REVISÃO) */
+const DEFAULT_SYLLABARY_GEARS = {
+    GEAR_1: {
+        id: 'GEAR_1',
+        shortLabel: 'Gear 1',
+        title: 'Gear 1 — Base (CV e CVV)',
+        desc: 'Sílabas simples abertas (CV) e encontros vocálicos (CVV) com vocabulário cumulativo inicial.',
+        order: ['VOGAIS', 'ENCONTROS', 'T', 'L', 'M', 'F', 'B', 'R', 'P', 'N', 'V', 'S', 'D', 'J', 'X', 'Z', 'C', 'G', 'Q'],
+        pivots: [],
+        initialUnlocked: ['VOGAIS', 'ENCONTROS', 'T'],
+        words: null // Usa SYLLABARY_CUMULATIVE_WORDS / FALLBACK_CUMULATIVE_SYL_WORDS
+    },
+    GEAR_2: {
+        id: 'GEAR_2',
+        shortLabel: 'Gear 2',
+        title: 'Gear 2 — Fechadas em R e L',
+        desc: 'Sílabas CV, CVV e CVC travadas em R e L, com R e L posicionados como pivôs de revisão.',
+        order: ['T', 'M', 'B', 'P', 'R', 'F', 'C', 'G', 'D', 'S', 'J', 'L'],
+        pivots: ['R', 'L'],
+        initialUnlocked: ['T'],
+        words: {
+            'T': { 1: ['TARTARUGA', 'TORTA', 'TORNEIRA', 'TARDE'], 2: ['TALCO', 'TURBINA', 'TALHER', 'TORPEDO'] },
+            'M': { 1: ['MARTELO', 'MARCADOR', 'MAR', 'MEL'], 2: ['MORCEGO', 'MURALHA', 'MOLDURA', 'MERGULHO'] },
+            'B': { 1: ['BARCO', 'BALDE', 'BOLSA', 'BORBOLETA'], 2: ['BALCÃO', 'BARBA', 'BERÇO', 'BULBO', 'BORDADO'] },
+            'P': { 1: ['PORTA', 'POLVO', 'PARDAL', 'PERNA'], 2: ['PORCO', 'PALCO', 'PARQUE', 'PORTO', 'PULGA'] },
+            'R': { 1: ['BARCO', 'PORTA', 'MARTELO', 'URSO', 'ÁRVORE'], 2: ['GARFO', 'CARTA', 'CORVO', 'FORMIGA', 'TARTARUGA'] },
+            'F': { 1: ['FORMIGA', 'FAROL', 'FILME', 'FURACÃO'], 2: ['FALCÃO', 'FORNO', 'FOLGA', 'FURGÃO'] },
+            'C': { 1: ['CARTA', 'CARNE', 'CORVO', 'COLHER', 'CELULAR'], 2: ['CORDA', 'CALÇA', 'CARACOL', 'COBERTOR', 'CARTEIRA'] },
+            'G': { 1: ['GARFO', 'GOLFINHO', 'GALPÃO', 'GARGALO'], 2: ['GUARDA', 'GORRO', 'GARRAFA', 'GIRASSOL'] },
+            'D': { 1: ['DARDO', 'DEDAL', 'DORMIR', 'DORSO'], 2: ['DARDO', 'DEDAL', 'DORMIR', 'DORSO'] },
+            'S': { 1: ['SORVETE', 'SARDINHA', 'SERRA', 'SOL'], 2: ['SERROTE', 'SOLDADO', 'SELVA', 'SALMÃO'] },
+            'J': { 1: ['JORNAL', 'JARRA', 'JARDINEIRO', 'JOGADOR'], 2: ['JORNADA', 'JORNAL', 'JARRA', 'JOGADOR'] },
+            'L': { 1: ['SOL', 'ALFACE', 'GOLFINHO', 'POLVO', 'BALDE'], 2: ['PARDAL', 'CELULAR', 'CARACOL', 'FAROL', 'SAL'] }
+        }
+    },
+    GEAR_3: {
+        id: 'GEAR_3',
+        shortLabel: 'Gear 3',
+        title: 'Gear 3 — Fechadas em M/N e S',
+        desc: 'Sílabas CV, CVV, VC e CVC travadas em M, N e S, com M, N e S como pivôs de revisão.',
+        order: ['T', 'B', 'P', 'M', 'L', 'F', 'D', 'N', 'C', 'G', 'V', 'R', 'J', 'S'],
+        pivots: ['M', 'N', 'S'],
+        initialUnlocked: ['T'],
+        words: {
+            'T': { 1: ['TAMBOR', 'TÊNIS', 'TINTA', 'TAMPA'], 2: ['TESTA', 'TOMBO', 'TANQUE', 'TOSSE'] },
+            'B': { 1: ['BANCO', 'BOMBA', 'BISCOITO', 'BAMBU'], 2: ['BÚSSOLA', 'BONDE', 'BENGALA', 'BANDO'] },
+            'P': { 1: ['PASTA', 'PENTE', 'PONTE', 'POMBO', 'PÁSSARO'], 2: ['PINGUIM', 'PISCINA', 'PINTO', 'PUDIM', 'PANTERA'] },
+            'M': { 1: ['MANGA', 'MUNDO', 'MANTEIGA', 'MONTE'], 2: ['MORANGO', 'MENSAGEM', 'MANTA', 'MANGUEIRA'] },
+            'L': { 1: ['LÁPIS', 'LENTILHA', 'LANCHE', 'LESMA'], 2: ['LANTERNA', 'LENÇO', 'LENTE', 'LISTA'] },
+            'F': { 1: ['FANTASMA', 'FESTA', 'FUSCA', 'FÓSFORO'], 2: ['FONTE', 'FUNGOS', 'FENDA', 'FAZENDA'] },
+            'D': { 1: ['DENTE', 'DISCO', 'DANÇA', 'DENTISTA'], 2: ['DUENDE', 'DESFILE', 'DENGUE', 'DESERTO'] },
+            'N': { 1: ['NUVEM', 'DENTE', 'PONTE', 'ELEFANTE', 'PINGUIM'], 2: ['CINTO', 'PENTE', 'POMBO', 'TAMBOR', 'ESPONJA'] },
+            'C': { 1: ['CINTO', 'CINCO', 'CUSCUZ', 'CAMPO', 'CESTO'], 2: ['CASTELO', 'CONCHA', 'CANGURU', 'COSTELA', 'CIMENTO'] },
+            'G': { 1: ['GANSO', 'GOSMA', 'GAMBÁ', 'GARAGEM'], 2: ['GENTE', 'GIGANTE', 'GENGIVA', 'GÔNDOLA'] },
+            'V': { 1: ['VASSOURA', 'VENTO', 'VESTIDO', 'VAMPIRO'], 2: ['VENTOSA', 'VAGEM', 'VESPA', 'VISTA'] },
+            'R': { 1: ['RAMPA', 'ROSTO', 'ROSCA', 'RASTELO'], 2: ['RONCO', 'RENDA', 'RISCO', 'ROMBO'] },
+            'J': { 1: ['JANTAR', 'JANGADA', 'JUMENTO', 'JASMIM'], 2: ['JANTAR', 'JANGADA', 'JUMENTO', 'JASMIM'] },
+            'S': { 1: ['PASTA', 'ESCOVA', 'ESCADA', 'OSSO', 'LÁPIS'], 2: ['VASSOURA', 'ESPONJA', 'ESQUILO', 'ESTOJO', 'TÊNIS'] }
+        }
+    },
+    GEAR_4: {
+        id: 'GEAR_4',
+        shortLabel: 'Gear 4',
+        title: 'Gear 4 — Encontros Inseparáveis (R e L)',
+        desc: 'Grupos consonantais CCV e CCVC com R e L, com R e L atuando como pivôs de revisão.',
+        order: ['T', 'P', 'B', 'R', 'F', 'C', 'G', 'D', 'V', 'L'],
+        pivots: ['R', 'L'],
+        initialUnlocked: ['T'],
+        words: {
+            'T': { 1: ['TREM', 'TRATOR', 'TRIÂNGULO', 'TRILHO', 'TRUTA', 'TRABALHAR'], 2: ['TROFÉU', 'TRAVESSEIRO', 'TRINCA', 'TRONCO', 'TRICICLO', 'TRUQUE'] },
+            'P': { 1: ['PRATO', 'PLANTA', 'PLACA', 'PRESENTE', 'PREGO', 'PLANETA'], 2: ['PRINCESA', 'PRATELEIRA', 'PROVA', 'PLÁSTICO', 'PLANTAR', 'PRÁTICA'] },
+            'B': { 1: ['BRUXA', 'BLUSA', 'BRÓCOLIS', 'BRINQUEDO', 'BRINCO', 'BLOCO'], 2: ['BRANCO', 'BRIGADEIRO', 'BRONZE', 'BRINCAR', 'BLINDADO', 'BRILHO'] },
+            'R': { 1: ['TREM', 'PRATO', 'BRUXA', 'FRUTA', 'CROCODILO', 'GRAVATA'], 2: ['TRATOR', 'PRESENTE', 'BRINQUEDO', 'FRANGO', 'DRAGÃO', 'GRILO'] },
+            'F': { 1: ['FLOR', 'FLAUTA', 'FLAMINGO', 'FRUTA', 'FRANGO', 'FRIGIDEIRA'], 2: ['FLECHA', 'FLORESCER', 'FRESCA', 'FRITAR', 'FRONTAL', 'FLUTUAR'] },
+            'C': { 1: ['COBRA', 'CROCODILO', 'CLAVÍCULA', 'CRIANÇA', 'CRUZ', 'CLIMA'], 2: ['CRISTAL', 'CREME', 'CLUBE', 'CLASSE', 'CRIAR', 'CROSTA'] },
+            'G': { 1: ['GRAVATA', 'GLOBO', 'GRILO', 'GRANDE', 'GRADE', 'GLADIADOR'], 2: ['GROSSO', 'GRAVAR', 'GRUPO', 'GLICINA', 'GRAU', 'GRUTA'] },
+            'D': { 1: ['DRAGÃO', 'DROGARIA', 'DRENAGEM'], 2: ['DRAGÃO', 'DROGARIA', 'DRENAGEM'] },
+            'V': { 1: ['LIVRO', 'VIDRO'], 2: ['LIVRO', 'VIDRO'] },
+            'L': { 1: ['PLANTA', 'BLUSA', 'FLOR', 'FLAUTA', 'GLOBO', 'CLUBE'], 2: ['PLACA', 'BLOCO', 'FLAMINGO', 'FLECHA', 'CRISTAL'] }
+        }
+    }
+};
+
+function getEffectiveSyllabaryGears() {
+    if (typeof SYLLABARY_GEARS !== 'undefined' && SYLLABARY_GEARS && SYLLABARY_GEARS.GEAR_1) {
+        return SYLLABARY_GEARS;
+    }
+    return DEFAULT_SYLLABARY_GEARS;
+}
+
+function getActiveSyllabaryGearId() {
+    const gears = getEffectiveSyllabaryGears();
+    const id = (typeof state !== 'undefined' && state && state.activeSyllabaryGear) ? state.activeSyllabaryGear : 'GEAR_1';
+    return gears[id] ? id : 'GEAR_1';
+}
+
+function getActiveSyllabaryGearObj() {
+    const gears = getEffectiveSyllabaryGears();
+    return gears[getActiveSyllabaryGearId()] || gears.GEAR_1;
+}
+
+function getEffectiveSyllabaryOrder() {
+    const gObj = getActiveSyllabaryGearObj();
+    return (gObj && Array.isArray(gObj.order)) ? [...gObj.order] : [...ALL_SYLLABARY_KEYS];
+}
+
+function getCumulativeWordsForSyllableFamily(cons, specificVarKey = null) {
+    const k = String(cons || '').toUpperCase().trim();
+    const gearObj = getActiveSyllabaryGearObj();
+
+    if (gearObj && gearObj.words && gearObj.words[k]) {
+        const entry = gearObj.words[k];
+        if (Array.isArray(entry)) return [...entry];
+        const vk = specificVarKey || getActiveVariationForModule(k);
+        const list = entry[vk] || entry[1] || Object.values(entry)[0] || [];
+        return [...list];
+    }
+
+    if (typeof SYLLABARY_CUMULATIVE_WORDS !== 'undefined' && SYLLABARY_CUMULATIVE_WORDS[k]) {
+        return [...SYLLABARY_CUMULATIVE_WORDS[k]];
+    }
+    if (FALLBACK_CUMULATIVE_SYL_WORDS[k]) {
+        return FALLBACK_CUMULATIVE_SYL_WORDS[k].map(w => w.trim().toUpperCase());
+    }
+    return ['BOLA', 'MALA', 'PATO', 'GATO', 'SAPO', 'TATU'];
+}
 
 const DEFAULT_PHONEME_SETS = [
     { setNum: 1, id: 'FA_CHK_1', title: '★ Check-point Conjunto 1 (Vogais Orais)', members: ['FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1'] },
@@ -535,26 +684,6 @@ function getEffectivePhonologicalModules() {
     return DEFAULT_PHONEME_SETS_MODULES;
 }
 
-const FALLBACK_CUMULATIVE_SYL_WORDS = {
-    'T': ['TATU', 'TETO', 'TIA', 'TIO', 'TEIA', 'TUDO'],
-    'L': ['LATA', 'LUTA', 'TELA', 'LUA', 'LEITE', 'LOTE'],
-    'M': ['MALA', 'MATO', 'MOLA', 'TOMATE', 'MULETA', 'LAMA'],
-    'F': ['FACA', 'FITA', 'FOGO', 'FAMÍLIA', 'FALA', 'FOFO'],
-    'B': ['BOLA', 'BOLO', 'BOTA', 'BULE', 'LOBO', 'BEBÊ'],
-    'R': ['RATO', 'RODA', 'REDE', 'RUA', 'REI', 'ROUPA'],
-    'P': ['PATO', 'PIPA', 'PANELA', 'PETECA', 'POTE', 'PÉ'],
-    'N': ['NAVIO', 'BONECA', 'CANECA', 'MENINO', 'MENINA', 'NUVEM'],
-    'V': ['VACA', 'VELA', 'LUVA', 'VIOLÃO', 'OVO', 'AVIÃO'],
-    'S': ['SAPO', 'SUCO', 'SOFÁ', 'SALADA', 'SAPATO', 'SINO'],
-    'D': ['DADO', 'DEDO', 'DENTE', 'CABIDE', 'DOCE', 'DIA'],
-    'J': ['JACARÉ', 'JANELA', 'TIJOLO', 'CAJU', 'JOGO', 'JIBOIA'],
-    'X': ['LIXO', 'XÍCARA', 'XALE', 'ABACAXI', 'CAIXA', 'PEIXE'],
-    'Z': ['ZEBRA', 'ZERO', 'BUZINA', 'AZEITE', 'DEZ', 'PAZ'],
-    'C': ['CASA', 'CAMA', 'COPO', 'CAVALO', 'MACACO', 'TUCANO'],
-    'G': ['GATO', 'GALO', 'FOGO', 'GOTA', 'LAGO', 'FIGO'],
-    'Q': ['QUEIJO', 'QUIABO', 'QUATRO', 'AQUÁRIO', 'LEQUE', 'CAQUI']
-};
-
 const DEFAULT_PALAVRARIO_DRAWERS = [
     { id: 'PAL_1', code: 'GAVETA 1', title: 'Dissílabas CV (Conj. 1 e 2)', desc: 'Palavras dissílabas formadas por T, L, M, F, B, R.', variations: { 1: ['TATU', 'LATA', 'MALA', 'FACA', 'BOLA', 'RATO'], 2: ['TELA', 'MOLA', 'FOCA', 'BOLO', 'BOTA', 'RODA'] } },
     { id: 'PAL_2', code: 'GAVETA 2', title: 'Dissílabas CV (Conj. 3 a 6)', desc: 'Palavras dissílabas com P, N, V, S, D, J, X, Z, C, G.', variations: { 1: ['PATO', 'VACA', 'SAPO', 'DADO', 'CASA', 'GATO'], 2: ['PIPA', 'LUVA', 'SUCO', 'DEDO', 'CAMA', 'GALO'] } },
@@ -571,21 +700,6 @@ function getEffectivePalavrarioDrawers() {
         return PALAVRARIO_DRAWERS;
     }
     return DEFAULT_PALAVRARIO_DRAWERS;
-}
-
-function getEffectiveSyllabaryOrder() {
-    return STRUCTURED_SYLLABARY_ORDER;
-}
-
-function getCumulativeWordsForSyllableFamily(cons) {
-    const k = String(cons || '').toUpperCase().trim();
-    if (typeof SYLLABARY_CUMULATIVE_WORDS !== 'undefined' && SYLLABARY_CUMULATIVE_WORDS[k]) {
-        return [...SYLLABARY_CUMULATIVE_WORDS[k]];
-    }
-    if (FALLBACK_CUMULATIVE_SYL_WORDS[k]) {
-        return FALLBACK_CUMULATIVE_SYL_WORDS[k].map(w => w.trim().toUpperCase());
-    }
-    return ['BOLA', 'MALA', 'PATO', 'GATO', 'SAPO', 'TATU'];
 }
 
 function getDefaultTokensClone() {
@@ -627,6 +741,8 @@ function createFreshStudentState(firstName = 'ALUNO') {
         setupDone: true,
         student: cleanFirst,
         manualProgressionOverride: false,
+        activeSyllabaryGear: 'GEAR_1',
+        gearSnapshots: {},
         unlocked: unlockedInit,
         moduleProgress: {},
         phonemeMastery: {},
@@ -707,6 +823,12 @@ function initTenantsAndActiveStudent() {
 }
 
 function normalizeStudentState(st) {
+    if (!st.activeSyllabaryGear || !getEffectiveSyllabaryGears()[st.activeSyllabaryGear]) {
+        st.activeSyllabaryGear = 'GEAR_1';
+    }
+    if (!st.gearSnapshots || typeof st.gearSnapshots !== 'object') {
+        st.gearSnapshots = {};
+    }
     if (!st.moduleProgress) st.moduleProgress = {};
     if (!st.phonemeMastery) st.phonemeMastery = {};
     if (!st.customCurriculum) st.customCurriculum = {};
@@ -745,7 +867,14 @@ function normalizeStudentState(st) {
     if (!st.session) st.session = { expired: false, endTime: null, configuredMin: st.settings.timer ? st.settings.timer.min : 30 };
     if (!Array.isArray(st.unlocked)) st.unlocked = [];
 
-    ['VOGAIS', 'ENCONTROS', 'T', 'PAL_1', 'PAL_2', 'FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1', 'FA_CHK_1', 'EX_TYPO_GEN'].forEach(baseId => {
+    const activeGear = getEffectiveSyllabaryGears()[st.activeSyllabaryGear] || getEffectiveSyllabaryGears().GEAR_1;
+    const baseUnlocks = [
+        ...(activeGear.initialUnlocked || ['T']),
+        'PAL_1', 'PAL_2',
+        'FA_A_1', 'FA_I_1', 'FA_O_1', 'FA_E_1', 'FA_U_1', 'FA_CHK_1',
+        'EX_TYPO_GEN'
+    ];
+    baseUnlocks.forEach(baseId => {
         if (!st.unlocked.includes(baseId)) st.unlocked.push(baseId);
     });
     getEffectiveEidosModules().filter(m => m.level === 'N1').forEach(m => {
@@ -758,6 +887,147 @@ function normalizeStudentState(st) {
 }
 
 let state = initTenantsAndActiveStudent();
+
+/* TROCA DISJUNTA DE GEAR DO SILABÁRIO COM SALVAMENTO E RESTAURAÇÃO DE SNAPSHOTS */
+function switchSyllabaryGear(newGearId) {
+    const gears = getEffectiveSyllabaryGears();
+    if (!gears[newGearId]) return;
+    const oldGearId = getActiveSyllabaryGearId();
+    if (oldGearId === newGearId) {
+        closeSyllabaryGearSheet();
+        return;
+    }
+
+    if (!state.gearSnapshots) state.gearSnapshots = {};
+
+    // 1. Salva snapshot do estado atual das consoantes do Silabário na Gear que está saindo
+    const oldProgress = {};
+    const oldUnlocked = [];
+    ALL_SYLLABARY_KEYS.forEach(k => {
+        if (state.moduleProgress && state.moduleProgress[k]) {
+            oldProgress[k] = JSON.parse(JSON.stringify(state.moduleProgress[k]));
+        }
+        if (Array.isArray(state.unlocked) && state.unlocked.includes(k)) {
+            oldUnlocked.push(k);
+        }
+    });
+    state.gearSnapshots[oldGearId] = {
+        moduleProgress: oldProgress,
+        unlocked: oldUnlocked,
+        savedAt: new Date().toLocaleDateString('pt-BR')
+    };
+
+    // 2. Limpa o progresso e desbloqueios ativos apenas das chaves do Silabário (mantendo state.log intacto)
+    ALL_SYLLABARY_KEYS.forEach(k => {
+        if (state.moduleProgress && state.moduleProgress[k]) {
+            delete state.moduleProgress[k];
+        }
+    });
+    state.unlocked = (state.unlocked || []).filter(id => !ALL_SYLLABARY_KEYS.includes(id));
+
+    // 3. Engata a nova Gear e restaura snapshot anterior se existir (ou inicia limpa com o 1º card destravado)
+    state.activeSyllabaryGear = newGearId;
+    const targetGear = gears[newGearId];
+    const snap = state.gearSnapshots[newGearId];
+
+    if (snap && snap.moduleProgress) {
+        Object.keys(snap.moduleProgress).forEach(k => {
+            state.moduleProgress[k] = JSON.parse(JSON.stringify(snap.moduleProgress[k]));
+        });
+        (snap.unlocked || []).forEach(k => {
+            if (!state.unlocked.includes(k)) state.unlocked.push(k);
+        });
+    }
+
+    // Garante sempre que os cards iniciais (1º card da trilha) da Gear engatada estejam destravados
+    const mustUnlock = targetGear.initialUnlocked || [targetGear.order[0]];
+    mustUnlock.forEach(k => {
+        if (k && !state.unlocked.includes(k)) state.unlocked.push(k);
+    });
+
+    saveState();
+    playSound('win');
+    closeSyllabaryGearSheet();
+    renderGrid();
+}
+
+function ensureSyllabaryGearSheetDOM() {
+    let modal = document.getElementById('modal-gear-selector');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'modal-gear-selector';
+    modal.className = 'modal-overlay bottom-sheet-overlay';
+    modal.setAttribute('data-backdrop-close', 'true');
+    modal.style.zIndex = '360';
+    modal.innerHTML = `
+        <div class="bottom-sheet-content">
+            <div class="bottom-sheet-handle"></div>
+            <div class="modal-clean-header" style="margin-bottom:10px;">
+                <div>
+                    <h2 class="modal-title" style="margin:0; font-size:1.28rem;">Gears do Silabário</h2>
+                    <span style="font-size:0.78rem; color:var(--text-light); font-weight:700;">Seleção exclusiva • O histórico bruto permanece salvo</span>
+                </div>
+                <button type="button" class="icon-circle-btn" onclick="closeSyllabaryGearSheet()" title="Fechar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="gear-reset-notice">
+                Alternar de Gear salva o progresso atual em snapshot e carrega (ou inicia limpo) o status de maestria das consoantes da nova Gear.
+            </div>
+            <div id="gear-selector-list" class="gear-selector-list"></div>
+        </div>
+    `;
+    modal.addEventListener('mousedown', (e) => { backdropMouseDownTarget = e.target; });
+    modal.addEventListener('mouseup', (e) => {
+        if (e.target === modal && backdropMouseDownTarget === modal) closeSyllabaryGearSheet();
+        backdropMouseDownTarget = null;
+    });
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function openSyllabaryGearSheet() {
+    if (activeRole !== 'ANALYST') return;
+    playSound('click');
+    const modal = ensureSyllabaryGearSheetDOM();
+    const listEl = document.getElementById('gear-selector-list');
+    if (listEl) {
+        listEl.innerHTML = '';
+        const gears = getEffectiveSyllabaryGears();
+        const activeId = getActiveSyllabaryGearId();
+
+        Object.values(gears).forEach(g => {
+            const isCurrent = (g.id === activeId);
+            const hasSnap = !!(state.gearSnapshots && state.gearSnapshots[g.id]);
+            const card = document.createElement('div');
+            card.className = `gear-option-card ${isCurrent ? 'active' : ''}`;
+            card.onclick = () => switchSyllabaryGear(g.id);
+
+            const badgeHTML = isCurrent
+                ? `<span class="meta-chip" style="background:var(--primary); color:#FFFFFF;">Ativa</span>`
+                : (hasSnap ? `<span class="meta-chip" style="background:var(--success-light); color:#065F46;">Snapshot Salvo</span>` : `<span class="meta-chip">Limpa</span>`);
+
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
+                    <strong style="font-size:0.98rem; color:var(--text);">${g.title}</strong>
+                    ${badgeHTML}
+                </div>
+                <p style="font-size:0.8rem; color:var(--text-light); font-weight:600; margin:0; line-height:1.4;">${g.desc}</p>
+                <div style="font-size:0.72rem; font-weight:800; color:var(--primary-dark); margin-top:6px;">
+                    Trilha (${g.order.length} cards): ${g.order.join(' → ')}
+                </div>
+            `;
+            listEl.appendChild(card);
+        });
+    }
+    modal.style.display = 'flex';
+}
+
+function closeSyllabaryGearSheet() {
+    const modal = document.getElementById('modal-gear-selector');
+    if (modal) modal.style.display = 'none';
+}
 
 let currentLevelTab = 'N1';
 let isReviewMode = false;
@@ -876,7 +1146,7 @@ function getTaskConfig(modId) {
 function getTaskCapabilities(modId) {
     const idStr = String(modId || '');
     const eMod = getEffectiveEidosModules().find(m => m.id === idStr) || null;
-    const isSyl = getEffectiveSyllabaryOrder().includes(idStr) && !['VOGAIS', 'ENCONTROS'].includes(idStr);
+    const isSyl = ALL_SYLLABARY_KEYS.includes(idStr) && !['VOGAIS', 'ENCONTROS'].includes(idStr);
     const isPal = idStr.startsWith('PAL_');
     const isPhon = idStr.startsWith('FA_');
     const isCustom = idStr.startsWith('CUST_');
@@ -922,7 +1192,7 @@ function getTaskCapabilities(modId) {
         cap.canColorCV = false;
         cap.canSylBox = false;
         cap.cyclesLabels = [
-            { key: 'c1', label: 'Passo 1: Sílabas Estruturadas (CV)' },
+            { key: 'c1', label: 'Passo 1: Sílabas Estruturadas' },
             { key: 'c2', label: 'Passo 2: Palavras Cumulativas Estruturadas' },
             { key: 'c3', label: 'Passo 3: Desmame Tipográfico (Cor → Preto)' },
             { key: 'c4', label: 'Passo 4: Sondagem de Leitura e Compreensão' }
@@ -1033,7 +1303,7 @@ function getTaskCapabilities(modId) {
 
 function getEffectiveOptsForCurrentSession() {
     if (!session || !session.phase) return 3;
-    if (getEffectiveSyllabaryOrder().includes(session.phase)) {
+    if (ALL_SYLLABARY_KEYS.includes(session.phase)) {
         return parseInt(state.settings.opts) || 3;
     }
     const tCfg = getTaskConfig(session.phase);
@@ -1042,7 +1312,7 @@ function getEffectiveOptsForCurrentSession() {
 }
 
 function getEffectiveStagesForModule(modId, isSyllabary = false) {
-    if (isSyllabary || getEffectiveSyllabaryOrder().includes(modId)) {
+    if (isSyllabary || ALL_SYLLABARY_KEYS.includes(modId)) {
         return state.settings.stages || { c1: true, c2: true, c3: true, c4: true };
     }
     const tCfg = getTaskConfig(modId);
@@ -1060,6 +1330,10 @@ function getModuleVariationsMap(modId) {
     const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
     if (palDrawer && palDrawer.variations) {
         return JSON.parse(JSON.stringify(palDrawer.variations));
+    }
+    const activeGear = getActiveSyllabaryGearObj();
+    if (activeGear && activeGear.words && activeGear.words[modId] && !Array.isArray(activeGear.words[modId])) {
+        return JSON.parse(JSON.stringify(activeGear.words[modId]));
     }
     if (typeof DEFAULT_MODULE_VARIATIONS !== 'undefined' && DEFAULT_MODULE_VARIATIONS[modId]) {
         return JSON.parse(JSON.stringify(DEFAULT_MODULE_VARIATIONS[modId].variations));
@@ -1807,7 +2081,6 @@ function escapeHTMLSafe(str) {
 
 function parseMarkdownInline(text) {
     let out = escapeHTMLSafe(text);
-    // Imagens: ![alt](src)
     out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, rawSrc) => {
         let src = rawSrc.trim();
         if (!/^(https?:|data:|\/|\.\/|assets\/)/i.test(src)) {
@@ -1815,9 +2088,7 @@ function parseMarkdownInline(text) {
         }
         return `<figure class="md-figure"><img src="${src}" alt="${alt}" draggable="false"><figcaption>${alt}</figcaption></figure>`;
     });
-    // Código inline
     out = out.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>');
-    // Negrito e itálico
     out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
     return out;
@@ -2867,7 +3138,7 @@ function handleImportStudentProfileFile(fileList) {
 }
 
 /* ============================================================================
-   8. CARROSSEL DE 10 GUIAS E PUSH-TO-VIEW (320ms)
+   8. CARROSSEL DE 10 GUIAS, GATILHO DE GEARS NO SILABÁRIO E PUSH-TO-VIEW
    ============================================================================ */
 const CAROUSEL_LEVELS = [
     { key: 'N1', title: 'Nível 1' },
@@ -2973,7 +3244,34 @@ function onCarouselScroll() {
     currentLevelTab = lvlObj.key;
 
     const titleEl = document.getElementById('carousel-level-title');
-    if (titleEl) titleEl.innerText = lvlObj.title;
+    if (titleEl) {
+        if (lvlObj.key === 'SILABARIO') {
+            const gear = getActiveSyllabaryGearObj();
+            const isAnalyst = (activeRole === 'ANALYST');
+            if (isAnalyst) {
+                titleEl.classList.add('gear-trigger-title');
+                titleEl.style.pointerEvents = 'auto';
+                titleEl.style.cursor = 'pointer';
+                titleEl.title = 'Toque para trocar a Gear do Silabário';
+                titleEl.innerHTML = `<span>Silabário</span> <span class="gear-header-chip">${gear.shortLabel} ${UI_SVGS.chevronDown}</span>`;
+                titleEl.onclick = () => openSyllabaryGearSheet();
+            } else {
+                titleEl.classList.remove('gear-trigger-title');
+                titleEl.style.pointerEvents = 'none';
+                titleEl.style.cursor = 'default';
+                titleEl.title = '';
+                titleEl.innerHTML = `<span>Silabário • ${gear.shortLabel}</span>`;
+                titleEl.onclick = null;
+            }
+        } else {
+            titleEl.classList.remove('gear-trigger-title');
+            titleEl.style.pointerEvents = 'none';
+            titleEl.style.cursor = 'default';
+            titleEl.title = '';
+            titleEl.innerText = lvlObj.title;
+            titleEl.onclick = null;
+        }
+    }
 
     document.querySelectorAll('#carousel-dots .page-dot').forEach((d, i) => {
         d.classList.toggle('active', i === pageIdx);
@@ -3085,6 +3383,7 @@ function executeRewardPortalAction(modId) {
 function buildCleanCardElement(itemData) {
     const isPortal = (itemData.engine === 'REWARD_PORTAL');
     const isCheckpoint = (itemData.engine === 'PHON_CHECKPOINT');
+    const isPivot = !!itemData.isPivot;
     const card = document.createElement('div');
     card.className = `phase-card clean-card ${itemData.isUnlocked ? '' : 'locked'} ${itemData.isMastered ? 'mastered' : ''} ${isPortal || isCheckpoint ? 'reward-portal-card' : ''}`;
 
@@ -3119,12 +3418,12 @@ function buildCleanCardElement(itemData) {
            </button>`
         : '';
 
-    const chkHeader = isCheckpoint
+    const topBadge = isCheckpoint
         ? `<span class="code-tag" style="background:#EDE9FE; color:#6D28D9; width:fit-content;">CHECK-POINT DE CONJUNTO</span>`
-        : '';
+        : (isPivot ? `<span class="code-tag" style="background:var(--primary-light); color:var(--primary-dark); width:fit-content;">PIVÔ DE REVISÃO</span>` : '');
 
     card.innerHTML = `
-        ${chkHeader}
+        ${topBadge}
         <div class="clean-card-body">
             <h3 class="clean-card-title">${itemData.title}</h3>
             ${playBtnHTML}
@@ -3175,6 +3474,13 @@ function triggerCardPlay(id, isEidos, forceDirectPlay = false) {
 }
 
 function getSyllableSetLabel(sylKey) {
+    const activeGear = getActiveSyllabaryGearObj();
+    if (activeGear && activeGear.id !== 'GEAR_1') {
+        const isPivot = Array.isArray(activeGear.pivots) && activeGear.pivots.includes(sylKey);
+        return isPivot
+            ? `${activeGear.shortLabel} • Pivô de Revisão`
+            : `${activeGear.title}`;
+    }
     if (['T', 'L', 'M'].includes(sylKey)) return 'Conjunto 1 • Sílabas + Palavras Cumulativas';
     if (['F', 'B', 'R'].includes(sylKey)) return 'Conjunto 2 • Sílabas + Palavras Cumulativas';
     if (['P', 'N', 'V'].includes(sylKey)) return 'Conjunto 3 • Sílabas + Palavras Cumulativas';
@@ -3194,6 +3500,7 @@ function renderGrid() {
     track.innerHTML = '';
     dotsBox.innerHTML = '';
     const allEidos = getEffectiveEidosModules();
+    const activeGear = getActiveSyllabaryGearObj();
 
     CAROUSEL_LEVELS.forEach((lvl, idx) => {
         const page = document.createElement('div');
@@ -3244,12 +3551,17 @@ function renderGrid() {
                 }));
             });
         } else if (lvl.key === 'SILABARIO') {
-            getEffectiveSyllabaryOrder().forEach(p => {
+            const gearOrder = getEffectiveSyllabaryOrder();
+            const isAdvancedGear = (activeGear.id !== 'GEAR_1');
+
+            gearOrder.forEach(p => {
                 const isUnlocked = state.unlocked.includes(p);
                 const prog = getModuleProgress(p);
+                const isPivot = isAdvancedGear && Array.isArray(activeGear.pivots) && activeGear.pivots.includes(p);
                 let displayDesc = `${getSyllableSetLabel(p)}: Passos 1 a 4 (Sílabas → Palavras Estruturadas → Desmame Preto → Compreensão).`;
                 if (p === 'VOGAIS') displayDesc = "Identificação e leitura das vogais A, E, I, O, U.";
                 else if (p === 'ENCONTROS') displayDesc = "Encontros vocálicos AI, EI, OI, UI, AU, EU, OU, ÃO.";
+                else if (isPivot) displayDesc = `Revisão estratégica em espiral da ${activeGear.title}.`;
 
                 page.appendChild(buildCleanCardElement({
                     id: p,
@@ -3260,8 +3572,9 @@ function renderGrid() {
                     methodText: displayDesc,
                     isUnlocked,
                     isMastered: prog.status === 'mastered',
+                    isPivot,
                     canConfigure: true,
-                    hasVar: false,
+                    hasVar: isAdvancedGear,
                     isEidos: false
                 }));
             });
@@ -3372,7 +3685,7 @@ function renderGrid() {
 }
 
 /* ============================================================================
-   9. PAINEL INTELIGENTE DA TAREFA, CATÁLOGO DE FONTES E SELETOR DE MÍDIA
+   9. PAINEL INTELIGENTE DA TAREFA, CATÁLOGO DE FONTES E ATUALIZAÇÃO PWA
    ============================================================================ */
 let editorSession = {
     modId: null,
@@ -4013,6 +4326,9 @@ function openQuickPeekModal() {
         } else if (t.steps) {
             stimText = 'Sequência de 3 frases';
             ansText = t.steps.join(' / ');
+        } else if (Array.isArray(t.words)) {
+            stimText = t.words.join(' | ');
+            ansText = t.words.join(' ');
         } else {
             stimText = JSON.stringify(t);
             ansText = stimText;
@@ -4033,6 +4349,31 @@ function openQuickPeekModal() {
     document.getElementById('peek-stimulus-text').innerText = stimText;
     document.getElementById('peek-answer-text').innerText = ansText;
     document.getElementById('modal-quick-peek').style.display = 'flex';
+}
+
+/* VERIFICAÇÃO DE ATUALIZAÇÕES PWA SEM PERDA DE DADOS (PRESERVA LOCALSTORAGE E INDEXEDDB) */
+async function checkAppUpdatesWithoutDataLoss() {
+    playSound('click');
+    saveState();
+
+    try {
+        if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(r => r.update().catch(() => {})));
+        }
+        if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(k => caches.delete(k)));
+        }
+    } catch (e) {}
+
+    customAlert(
+        "Atualização Aplicada",
+        "O cache de arquivos foi renovado mantendo todos os perfis, configurações e histórico intactos. O aplicativo será recarregado agora.",
+        () => {
+            window.location.reload();
+        }
+    );
 }
 
 function hardResetAppCache() {
@@ -4060,32 +4401,55 @@ function hardResetAppCache() {
 }
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 2 DE 3: SEÇÕES 10 A 13)
-   POOLS • PRÉ-TESTE • DRAG SEM A->C • FUSÃO SILÁBICA • TECLADO • EX_TYPO_GEN
+   GEARS DO SILABÁRIO • SYLBOX HORIZONTAL • DRAG SEM A->C • FUSÃO • EX_TYPO_GEN
    ============================================================================ */
 
 /* ============================================================================
-   10. GERADORES DE SÍLABAS PURAS, POOLS E GAVETAS DO PALAVRÁRIO
+   10. GERADORES DE SÍLABAS POR GEAR, POOLS E GAVETAS DO PALAVRÁRIO
    ============================================================================ */
 function generateSyllables(cons) {
-    let pool = vowels.map(v => cons + v);
-    if (cons === 'Q') pool = ['QUA', 'QUE', 'QUI', 'QUO'];
-    else if (cons === 'C') pool = ['CA', 'CO', 'CU'];
-    else if (cons === 'G') pool = ['GA', 'GO', 'GU'];
+    const k = String(cons || '').toUpperCase().trim();
+    const gearId = getActiveSyllabaryGearId();
 
-    const sc = state.settings.sylComplex || {};
-    const baseCV = [...pool];
-
-    if (sc.ccv) {
-        if (['C','P','B','F','G'].includes(cons)) {
-            pool = pool.concat(vowels.map(v => cons + 'R' + v)).concat(vowels.map(v => cons + 'L' + v));
-        }
-        if (['T','D','V'].includes(cons)) {
-            pool = pool.concat(vowels.map(v => cons + 'R' + v));
-        }
+    if (gearId === 'GEAR_2') {
+        // Fechadas em R e L (CV, CVV, CVC) + pivôs R e L
+        if (k === 'R') return ['BAR', 'POR', 'GAR', 'CAR', 'MAR', 'TOR'];
+        if (k === 'L') return ['SOL', 'BAL', 'POL', 'GOL', 'FAL', 'SAL'];
+        const rList = vowels.map(v => k + v + 'R');
+        const lList = vowels.map(v => k + v + 'L');
+        return [...new Set([...rList, ...lList])];
     }
-    if (sc.cvcL) pool = pool.concat(baseCV.map(cv => cv + 'L'));
-    if (sc.cvcS) pool = pool.concat(baseCV.map(cv => cv + 'S'));
-    if (sc.cvcM) pool = pool.concat(baseCV.map(cv => cv + 'M'));
+
+    if (gearId === 'GEAR_3') {
+        // Fechadas em M/N e S + pivôs M, N e S
+        if (k === 'M') return ['MAN', 'MON', 'MUN', 'BAM', 'TAM', 'CAM'];
+        if (k === 'N') return ['DEN', 'PON', 'CIN', 'PEN', 'BAN', 'VEN'];
+        if (k === 'S') return ['PAS', 'VES', 'COS', 'FES', 'DIS', 'LAS'];
+        const nList = vowels.map(v => k + v + 'N');
+        const sList = vowels.map(v => k + v + 'S');
+        return [...new Set([...nList, ...sList])];
+    }
+
+    if (gearId === 'GEAR_4') {
+        // Encontros Inseparáveis (R e L) + pivôs R e L
+        if (k === 'R') return ['TRA', 'PRA', 'BRA', 'FRA', 'CRA', 'GRA', 'DRA'];
+        if (k === 'L') return ['PLA', 'BLA', 'FLA', 'CLA', 'GLA', 'PLO', 'BLO'];
+        let ccvPool = [];
+        if (['T', 'D', 'V'].includes(k)) {
+            ccvPool = vowels.map(v => k + 'R' + v);
+        } else if (['P', 'B', 'F', 'C', 'G'].includes(k)) {
+            ccvPool = vowels.map(v => k + 'R' + v).concat(vowels.map(v => k + 'L' + v));
+        } else {
+            ccvPool = vowels.map(v => k + 'R' + v);
+        }
+        return [...new Set(ccvPool)];
+    }
+
+    // GEAR_1 (Base: CV puro)
+    let pool = vowels.map(v => k + v);
+    if (k === 'Q') pool = ['QUA', 'QUE', 'QUI', 'QUO'];
+    else if (k === 'C') pool = ['CA', 'CO', 'CU'];
+    else if (k === 'G') pool = ['GA', 'GO', 'GU'];
     return [...new Set(pool)];
 }
 
@@ -4188,7 +4552,7 @@ function getCategory(item) {
 
 /* ============================================================================
    11. INICIALIZADOR UNIFICADO: PRÉ-TESTE EM CADEIA (VAR 1 -> VAR N),
-       FONOLÓGICO (5 CICLOS), SILABÁRIO CAP. 5, PALAVRÁRIO E TRILHA N1-N5
+       FONOLÓGICO (5 CICLOS), SILABÁRIO POR GEAR, PALAVRÁRIO E TRILHA N1-N5
    ============================================================================ */
 function ensureSessionTimerStarted() {
     if (state.settings.timer.enabled) {
@@ -4245,7 +4609,7 @@ function isModuleEligibleForDefaultPreTestChain(modId) {
     if (/^E1_/.test(idStr) || /^E5_/.test(idStr) || ['E3_2', 'E3_3', 'E3_6', 'VOGAIS', 'ENCONTROS', 'EX_TYPO_GEN'].includes(idStr)) {
         return false;
     }
-    const isSylCons = getEffectiveSyllabaryOrder().includes(idStr) && !['VOGAIS', 'ENCONTROS'].includes(idStr);
+    const isSylCons = ALL_SYLLABARY_KEYS.includes(idStr) && !['VOGAIS', 'ENCONTROS'].includes(idStr);
     const isPal = idStr.startsWith('PAL_');
     const isN4 = /^E4_/.test(idStr);
     return isSylCons || isPal || isN4;
@@ -4305,6 +4669,7 @@ function startCustomStudioModule(modId) {
         phase: customMod.id,
         eidosMod: customMod,
         activeVar: 1,
+        activeGear: null,
         isProbeMode: inProbe,
         isFastTrackEntryProbe: false,
         isPreTestChain: false,
@@ -4370,6 +4735,7 @@ function startPalavrarioDrawer(drawerId, forcePreTest = false) {
         phase: drawer.id,
         eidosMod: modDescriptor,
         activeVar,
+        activeGear: null,
         isProbeMode: inProbe,
         isFastTrackEntryProbe: autoPreTest,
         isPreTestChain: autoPreTest,
@@ -4412,7 +4778,7 @@ function startPalavrarioDrawer(drawerId, forcePreTest = false) {
     renderTrial();
 }
 
-/* MOTOR ESTRUTURADO DO SILABÁRIO CUMULATIVO (CAP. 5) */
+/* MOTOR ESTRUTURADO DO SILABÁRIO CUMULATIVO POR GEAR (GEARS 1 A 4) */
 function startStructuredSyllabary(phaseId, forcePreTest = false) {
     if (phaseId === 'PALAVRAS') {
         document.getElementById('custom-words-input').value = state.customWords || '';
@@ -4426,6 +4792,8 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
     const isPseudo = (phaseId === 'PSEUDOPALAVRAS');
     const autoPreTest = forcePreTest || (!isBaseVocal && !isPseudo && shouldAutoStartPreTestChain(phaseId));
     const inProbe = autoPreTest || isModuleInProbeMode(phaseId);
+    const activeGearId = getActiveSyllabaryGearId();
+    const activeGearObj = getActiveSyllabaryGearObj();
 
     if (isBaseVocal || isPseudo) {
         const pool = getPhasePool(phaseId);
@@ -4438,6 +4806,7 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
             phase: phaseId,
             eidosMod: null,
             activeVar: 1,
+            activeGear: isBaseVocal ? activeGearId : null,
             isProbeMode: inProbe,
             isFastTrackEntryProbe: false,
             isPreTestChain: false,
@@ -4468,8 +4837,9 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
         return;
     }
 
-    const familySyllables = generateSyllables(phaseId);
-    const cumulativeWords = shuffleArray(getCumulativeWordsForSyllableFamily(phaseId)).slice(0, 6);
+    const activeVar = getActiveVariationForModule(phaseId);
+    const familySyllables = shuffleArray(generateSyllables(phaseId)).slice(0, 6);
+    const cumulativeWords = shuffleArray(getCumulativeWordsForSyllableFamily(phaseId, activeVar)).slice(0, 6);
     const candidateCycles = inProbe ? [4] : [1, 2, 3, 4];
     const activeCycles = inProbe ? [4] : filterCyclesByTaskConfig(phaseId, candidateCycles, true);
 
@@ -4482,7 +4852,8 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
     session = {
         phase: phaseId,
         eidosMod: null,
-        activeVar: 1,
+        activeVar,
+        activeGear: activeGearId,
         isProbeMode: inProbe,
         isFastTrackEntryProbe: autoPreTest,
         isPreTestChain: autoPreTest,
@@ -4493,6 +4864,8 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
         isPhonemeCheckpoint: false,
         sylData: {
             consonant: phaseId,
+            gearId: activeGearId,
+            gearShort: activeGearObj.shortLabel || 'Gear 1',
             syllables: familySyllables,
             words: cumulativeWords
         },
@@ -4514,7 +4887,7 @@ function startStructuredSyllabary(phaseId, forcePreTest = false) {
             c0: { indep: 0, dica: 0, erro: 0, total: 0 },
             c1: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(1) ? familySyllables.length : 0 },
             c2: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(2) ? cumulativeWords.length : 0 },
-            c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? 2 : 0 },
+            c3: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(3) ? Math.max(1, [cumulativeWords.slice(0, 3), cumulativeWords.slice(3, 6)].filter(g => g.length > 0).length) : 0 },
             c4: { indep: 0, dica: 0, erro: 0, total: activeCycles.includes(4) ? cumulativeWords.length : 0 },
             c5: { indep: 0, dica: 0, erro: 0, total: 0 },
             c6: { indep: 0, dica: 0, erro: 0, total: 0 }
@@ -4589,6 +4962,7 @@ function startPhonologicalModelingModule(modId, forceColdProbe = false) {
         phase: pm.id,
         eidosMod: modDescriptor,
         activeVar: 1,
+        activeGear: null,
         isProbeMode: forceColdProbe,
         isFastTrackEntryProbe: forceColdProbe,
         isPreTestChain: false,
@@ -4694,6 +5068,7 @@ function startPhonemeSetCheckpoint(chkSetOrId) {
         phase: chkSet.id,
         eidosMod: modDescriptor,
         activeVar: 1,
+        activeGear: null,
         isProbeMode: true,
         isFastTrackEntryProbe: false,
         isPreTestChain: false,
@@ -4937,6 +5312,7 @@ function startEidosModule(modId, forcePreTest = false) {
         phase: mod.id,
         eidosMod: mod,
         activeVar,
+        activeGear: null,
         isProbeMode: inProbe,
         isFastTrackEntryProbe: autoPreTest,
         isPreTestChain: autoPreTest,
@@ -5093,7 +5469,7 @@ function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel, overrideD
     }
 }
 
-/* DETECÇÃO PRECISA POR MAIOR ÁREA DE INTERSEÇÃO (SEM ERRO DE ESQUADRO DIAGONAL) */
+/* DETECÇÃO PRECISA POR MAIOR ÁREA DE INTERSEÇÃO */
 function getIntersectionArea(r1, r2) {
     const xOverlap = Math.max(0, Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left));
     const yOverlap = Math.max(0, Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top));
@@ -5182,8 +5558,7 @@ function attachDragToTargetBehavior(cardEl, getDropZonesFn, onDropOnZoneFn, allo
     cardEl.addEventListener('pointercancel', endDrag);
 }
 
-/* LIGAÇÃO UNIFICADA PARA CARTÕES DO MTS SIMPLES:
-   DESATIVA DRAG EM CICLOS AUDITIVOS (A -> C), EXIGINDO MODELO VISUAL (.model-card) */
+/* LIGAÇÃO UNIFICADA PARA CARTÕES DO MTS SIMPLES (SEM DRAG EM CICLOS AUDITIVOS A -> C) */
 function bindMTSCardInteraction(btn, isCorrect, onBeforeAnswer = null) {
     const useDrag = !!(state.settings && state.settings.dragToModelMTS);
     const visualModelCard = document.querySelector('#model-area .model-card');
@@ -5209,8 +5584,7 @@ function bindMTSCardInteraction(btn, isCorrect, onBeforeAnswer = null) {
     }
 }
 
-/* LIGAÇÃO UNIFICADA PARA PEÇAS MÓVEIS DO CRMTS:
-   HOLD-TO-SELECT DESATIVADO POR PADRÃO NO CRMTS (ATIVÁVEL VIA FALLBACK holdOnCRMTS) */
+/* LIGAÇÃO UNIFICADA PARA PEÇAS MÓVEIS DO CRMTS (HOLD DESATIVADO POR PADRÃO, COM FALLBACK) */
 function attachCRMTSUnitInteraction(tileBtn, getSlotsTargetElFn, onSelectFn) {
     const useDrag = !!(state.settings && state.settings.dragToModelCRMTS);
     if (useDrag) {
@@ -5535,14 +5909,15 @@ function renderTrial(restoredOptions = null) {
     }
 }
 
-/* RENDERIZADOR DOS 4 PASSOS DO SILABÁRIO CUMULATIVO (ARENA LIMPA) */
+/* RENDERIZADOR DOS 4 PASSOS DO SILABÁRIO CUMULATIVO POR GEAR */
 function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaDock) {
     const topoClass = getTopographicClasses();
     const cons = session.sylData.consonant;
+    const gearTag = session.sylData.gearShort ? `${session.sylData.gearShort} • ` : '';
     const cyc = session.currentCycle;
 
     if (cyc === 1) {
-        badge.innerText = `Família ${cons} • Passo 1: Sílabas Estruturadas`;
+        badge.innerText = `${gearTag}Família ${cons} • Passo 1: Sílabas`;
         const sylStr = String(target || '').trim().toUpperCase();
         modelArea.style.minHeight = '145px';
         modelArea.innerHTML = `
@@ -5569,7 +5944,7 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
     }
 
     if (cyc === 2) {
-        badge.innerText = `Família ${cons} • Passo 2: Palavras Estruturadas`;
+        badge.innerText = `${gearTag}Família ${cons} • Passo 2: Palavras`;
         const wordStr = getNormalizedWordKey(target);
         modelArea.style.minHeight = '145px';
         modelArea.innerHTML = `
@@ -5599,7 +5974,7 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
     }
 
     if (cyc === 3) {
-        badge.innerText = `Família ${cons} • Passo 3: Transição para Texto Preto`;
+        badge.innerText = `${gearTag}Família ${cons} • Passo 3: Texto Preto`;
         const groupWords = Array.isArray(target) ? target : session.sylData.words.slice(0, 3);
         modelArea.style.minHeight = '0px';
 
@@ -5623,8 +5998,8 @@ function renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaD
     }
 
     badge.innerText = session.isPreTestChain
-        ? `PRÉ-TESTE • Família ${cons}`
-        : `Família ${cons} • Passo 4: Sondagem de Compreensão`;
+        ? `PRÉ-TESTE • ${gearTag}Família ${cons}`
+        : `${gearTag}Família ${cons} • Passo 4: Sondagem`;
     const wordStr = getNormalizedWordKey(target);
     modelArea.style.minHeight = '145px';
     modelArea.innerHTML = `
@@ -5832,7 +6207,7 @@ function isVowelChar(ch) {
     return /^[AEIOUÁÉÍÓÚÂÊÔÃÕÜ]$/i.test(ch);
 }
 
-/* FORMATAÇÃO VISUAL COM CAPITALIZAÇÃO CURSIVA (MAMÃE QUE NOS FAZ), PRESERVAÇÃO DE b/d/p/q E ZERO REGEX */
+/* FORMATAÇÃO VISUAL: WRAPPER HORIZONTAL ANTI-QUEBRA DE SÍLABAS + CURSIVA + b/d/p/q */
 function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainBlack = false) {
     const rawStr = String(text || '').trim();
     if (!rawStr) return '';
@@ -5868,11 +6243,15 @@ function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainB
         }).join('');
     };
 
-    const boxStyle = `display:inline-flex; align-items:center; justify-content:center; border:2.5px solid #2563EB; border-radius:10px; padding:1px 7px; margin:0 3px; background:#fff;`;
+    const boxStyle = `display:inline-flex; align-items:center; justify-content:center; border:2.5px solid #2563EB; border-radius:10px; padding:1px 7px; background:#fff; white-space:nowrap;`;
 
     if (useSylBox && !rawStr.includes(' ')) {
         const explicitSyls = extractExplicitSyllables(rawStr);
-        return explicitSyls.map((s, idx) => {
+        let scaleStyle = '';
+        if (explicitSyls.length >= 4) scaleStyle = 'font-size:0.72em;';
+        else if (explicitSyls.length === 3) scaleStyle = 'font-size:0.84em;';
+
+        const innerBoxes = explicitSyls.map((s, idx) => {
             let displaySyl = s;
             if (fontKey === 'SCHOOL') {
                 if (explicitSyls.length > 1 && idx === 0 && strippedStr.length >= 3) {
@@ -5884,11 +6263,13 @@ function formatStimulusTextHTML(text, modId, forceVisualCue = false, forcePlainB
             } else if (fontKey === 'LOWER') {
                 displaySyl = s.toLowerCase();
             }
-            return `<span style="${boxStyle}">${colorizeSegment(displaySyl)}</span>`;
+            return `<span class="syl-box-item" style="${boxStyle}">${colorizeSegment(displaySyl)}</span>`;
         }).join('');
+
+        return `<span class="syl-boxes-row" style="display:inline-flex; flex-wrap:nowrap; align-items:center; justify-content:center; gap:6px; white-space:nowrap; ${scaleStyle}">${innerBoxes}</span>`;
     }
 
-    return colorizeSegment(cleanDisplayStr);
+    return `<span style="display:inline-flex; flex-wrap:nowrap; align-items:center; justify-content:center; white-space:nowrap;">${colorizeSegment(cleanDisplayStr)}</span>`;
 }
 
 function getPhoneticAudioModel(target) {
@@ -6201,7 +6582,6 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         return;
     }
 
-    /* MÓDULO EXTRA: GENERALIZAÇÃO TIPOGRÁFICA (BASTÃO ↔ MINÚSCULA ↔ CURSIVA LEGÍVEL) */
     if (subType === 'TYPO_GEN_MM') {
         const pairMode = (target && target.pairMode) ? target.pairMode : 'UPPER_CURSIVE';
         const groupWords = (target && Array.isArray(target.words)) ? target.words : (Array.isArray(target) ? target : ['BOLA', 'GATO', 'MALA']);
@@ -7295,7 +7675,6 @@ function bindPhonemeSliderEvents(trackId, boxId, fillId) {
     boxEl.onpointerup = () => { if (isDragging && !completedSlide) resetDragPosition(); };
     boxEl.onpointercancel = () => { if (isDragging && !completedSlide) resetDragPosition(); };
 
-    // Suporte suave às setas do teclado no PC (interpolação fluida para acompanhar o eco)
     activeSliderKeyHandler = (key) => {
         if (blockClicks || completedSlide) return;
         maxSlide = getMaxSlide();
@@ -7362,7 +7741,6 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
         trackEl.classList.add('fused-state');
         playSound('win');
 
-        // Atraso de 300ms para a criança concluir a emissão vocal antes de ouvir o eco da sílaba fundida
         setTimeout(() => {
             const nowToken = `${session.phase}_${session.currentCycle}_${session.currentTrialIdx}`;
             if (fused && nowToken === trialToken) {
@@ -7414,7 +7792,6 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
     consEl.onpointerup = endPointer;
     consEl.onpointercancel = endPointer;
 
-    // Suporte às setas ArrowRight / ArrowLeft no PC para o Slide Silábico
     activeSliderKeyHandler = (key) => {
         if (blockClicks) return;
         if (fused) {
@@ -7442,7 +7819,7 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
 }
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 3 DE 3: SEÇÕES 14 A 19)
-   RESPOSTAS • TRAVA DO DOCK • TELEMETRIA & PDF FILTRADO • CONFIGS • ESTÚDIO A4
+   RESPOSTAS • TRAVA DO DOCK • TELEMETRIA CLÍNICA (JANELA RECENTE) • ESTÚDIO A4
    ============================================================================ */
 
 /* ============================================================================
@@ -8131,6 +8508,7 @@ function checkBlockMastery() {
 
     let prog = getModuleProgress(session.phase);
     const usedVar = session.activeVar || 1;
+    const hasExplicitVariations = getModuleVariationsMap(session.phase) !== null;
     const availVars = getAvailableVariationKeys(session.phase);
     const isProbeSession = !!(session.isProbeMode || session.isPreTestChain || session.isFastTrackEntryProbe || session.isPhonemeCheckpoint || session.phonemePreTestMastered);
 
@@ -8141,9 +8519,9 @@ function checkBlockMastery() {
                     prog.preTestCompletedVars.push(usedVar);
                 }
                 const curVarIdx = availVars.indexOf(usedVar);
-                const nextVar = (curVarIdx >= 0 && curVarIdx < availVars.length - 1) ? availVars[curVarIdx + 1] : null;
+                const nextVar = (hasExplicitVariations && curVarIdx >= 0 && curVarIdx < availVars.length - 1) ? availVars[curVarIdx + 1] : null;
 
-                if (nextVar !== null && !String(session.phase).startsWith('FA_') && !session.isStructuredSyllabary) {
+                if (nextVar !== null && !String(session.phase).startsWith('FA_')) {
                     prog.activeVar = nextVar;
                     saveState();
                     playSound('win');
@@ -8189,7 +8567,9 @@ function checkBlockMastery() {
             }
         }
 
-        const modTitle = session.eidosMod ? `${session.eidosMod.code} ${session.eidosMod.title}` : session.phase;
+        const gearUsed = session.activeGear || (ALL_SYLLABARY_KEYS.includes(session.phase) ? getActiveSyllabaryGearId() : null);
+        const gearLabelTag = gearUsed ? ` (${getEffectiveSyllabaryGears()[gearUsed]?.shortLabel || gearUsed})` : '';
+        const modTitle = session.eidosMod ? `${session.eidosMod.code} ${session.eidosMod.title}` : `${session.phase}${gearLabelTag}`;
         const modeTag = (session.isPreTestChain || session.isFastTrackEntryProbe || session.phonemePreTestMastered)
             ? ' [PRÉ-TESTE]'
             : (session.isProbeMode ? ' [SONDA]' : ' [TREINO]');
@@ -8200,6 +8580,7 @@ function checkBlockMastery() {
             tipo: session.eidosMod ? session.eidosMod.engine : (session.isPreReq ? "PRE_REQUISITO" : "SILABARIO"),
             modId: session.phase,
             modLabel: modTitle,
+            gear: gearUsed,
             eidosCode: session.eidosMod ? session.eidosMod.code : null,
             fase: modTitle + modeTag,
             isProbe: isProbeSession,
@@ -8311,7 +8692,7 @@ function repeatLesson() {
 }
 
 /* ============================================================================
-   17. TELEMETRIA (3 ABAS) E EXPORTAÇÃO PDF ALINHADA AOS FILTROS ATIVOS
+   17. TELEMETRIA (3 ABAS), REPERTÓRIO LEXICAL (JANELA RECENTE) E PDF FILTRADO
    ============================================================================ */
 let telemetryActiveTab = 'DTT';       // 'DTT' | 'LEXICAL' | 'HISTORY'
 let telemetryDttMode = 'TRAIN';       // 'TRAIN' | 'PROBE'
@@ -8335,11 +8716,14 @@ function normalizeLogEntryForTelemetry(entry) {
     const r = entry.resumoABA || { I: 0, D: 0, N: 0, T: 0 };
     const total = r.T || (r.I + r.D + r.N) || 0;
     const itemsLog = Array.isArray(entry.itemsLog) ? entry.itemsLog : [];
+    const taskKey = entry.gear ? `${entry.modId}__${entry.gear}` : (entry.modId || cleanLabel);
 
     return {
         ...entry,
+        taskKey,
         modId: entry.modId || cleanLabel,
         modLabel: cleanLabel,
+        gear: entry.gear || null,
         isProbe,
         itemsLog,
         resumoABA: { I: r.I || 0, D: r.D || 0, N: r.N || 0, T: total }
@@ -8375,8 +8759,8 @@ function setTelemetryDttMode(mode) {
     renderTelemetryDttView();
 }
 
-function onTelemetryTaskSelectChange(modId) {
-    telemetrySelectedTaskId = modId;
+function onTelemetryTaskSelectChange(taskKey) {
+    telemetrySelectedTaskId = taskKey;
     renderTelemetryDttView();
 }
 
@@ -8392,8 +8776,8 @@ function renderDashboard() {
     if (taskSel) {
         const taskMap = new Map();
         logs.forEach(l => {
-            if (!taskMap.has(l.modId)) {
-                taskMap.set(l.modId, l.modLabel);
+            if (!taskMap.has(l.taskKey)) {
+                taskMap.set(l.taskKey, l.modLabel);
             }
         });
 
@@ -8412,7 +8796,7 @@ function renderDashboard() {
                 taskSel.appendChild(opt);
             });
             if (!telemetrySelectedTaskId || !taskMap.has(telemetrySelectedTaskId)) {
-                telemetrySelectedTaskId = logs[logs.length - 1].modId;
+                telemetrySelectedTaskId = logs[logs.length - 1].taskKey;
             }
             taskSel.value = telemetrySelectedTaskId;
         }
@@ -8435,7 +8819,7 @@ function renderTelemetryDttView() {
 
     const logs = getNormalizedTelemetryLogs();
     const wantProbe = (telemetryDttMode === 'PROBE');
-    const filtered = logs.filter(l => l.modId === telemetrySelectedTaskId && l.isProbe === wantProbe);
+    const filtered = logs.filter(l => l.taskKey === telemetrySelectedTaskId && l.isProbe === wantProbe);
 
     if (!telemetrySelectedTaskId || filtered.length === 0) {
         tableWrap.innerHTML = `
@@ -8540,7 +8924,7 @@ function renderTelemetryDttView() {
     drawProgressChart(filtered);
 }
 
-/* ABA 2: REPERTÓRIO LEXICAL */
+/* ABA 2: REPERTÓRIO LEXICAL — JANELA RECENTE (ÚLTIMAS 5) + MÍNIMO DE 3 EXPOSIÇÕES */
 function buildLexicalTelemetryMap() {
     const logs = getNormalizedTelemetryLogs();
     const wordStats = new Map();
@@ -8581,12 +8965,42 @@ function buildLexicalTelemetryMap() {
     return wordStats;
 }
 
+function evaluateLexicalClinicalStatus(item) {
+    const crit = state.settings.crit || 90;
+    const recentWindow = item.history.slice(-5);
+    const recentI = recentWindow.filter(h => h.outcome === 'I').length;
+    const recentAcc = recentWindow.length > 0 ? Math.round((recentI / recentWindow.length) * 100) : 0;
+
+    const last3 = item.history.slice(-3);
+    const has3ConsecI = (last3.length === 3 && last3.every(h => h.outcome === 'I'));
+
+    // Exige mínimo de 3 exposições para consolidar; avalia janela recente (últimas 5) ou 3 acertos seguidos
+    if (item.total >= 3 && (recentAcc >= crit || has3ConsecI)) {
+        return { acc: recentAcc, statusClass: 'status-mastered', statusText: 'Consolidada' };
+    }
+    if (item.total < 3) {
+        if (recentAcc < 50 && item.N >= 2) {
+            return { acc: recentAcc, statusClass: 'status-attention', statusText: 'Atenção' };
+        }
+        return { acc: recentAcc, statusClass: 'status-learning', statusText: 'Em Aquisição' };
+    }
+    if (recentAcc < 60) {
+        return { acc: recentAcc, statusClass: 'status-attention', statusText: 'Atenção' };
+    }
+    return { acc: recentAcc, statusClass: 'status-learning', statusText: 'Em Aquisição' };
+}
+
 function getSortedLexicalList() {
     const map = buildLexicalTelemetryMap();
-    const list = Array.from(map.values()).map(item => ({
-        ...item,
-        acc: item.total > 0 ? Math.round((item.I / item.total) * 100) : 0
-    }));
+    const list = Array.from(map.values()).map(item => {
+        const evalRes = evaluateLexicalClinicalStatus(item);
+        return {
+            ...item,
+            acc: evalRes.acc,
+            statusClass: evalRes.statusClass,
+            statusText: evalRes.statusText
+        };
+    });
 
     if (telemetryLexSort === 'ACC_DESC') {
         list.sort((a, b) => (b.acc - a.acc) || (b.total - a.total));
@@ -8616,15 +9030,11 @@ function renderTelemetryLexicalView() {
         return;
     }
 
-    const crit = state.settings.crit || 90;
     gridEl.innerHTML = '';
 
     list.forEach(item => {
-        const statusClass = item.acc >= crit ? 'status-mastered' : (item.acc >= 60 ? 'status-learning' : 'status-attention');
-        const statusText = item.acc >= crit ? 'Consolidada' : (item.acc >= 60 ? 'Em Aquisição' : 'Atenção');
-
         const card = document.createElement('div');
-        card.className = `lex-word-card ${statusClass}`;
+        card.className = `lex-word-card ${item.statusClass}`;
         card.onclick = () => openWordTelemetryModal(item.word);
         card.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
@@ -8635,7 +9045,7 @@ function renderTelemetryLexicalView() {
                 <div class="lex-progress-fill" style="width:${item.acc}%;"></div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:0.72rem; font-weight:800; color:var(--text-light);">
-                <span>${statusText}</span>
+                <span>${item.statusText}</span>
                 <span>${item.total}x</span>
             </div>
         `;
@@ -8835,7 +9245,7 @@ function exportSessionLogPDF() {
     if (telemetryActiveTab === 'DTT') {
         const logs = getNormalizedTelemetryLogs();
         const wantProbe = (telemetryDttMode === 'PROBE');
-        const filtered = logs.filter(l => l.modId === telemetrySelectedTaskId && l.isProbe === wantProbe);
+        const filtered = logs.filter(l => l.taskKey === telemetrySelectedTaskId && l.isProbe === wantProbe);
 
         if (!telemetrySelectedTaskId || filtered.length === 0) {
             customAlert("Sem Dados no Filtro", `Não há registros de ${wantProbe ? 'Sondagem' : 'Treino'} para a tarefa selecionada.`);
@@ -8905,14 +9315,13 @@ function exportSessionLogPDF() {
             customAlert("Sem Dados", "Nenhuma palavra do Repertório Lexical foi registrada ainda.");
             return;
         }
-        const crit = state.settings.crit || 90;
         const doc = new jsPDF();
         doc.setFontSize(15);
         doc.setTextColor(59, 130, 246);
         doc.text("Repertório Lexical — AlfaMTS", 14, 18);
         doc.setFontSize(10);
         doc.setTextColor(50, 50, 50);
-        doc.text(`Aluno(a): ${state.student || 'NÃO INFORMADO'}   |   Palavras trabalhadas: ${list.length}   |   Emissão: ${todayStr}`, 14, 26);
+        doc.text(`Aluno(a): ${state.student || 'NÃO INFORMADO'}   |   Palavras trabalhadas: ${list.length}   |   Janela Recente (Últimas 5)   |   Emissão: ${todayStr}`, 14, 26);
 
         const rows = list.map(it => [
             it.word,
@@ -8921,12 +9330,12 @@ function exportSessionLogPDF() {
             String(it.D),
             String(it.N),
             `${it.acc}%`,
-            it.acc >= crit ? 'Consolidada' : (it.acc >= 60 ? 'Em Aquisição' : 'Atenção')
+            it.statusText
         ]);
 
         doc.autoTable({
             startY: 32,
-            head: [['Palavra', 'Alvos', 'Indep. (I)', 'Dica (D)', 'Erro (N)', 'Precisão', 'Status']],
+            head: [['Palavra', 'Alvos', 'Indep. (I)', 'Dica (D)', 'Erro (N)', 'Recente', 'Status']],
             body: rows,
             theme: 'grid',
             headStyles: { fillColor: [15, 23, 42] },
@@ -8942,7 +9351,6 @@ function exportSessionLogPDF() {
         return;
     }
 
-    // ABA HISTÓRICO (RESPEITANDO FILTRO DE BUSCA ATIVO)
     const filteredHistory = getFilteredHistoryLogs();
     if (filteredHistory.length === 0) {
         customAlert("Aviso", "Nenhum dado encontrado no filtro atual para exportar.");
@@ -9036,7 +9444,7 @@ function exportEidosChecklistPDF() {
 }
 
 /* ============================================================================
-   18. CONFIGURAÇÕES GLOBAIS (CONTROLE MOTOR, IMPULSIVIDADE E TRAVA DO DOCK)
+   18. CONFIGURAÇÕES GLOBAIS (CONTROLE MOTOR, IMPULSIVIDADE E UPDATE PWA)
    ============================================================================ */
 function togglePasswordField() {
     const chk = document.getElementById('set-sec-enable');
@@ -9094,6 +9502,21 @@ function ensureTactileControlsInSettingsUI() {
     if (holdSel) {
         holdSel.onchange = syncHoldCRMTSVisibility;
     }
+
+    // Garante botão "Verificar Atualizações" sem perda de dados no card Sistema e Memória Local
+    if (!document.getElementById('btn-check-pwa-updates')) {
+        const resetBtn = document.querySelector('#screen-settings button[onclick*="hardResetAppCache"]');
+        if (resetBtn && resetBtn.parentElement) {
+            const updBtn = document.createElement('button');
+            updBtn.type = 'button';
+            updBtn.id = 'btn-check-pwa-updates';
+            updBtn.className = 'btn-action';
+            updBtn.style.cssText = 'flex:1; background:var(--primary);';
+            updBtn.onclick = checkAppUpdatesWithoutDataLoss;
+            updBtn.innerHTML = `${UI_SVGS.replay} Verificar Atualizações`;
+            resetBtn.parentElement.insertBefore(updBtn, resetBtn);
+        }
+    }
 }
 
 function openSettings() {
@@ -9134,10 +9557,10 @@ function openSettings() {
     if (colorInp) colorInp.value = state.settings.themeColor || '#3B82F6';
 
     const sc = state.settings.sylComplex || {};
-    document.getElementById('set-syl-ccv').checked = !!sc.ccv;
-    document.getElementById('set-syl-cvcl').checked = !!sc.cvcL;
-    document.getElementById('set-syl-cvcs').checked = !!sc.cvcS;
-    document.getElementById('set-syl-cvcm').checked = !!sc.cvcM;
+    if (document.getElementById('set-syl-ccv')) document.getElementById('set-syl-ccv').checked = !!sc.ccv;
+    if (document.getElementById('set-syl-cvcl')) document.getElementById('set-syl-cvcl').checked = !!sc.cvcL;
+    if (document.getElementById('set-syl-cvcs')) document.getElementById('set-syl-cvcs').checked = !!sc.cvcS;
+    if (document.getElementById('set-syl-cvcm')) document.getElementById('set-syl-cvcm').checked = !!sc.cvcM;
 
     document.getElementById('set-stg-c1').checked = state.settings.stages.c1 !== false;
     document.getElementById('set-stg-c2').checked = state.settings.stages.c2 !== false;
@@ -9216,10 +9639,10 @@ function saveSettings() {
     state.settings.dragToModelCRMTS = document.getElementById('set-drag-crmts') ? document.getElementById('set-drag-crmts').checked : false;
 
     state.settings.sylComplex = {
-        ccv: document.getElementById('set-syl-ccv').checked,
-        cvcL: document.getElementById('set-syl-cvcl').checked,
-        cvcS: document.getElementById('set-syl-cvcs').checked,
-        cvcM: document.getElementById('set-syl-cvcm').checked
+        ccv: document.getElementById('set-syl-ccv') ? document.getElementById('set-syl-ccv').checked : false,
+        cvcL: document.getElementById('set-syl-cvcl') ? document.getElementById('set-syl-cvcl').checked : false,
+        cvcS: document.getElementById('set-syl-cvcs') ? document.getElementById('set-syl-cvcs').checked : false,
+        cvcM: document.getElementById('set-syl-cvcm') ? document.getElementById('set-syl-cvcm').checked : false
     };
 
     const colorInp = document.getElementById('set-theme-color');
@@ -9274,7 +9697,7 @@ function saveSettings() {
 
 function openReview(phaseId) {
     let pool = getPhasePool(phaseId);
-    if (getEffectiveSyllabaryOrder().includes(phaseId) && !['VOGAIS', 'ENCONTROS'].includes(phaseId)) {
+    if (ALL_SYLLABARY_KEYS.includes(phaseId) && !['VOGAIS', 'ENCONTROS'].includes(phaseId)) {
         pool = [...generateSyllables(phaseId), ...getCumulativeWordsForSyllableFamily(phaseId)];
     }
     const mod = getEffectiveEidosModules().find(m => m.id === phaseId)
@@ -9313,12 +9736,13 @@ function openReview(phaseId) {
 function openModulesManager() {
     const container = document.getElementById('modules-list-container');
     container.innerHTML = '';
+    const gearShort = getActiveSyllabaryGearObj().shortLabel;
     const allItems = [
         ...getEffectiveEidosModules().map(m => ({ id: m.id, label: `${m.code} - ${m.title}` })),
         ...getEffectivePalavrarioDrawers().map(d => ({ id: d.id, label: `Palavrário: ${d.title}` })),
         ...(state.customModules || []).map(cm => ({ id: cm.id, label: `Personalizado: ${cm.title}` })),
         ...getEffectivePhonologicalModules().map(pm => ({ id: pm.id, label: `Fonológico: ${pm.title}` })),
-        ...getEffectiveSyllabaryOrder().map(c => ({ id: c, label: `Silabário: ${c}` })),
+        ...getEffectiveSyllabaryOrder().map(c => ({ id: c, label: `Silabário (${gearShort}): ${c}` })),
         ...extraModules.map(e => ({ id: e, label: `Extra: ${e}` }))
     ];
 
@@ -9393,6 +9817,7 @@ function startCustomWords() {
         phase: 'PALAVRAS',
         eidosMod: null,
         activeVar: 1,
+        activeGear: null,
         isProbeMode: isModuleInProbeMode('PALAVRAS'),
         isFastTrackEntryProbe: false,
         isPreTestChain: false,
@@ -9643,7 +10068,7 @@ function parseStudioCycleToFormula(cyc) {
 function extractModuleFormulasForStudent(modId) {
     const customMod = (state.customModules || []).find(m => m.id === modId);
     const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
-    const isSyl = getEffectiveSyllabaryOrder().includes(modId);
+    const isSyl = ALL_SYLLABARY_KEYS.includes(modId);
     const stg = getEffectiveStagesForModule(modId, isSyl);
 
     if (customMod) {
@@ -9829,21 +10254,21 @@ function renderLivePrintStudioPreview() {
     const customMod = (state.customModules || []).find(m => m.id === modId);
     const palDrawer = getEffectivePalavrarioDrawers().find(d => d.id === modId);
     const eMod = getEffectiveEidosModules().find(m => m.id === modId);
-    const isSylFamily = getEffectiveSyllabaryOrder().includes(modId) && !['VOGAIS', 'ENCONTROS'].includes(modId);
+    const isSylFamily = ALL_SYLLABARY_KEYS.includes(modId) && !['VOGAIS', 'ENCONTROS'].includes(modId);
     const isPalDrawer = !!palDrawer;
 
     const modCode = eMod ? eMod.code : (palDrawer ? palDrawer.code : (customMod ? 'PERS' : 'SIL'));
-    const modTitle = eMod ? eMod.title : (palDrawer ? palDrawer.title : (customMod ? customMod.title : `Família ${modId}`));
+    const modTitle = eMod ? eMod.title : (palDrawer ? palDrawer.title : (customMod ? customMod.title : `Família ${modId} (${getActiveSyllabaryGearObj().shortLabel})`));
 
     const tCfg = getTaskConfig(modId);
-    const numOpts = getEffectiveSyllabaryOrder().includes(modId)
+    const numOpts = ALL_SYLLABARY_KEYS.includes(modId)
         ? (parseInt(state.settings.opts) || 3)
         : ((tCfg && tCfg.opts >= 2) ? parseInt(tCfg.opts) : (parseInt(state.settings.opts) || 3));
 
     const studentName = getActiveFirstName();
     let rawPool = getPhasePool(modId, chosenVar);
     if (isSylFamily) {
-        rawPool = [...generateSyllables(modId), ...getCumulativeWordsForSyllableFamily(modId)];
+        rawPool = [...generateSyllables(modId), ...getCumulativeWordsForSyllableFamily(modId, chosenVar)];
     }
     const cleanPool = rawPool.map(it => {
         if (typeof it === 'object') return it.target || it.sentence || JSON.stringify(it);
