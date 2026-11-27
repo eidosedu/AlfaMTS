@@ -724,7 +724,7 @@ html, body {
     display: block;
 }
 
-/* ================= 6. TELA DE JOGOS / TRILHA ================= */
+/* ================= 6. TELA DE JOGOS / TRILHA & BOTTOM SHEET DE GEARS ================= */
 #screen-home {
     overflow: hidden !important;
     padding: 16px 32px 14px 32px !important;
@@ -756,6 +756,113 @@ html, body {
     text-align: center;
     pointer-events: none;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dynamic-level-title.gear-trigger-title {
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.dynamic-level-title.gear-trigger-title:hover {
+    background: #FFFFFF;
+    border-color: var(--border);
+    box-shadow: var(--shadow-card);
+}
+
+.dynamic-level-title.gear-trigger-title:active {
+    transform: translateX(-50%) scale(0.96);
+}
+
+.gear-header-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0;
+}
+
+/* BOTTOM SHEET DE SELEÇÃO DE GEARS */
+.bottom-sheet-overlay {
+    align-items: flex-end !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+.bottom-sheet-content {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 680px;
+    max-height: 82vh;
+    overflow-y: auto;
+    border-radius: 26px 26px 0 0;
+    padding: 12px 24px 28px 24px;
+    box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.18);
+    border-top: 1.5px solid var(--border);
+    text-align: left;
+    animation: slideUpSheet 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideUpSheet {
+    from { transform: translateY(32px); opacity: 0.6; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.bottom-sheet-handle {
+    width: 44px;
+    height: 5px;
+    border-radius: 999px;
+    background: #CBD5E1;
+    margin: 0 auto 14px auto;
+}
+
+.gear-reset-notice {
+    background: var(--warning-light);
+    color: #92400E;
+    border: 1px solid #FDE68A;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+.gear-selector-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gear-option-card {
+    background: #F8FAFC;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.gear-option-card:hover {
+    border-color: var(--primary);
+    background: #FFFFFF;
+}
+
+.gear-option-card.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 .header-right-actions {
@@ -985,7 +1092,7 @@ html, body {
     border-radius: 6px;
 }
 
-/* ================= 7. ARENA DE INTERVENÇÃO, SLIDE DE FUSÃO E DOCK COM TRAVA ================= */
+/* ================= 7. ARENA DE INTERVENÇÃO, SYLBOX HORIZONTAL & DOCK ================= */
 #screen-game {
     background: #FFFFFF;
     padding: 16px 24px;
@@ -1086,6 +1193,26 @@ html, body {
     line-height: 1.35;
     padding: 22px 32px;
     border-style: solid;
+}
+
+/* BLINDAGEM HORIZONTAL DAS SÍLABAS ENQUADRADAS */
+.syl-boxes-row {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.syl-box-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .tracking-multiline-box {
@@ -1690,7 +1817,7 @@ html, body {
 }
 .ghost-input { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
-/* ================= 8. NOVA TELEMETRIA (3 ABAS: DTT EM COLUNAS, LEXICAL E HISTÓRICO) ================= */
+/* ================= 8. NOVA TELEMETRIA (DTT EM COLUNAS, REPERTÓRIO LEXICAL E HISTÓRICO) ================= */
 .dash-header {
     display: flex;
     justify-content: space-between;
@@ -1711,7 +1838,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding-bottom: 42px;
+    padding-bottom: 84px;
 }
 
 .telemetry-main-tabs {
@@ -1822,8 +1949,9 @@ html, body {
 
 .tel-lexical-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 14px;
+    padding-bottom: 24px;
 }
 
 .lex-word-card {
@@ -1831,10 +1959,12 @@ html, body {
     border: 1.5px solid var(--border);
     border-left: 5px solid var(--primary);
     border-radius: 16px;
-    padding: 14px 16px;
+    padding: 15px 16px;
+    min-height: 104px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 10px;
     cursor: pointer;
     box-shadow: var(--shadow-card);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -2717,7 +2847,6 @@ textarea {
     body * {
         visibility: hidden !important;
     }
-    /* IMPRESSÃO DO ESTÚDIO A4 (MATERIAIS CONCRETOS) */
     body:not(.printing-manual) #screen-complements,
     body:not(.printing-manual) #comp-section-printkit,
     body:not(.printing-manual) .print-studio-workspace,
@@ -2726,7 +2855,6 @@ textarea {
     body:not(.printing-manual) #print-root * {
         visibility: visible !important;
     }
-    /* IMPRESSÃO ISOLADA DOS MANUAIS EM MARKDOWN */
     body.printing-manual #screen-complements,
     body.printing-manual #comp-section-manuals,
     body.printing-manual #manual-reader-panel,
