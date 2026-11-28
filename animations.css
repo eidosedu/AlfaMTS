@@ -1,0 +1,368 @@
+/* ============================================================================
+   ALFAMTS - CAMADA ISOLADA DE ANIMAÇÕES E FLUIDEZ (animations.css)
+   MOEDA 3D • FÍSICA DE BOTTOM SHEET • TRANSIÇÕES • MICRO-INTERAÇÕES DA ARENA
+   ============================================================================ */
+
+/* ================= 1. TRANSIÇÕES DE TELAS E TÍTULO DO CARROSSEL ================= */
+.screen.active {
+    animation: alfaScreenEnter 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes alfaScreenEnter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.title-swap-anim {
+    animation: alfaTitleSwap 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes alfaTitleSwap {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 4px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* ================= 2. MODAIS (BACKDROP FADE + POP-IN) ================= */
+.modal-overlay:not(.bottom-sheet-overlay) {
+    animation: alfaBackdropFade 180ms ease-out both;
+}
+
+.modal-overlay:not(.bottom-sheet-overlay) .modal-content {
+    animation: alfaModalPop 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes alfaBackdropFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes alfaModalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ================= 3. FÍSICA REAL NA BOTTOM SHEET (#modal-gear-selector) ================= */
+.bottom-sheet-overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bottom-sheet-overlay.sheet-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.bottom-sheet-overlay .bottom-sheet-content {
+    transform: translateY(100%);
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation: none !important;
+    will-change: transform;
+}
+
+.bottom-sheet-overlay.sheet-open .bottom-sheet-content {
+    transform: translateY(0);
+}
+
+.bottom-sheet-overlay .bottom-sheet-content.sheet-dragging {
+    transition: none !important;
+}
+
+.bottom-sheet-drag-zone {
+    cursor: grab;
+    touch-action: none;
+    padding-top: 4px;
+}
+
+.bottom-sheet-drag-zone:active {
+    cursor: grabbing;
+}
+
+/* ================= 4. RESPOSTA TÁTIL EM CARDS E BOTÕES ================= */
+.phase-card,
+.splash-btn,
+.complement-hub-card,
+.gear-option-card,
+.lex-word-card {
+    transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 160ms ease,
+                box-shadow 160ms ease,
+                background-color 160ms ease;
+}
+
+.phase-card:not(.locked):active,
+.splash-btn:active,
+.complement-hub-card:active,
+.gear-option-card:active,
+.lex-word-card:active {
+    transform: scale(0.97) !important;
+}
+
+/* ================= 5. MICRO-INTERAÇÕES DA ARENA (#screen-game) ================= */
+.arena-trial-enter {
+    animation: alfaTrialEnter 210ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes alfaTrialEnter {
+    from {
+        opacity: 0;
+        transform: translateY(7px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Encaixe magnético no CRMTS */
+.crmts-slot.slot-magnetic-fill {
+    animation: alfaSlotSnap 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes alfaSlotSnap {
+    0% {
+        transform: scale(0.78);
+        background-color: var(--primary-light);
+    }
+    65% {
+        transform: scale(1.08);
+        background-color: var(--success-light);
+        border-color: var(--success);
+    }
+    100% {
+        transform: scale(1);
+        background-color: #FFFFFF;
+    }
+}
+
+/* Tremor horizontal sutil em erro */
+.alfa-shake-subtle {
+    animation: alfaShakeSubtle 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes alfaShakeSubtle {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+/* Pulso suave na Aprendizagem Sem Erro */
+.errorless-prompt {
+    border-color: var(--warning) !important;
+    background: var(--warning-light) !important;
+    animation: alfaErrorlessPulse 1.35s ease-in-out infinite !important;
+}
+
+@keyframes alfaErrorlessPulse {
+    0%, 100% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.22);
+    }
+    50% {
+        transform: scale(1.055);
+        box-shadow: 0 0 0 11px rgba(245, 158, 11, 0.06);
+    }
+}
+
+/* Ondas concêntricas no botão de áudio durante TTS/Fonema */
+.model-audio-btn {
+    position: relative;
+}
+
+.model-audio-btn.audio-wave-active::before,
+.model-audio-btn.audio-wave-active::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 3px solid var(--primary);
+    opacity: 0;
+    pointer-events: none;
+    animation: alfaAudioRipple 1.15s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.model-audio-btn.audio-wave-active::after {
+    animation-delay: 0.42s;
+}
+
+@keyframes alfaAudioRipple {
+    0% {
+        transform: scale(0.96);
+        opacity: 0.55;
+    }
+    100% {
+        transform: scale(1.48);
+        opacity: 0;
+    }
+}
+
+/* Pulso rítmico ativo no Microfone */
+#mic-btn.listening {
+    animation: alfaMicPulse 1.05s cubic-bezier(0.22, 1, 0.36, 1) infinite !important;
+}
+
+@keyframes alfaMicPulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.48);
+    }
+    65% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* ================= 6. MOEDA 3D DE RECOMPENSA + VOO ATÉ O SALDO ================= */
+.alfa-coin-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9800;
+    overflow: hidden;
+}
+
+.alfa-coin-flyer {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 96px;
+    height: 96px;
+    margin-left: -48px;
+    margin-top: -48px;
+    perspective: 700px;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+.alfa-coin-body {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: alfaCoinSpin3D 780ms cubic-bezier(0.25, 0.85, 0.35, 1) forwards;
+}
+
+.alfa-coin-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    background: linear-gradient(145deg, #FDE047 0%, #F59E0B 55%, #D97706 100%);
+    border: 5px solid #FEF08A;
+    box-shadow: 0 14px 32px rgba(217, 119, 6, 0.38), inset 0 3px 6px rgba(255, 255, 255, 0.55);
+    color: #78350F;
+    font-weight: 900;
+}
+
+.alfa-coin-face.back {
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, #FBBF24 0%, #D97706 100%);
+}
+
+.alfa-coin-val {
+    font-size: 1.85rem;
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+@keyframes alfaCoinSpin3D {
+    0% {
+        transform: scale(0.35) rotateY(0deg);
+        opacity: 0;
+    }
+    25% {
+        transform: scale(1.12) rotateY(180deg);
+        opacity: 1;
+    }
+    65% {
+        transform: scale(1) rotateY(540deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotateY(720deg);
+        opacity: 1;
+    }
+}
+
+/* Pulso elástico no contador de saldo ao receber a moeda */
+.token-impact-pulse {
+    animation: alfaTokenImpact 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes alfaTokenImpact {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.55);
+    }
+    45% {
+        transform: scale(1.18);
+        background-color: #FEF08A;
+        border-color: #D97706;
+        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+.alfa-pulse-generic {
+    animation: alfaGenericPulse 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes alfaGenericPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.09); }
+    100% { transform: scale(1); }
+}
+
+/* ================= 7. CONTROLE SENSORIAL (PREFERS-REDUCED-MOTION) ================= */
+@media (prefers-reduced-motion: reduce) {
+    .screen.active,
+    .title-swap-anim,
+    .modal-overlay,
+    .modal-content,
+    .arena-trial-enter,
+    .crmts-slot.slot-magnetic-fill,
+    .alfa-shake-subtle,
+    .errorless-prompt,
+    .model-audio-btn.audio-wave-active::before,
+    .model-audio-btn.audio-wave-active::after,
+    #mic-btn.listening,
+    .alfa-coin-body,
+    .token-impact-pulse,
+    .alfa-pulse-generic {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
