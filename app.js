@@ -1,6 +1,6 @@
 /* ============================================================================
-   ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 1 DE 3: SEÇÕES 5.0 A 9)
-   GEARS DO SILABÁRIO (SNAPSHOTS) • FONTES • HOLD • MANUAIS .MD • UPDATE PWA
+   ALFAMTS - MOTOR PRINCIPAL (SEÇÕES 5.0, 5, 6, 7 E 8 — v2.1.0)
+   CAMADA DE ANIMAÇÕES • MOEDA 3D • BOTTOM SHEET MINIMALISTA • ONDAS DE ÁUDIO
    ============================================================================ */
 
 /* ============================================================================
@@ -170,6 +170,9 @@ function playPhonemeAudioFile(letter, varIdx = '1', playTwice = false) {
     if (phonemeDoublePlayTimer) { clearTimeout(phonemeDoublePlayTimer); phonemeDoublePlayTimer = null; }
     if (activePhonemeAudioObj) {
         try { activePhonemeAudioObj.pause(); activePhonemeAudioObj.currentTime = 0; } catch (e) {}
+    }
+    if (window.AlfaAnimations && typeof window.AlfaAnimations.triggerAudioWave === 'function') {
+        window.AlfaAnimations.triggerAudioWave(null, playTwice ? 1800 : 1000);
     }
 
     const src = getPhonemeAudioPath(letter, varIdx);
@@ -490,18 +493,20 @@ const DEFAULT_SYLLABARY_GEARS = {
     GEAR_1: {
         id: 'GEAR_1',
         shortLabel: 'Gear 1',
-        title: 'Gear 1 — Base (CV e CVV)',
-        desc: 'Sílabas simples abertas (CV) e encontros vocálicos (CVV) com vocabulário cumulativo inicial.',
+        shortTag: 'CV • CVV',
+        title: 'Gear 1 — Base',
+        desc: 'Sílabas simples abertas (CV) e encontros vocálicos (CVV).',
         order: ['VOGAIS', 'ENCONTROS', 'T', 'L', 'M', 'F', 'B', 'R', 'P', 'N', 'V', 'S', 'D', 'J', 'X', 'Z', 'C', 'G', 'Q'],
         pivots: [],
         initialUnlocked: ['VOGAIS', 'ENCONTROS', 'T'],
-        words: null // Usa SYLLABARY_CUMULATIVE_WORDS / FALLBACK_CUMULATIVE_SYL_WORDS
+        words: null
     },
     GEAR_2: {
         id: 'GEAR_2',
         shortLabel: 'Gear 2',
+        shortTag: 'CVC • R / L',
         title: 'Gear 2 — Fechadas em R e L',
-        desc: 'Sílabas CV, CVV e CVC travadas em R e L, com R e L posicionados como pivôs de revisão.',
+        desc: 'Sílabas CV, CVV e CVC travadas em R e L.',
         order: ['T', 'M', 'B', 'P', 'R', 'F', 'C', 'G', 'D', 'S', 'J', 'L'],
         pivots: ['R', 'L'],
         initialUnlocked: ['T'],
@@ -523,8 +528,9 @@ const DEFAULT_SYLLABARY_GEARS = {
     GEAR_3: {
         id: 'GEAR_3',
         shortLabel: 'Gear 3',
+        shortTag: 'CVC • M/N / S',
         title: 'Gear 3 — Fechadas em M/N e S',
-        desc: 'Sílabas CV, CVV, VC e CVC travadas em M, N e S, com M, N e S como pivôs de revisão.',
+        desc: 'Sílabas CV, CVV, VC e CVC travadas em M, N e S.',
         order: ['T', 'B', 'P', 'M', 'L', 'F', 'D', 'N', 'C', 'G', 'V', 'R', 'J', 'S'],
         pivots: ['M', 'N', 'S'],
         initialUnlocked: ['T'],
@@ -548,8 +554,9 @@ const DEFAULT_SYLLABARY_GEARS = {
     GEAR_4: {
         id: 'GEAR_4',
         shortLabel: 'Gear 4',
-        title: 'Gear 4 — Encontros Inseparáveis (R e L)',
-        desc: 'Grupos consonantais CCV e CCVC com R e L, com R e L atuando como pivôs de revisão.',
+        shortTag: 'CCV • CCVC',
+        title: 'Gear 4 — Encontros Inseparáveis',
+        desc: 'Grupos consonantais CCV e CCVC com R e L.',
         order: ['T', 'P', 'B', 'R', 'F', 'C', 'G', 'D', 'V', 'L'],
         pivots: ['R', 'L'],
         initialUnlocked: ['T'],
@@ -888,7 +895,7 @@ function normalizeStudentState(st) {
 
 let state = initTenantsAndActiveStudent();
 
-/* TROCA DISJUNTA DE GEAR DO SILABÁRIO COM SALVAMENTO E RESTAURAÇÃO DE SNAPSHOTS */
+/* TROCA DISJUNTA DE GEAR DO SILABÁRIO COM SNAPSHOTS + BOTTOM SHEET MINIMALISTA */
 function switchSyllabaryGear(newGearId) {
     const gears = getEffectiveSyllabaryGears();
     if (!gears[newGearId]) return;
@@ -900,7 +907,6 @@ function switchSyllabaryGear(newGearId) {
 
     if (!state.gearSnapshots) state.gearSnapshots = {};
 
-    // 1. Salva snapshot do estado atual das consoantes do Silabário na Gear que está saindo
     const oldProgress = {};
     const oldUnlocked = [];
     ALL_SYLLABARY_KEYS.forEach(k => {
@@ -917,7 +923,6 @@ function switchSyllabaryGear(newGearId) {
         savedAt: new Date().toLocaleDateString('pt-BR')
     };
 
-    // 2. Limpa o progresso e desbloqueios ativos apenas das chaves do Silabário (mantendo state.log intacto)
     ALL_SYLLABARY_KEYS.forEach(k => {
         if (state.moduleProgress && state.moduleProgress[k]) {
             delete state.moduleProgress[k];
@@ -925,7 +930,6 @@ function switchSyllabaryGear(newGearId) {
     });
     state.unlocked = (state.unlocked || []).filter(id => !ALL_SYLLABARY_KEYS.includes(id));
 
-    // 3. Engata a nova Gear e restaura snapshot anterior se existir (ou inicia limpa com o 1º card destravado)
     state.activeSyllabaryGear = newGearId;
     const targetGear = gears[newGearId];
     const snap = state.gearSnapshots[newGearId];
@@ -939,7 +943,6 @@ function switchSyllabaryGear(newGearId) {
         });
     }
 
-    // Garante sempre que os cards iniciais (1º card da trilha) da Gear engatada estejam destravados
     const mustUnlock = targetGear.initialUnlocked || [targetGear.order[0]];
     mustUnlock.forEach(k => {
         if (k && !state.unlocked.includes(k)) state.unlocked.push(k);
@@ -949,6 +952,22 @@ function switchSyllabaryGear(newGearId) {
     playSound('win');
     closeSyllabaryGearSheet();
     renderGrid();
+}
+
+function getGearShortTag(gearObj) {
+    if (gearObj && gearObj.shortTag) return gearObj.shortTag;
+    const map = {
+        GEAR_1: 'CV • CVV',
+        GEAR_2: 'CVC • R / L',
+        GEAR_3: 'CVC • M/N / S',
+        GEAR_4: 'CCV • CCVC'
+    };
+    return map[gearObj.id] || '';
+}
+
+function getGearCleanTitle(gearObj) {
+    if (!gearObj || !gearObj.title) return 'Gear';
+    return String(gearObj.title).replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
 function ensureSyllabaryGearSheetDOM() {
@@ -962,18 +981,14 @@ function ensureSyllabaryGearSheetDOM() {
     modal.style.zIndex = '360';
     modal.innerHTML = `
         <div class="bottom-sheet-content">
-            <div class="bottom-sheet-handle"></div>
-            <div class="modal-clean-header" style="margin-bottom:10px;">
-                <div>
-                    <h2 class="modal-title" style="margin:0; font-size:1.28rem;">Gears do Silabário</h2>
-                    <span style="font-size:0.78rem; color:var(--text-light); font-weight:700;">Seleção exclusiva • O histórico bruto permanece salvo</span>
+            <div class="bottom-sheet-drag-zone">
+                <div class="bottom-sheet-handle"></div>
+                <div class="modal-clean-header" style="margin-bottom:14px;">
+                    <h2 class="modal-title" style="margin:0; font-size:1.22rem;">Gears do Silabário</h2>
+                    <button type="button" class="icon-circle-btn" onclick="closeSyllabaryGearSheet()" title="Fechar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                 </div>
-                <button type="button" class="icon-circle-btn" onclick="closeSyllabaryGearSheet()" title="Fechar">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <div class="gear-reset-notice">
-                Alternar de Gear salva o progresso atual em snapshot e carrega (ou inicia limpo) o status de maestria das consoantes da nova Gear.
             </div>
             <div id="gear-selector-list" class="gear-selector-list"></div>
         </div>
@@ -984,6 +999,10 @@ function ensureSyllabaryGearSheetDOM() {
         backdropMouseDownTarget = null;
     });
     document.body.appendChild(modal);
+
+    if (window.AlfaAnimations && typeof window.AlfaAnimations.bindDraggableSheet === 'function') {
+        window.AlfaAnimations.bindDraggableSheet(modal, closeSyllabaryGearSheet);
+    }
     return modal;
 }
 
@@ -1004,29 +1023,38 @@ function openSyllabaryGearSheet() {
             card.className = `gear-option-card ${isCurrent ? 'active' : ''}`;
             card.onclick = () => switchSyllabaryGear(g.id);
 
-            const badgeHTML = isCurrent
+            const statusBadge = isCurrent
                 ? `<span class="meta-chip" style="background:var(--primary); color:#FFFFFF;">Ativa</span>`
-                : (hasSnap ? `<span class="meta-chip" style="background:var(--success-light); color:#065F46;">Snapshot Salvo</span>` : `<span class="meta-chip">Limpa</span>`);
+                : (hasSnap ? `<span class="meta-chip" style="background:var(--success-light); color:#065F46;">Salvo</span>` : '');
 
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
-                    <strong style="font-size:0.98rem; color:var(--text);">${g.title}</strong>
-                    ${badgeHTML}
-                </div>
-                <p style="font-size:0.8rem; color:var(--text-light); font-weight:600; margin:0; line-height:1.4;">${g.desc}</p>
-                <div style="font-size:0.72rem; font-weight:800; color:var(--primary-dark); margin-top:6px;">
-                    Trilha (${g.order.length} cards): ${g.order.join(' → ')}
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                    <div>
+                        <strong style="font-size:0.98rem; color:var(--text); display:block;">${getGearCleanTitle(g)}</strong>
+                        <span style="font-size:0.76rem; font-weight:800; color:var(--text-light);">${getGearShortTag(g)}</span>
+                    </div>
+                    ${statusBadge}
                 </div>
             `;
             listEl.appendChild(card);
         });
     }
-    modal.style.display = 'flex';
+
+    if (window.AlfaAnimations && typeof window.AlfaAnimations.openBottomSheet === 'function') {
+        window.AlfaAnimations.openBottomSheet(modal);
+    } else {
+        modal.style.display = 'flex';
+    }
 }
 
 function closeSyllabaryGearSheet() {
     const modal = document.getElementById('modal-gear-selector');
-    if (modal) modal.style.display = 'none';
+    if (!modal) return;
+    if (window.AlfaAnimations && typeof window.AlfaAnimations.closeBottomSheet === 'function') {
+        window.AlfaAnimations.closeBottomSheet(modal);
+    } else {
+        modal.style.display = 'none';
+    }
 }
 
 let currentLevelTab = 'N1';
@@ -1550,6 +1578,7 @@ let session = {
     phase: '',
     eidosMod: null,
     activeVar: 1,
+    activeGear: null,
     isProbeMode: false,
     isFastTrackEntryProbe: false,
     isPreTestChain: false,
@@ -1585,7 +1614,7 @@ let session = {
 };
 
 /* ============================================================================
-   6. ÁUDIO SINTÉTICO, TTS, BLINDAGEM DE INTERFACE E HOLD-TO-SELECT
+   6. ÁUDIO SINTÉTICO, TTS COM ONDA SONORA, MOEDA 3D E HOLD-TO-SELECT
    ============================================================================ */
 let audioCtx = null;
 
@@ -1625,6 +1654,9 @@ function playSound(type) {
 }
 
 function speakTTS(text) {
+    if (window.AlfaAnimations && typeof window.AlfaAnimations.triggerAudioWave === 'function') {
+        window.AlfaAnimations.triggerAudioWave(null, 1200);
+    }
     if (window.AppInventor) {
         window.AppInventor.setWebViewString("FALAR:" + text);
     } else {
@@ -1679,8 +1711,9 @@ function applyTheme() {
 
 function awardTokensToActiveStudent(amount, reason = '') {
     if (!state.tokens) state.tokens = getDefaultTokensClone();
-    const val = parseInt(amount) || 0;
+    const val = parseInt(amount, 10) || 0;
     if (val === 0) return;
+
     state.tokens.balance = Math.max(0, (state.tokens.balance || 0) + val);
     if (val > 0) {
         state.tokens.totalEarned = (state.tokens.totalEarned || 0) + val;
@@ -1692,7 +1725,15 @@ function awardTokensToActiveStudent(amount, reason = '') {
     });
     if (state.tokens.ledger.length > 40) state.tokens.ledger.pop();
     saveState();
-    updateTokenBalanceUI();
+
+    // Se for ganho de fichas, congela o contador visual até a moeda 3D pousar no saldo
+    if (val > 0 && window.AlfaAnimations && typeof window.AlfaAnimations.playCoinReward === 'function') {
+        window.AlfaAnimations.playCoinReward(val, () => {
+            updateTokenBalanceUI();
+        });
+    } else {
+        updateTokenBalanceUI();
+    }
 }
 
 /* MOTOR DE PRESSÃO SUSTENTADA (HOLD-TO-SELECT — APENAS NA RESPOSTA, TOLERÂNCIA 24PX) */
@@ -1897,7 +1938,18 @@ function hideAllScreens() {
 }
 
 function closeModals() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        if (m.classList.contains('bottom-sheet-overlay')) {
+            if (window.AlfaAnimations && typeof window.AlfaAnimations.closeBottomSheet === 'function') {
+                window.AlfaAnimations.closeBottomSheet(m);
+            } else {
+                m.classList.remove('sheet-open');
+                m.style.display = 'none';
+            }
+        } else {
+            m.style.display = 'none';
+        }
+    });
     closeAuth();
 }
 
@@ -3153,6 +3205,7 @@ const CAROUSEL_LEVELS = [
     { key: 'PERSONALIZADOS', title: 'Personalizados' }
 ];
 
+let lastCarouselPageIdx = -1;
 let pushHoldTimer = null;
 let isPushModalOpen = false;
 let pointerDownCoords = { x: 0, y: 0 };
@@ -3240,6 +3293,9 @@ function onCarouselScroll() {
     if (pushHoldTimer) { clearTimeout(pushHoldTimer); pushHoldTimer = null; }
 
     const pageIdx = Math.round(viewport.scrollLeft / viewport.clientWidth);
+    const pageChanged = (pageIdx !== lastCarouselPageIdx);
+    lastCarouselPageIdx = pageIdx;
+
     const lvlObj = CAROUSEL_LEVELS[pageIdx] || CAROUSEL_LEVELS[0];
     currentLevelTab = lvlObj.key;
 
@@ -3270,6 +3326,9 @@ function onCarouselScroll() {
             titleEl.title = '';
             titleEl.innerText = lvlObj.title;
             titleEl.onclick = null;
+        }
+        if (pageChanged && window.AlfaAnimations && typeof window.AlfaAnimations.animateTitleSwap === 'function') {
+            window.AlfaAnimations.animateTitleSwap(titleEl);
         }
     }
 
@@ -5459,6 +5518,9 @@ function applyDMTSWrapperIfEnabled(modelArea, compArea, isVisualModel, overrideD
             dmtsDelayTimer = setTimeout(() => {
                 modelArea.innerHTML = '';
                 compArea.style.display = 'flex';
+                if (window.AlfaAnimations && typeof window.AlfaAnimations.animateTrialEnter === 'function') {
+                    window.AlfaAnimations.animateTrialEnter(null, compArea);
+                }
                 trialStartTime = Date.now();
                 startResponseTimeoutIfConfigured(overrideTimeoutSec);
             }, delaySec * 1000);
@@ -5676,6 +5738,9 @@ function renderHorizontalMultiMTSBoard(compArea, pairs, options = {}) {
             undockModelZone(zoneObj);
         };
         zoneObj.el.appendChild(dockSlot);
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.animateSlotFill === 'function') {
+            window.AlfaAnimations.animateSlotFill(dockSlot);
+        }
         playSound('click');
         return true;
     };
@@ -5723,6 +5788,9 @@ function renderHorizontalMultiMTSBoard(compArea, pairs, options = {}) {
             playSound('click');
             if (!session.isProbeMode) {
                 cardC.classList.add('feedback-error');
+                if (window.AlfaAnimations && typeof window.AlfaAnimations.shakeElement === 'function') {
+                    window.AlfaAnimations.shakeElement(cardC);
+                }
                 setTimeout(() => cardC.classList.remove('feedback-error'), 380);
             }
             if (typeof onPairError === 'function') {
@@ -5785,19 +5853,28 @@ function renderTrial(restoredOptions = null) {
     counterPill.innerText = `${session.currentTrialIdx + 1} / ${session.trials.length}`;
     const target = session.trials[session.currentTrialIdx];
 
+    const triggerStageEnterAnim = () => {
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.animateTrialEnter === 'function') {
+            window.AlfaAnimations.animateTrialEnter(modelArea, compArea);
+        }
+    };
+
     if (session.eidosMod && session.eidosMod.subType === 'CUSTOM_STUDIO') {
         renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock);
+        triggerStageEnterAnim();
         return;
     }
 
     if (session.isStructuredSyllabary && session.sylData) {
         renderStructuredSyllabaryTrial(target, modelArea, compArea, badge, abaDock);
+        triggerStageEnterAnim();
         return;
     }
 
     const stdSubTypes = ['VOWELS_PURE', 'VOCAL_ENCOUNTERS', 'SYL_RECOG_CV', 'CV_FUSION', 'WORDS_EQ', 'CG_ALL_SOUNDS', 'QU_GU_SOUNDS', 'CLASS_VC', 'CLASS_SP', 'RECOMB_STT'];
     if (session.eidosMod && !stdSubTypes.includes(session.eidosMod.subType)) {
         renderSpecializedEidosTrial(session.eidosMod.subType, target, modelArea, compArea, badge, abaDock, fluencyPill);
+        triggerStageEnterAnim();
         return;
     }
 
@@ -5907,6 +5984,8 @@ function renderTrial(restoredOptions = null) {
         });
         applyDMTSWrapperIfEnabled(modelArea, compArea, true);
     }
+
+    triggerStageEnterAnim();
 }
 
 /* RENDERIZADOR DOS 4 PASSOS DO SILABÁRIO CUMULATIVO POR GEAR */
@@ -6124,13 +6203,16 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
         const poolDiv = document.createElement('div');
         poolDiv.className = 'crmts-pool';
 
-        const refreshSlots = () => {
+        const refreshSlots = (animateIdx = -1) => {
             slotsDiv.innerHTML = '';
             units.forEach((_, i) => {
                 const s = document.createElement('div');
                 s.className = `crmts-slot ${topoClass} ${built[i] ? 'filled' : ''}`;
                 s.innerHTML = built[i] ? formatStimulusTextHTML(built[i]) : '';
                 slotsDiv.appendChild(s);
+                if (i === animateIdx && window.AlfaAnimations && typeof window.AlfaAnimations.animateSlotFill === 'function') {
+                    window.AlfaAnimations.animateSlotFill(s);
+                }
             });
         };
 
@@ -6148,7 +6230,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
                     slotErrors = 0;
                     t.classList.add('used');
                     built.push(ch);
-                    refreshSlots();
+                    refreshSlots(built.length - 1);
                     if (built.length === units.length) handleAnswer(true, slotsDiv);
                 } else {
                     slotErrors++;
@@ -6159,6 +6241,9 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
                         return;
                     }
                     t.classList.add('feedback-error');
+                    if (window.AlfaAnimations && typeof window.AlfaAnimations.shakeElement === 'function') {
+                        window.AlfaAnimations.shakeElement(t);
+                    }
                     setTimeout(() => t.classList.remove('feedback-error'), 350);
 
                     if (slotErrors >= 2) {
@@ -6170,7 +6255,7 @@ function renderCustomStudioTrial(target, modelArea, compArea, badge, abaDock) {
                                 rightBtn.classList.remove('errorless-prompt');
                                 rightBtn.classList.add('used');
                                 built.push(expectedUnit);
-                                refreshSlots();
+                                refreshSlots(built.length - 1);
                                 if (built.length === units.length) handleAnswer(true, slotsDiv);
                             }, 420);
                         }
@@ -6277,7 +6362,7 @@ function getPhoneticAudioModel(target) {
 }
 
 /* ============================================================================
-   13. RENDERIZADORES ESPECIALIZADOS (SLIDE SILÁBICO DE FUSÃO + EX_TYPO_GEN)
+   13. RENDERIZADORES ESPECIALIZADOS (SLIDE CONTÍNUO, ENCAIXE CRMTS, EX_TYPO_GEN)
    ============================================================================ */
 function showPhonemeCorrectivePopup(letter, varIdx, onDismissCallback) {
     playPhonemeAudioFile(letter, varIdx, true);
@@ -6308,6 +6393,10 @@ function showPhonemeCorrectivePopup(letter, varIdx, onDismissCallback) {
 function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge, abaDock, fluencyPill) {
     const topoClass = getTopographicClasses();
     const numOpts = getEffectiveOptsForCurrentSession();
+
+    if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+        window.AlfaAnimations.stopHoldSlide();
+    }
 
     if (subType === 'PHON_CHECKPOINT') {
         const letter = target.letter || 'A';
@@ -6902,7 +6991,11 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         document.getElementById('drum-tap-btn').onclick = () => {
             tapCount++;
             playSound('click');
-            document.getElementById('drum-count-val').innerText = tapCount;
+            const valEl = document.getElementById('drum-count-val');
+            valEl.innerText = tapCount;
+            if (window.AlfaAnimations && typeof window.AlfaAnimations.pulseTarget === 'function') {
+                window.AlfaAnimations.pulseTarget(valEl);
+            }
         };
         document.getElementById('drum-reset-btn').onclick = () => {
             tapCount = 0;
@@ -6959,13 +7052,16 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const poolDiv = document.createElement('div');
         poolDiv.className = 'crmts-pool';
 
-        function refreshSylSlots() {
+        function refreshSylSlots(animateIdx = -1) {
             slotsDiv.innerHTML = '';
             syllables.forEach((_, idx) => {
                 const s = document.createElement('div');
                 s.className = `crmts-slot ${topoClass} ${built[idx] ? 'filled' : ''}`;
                 s.innerHTML = built[idx] ? formatStimulusTextHTML(built[idx].syl, session.phase, true, false) : '';
                 slotsDiv.appendChild(s);
+                if (idx === animateIdx && window.AlfaAnimations && typeof window.AlfaAnimations.animateSlotFill === 'function') {
+                    window.AlfaAnimations.animateSlotFill(s);
+                }
             });
         }
 
@@ -6989,7 +7085,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     slotErrors = 0;
                     t.classList.add('used');
                     built.push({ syl, tileEl: t });
-                    refreshSylSlots();
+                    refreshSylSlots(built.length - 1);
                     if (built.length === syllables.length) {
                         playSound('win');
                         triggerReadingWithoutCueGate();
@@ -6999,6 +7095,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     session.attemptsOnCurrent++;
                     playSound('click');
                     t.classList.add('feedback-error');
+                    if (window.AlfaAnimations && typeof window.AlfaAnimations.shakeElement === 'function') {
+                        window.AlfaAnimations.shakeElement(t);
+                    }
                     setTimeout(() => t.classList.remove('feedback-error'), 350);
 
                     if (slotErrors >= 2) {
@@ -7010,7 +7109,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                                 rightBtn.classList.remove('errorless-prompt');
                                 rightBtn.classList.add('used');
                                 built.push({ syl: expectedSyl, tileEl: rightBtn });
-                                refreshSylSlots();
+                                refreshSylSlots(built.length - 1);
                                 if (built.length === syllables.length) {
                                     triggerReadingWithoutCueGate();
                                 }
@@ -7189,13 +7288,16 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
         const poolDiv = document.createElement('div');
         poolDiv.className = 'crmts-pool';
 
-        function refreshCRMTS() {
+        function refreshCRMTS(animateIdx = -1) {
             slotsDiv.innerHTML = '';
             letters.forEach((_, idx) => {
                 const s = document.createElement('div');
                 s.className = `crmts-slot ${topoClass} ${built[idx] ? 'filled' : ''}`;
                 s.innerHTML = built[idx] ? formatStimulusTextHTML(built[idx].char) : '';
                 slotsDiv.appendChild(s);
+                if (idx === animateIdx && window.AlfaAnimations && typeof window.AlfaAnimations.animateSlotFill === 'function') {
+                    window.AlfaAnimations.animateSlotFill(s);
+                }
             });
         }
 
@@ -7214,7 +7316,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     slotErrors = 0;
                     t.classList.add('used');
                     built.push({ char: ch, tileEl: t });
-                    refreshCRMTS();
+                    refreshCRMTS(built.length - 1);
                     if (built.length === letters.length) {
                         handleAnswer(true, slotsDiv);
                     }
@@ -7227,6 +7329,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                         return;
                     }
                     t.classList.add('feedback-error');
+                    if (window.AlfaAnimations && typeof window.AlfaAnimations.shakeElement === 'function') {
+                        window.AlfaAnimations.shakeElement(t);
+                    }
                     setTimeout(() => t.classList.remove('feedback-error'), 350);
 
                     if (slotErrors >= 2) {
@@ -7238,7 +7343,7 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                                 rightBtn.classList.remove('errorless-prompt');
                                 rightBtn.classList.add('used');
                                 built.push({ char: expectedChar, tileEl: rightBtn });
-                                refreshCRMTS();
+                                refreshCRMTS(built.length - 1);
                                 if (built.length === letters.length) {
                                     handleAnswer(true, slotsDiv);
                                 }
@@ -7282,6 +7387,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                         gapBtn.innerHTML = '|';
                         cutGaps++;
                         playSound('click');
+                        if (window.AlfaAnimations && typeof window.AlfaAnimations.pulseTarget === 'function') {
+                            window.AlfaAnimations.pulseTarget(gapBtn);
+                        }
                         if (cutGaps === totalGaps) {
                             handleAnswer(true, box);
                         }
@@ -7390,7 +7498,12 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
 
         function updatePreview() {
             const prev = document.getElementById('built-sentence-preview');
-            if (prev) prev.innerHTML = builtWords.map(w => formatStimulusTextHTML(w)).join(' ');
+            if (prev) {
+                prev.innerHTML = builtWords.map(w => formatStimulusTextHTML(w)).join(' ');
+                if (builtWords.length > 0 && window.AlfaAnimations && typeof window.AlfaAnimations.pulseTarget === 'function') {
+                    window.AlfaAnimations.pulseTarget(prev);
+                }
+            }
         }
 
         wordsShuffled.forEach(w => {
@@ -7419,6 +7532,9 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
                     session.attemptsOnCurrent++;
                     playSound('click');
                     btn.classList.add('feedback-error');
+                    if (window.AlfaAnimations && typeof window.AlfaAnimations.shakeElement === 'function') {
+                        window.AlfaAnimations.shakeElement(btn);
+                    }
                     setTimeout(() => btn.classList.remove('feedback-error'), 350);
 
                     if (wordErrors >= 2) {
@@ -7613,19 +7729,31 @@ function renderSpecializedEidosTrial(subType, target, modelArea, compArea, badge
     }
 }
 
-/* CONTROLADOR DO SLIDE FONOLÓGICO (TOQUE + MOUSE + SETAS ARROWLEFT/ARROWRIGHT NO PC) */
+/* CONTROLADOR DO SLIDE FONOLÓGICO (TOQUE + MOUSE + SEGURAR SETA PARA DESLIZE CONTÍNUO ~1s) */
 function bindPhonemeSliderEvents(trackId, boxId, fillId) {
     const trackEl = document.getElementById(trackId);
     const boxEl = document.getElementById(boxId);
     const fillEl = document.getElementById(fillId);
     if (!trackEl || !boxEl || !fillEl) return;
 
-    let isDragging = false, startX = 0, currentX = 0, maxSlide = 0, completedSlide = false;
+    let isDragging = false, startX = 0, currentX = 0, completedSlide = false;
+    let heldKey = null;
 
     const getMaxSlide = () => Math.max(80, trackEl.clientWidth - boxEl.offsetWidth - 16);
 
+    const applyX = (x) => {
+        const m = getMaxSlide();
+        currentX = Math.max(0, Math.min(m, x));
+        boxEl.style.transform = `translateX(${currentX}px)`;
+        fillEl.style.width = `${currentX > 0 ? currentX + (boxEl.offsetWidth / 2) : 0}px`;
+    };
+
     const resetDragPosition = () => {
         isDragging = false;
+        heldKey = null;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+            window.AlfaAnimations.stopHoldSlide();
+        }
         currentX = 0;
         boxEl.style.transition = 'transform 0.25s ease';
         fillEl.style.transition = 'width 0.25s ease';
@@ -7633,10 +7761,17 @@ function bindPhonemeSliderEvents(trackId, boxId, fillId) {
         fillEl.style.width = '0px';
     };
 
-    const triggerSlideCompletion = () => {
+    const triggerSlideCompletion = (finalX = null) => {
+        if (completedSlide) return;
         completedSlide = true;
         isDragging = false;
-        const m = getMaxSlide();
+        heldKey = null;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+            window.AlfaAnimations.stopHoldSlide();
+        }
+        const m = finalX !== null ? finalX : getMaxSlide();
+        boxEl.style.transition = 'none';
+        fillEl.style.transition = 'none';
         boxEl.style.transform = `translateX(${m}px)`;
         fillEl.style.width = '100%';
         fillEl.style.background = 'var(--success-light)';
@@ -7653,51 +7788,68 @@ function bindPhonemeSliderEvents(trackId, boxId, fillId) {
     boxEl.onpointerdown = (e) => {
         if (blockClicks || completedSlide) return;
         isDragging = true;
+        heldKey = null;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+            window.AlfaAnimations.stopHoldSlide();
+        }
         boxEl.style.transition = 'none';
         fillEl.style.transition = 'none';
-        maxSlide = getMaxSlide();
         startX = e.clientX - currentX;
         if (boxEl.setPointerCapture) { try { boxEl.setPointerCapture(e.pointerId); } catch (err) {} }
     };
 
     boxEl.onpointermove = (e) => {
         if (!isDragging || completedSlide) return;
-        let delta = Math.max(0, Math.min(maxSlide, e.clientX - startX));
-        currentX = delta;
-        boxEl.style.transform = `translateX(${currentX}px)`;
-        fillEl.style.width = `${currentX + (boxEl.offsetWidth / 2)}px`;
-
-        if (currentX >= maxSlide * 0.94) {
-            triggerSlideCompletion();
+        const m = getMaxSlide();
+        applyX(e.clientX - startX);
+        if (currentX >= m * 0.94) {
+            triggerSlideCompletion(m);
         }
     };
 
     boxEl.onpointerup = () => { if (isDragging && !completedSlide) resetDragPosition(); };
     boxEl.onpointercancel = () => { if (isDragging && !completedSlide) resetDragPosition(); };
 
+    const onKeyUpHold = (ev) => {
+        if (!document.body.contains(trackEl)) {
+            window.removeEventListener('keyup', onKeyUpHold);
+            return;
+        }
+        if (ev.key === heldKey) {
+            heldKey = null;
+            if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+                window.AlfaAnimations.stopHoldSlide();
+            }
+        }
+    };
+
+    if (window._alfaSliderKeyUpFn) {
+        window.removeEventListener('keyup', window._alfaSliderKeyUpFn);
+    }
+    window._alfaSliderKeyUpFn = onKeyUpHold;
+    window.addEventListener('keyup', onKeyUpHold);
+
     activeSliderKeyHandler = (key) => {
         if (blockClicks || completedSlide) return;
-        maxSlide = getMaxSlide();
-        const step = maxSlide * 0.22;
-        boxEl.style.transition = 'transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)';
-        fillEl.style.transition = 'width 0.2s cubic-bezier(0.22, 1, 0.36, 1)';
+        if (heldKey === key) return;
+        heldKey = key;
 
-        if (key === 'ArrowRight') {
-            currentX = Math.min(maxSlide, currentX + step);
-        } else if (key === 'ArrowLeft') {
-            currentX = Math.max(0, currentX - step);
-        }
+        boxEl.style.transition = 'none';
+        fillEl.style.transition = 'none';
 
-        boxEl.style.transform = `translateX(${currentX}px)`;
-        fillEl.style.width = `${currentX > 0 ? currentX + (boxEl.offsetWidth / 2) : 0}px`;
-
-        if (currentX >= maxSlide * 0.94) {
-            triggerSlideCompletion();
+        const dir = key === 'ArrowRight' ? 1 : -1;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.startHoldSlide === 'function') {
+            window.AlfaAnimations.startHoldSlide(
+                dir,
+                () => ({ currentX, maxSlide: getMaxSlide(), durationMs: 900, threshold: 0.94 }),
+                (nextX) => applyX(nextX),
+                (endX) => triggerSlideCompletion(endX)
+            );
         }
     };
 }
 
-/* CONTROLADOR DO SLIDE SILÁBICO INTELIGENTE (FUSÃO C -> V -> CV + ECO APÓS 300ms + TECLADO) */
+/* CONTROLADOR DO SLIDE SILÁBICO INTELIGENTE (FUSÃO C -> V -> CV + SEGURAR SETA ~1s + ECO 300ms) */
 function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylStr) {
     const trackEl = document.getElementById(trackId);
     const consEl = document.getElementById(consId);
@@ -7708,6 +7860,7 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
     if (!trackEl || !consEl || !vowEl || !fillEl || !resultEl) return;
 
     let isDragging = false, startX = 0, currentX = 0, fused = false;
+    let heldKey = null;
     const trialToken = `${session.phase}_${session.currentCycle}_${session.currentTrialIdx}`;
 
     const getMaxSlide = () => {
@@ -7715,9 +7868,20 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
         return Math.max(80, trackEl.clientWidth - consEl.offsetWidth - vowWidth - 12);
     };
 
+    const applyX = (x) => {
+        const m = getMaxSlide();
+        currentX = Math.max(0, Math.min(m, x));
+        consEl.style.transform = `translateX(${currentX}px)`;
+        fillEl.style.width = `${currentX > 0 ? currentX + (consEl.offsetWidth / 2) : 0}px`;
+    };
+
     const resetFusion = () => {
         fused = false;
         isDragging = false;
+        heldKey = null;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+            window.AlfaAnimations.stopHoldSlide();
+        }
         currentX = 0;
         consEl.style.display = 'flex';
         vowEl.style.display = 'flex';
@@ -7733,12 +7897,19 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
         if (fused) return;
         fused = true;
         isDragging = false;
+        heldKey = null;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+            window.AlfaAnimations.stopHoldSlide();
+        }
         fillEl.style.transition = 'width 0.18s ease';
         fillEl.style.width = '100%';
         consEl.style.display = 'none';
         vowEl.style.display = 'none';
         resultEl.style.display = 'flex';
         trackEl.classList.add('fused-state');
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.pulseTarget === 'function') {
+            window.AlfaAnimations.pulseTarget(resultEl);
+        }
         playSound('win');
 
         setTimeout(() => {
@@ -7760,6 +7931,10 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
     consEl.onpointerdown = (e) => {
         if (blockClicks || fused) return;
         isDragging = true;
+        heldKey = null;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+            window.AlfaAnimations.stopHoldSlide();
+        }
         consEl.style.transition = 'none';
         fillEl.style.transition = 'none';
         startX = e.clientX - currentX;
@@ -7769,11 +7944,7 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
     consEl.onpointermove = (e) => {
         if (!isDragging || fused) return;
         const maxSlide = getMaxSlide();
-        let delta = Math.max(0, Math.min(maxSlide, e.clientX - startX));
-        currentX = delta;
-        consEl.style.transform = `translateX(${currentX}px)`;
-        fillEl.style.width = `${currentX + (consEl.offsetWidth / 2)}px`;
-
+        applyX(e.clientX - startX);
         if (currentX >= maxSlide * 0.88) {
             completeFusion();
         }
@@ -7792,31 +7963,49 @@ function bindSyllableFusionSlider(trackId, consId, vowId, fillId, resultId, sylS
     consEl.onpointerup = endPointer;
     consEl.onpointercancel = endPointer;
 
+    const onKeyUpHold = (ev) => {
+        if (!document.body.contains(trackEl)) {
+            window.removeEventListener('keyup', onKeyUpHold);
+            return;
+        }
+        if (ev.key === heldKey) {
+            heldKey = null;
+            if (window.AlfaAnimations && typeof window.AlfaAnimations.stopHoldSlide === 'function') {
+                window.AlfaAnimations.stopHoldSlide();
+            }
+        }
+    };
+
+    if (window._alfaSliderKeyUpFn) {
+        window.removeEventListener('keyup', window._alfaSliderKeyUpFn);
+    }
+    window._alfaSliderKeyUpFn = onKeyUpHold;
+    window.addEventListener('keyup', onKeyUpHold);
+
     activeSliderKeyHandler = (key) => {
         if (blockClicks) return;
         if (fused) {
             if (key === 'ArrowLeft') resetFusion();
             return;
         }
-        const maxSlide = getMaxSlide();
-        const step = maxSlide * 0.25;
-        consEl.style.transition = 'transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)';
-        fillEl.style.transition = 'width 0.2s cubic-bezier(0.22, 1, 0.36, 1)';
+        if (heldKey === key) return;
+        heldKey = key;
 
-        if (key === 'ArrowRight') {
-            currentX = Math.min(maxSlide, currentX + step);
-        } else if (key === 'ArrowLeft') {
-            currentX = Math.max(0, currentX - step);
-        }
+        consEl.style.transition = 'none';
+        fillEl.style.transition = 'none';
 
-        consEl.style.transform = `translateX(${currentX}px)`;
-        fillEl.style.width = `${currentX > 0 ? currentX + (consEl.offsetWidth / 2) : 0}px`;
-
-        if (currentX >= maxSlide * 0.88) {
-            completeFusion();
+        const dir = key === 'ArrowRight' ? 1 : -1;
+        if (window.AlfaAnimations && typeof window.AlfaAnimations.startHoldSlide === 'function') {
+            window.AlfaAnimations.startHoldSlide(
+                dir,
+                () => ({ currentX, maxSlide: getMaxSlide(), durationMs: 900, threshold: 0.88 }),
+                (nextX) => applyX(nextX),
+                () => completeFusion()
+            );
         }
     };
 }
+
 /* ============================================================================
    ALFAMTS - MOTOR PRINCIPAL (app.js - PARTE 3 DE 3: SEÇÕES 14 A 19)
    RESPOSTAS • TRAVA DO DOCK • TELEMETRIA CLÍNICA (JANELA RECENTE) • ESTÚDIO A4
@@ -8691,6 +8880,7 @@ function repeatLesson() {
     }
 }
 
+
 /* ============================================================================
    17. TELEMETRIA (3 ABAS), REPERTÓRIO LEXICAL (JANELA RECENTE) E PDF FILTRADO
    ============================================================================ */
@@ -8974,7 +9164,6 @@ function evaluateLexicalClinicalStatus(item) {
     const last3 = item.history.slice(-3);
     const has3ConsecI = (last3.length === 3 && last3.every(h => h.outcome === 'I'));
 
-    // Exige mínimo de 3 exposições para consolidar; avalia janela recente (últimas 5) ou 3 acertos seguidos
     if (item.total >= 3 && (recentAcc >= crit || has3ConsecI)) {
         return { acc: recentAcc, statusClass: 'status-mastered', statusText: 'Consolidada' };
     }
@@ -9037,8 +9226,11 @@ function renderTelemetryLexicalView() {
         card.className = `lex-word-card ${item.statusClass}`;
         card.onclick = () => openWordTelemetryModal(item.word);
         card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                <strong class="lex-word-title">${item.word}</strong>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:8px;">
+                <span class="lex-word-title-wrap">
+                    <span class="lex-status-dot"></span>
+                    <strong class="lex-word-title">${item.word}</strong>
+                </span>
                 <span class="lex-acc-badge">${item.acc}%</span>
             </div>
             <div class="lex-progress-bar">
